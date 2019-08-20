@@ -12,11 +12,13 @@ https://github.com/prodo-ai/dogedit when it is ready.
 
 ## Running the examples
 
-Navigate to the example and
+Navigate to the example, run
 
 ``` shell
 yarn start
 ```
+
+and open [localhost:1234](http://localhost:1234).
 
 To typecheck the example run `yarn build:watch` at the root of this repo. Some
 of the examples also have tests that can be run with `yarn test`.
