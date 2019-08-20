@@ -1,6 +1,6 @@
 import { createAction } from "./actions";
 import { createConnect } from "./connect";
-import { prodoRender } from "./context";
+import { prodoRender } from "./render";
 import { createTestRenderer } from "./testing";
 
 export { createTestRenderer };

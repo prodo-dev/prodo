@@ -48,17 +48,17 @@ export const createAction = <S>() => <A>(
       },
     );
 
-    logger.log("%c prev state ", "color: grey", prevState);
+    logger.log("%c prev state ", "color: grey;", prevState);
     logger.log(
       "%c action  %c%s   %c%s",
-      "color: dodgerblue",
-      "color: black; font-weight: thin",
+      "color: dodgerblue;",
+      "color: black;",
       origin != null ? origin.id : event.id,
       "color: black; font-weight: bold",
       name,
       arg,
     );
-    logger.log("%c next state ", "color: green", nextState);
+    logger.log("%c next state ", "color: green;", nextState);
     logger.log("");
 
     completeEvent(store, event);
