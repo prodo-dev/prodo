@@ -1,6 +1,6 @@
 import * as React from "react";
+import { deleteAll, deleteItem, newTodo, toggle } from "./actions";
 import { connect } from "./store";
-import { toggle, deleteItem, deleteAll, newTodo } from "./actions";
 
 export const List = connect(
   "List",

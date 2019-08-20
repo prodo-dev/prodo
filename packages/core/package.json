@@ -14,13 +14,16 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
+    "@testing-library/react": "^9.1.3",
     "immer": "^3.2.0",
-    "@testing-library/react": "^9.1.3"
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
-    "@types/react": "^16.8.25",
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
     "@types/testing-library__react": "^9.1.1",
     "ts-jest": "^24.0.2"
   },

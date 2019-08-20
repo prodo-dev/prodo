@@ -1,4 +1,4 @@
-export type Store<S> = {
+export interface Store<S> {
   state: S;
   history: History;
   eventsOrder: EventOrder[];
@@ -6,28 +6,28 @@ export type Store<S> = {
 
   watchTree: WatchTree;
   trackHistory?: boolean;
-};
+}
 
-export type WatchTree = {
+export interface WatchTree {
   subs: Set<Node>; // subscriptions for branch
   esubs: Set<Node>; // subscriptions for leaf
   children: { [key: string]: WatchTree };
-};
+}
 
-export type Node = {
+export interface Node {
   name: string;
   setState: (state: any) => void;
   pathKey: string;
   status: { unmounted: boolean };
   compId: number;
-};
+}
 
 export type Watch = <T>(x: T) => T;
 
-export type Origin = {
+export interface Origin {
   parentId: string;
   id: string;
-};
+}
 
 export type Action<A> = (
   arg: A,
@@ -37,12 +37,12 @@ export type Dispatch = <T>(func: Action<T>) => (args: T) => void;
 
 export type Track = <T, R>(func: (a: T) => R, a: T) => R;
 
-export type ActionCtx<State> = {
+export interface ActionCtx<State> {
   state: State;
   dispatch: Dispatch;
   track: Track;
   stream: Stream;
-};
+}
 
 export type CallBack<T> = (x: T) => void;
 
@@ -51,7 +51,7 @@ export type Stream = <A, T>(
   arg: A,
 ) => T;
 
-export type Event = {
+export interface Event {
   actionName: string;
   args: any;
   id: string;
@@ -66,13 +66,18 @@ export type Event = {
   logs: any[];
   runtimeError: boolean;
   stateAfter?: any;
-};
+}
 
-type History = { [key: string]: Event };
+interface History {
+  [key: string]: Event;
+}
 
-type NextAction = {
+interface NextAction {
   func: Action<any>;
   args: any;
-};
+}
 
-export type EventOrder = { type: "start" | "end"; eventId: string };
+export interface EventOrder {
+  type: "start" | "end";
+  eventId: string;
+}

@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Store, Node, Dispatch, Watch } from "./types";
-import { subscribe, unsubscribe } from "./watch";
 import { ProdoContext, ProdoContextType } from "./context";
 import logger from "./logger";
+import { Dispatch, Node, Store, Watch } from "./types";
+import { subscribe, unsubscribe } from "./watch";
 
 const readProxy = (path: string[] = []): any =>
   new Proxy(
@@ -23,12 +23,17 @@ const valueExtractor = (store: Store<any>, watched: any): Watch => (x: any) => {
 };
 
 const shallowEqual = (objA: any, objB: any): boolean => {
-  if (objA === objB) return true;
-  var keysA = Object.keys(objA);
-  var keysB = Object.keys(objB);
-  if (keysA.length !== keysB.length) return false;
-  for (var i = 0; i < keysA.length; i++) {
-    if (!objB.hasOwnProperty(keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
+  if (objA === objB) {
+    return true;
+  }
+  const keysA = Object.keys(objA);
+  const keysB = Object.keys(objB);
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  for (const key of keysA) {
+    if (!objB.hasOwnProperty(key) || objA[key] !== objB[key]) {
       return false;
     }
   }
@@ -37,22 +42,23 @@ const shallowEqual = (objA: any, objB: any): boolean => {
 
 let _compIdCnt = 1;
 
-export type ConnectArgs<S> = {
+export interface ConnectArgs<S> {
   state: S;
   watch: Watch;
   dispatch: Dispatch;
-};
+}
 
 export type Func<S, P = {}> = (args: ConnectArgs<S>) => React.ComponentType<P>;
 
-type ConnectProps<S, P> = {
+interface ConnectProps<S, P> {
   userProps: P;
   name: string;
   func: Func<S, P>;
   store: Store<S>;
-};
+}
 
 class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
+  public state: any;
   private watched: { [key: string]: any };
   private prevWatched: { [key: string]: any };
   private pathNodes: { [key: string]: Node };
@@ -67,8 +73,6 @@ class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
   private _watch: Watch;
   private _dispatch: Dispatch;
   private _state: any;
-
-  public state: any;
 
   constructor(props: ConnectProps<S, P>) {
     super(props);
@@ -123,7 +127,7 @@ class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
     logger.info(`[constructing] ${this.name}`);
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     logger.info(`[did mount] ${this.name}`);
 
     Object.keys(this.watched).forEach(pathKey => {
@@ -139,7 +143,7 @@ class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
     this.watched = {};
   }
 
-  shouldComponentUpdate(nextProps: ConnectProps<S, P>, nextState: any) {
+  public shouldComponentUpdate(nextProps: ConnectProps<S, P>, nextState: any) {
     const test =
       !shallowEqual(this.props.userProps, nextProps.userProps) ||
       (!this.firstTime && !shallowEqual(this.state, nextState));
@@ -149,7 +153,7 @@ class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
     return test;
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     logger.info(`[did update] ${this.name}`);
 
     Object.keys(this.watched).forEach(pathKey => {
@@ -169,7 +173,7 @@ class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
     });
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     logger.info(`[will unmount]: ${this.name}`, this.state);
     Object.keys(this.state).forEach(pathKey => {
       logger.info(`[unmount] ${this.name}: stop watching < ${pathKey} >`);
@@ -181,7 +185,7 @@ class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
     this.status.unmounted = true;
   }
 
-  render() {
+  public render() {
     this._state = readProxy() as S;
     this._watch = valueExtractor(this.props.store, this.watched);
 

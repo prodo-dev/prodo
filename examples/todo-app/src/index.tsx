@@ -1,6 +1,6 @@
 import * as React from "react";
-import { render, initialState } from "./store";
 import App from "./App";
+import { initialState, render } from "./store";
 
 import "./index.scss";
 

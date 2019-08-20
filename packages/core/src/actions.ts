@@ -1,15 +1,15 @@
+import produce from "immer";
+import { completeEvent, startEvent } from "./events";
+import logger from "./logger";
 import {
   Action,
-  Store,
-  Dispatch,
   ActionCtx,
+  Dispatch,
   Origin,
-  Track,
+  Store,
   Stream,
+  Track,
 } from "./types";
-import { startEvent, completeEvent } from "./events";
-import produce from "immer";
-import logger from "./logger";
 
 const track: Track = (func, a) => {
   logger.info("tracking", func, a);

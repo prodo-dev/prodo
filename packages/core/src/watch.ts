@@ -1,6 +1,6 @@
-import { Store, WatchTree, Node } from "./types";
 import { Patch } from "immer";
 import logger from "./logger";
+import { Node, Store, WatchTree } from "./types";
 
 export const subscribe = (store: Store<any>, path: string[], node: Node) => {
   // root tree
@@ -41,16 +41,16 @@ export const unsubscribe = (store: Store<any>, path: string[], node: Node) => {
     return;
   }
 
-  for (let i = 0; i < path.length; i += 1) {
+  for (const pathKey of path) {
     const prev = tree;
 
-    tree = tree.children[path[i]];
+    tree = tree.children[pathKey];
     tree.subs.delete(node);
 
     // there are no more subscribers to children of this tree
     // cut the branch
     if (tree.subs.size === 0) {
-      delete prev.children[path[i]];
+      delete prev.children[pathKey];
       break;
     }
   }
@@ -64,7 +64,7 @@ export const get = (store: Store<any>, pathKey: string): any =>
 export const submitPatches = (store: Store<any>, patches: Patch[]) => {
   const callbacksSet = new Set<Node>();
 
-  let tree = store.watchTree;
+  const tree = store.watchTree;
   patches.forEach(({ op, path }) => {
     let subtree = tree;
     for (let i = 0; i < path.length - (op === "add" ? 1 : 0); i += 1) {
@@ -79,8 +79,8 @@ export const submitPatches = (store: Store<any>, patches: Patch[]) => {
     }
   });
 
-  let comps: { [key: string]: any } = {};
-  let compIds: number[] = [];
+  const comps: { [key: string]: any } = {};
+  const compIds: number[] = [];
 
   Array.from(callbacksSet)
     .sort((x: Node, y: Node) => x.compId - y.compId)

@@ -1,5 +1,5 @@
-import * as React from "react";
 import { render } from "@testing-library/react";
+import * as React from "react";
 import { ProdoContext } from "./context";
 import { createStore } from "./store";
 

@@ -10,6 +10,7 @@ const logLevel = verbosityLevels.log;
 
 const printWithVerbosity = (verbosity: number, ...values: any[]) => {
   if (logLevel <= verbosity && process.env.NODE_ENV === "development") {
+    // tslint:disable-next-line:no-console
     console.log(...values);
   }
 };

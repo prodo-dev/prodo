@@ -1,5 +1,5 @@
-import { Event, Store, Origin } from "./types";
 import { applyPatches } from "immer";
+import { Event, Origin, Store } from "./types";
 import { submitPatches } from "./watch";
 
 export const startEvent = (
