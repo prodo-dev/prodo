@@ -1,0 +1,29 @@
+# Output
+build
+dev
+dist
+lib
+
+# Development
+.envrc.local
+
+# JavaScript
+*.tsbuildinfo
+.tern-port
+node_modules
+
+# Jest
+coverage
+
+# Parcel
+.cache
+
+# Yarn
+yarn-error.log
+
+# VSCode
+.vscode/settings.json
+
+# IntelliJ IDEA
+.idea
+*.iml

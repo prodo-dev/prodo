@@ -1,0 +1,4 @@
+{
+  "files": [],
+  "references": [{ "path": "examples/todo-app" }, { "path": "packages/core" }]
+}

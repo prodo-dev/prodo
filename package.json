@@ -1,0 +1,27 @@
+{
+  "name": "v2-framework",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "set -ex; tsc --build",
+    "build:watch": "yarn build --watch",
+    "clean": "wsrun clean",
+    "test": "wsrun --serial test",
+    "lint": "wsrun --serial lint",
+    "verify": "set -ex; yarn install; yarn build; yarn test; yarn lint"
+  },
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "prettier": "^1.17.1",
+    "tslint": "^5.17.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^4.0.0",
+    "typescript": "^3.5.1",
+    "wsrun": "^5.0.0"
+  }
+}

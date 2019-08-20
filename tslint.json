@@ -1,0 +1,32 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier",
+    "tslint-plugin-prettier",
+    "tslint-react"
+  ],
+  "rules": {
+    "interface-name": false,
+    "jsx-boolean-value": false,
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false,
+    "jsx-wrap-multiline": false,
+    "object-literal-sort-keys": false,
+    "no-unused-expression": false,
+    "no-implicit-dependencies": {
+      "options": [true, "dev", ["~"]]
+    },
+    "no-submodule-imports": false,
+    "no-shadowed-variable": false,
+    "prettier": true,
+    "variable-name": {
+      "options": [
+        "ban-keywords",
+        "check-format",
+        "allow-leading-underscore",
+        "allow-pascal-case"
+      ]
+    }
+  }
+}
