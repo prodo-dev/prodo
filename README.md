@@ -29,4 +29,5 @@ of the examples also have tests that can be run with `yarn test`.
 - Run `yarn` at the root.
 - Run `yarn build:watch` to build all the TypeScript. Check this console for
   type errors.
+- Fix linting errors with `yarn lint --fix`.
 - To run a sanity check over everything, run `yarn verify`.
