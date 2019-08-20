@@ -1,6 +1,7 @@
 import { Patch } from "immer";
 import logger from "./logger";
 import { Node, Store, WatchTree } from "./types";
+import { splitPath } from "./utils";
 
 export const subscribe = (store: Store<any>, path: string[], node: Node) => {
   // root tree
@@ -59,7 +60,7 @@ export const unsubscribe = (store: Store<any>, path: string[], node: Node) => {
 };
 
 export const get = (store: Store<any>, pathKey: string): any =>
-  pathKey.split("・").reduce((x: any, y: any) => x[y], store.state);
+  splitPath(pathKey).reduce((x: any, y: any) => x[y], store.state);
 
 export const submitPatches = (store: Store<any>, patches: Patch[]) => {
   const callbacksSet = new Set<Node>();

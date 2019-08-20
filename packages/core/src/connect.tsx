@@ -3,6 +3,7 @@ import { ProdoContext, ProdoContextType } from "./context";
 import logger from "./logger";
 import { Dispatch, Node, Store, Watch } from "./types";
 import { subscribe, unsubscribe } from "./watch";
+import { joinPath, splitPath } from "./utils";
 
 const readProxy = (path: string[] = []): any =>
   new Proxy(
@@ -15,7 +16,7 @@ const readProxy = (path: string[] = []): any =>
 
 const valueExtractor = (store: Store<any>, watched: any): Watch => (x: any) => {
   const path = x._path;
-  const pathKey = path.join("・");
+  const pathKey = joinPath(path);
   const value = path.reduce((x: any, y: any) => x[y], store.state);
 
   watched[pathKey] = value;
@@ -100,12 +101,12 @@ class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
       };
 
       this.pathNodes[pathKey] = node;
-      subscribe(this.props.store, pathKey.split("・"), node);
+      subscribe(this.props.store, splitPath(pathKey), node);
     };
 
     this.unsubscribe = (pathKey: string) => {
       const node = this.pathNodes[pathKey];
-      unsubscribe(this.props.store, pathKey.split("・"), node);
+      unsubscribe(this.props.store, splitPath(pathKey), node);
       delete this.pathNodes[pathKey];
     };
 
