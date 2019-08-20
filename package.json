@@ -7,8 +7,8 @@
     "build": "set -ex; tsc --build",
     "build:watch": "yarn build --watch",
     "clean": "wsrun clean",
-    "test": "wsrun --serial test",
-    "lint": "wsrun --serial lint",
+    "test": "wsrun --serial --exclude-missing test",
+    "lint": "wsrun --serial --exclude-missing lint",
     "verify": "set -ex; yarn install; yarn build; yarn test; yarn lint"
   },
   "workspaces": [
