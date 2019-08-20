@@ -2,8 +2,8 @@ import * as React from "react";
 import { ProdoContext, ProdoContextType } from "./context";
 import logger from "./logger";
 import { Dispatch, Node, Store, Watch } from "./types";
-import { subscribe, unsubscribe } from "./watch";
 import { joinPath, splitPath } from "./utils";
+import { subscribe, unsubscribe } from "./watch";
 
 const readProxy = (path: string[] = []): any =>
   new Proxy(
