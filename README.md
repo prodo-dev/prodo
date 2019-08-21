@@ -1,8 +1,7 @@
 # V2 Framework
 
-This repo contains the current version of v2 of the Prodo framework. It is
-currently experimental and will most likely be merged into
-https://github.com/prodo-ai/dogedit when it is ready.
+This repo contains an experimental version v2 of the Prodo framework. It will
+most likely be merged into https://github.com/prodo-ai/dogedit when it is ready.
 
 ## Architecture
 
