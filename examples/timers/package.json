@@ -1,0 +1,23 @@
+{
+  "name": "@prodo-example/timers",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
+    "start": "parcel src/index.html",
+    "lint": "set -ex; tsc --build; tslint --project ."
+  },
+  "dependencies": {
+    "@prodo/core": "1.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.2",
+    "@types/react": "^16.8.25",
+    "@types/react-dom": "^16.8.5",
+    "parcel-bundler": "^1.12.3",
+    "sass": "^1.22.9"
+  }
+}

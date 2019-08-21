@@ -3,6 +3,7 @@
   "references": [
     { "path": "examples/todo-app" },
     { "path": "examples/update-testing" },
+    { "path": "examples/timers" },
     { "path": "packages/core" }
   ]
 }

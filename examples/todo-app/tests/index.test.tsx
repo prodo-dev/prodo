@@ -1,12 +1,12 @@
 import * as React from "react";
 import { fireEvent } from "@testing-library/react";
 import { renderWithProdo } from "./utils";
-import { initialState } from "../src/store";
+import { initialState as state } from "../src/store";
 import App, { Item } from "../src/App";
 
 test("can render with initial store", async () => {
   const { getByTestId, findAllByTestId } = renderWithProdo(<App />, {
-    initialState,
+    state,
   });
   expect(getByTestId("list").textContent).toContain("milk");
   expect(await findAllByTestId("item")).toHaveLength(1);
@@ -14,7 +14,7 @@ test("can render with initial store", async () => {
 
 test("can render specific item", async () => {
   const { getByTestId } = renderWithProdo(<Item id="T2" />, {
-    initialState: {
+    state: {
       todos: {
         T1: {
           text: "one",
@@ -32,7 +32,7 @@ test("can render specific item", async () => {
 
 test("can render with empty store", async () => {
   const { getByTestId } = renderWithProdo(<App />, {
-    initialState: {
+    state: {
       todos: {},
     },
   });
@@ -41,7 +41,7 @@ test("can render with empty store", async () => {
 
 test("can render with store with multiple items", async () => {
   const { findAllByTestId } = renderWithProdo(<App />, {
-    initialState: {
+    state: {
       todos: {
         T1: {
           text: "one",
@@ -63,14 +63,14 @@ test("can render with store with multiple items", async () => {
 });
 
 test("delete all items", () => {
-  const { getByText, getByTestId } = renderWithProdo(<App />, { initialState });
+  const { getByText, getByTestId } = renderWithProdo(<App />, { state });
   fireEvent.click(getByText("delete all"));
   expect(getByTestId("list").textContent).toContain("");
 });
 
 test("add an item", async () => {
   const { getByLabelText, getByTestId } = renderWithProdo(<App />, {
-    initialState,
+    state,
   });
   const input = getByLabelText("item-input");
   expect(getByTestId("list").textContent).toBe("milkx");

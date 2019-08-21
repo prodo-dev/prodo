@@ -1,24 +1,12 @@
 import produce from "immer";
 import { completeEvent, startEvent } from "./events";
 import logger from "./logger";
-import {
-  Action,
-  ActionCtx,
-  Dispatch,
-  Origin,
-  Store,
-  Stream,
-  Track,
-} from "./types";
+import { stream } from "./streams";
+import { Action, ActionCtx, Dispatch, Origin, Store, Track } from "./types";
 
 const track: Track = (func, a) => {
   logger.info("tracking", func, a);
   return func(a);
-};
-
-const stream: Stream = (func, arg) => {
-  logger.info("stream not implemented", func, arg);
-  return null as any;
 };
 
 export const createAction = <S>() => <A>(
@@ -63,6 +51,8 @@ export const createAction = <S>() => <A>(
 
     completeEvent(store, event);
   } catch (error) {
+    // tslint:disable-next-line:no-console
+    console.error(error);
     completeEvent(store, event, error);
   }
 };
