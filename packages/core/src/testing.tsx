@@ -12,11 +12,3 @@ export const createTestRenderer = <S extends {}>() => (
     <ProdoContext.Provider value={{ store }}>{ui}</ProdoContext.Provider>,
   );
 };
-
-/* export const createTestDispatch = <S extends {}>() => ({ */
-/* state, */
-/* }: { */
-/* state: S; */
-/* }): Promise<S> => { */
-/* const store = createStore(state); */
-/* }; */
