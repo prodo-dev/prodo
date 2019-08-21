@@ -51,6 +51,8 @@ export const createAction = <S>() => <A>(
 
     completeEvent(store, event);
   } catch (error) {
+    // tslint:disable-next-line:no-console
+    console.error(error);
     completeEvent(store, event, error);
   }
 };

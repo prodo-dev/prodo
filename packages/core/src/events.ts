@@ -1,5 +1,6 @@
 import { applyPatches } from "immer";
-import { Event, Origin, Store } from "./types";
+import { Event, Origin, Store, streamSymbol } from "./types";
+import { joinPath } from "./utils";
 import { submitPatches } from "./watch";
 
 export const startEvent = (
@@ -60,7 +61,33 @@ export const doCompleteEvent = (
     return;
   }
 
-  event.stateAfter = applyPatches(store.state, event.patches);
+  const patches = event.patches
+    .map(patch => {
+      const path = joinPath(patch.path.map(v => v.toString()));
+      const streamState = store.streamStates[path];
+
+      if (streamState && (patch.op === "remove" || patch.value[streamSymbol])) {
+        // replacing or removing subscription
+        streamState.unsubscribe();
+      }
+
+      if (patch.value && patch.value[streamSymbol]) {
+        const cb = (value: any) => {
+          const event = startEvent(store, "Subscription", {});
+          event.patches = [{ op: "replace", path: patch.path, value }];
+          completeEvent(store, event);
+        };
+
+        store.streamStates[path] = patch.value.subscribe(cb);
+
+        return undefined;
+      }
+
+      return patch;
+    })
+    .filter(p => p !== undefined);
+
+  event.stateAfter = applyPatches(store.state, patches);
   store.state = event.stateAfter;
   submitPatches(store, event.patches);
 

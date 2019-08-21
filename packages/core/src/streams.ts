@@ -1,5 +1,8 @@
-import { CreateStream } from "./types";
+import { CreateStream, streamSymbol } from "./types";
 
 export const stream: CreateStream = userStream => arg => {
-  return userStream(arg) as any;
+  return {
+    [streamSymbol]: true,
+    ...userStream(arg),
+  } as any;
 };

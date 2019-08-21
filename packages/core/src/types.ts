@@ -1,3 +1,6 @@
+import { Patch } from "immer";
+export const streamSymbol = Symbol("stream");
+
 export interface Store<S> {
   state: S;
   history: History;
@@ -55,9 +58,9 @@ export type CreateStream = <A, T>(
   userStream: UserStream<A, T>,
 ) => (arg: A) => T;
 
-export type Stream<T> = {
+export interface Stream<T> {
   subscribe: (cb: (value: T) => void) => { unsubscribe: () => void };
-};
+}
 
 export interface Event {
   actionName: string;
@@ -68,7 +71,7 @@ export interface Event {
   timeStart: number;
   timeEnd?: number;
   stateBefore: any;
-  patches: any[];
+  patches: Patch[];
   nextActions: NextAction[];
   effectsLog: any[];
   logs: any[];
