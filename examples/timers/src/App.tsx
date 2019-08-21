@@ -9,7 +9,7 @@ const Counter = connect(
     return (
       <div className="counter">
         <h1 className="name">{counter.name}</h1>
-        <h2 className="value">{counter.value}</h2>
+        <h1 className="value">{counter.value}</h1>
       </div>
     );
   },
