@@ -4,8 +4,13 @@ export interface Store<S> {
   eventsOrder: EventOrder[];
   rootActionsCount: number;
 
+  streamStates: { [path: string]: StreamState };
   watchTree: WatchTree;
   trackHistory?: boolean;
+}
+
+export interface StreamState {
+  unsubscribe: () => void;
 }
 
 export interface WatchTree {
@@ -41,15 +46,18 @@ export interface ActionCtx<State> {
   state: State;
   dispatch: Dispatch;
   track: Track;
-  stream: Stream;
+  stream: CreateStream;
 }
 
-export type CallBack<T> = (x: T) => void;
+export type UserStream<A, T> = (arg: A) => Stream<T>;
 
-export type Stream = <A, T>(
-  func: (a: A) => (cb: CallBack<T>) => void,
-  arg: A,
-) => T;
+export type CreateStream = <A, T>(
+  userStream: UserStream<A, T>,
+) => (arg: A) => T;
+
+export type Stream<T> = {
+  subscribe: (cb: (value: T) => void) => { unsubscribe: () => void };
+};
 
 export interface Event {
   actionName: string;

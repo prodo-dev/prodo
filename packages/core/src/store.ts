@@ -11,4 +11,5 @@ export const createStore = <S>(initState: S): Store<S> => ({
   },
   eventsOrder: [],
   trackHistory: true,
+  streamStates: {},
 });

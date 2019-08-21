@@ -198,7 +198,7 @@ class ConnectComponent<S, P> extends React.Component<ConnectProps<S, P>> {
 export const createConnect = <S extends {}>() => <P extends {}>(
   name: string,
   func: Func<S, P>,
-) => (props: P) => {
+): React.ComponentType<P> => (props: P) => {
   const context = React.useContext(ProdoContext) as ProdoContextType;
 
   return (
