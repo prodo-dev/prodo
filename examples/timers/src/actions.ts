@@ -1,17 +1,13 @@
 import { action } from "./store";
 import * as rx from "rxjs";
 
-const timer = (interval: number) => {
-  return rx.interval(interval);
-};
-
 const numTimers = 20;
 const mult = 100;
 
 export const setupCounter = action(
   "setupCounter",
   (i: number) => ({ state, stream }) => {
-    state.counters[i.toString()].value = stream(timer)(i * mult);
+    state.counters[i.toString()].value = stream(rx.interval)(i * mult);
   },
 );
 
