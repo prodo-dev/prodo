@@ -64,6 +64,8 @@ test("can render with store with multiple items", async () => {
 
 test("delete all items", () => {
   const { getByText, getByTestId } = renderWithProdo(<App />, { state });
+
+  expect(getByTestId("list").textContent).toContain("milk");
   fireEvent.click(getByText("delete all"));
   expect(getByTestId("list").textContent).toContain("");
 });

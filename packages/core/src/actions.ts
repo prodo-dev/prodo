@@ -28,9 +28,7 @@ export const createAction = <S>() => <A>(
   try {
     const nextState = await produce(
       currentState,
-      (state: S) => {
-        action(arg)({ state, dispatch, track, stream });
-      },
+      (state: S) => action(arg)({ state, dispatch, track, stream }),
       (patches: any) => {
         event.patches = patches;
       },

@@ -1,9 +1,9 @@
 import { createAction } from "./actions";
 import { createConnect } from "./connect";
 import { prodoRender } from "./render";
-import { createTestRenderer } from "./testing";
+import { createTestRenderer, createTestDispatch } from "./testing";
 
-export { createTestRenderer };
+export { createTestRenderer, createTestDispatch };
 
 export default function<S>() {
   const action = createAction<S>();
