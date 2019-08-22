@@ -1,19 +1,9 @@
 import { action } from "./store";
+import * as rx from "rxjs";
 
-const timer = (interval: number) => ({
-  subscribe: (cb: (value: number) => void) => {
-    let count = 0;
-    const inter = setInterval(() => {
-      count += 1;
-
-      cb(count);
-    }, interval);
-
-    return {
-      unsubscribe: () => clearInterval(inter),
-    };
-  },
-});
+const timer = (interval: number) => {
+  return rx.interval(interval);
+};
 
 const numTimers = 20;
 const mult = 100;

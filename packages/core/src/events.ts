@@ -78,7 +78,7 @@ export const doCompleteEvent = (
           completeEvent(store, event);
         };
 
-        store.streamStates[path] = patch.value.subscribe(cb);
+        store.streamStates[path] = patch.value.stream.subscribe(cb);
 
         return undefined;
       }
