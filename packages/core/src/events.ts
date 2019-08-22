@@ -18,7 +18,10 @@ export const startEvent = (
   };
 
   if (store.trackHistory) {
-    store.history[event.id] = event;
+    if (store.history.length >= 1024) {
+      store.history.shift()
+    }
+    store.history.push(event);
   }
 
   if (store.watchForComplete) {
