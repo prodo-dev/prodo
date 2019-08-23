@@ -1,7 +1,7 @@
 import produce from "immer";
 import { completeEvent, startEvent } from "./events";
-import { BaseStore, Origin, ProdoPlugin, WatchTree } from "./types";
 import { stream } from "./streams";
+import { BaseStore, Origin, ProdoPlugin, WatchTree } from "./types";
 
 export const createBaseStore = <State>(
   config: { initState: State },

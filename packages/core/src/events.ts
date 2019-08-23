@@ -1,7 +1,7 @@
 import { applyPatches } from "immer";
-import { streamSymbol, Event, Origin, Store } from "./types";
-import { submitPatches } from "./watch";
+import { Event, Origin, Store, streamSymbol } from "./types";
 import { joinPath } from "./utils";
+import { submitPatches } from "./watch";
 
 export const startEvent = (
   store: Omit<Store<any, any>, "exec">,
@@ -15,7 +15,6 @@ export const startEvent = (
     nextActions: [],
     patches: [],
     prevUniverse: store.universe,
-    timeStart: Date.now(),
   };
 
   if (store.trackHistory) {
@@ -30,8 +29,6 @@ export const startEvent = (
 };
 
 export const completeEvent = (event: Event, store: Store<any, any>): void => {
-  event.timeEnd = Date.now();
-
   const patches = event.patches
     .map(patch => {
       const path = joinPath(patch.path.map(v => v.toString()));
@@ -64,7 +61,7 @@ export const completeEvent = (event: Event, store: Store<any, any>): void => {
   const nextUniverse = applyPatches(store.universe, patches);
   Object.assign(store.universe, nextUniverse);
   event.nextUniverse = nextUniverse;
-  submitPatches(store.watchTree, store.universe, event.patches);
+  submitPatches(store, store.universe, event.patches);
 
   event.nextActions.map(({ func, args, origin }) =>
     store.exec(func, args, origin),

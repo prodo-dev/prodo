@@ -5,12 +5,15 @@ describe("actions", () => {
   it("adds a todo", async () => {
     const { dispatch } = model.createStore({
       initState: { todos: {} },
+      mockEffects: {
+        randomId: ["T1"],
+      },
     });
 
     const { state } = await dispatch(newTodo)("foo");
     expect(Object.keys(state.todos)).toHaveLength(1);
 
-    const item = Object.values(state.todos)[0];
+    const item = state.todos.T1;
     expect(item.text).toBe("foo");
     expect(item.done).toBe(false);
   });

@@ -1,10 +1,10 @@
 import { model } from "./store";
 
-const randomId = () => Math.random().toString();
+const randomId = ({}) => Math.random().toString();
 
 export const newTodo = model.action(
-  ({ state }) => (text: string) => {
-    const id = randomId();
+  ({ state, effect }) => (text: string) => {
+    const id = effect(randomId)({});
     state.todos[id] = {
       text,
       done: false,

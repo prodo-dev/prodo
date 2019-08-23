@@ -70,14 +70,14 @@ export const get = (universe: any, pathKey: string): any =>
   splitPath(pathKey).reduce((x: any, y: any) => x[y], universe);
 
 export const submitPatches = (
-  watchTree: WatchTree,
+  store: Store<any, any>,
   universe: any,
   patches: Patch[],
 ) => {
   const callbacksSet = new Set<Node>();
 
   patches.forEach(({ op, path }) => {
-    let subtree = watchTree;
+    let subtree = store.watchTree;
     for (let i = 0; i < path.length - (op === "add" ? 1 : 0); i += 1) {
       const key = path[i];
 

@@ -86,8 +86,6 @@ export interface Event {
   actionName: string;
   id: string;
   parentId: string | null;
-  timeStart: number;
-  timeEnd?: number;
   patches: Patch[];
   nextActions: NextAction[];
   prevUniverse: any;

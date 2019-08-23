@@ -1,6 +1,6 @@
 import { connect } from "./connect";
 import { createBaseStore } from "./store";
-import { Dispatch, Model, ProdoPlugin, Watch, CreateStream } from "./types";
+import { CreateStream, Dispatch, Model, ProdoPlugin, Watch } from "./types";
 
 export const createBaseModel = <State>(): Model<
   { initState: State },
