@@ -3,10 +3,13 @@ import logger from "./logger";
 import { Node, Store, WatchTree } from "./types";
 import { splitPath } from "./utils";
 
-export const subscribe = (store: Store<any>, path: string[], node: Node) => {
+export const subscribe = (
+  store: Store<any, any>,
+  path: string[],
+  node: Node,
+) => {
   // root tree
   let tree: WatchTree = store.watchTree;
-
   tree.subs.add(node);
 
   // watching the entire state
@@ -33,7 +36,11 @@ export const subscribe = (store: Store<any>, path: string[], node: Node) => {
   tree.esubs.add(node);
 };
 
-export const unsubscribe = (store: Store<any>, path: string[], node: Node) => {
+export const unsubscribe = (
+  store: Store<any, any>,
+  path: string[],
+  node: Node,
+) => {
   let tree: WatchTree = store.watchTree;
 
   tree.subs.delete(node);
@@ -59,15 +66,18 @@ export const unsubscribe = (store: Store<any>, path: string[], node: Node) => {
   tree.esubs.delete(node);
 };
 
-export const get = (store: Store<any>, pathKey: string): any =>
-  splitPath(pathKey).reduce((x: any, y: any) => x[y], store.state);
+export const get = (universe: any, pathKey: string): any =>
+  splitPath(pathKey).reduce((x: any, y: any) => x[y], universe);
 
-export const submitPatches = (store: Store<any>, patches: Patch[]) => {
+export const submitPatches = (
+  watchTree: WatchTree,
+  universe: any,
+  patches: Patch[],
+) => {
   const callbacksSet = new Set<Node>();
 
-  const tree = store.watchTree;
   patches.forEach(({ op, path }) => {
-    let subtree = tree;
+    let subtree = watchTree;
     for (let i = 0; i < path.length - (op === "add" ? 1 : 0); i += 1) {
       const key = path[i];
 
@@ -96,7 +106,10 @@ export const submitPatches = (store: Store<any>, patches: Patch[]) => {
         };
       }
 
-      comps[x.compId.toString()].newValues[x.pathKey] = get(store, x.pathKey);
+      comps[x.compId.toString()].newValues[x.pathKey] = get(
+        universe,
+        x.pathKey,
+      );
     });
 
   logger.info("[update cycle]", comps);
