@@ -1,11 +1,11 @@
 import { connect } from "./connect";
 import { createBaseStore } from "./store";
-import { Dispatch, Model, ProdoPlugin, Watch } from "./types";
+import { Dispatch, Model, ProdoPlugin, Watch, CreateStream } from "./types";
 
 export const createBaseModel = <State>(): Model<
   { initState: State },
   { state: State },
-  { state: State; dispatch: Dispatch },
+  { state: State; dispatch: Dispatch; stream: CreateStream },
   { state: State; dispatch: Dispatch; watch: Watch }
 > => {
   const plugins: Array<ProdoPlugin<any, any, any, any>> = [];

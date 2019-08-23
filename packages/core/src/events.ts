@@ -1,6 +1,7 @@
 import { applyPatches } from "immer";
-import { Event, Origin, Store } from "./types";
+import { streamSymbol, Event, Origin, Store } from "./types";
 import { submitPatches } from "./watch";
+import { joinPath } from "./utils";
 
 export const startEvent = (
   store: Omit<Store<any, any>, "exec">,
@@ -30,46 +31,37 @@ export const startEvent = (
 
 export const completeEvent = (event: Event, store: Store<any, any>): void => {
   event.timeEnd = Date.now();
-  // store.eventsOrder.push({ type: "end", eventId: event.id });
 
-  // if (error) {
-  // event.runtimeError = true;
-  // event.logs.push({
-  //   severity: "runtime error",
-  //   message: error.message,
-  //   stack: error.stack,
-  // });
-  //
-  //   return;
-  // }
+  const patches = event.patches
+    .map(patch => {
+      const path = joinPath(patch.path.map(v => v.toString()));
+      const streamState = store.streamStates[path];
 
-  // const patches = event.patches
-  //   .map(patch => {
-  //     const path = joinPath(patch.path.map(v => v.toString()));
-  //     const streamState = store.streamStates[path];
+      if (streamState && (patch.op === "remove" || patch.value[streamSymbol])) {
+        // replacing or removing subscription
+        streamState.unsubscribe();
+      }
 
-  //     if (streamState && (patch.op === "remove" || patch.value[streamSymbol])) {
-  //       // replacing or removing subscription
-  //       streamState.unsubscribe();
-  //     }
+      if (patch.value && patch.value[streamSymbol]) {
+        const cb = (value: any) => {
+          const event = startEvent(store, "Subscription", {
+            id: "Subscription",
+            parentId: null,
+          });
+          event.patches = [{ op: "replace", path: patch.path, value }];
+          completeEvent(event, store);
+        };
 
-  //     if (patch.value && patch.value[streamSymbol]) {
-  //       const cb = (value: any) => {
-  //         const event = startEvent(store, "Subscription", {});
-  //         event.patches = [{ op: "replace", path: patch.path, value }];
-  //         completeEvent(store, event);
-  //       };
+        store.streamStates[path] = patch.value.stream.subscribe(cb);
 
-  //       store.streamStates[path] = patch.value.stream.subscribe(cb);
+        return undefined;
+      }
 
-  //       return undefined;
-  //     }
+      return patch;
+    })
+    .filter(p => p !== undefined);
 
-  //     return patch;
-  //   })
-  //   .filter(p => p !== undefined);
-
-  const nextUniverse = applyPatches(store.universe, event.patches);
+  const nextUniverse = applyPatches(store.universe, patches);
   Object.assign(store.universe, nextUniverse);
   event.nextUniverse = nextUniverse;
   submitPatches(store.watchTree, store.universe, event.patches);

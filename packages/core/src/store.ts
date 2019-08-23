@@ -1,6 +1,7 @@
 import produce from "immer";
 import { completeEvent, startEvent } from "./events";
 import { BaseStore, Origin, ProdoPlugin, WatchTree } from "./types";
+import { stream } from "./streams";
 
 export const createBaseStore = <State>(
   config: { initState: State },
@@ -37,6 +38,7 @@ export const createBaseStore = <State>(
       async u => {
         const ctx = {
           state: u.state,
+          stream,
           dispatch: <A>(func: (a: A) => void) => (args: A) => {
             event.nextActions.push({
               func,

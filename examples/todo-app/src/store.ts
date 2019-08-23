@@ -1,15 +1,13 @@
-import prodo from "@prodo/core";
+import { createBaseModel } from "@prodo/core";
 
 export interface State {
   todos: { [key: string]: { text: string; done: boolean } };
 }
 
-export const initialState: State = {
+export const initState: State = {
   todos: {
     T1: { text: "milk", done: false },
   },
 };
 
-const { action, connect, render } = prodo<State>();
-
-export { action, connect, render };
+export const model = createBaseModel<State>();
