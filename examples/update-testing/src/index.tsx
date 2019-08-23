@@ -1,13 +1,14 @@
 // tslint:disable:no-console
 
+import { Provider } from "@prodo/core";
 import * as React from "react";
-import { action, connect, initialState, numItems, render } from "./store";
+import * as ReactDOM from "react-dom";
+import { initState, model, numItems } from "./store";
 
 import "./index.scss";
 
-export const updateItem = action(
-  "updateItem",
-  ({ id, value }: { id: string; value: boolean }) => ({ state }) => {
+export const updateItem = model.action(
+  ({ state }) => ({ id, value }: { id: string; value: boolean }) => {
     state.items[id] = value;
   },
 );
@@ -39,8 +40,7 @@ const Value = (props: { name: string; value: string }) => (
   </div>
 );
 
-const Item = connect(
-  "Item",
+const Item = model.connect(
   ({ state, dispatch, watch }) => ({
     id,
     delay,
@@ -96,4 +96,11 @@ const App = () => (
   </div>
 );
 
-render({ initialState })(<App />, document.getElementById("root"));
+const store = model.createStore({ initState });
+
+ReactDOM.render(
+  <Provider value={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root"),
+);
