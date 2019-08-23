@@ -31,6 +31,11 @@ export const startEvent = (
   }
 
   store.eventsOrder.push({ type: "start", eventId: event.id });
+
+  if (store.watchForComplete) {
+    store.watchForComplete.count += 1;
+  }
+
   return event;
 };
 
@@ -99,4 +104,12 @@ export const doCompleteEvent = (
 
     func(args)(store, origin);
   });
+
+  if (store.watchForComplete) {
+    store.watchForComplete.count -= 1;
+
+    if (store.watchForComplete.count === 0) {
+      store.watchForComplete.cb();
+    }
+  }
 };

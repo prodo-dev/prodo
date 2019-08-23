@@ -1,4 +1,5 @@
 import { State } from "../src/store";
-import { createTestRenderer } from "@prodo/core";
+import { createTestRenderer, createTestDispatch } from "@prodo/core";
 
 export const renderWithProdo = createTestRenderer<State>();
+export const createDispatch = createTestDispatch<State>();

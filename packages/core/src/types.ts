@@ -10,6 +10,10 @@ export interface Store<S> {
   streamStates: { [path: string]: StreamState };
   watchTree: WatchTree;
   trackHistory?: boolean;
+  watchForComplete?: {
+    count: number;
+    cb: () => void;
+  };
 }
 
 export interface StreamState {
