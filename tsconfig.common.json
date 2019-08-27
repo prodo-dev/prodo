@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "composite": true,
-    "target": "es5",
+    "target": "es2017",
     "lib": ["es2015"],
+    "moduleResolution": "node",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
