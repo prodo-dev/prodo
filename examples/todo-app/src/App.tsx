@@ -1,9 +1,8 @@
 import * as React from "react";
 import { deleteAll, deleteItem, newTodo, toggle } from "./actions";
-import { connect } from "./store";
+import { model } from "./store";
 
-export const List = connect(
-  "List",
+export const List = model.connect(
   ({ state, watch }) => () => (
     <ul data-testid="list">
       {Object.keys(watch(state.todos)).map(id => (
@@ -11,10 +10,10 @@ export const List = connect(
       ))}
     </ul>
   ),
+  "List",
 );
 
-export const Item = connect(
-  "Item",
+export const Item = model.connect(
   ({ state, watch, dispatch }) => ({ id }: { id: string }) => (
     <li data-testid="item">
       <input
@@ -26,10 +25,10 @@ export const Item = connect(
       <button onClick={() => dispatch(deleteItem)(id)}>x</button>
     </li>
   ),
+  "Item",
 );
 
-export const NewTodo = connect(
-  "NewTodo",
+export const NewTodo = model.connect(
   ({ dispatch }) => () => (
     <input
       aria-label="item-input"
@@ -43,10 +42,10 @@ export const NewTodo = connect(
       }}
     />
   ),
+  "NewTodo",
 );
 
-export const Buttons = connect(
-  "Buttons",
+export const Buttons = model.connect(
   ({ dispatch }) => () => (
     <div className="buttons">
       <button
@@ -58,6 +57,7 @@ export const Buttons = connect(
       </button>
     </div>
   ),
+  "Buttons",
 );
 
 const App = () => (

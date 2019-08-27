@@ -1,20 +1,50 @@
 import { Patch } from "immer";
+import * as React from "react";
 export const streamSymbol = Symbol("stream");
 
-export interface Store<S> {
-  state: S;
-  history: History;
-  eventsOrder: EventOrder[];
-  rootActionsCount: number;
+export type Action<ActionCtx> = <A>(
+  func: (c: ActionCtx) => (args: A) => void,
+  name?: string,
+) => (args: A) => void;
 
+export type Connect<ViewCtx> = <P>(
+  func: (c: ViewCtx) => React.ComponentType<P>,
+  name?: string,
+) => React.ComponentType<P>;
+
+export type With<InitOptions, Universe, ActionCtx, ViewCtx> = <I, U, A, V>(
+  plugin: ProdoPlugin<I, U, A, V>,
+) => Model<InitOptions & I, Universe & U, ActionCtx & A, ViewCtx & V>;
+
+export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
+  createStore: (config: InitOptions) => Store<InitOptions, Universe>;
+  action: Action<ActionCtx>;
+  connect: Connect<ViewCtx>;
+  with: With<InitOptions, Universe, ActionCtx, ViewCtx>;
+  ctx: ActionCtx & ViewCtx;
+}
+
+// @ts-ignore
+export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
+  prepareActionCtx?: any;
+}
+
+export interface Store<InitOptions, Universe> {
+  config: InitOptions;
+  universe: Universe;
+  exec: <A>(func: (c: A) => void, args: A, origin: Origin) => void;
+  dispatch: <A>(func: (c: A) => void) => (args: A) => Promise<Universe>;
   streamStates: { [path: string]: StreamState };
   watchTree: WatchTree;
   trackHistory?: boolean;
+  history: History;
   watchForComplete?: {
     count: number;
     cb: () => void;
   };
 }
+
+export type BaseStore<State> = Store<{ initState: State }, { state: State }>;
 
 export interface StreamState {
   unsubscribe: () => void;
@@ -41,20 +71,7 @@ export interface Origin {
   id: string;
 }
 
-export type Action<A> = (
-  arg: A,
-) => (store: Store<any>, origin?: Origin) => Promise<void>;
-
-export type Dispatch = <T>(func: Action<T>) => (args: T) => void;
-
-export type Track = <T, R>(func: (a: T) => R, a: T) => R;
-
-export interface ActionCtx<State> {
-  state: State;
-  dispatch: Dispatch;
-  track: Track;
-  stream: CreateStream;
-}
+export type Dispatch = <A>(func: (a: A) => void) => (args: A) => void;
 
 export type UserStream<A, T> = (arg: A) => Stream<T>;
 
@@ -68,28 +85,22 @@ export interface Stream<T> {
 
 export interface Event {
   actionName: string;
-  args: any;
   id: string;
-  isRoot: boolean;
   parentId: string | null;
-  timeStart: number;
-  timeEnd?: number;
-  stateBefore: any;
   patches: Patch[];
   nextActions: NextAction[];
-  effectsLog: any[];
-  logs: any[];
-  runtimeError: boolean;
-  stateAfter?: any;
+  prevUniverse: any;
+  nextUniverse?: any;
 }
 
-interface History {
+export interface History {
   [key: string]: Event;
 }
 
 interface NextAction {
-  func: Action<any>;
+  func: (c: any) => void;
   args: any;
+  origin: Origin;
 }
 
 export interface EventOrder {

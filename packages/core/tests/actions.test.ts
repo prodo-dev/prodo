@@ -1,54 +1,66 @@
-import prodo, { createTestDispatch } from "../src";
+import { createModel } from "../src";
 
 interface State {
   count: number;
   foo: string;
 }
 
-const initialState: State = {
+const initState: State = {
   count: 0,
   foo: "foo",
 };
 
-const { action } = prodo<State>();
-const createDispatch = createTestDispatch<State>();
+const model = createModel<State>();
 
-const changeFoo = action("changeFoo", () => ({ state }) => {
-  state.foo = "bar";
-});
+const changeFoo = model.action(
+  ({ state }) => () => {
+    state.foo = "bar";
+  },
+  "changeFoo",
+);
 
-const dummy2 = action("dummy2", () => async ({ dispatch }) => {
-  await new Promise(r => setTimeout(r, 200));
-  dispatch(changeFoo)({});
-});
+const dummy2 = model.action(
+  ({ dispatch }) => async () => {
+    await new Promise(r => setTimeout(r, 200));
+    dispatch(changeFoo)({});
+  },
+  "dummy2",
+);
 
-const dummy = action("dummy", () => ({ dispatch }) => {
-  dispatch(dummy2)({});
-});
+const dummy = model.action(
+  ({ dispatch }) => () => {
+    dispatch(dummy2)({});
+  },
+  "dummy",
+);
 
-const changeCount = action("changeCount", (amount: number) => ({ state }) => {
-  state.count += amount;
-});
+const changeCount = model.action(
+  ({ state }) => (amount: number) => {
+    state.count += amount;
+  },
+  "changeCount",
+);
 
 describe("actions", () => {
   it("has correct state after calling action", async () => {
-    const { dispatch, state } = createDispatch({ state: initialState });
+    const { dispatch, universe } = model.createStore({ initState });
 
-    expect(state.foo).toBe("foo");
-    const finalState = await dispatch(changeFoo)({});
-    expect(finalState.foo).toBe("bar");
+    expect(universe.state.foo).toBe("foo");
+    const finalUniverse = await dispatch(changeFoo)({});
+    expect(finalUniverse.state.foo).toBe("bar");
   });
 
   it("has correct state after calling action that calls an async action", async () => {
-    const { dispatch, state } = createDispatch({ state: initialState });
+    const { dispatch, universe } = model.createStore({ initState });
 
-    expect(state.foo).toBe("foo");
-    const finalState = await dispatch(dummy)({});
-    expect(finalState.foo).toBe("bar");
+    expect(universe.state.foo).toBe("foo");
+    const finalUniverse = await dispatch(dummy)({});
+    expect(finalUniverse.state.foo).toBe("bar");
   });
 
   it("has correct state after calling multiple actions", async () => {
-    const { dispatch, state } = createDispatch({ state: initialState });
+    const { dispatch, universe } = model.createStore({ initState });
+    const state = universe.state;
 
     expect(state.count).toBe(0);
 
@@ -60,8 +72,8 @@ describe("actions", () => {
 
     await dispatch(changeCount)(-1);
     await dispatch(changeCount)(-1);
-    const finalState = await dispatch(changeCount)(-1);
+    const finalUniverse = await dispatch(changeCount)(-1);
 
-    expect(finalState.count).toBe(2);
+    expect(finalUniverse.state.count).toBe(2);
   });
 });

@@ -1,45 +1,49 @@
-import { fireEvent } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import * as React from "react";
-import prodo, { createTestRenderer } from "../src";
+import { createModel, ProdoProvider } from "../src";
 
 interface State {
   foo: string;
 }
 
-const state: State = {
+const initState: State = {
   foo: "foo",
 };
 
-const { action, connect } = prodo<State>();
+const model = createModel<State>();
 
-const renderWithProdo = createTestRenderer<State>();
-
-const changeFoo = action("changeFoo", () => ({ state }) => {
+const changeFoo = model.action(({ state }) => () => {
   state.foo = "bar";
 });
 
-const App = connect(
-  "App",
-  ({ state, watch, dispatch }) => () => (
-    <div>
-      <button data-testid="button" onClick={() => dispatch(changeFoo)({})} />
-      {watch(state.foo)}
-    </div>
-  ),
-);
+const App = model.connect(({ state, watch, dispatch }) => () => (
+  <div data-testid="app">
+    <button data-testid="button" onClick={() => dispatch(changeFoo)({})} />
+    {watch(state.foo)}
+  </div>
+));
+
+const renderWithProdo = (ui: React.ReactElement, initState: State) => {
+  const store = model.createStore({ initState });
+  return {
+    ...render(<ProdoProvider value={store}>{ui}</ProdoProvider>),
+    store,
+  };
+};
 
 describe("connect", () => {
   it("connects app to store", async () => {
-    const { container } = renderWithProdo(<App />, { state });
+    const { container } = renderWithProdo(<App />, initState);
 
     expect(container.textContent).toBe("foo");
   });
 
   it("changes what is rendered after", async () => {
-    const { container, getByTestId } = renderWithProdo(<App />, { state });
+    const { getByTestId } = renderWithProdo(<App />, initState);
 
-    expect(container.textContent).toBe("foo");
+    expect(getByTestId("app").textContent).toBe("foo");
     await fireEvent.click(getByTestId("button"));
-    expect(container.textContent).toBe("bar");
+    await new Promise(r => setTimeout(r, 0));
+    expect(await getByTestId("app").textContent).toBe("bar");
   });
 });

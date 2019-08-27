@@ -1,13 +1,19 @@
+import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { setupStreams } from "./actions";
 import App from "./App";
-import { initialState, render } from "./store";
+import { initState, model } from "./store";
 
 import "./index.scss";
 
-const { dispatch } = render({ initialState })(
-  <App />,
+const store = model.createStore({ initState });
+
+ReactDOM.render(
+  <ProdoProvider value={store}>
+    <App />
+  </ProdoProvider>,
   document.getElementById("root"),
 );
 
-dispatch(setupStreams)({});
+store.dispatch(setupStreams)({});

@@ -1,13 +1,8 @@
-import { createAction } from "./actions";
-import { createConnect } from "./connect";
-import { prodoRender } from "./render";
-import { createTestDispatch, createTestRenderer } from "./testing";
+import { ProdoContext } from "./connect";
+import { createModel } from "./model";
+import effectPlugin from "./plugins/effects";
+import { Store } from "./types";
 
-export { createTestRenderer, createTestDispatch };
+export const ProdoProvider = ProdoContext.Provider;
 
-export default function<S>() {
-  const action = createAction<S>();
-  const connect = createConnect<S>();
-
-  return { action, connect, render: prodoRender };
-}
+export { createModel, effectPlugin, Store };

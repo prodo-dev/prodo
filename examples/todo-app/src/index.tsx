@@ -1,7 +1,15 @@
+import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import App from "./App";
-import { initialState, render } from "./store";
+import { initState, model } from "./store";
 
 import "./index.scss";
 
-render({ initialState })(<App />, document.getElementById("root"));
+const store = model.createStore({ initState });
+ReactDOM.render(
+  <ProdoProvider value={store}>
+    <App />
+  </ProdoProvider>,
+  document.getElementById("root"),
+);

@@ -4,33 +4,22 @@ import { joinPath } from "./utils";
 import { submitPatches } from "./watch";
 
 export const startEvent = (
-  store: Store<any>,
+  store: Omit<Store<any, any>, "exec">,
   actionName: string,
-  args: any,
-  origin?: { parentId: string; id: string },
-) => {
-  const id = origin != null ? origin.id : `${store.rootActionsCount++}`;
-  const parentId = origin != null ? origin.parentId : null;
+  origin: Origin,
+): Event => {
   const event: Event = {
-    id,
-    parentId,
-    isRoot: origin == null,
+    id: origin.id,
+    parentId: origin.parentId,
     actionName,
-    args,
-    timeStart: Date.now(),
-    stateBefore: store.state,
-    patches: [],
     nextActions: [],
-    effectsLog: [],
-    logs: [],
-    runtimeError: false,
+    patches: [],
+    prevUniverse: store.universe,
   };
 
   if (store.trackHistory) {
     store.history[event.id] = event;
   }
-
-  store.eventsOrder.push({ type: "start", eventId: event.id });
 
   if (store.watchForComplete) {
     store.watchForComplete.count += 1;
@@ -39,33 +28,7 @@ export const startEvent = (
   return event;
 };
 
-export const completeEvent = (
-  store: Store<any>,
-  event: Event,
-  error?: Error,
-): void => {
-  doCompleteEvent(store, event, error);
-};
-
-export const doCompleteEvent = (
-  store: Store<any>,
-  event: Event,
-  error?: Error,
-): void => {
-  event.timeEnd = Date.now();
-  store.eventsOrder.push({ type: "end", eventId: event.id });
-
-  if (error) {
-    event.runtimeError = true;
-    event.logs.push({
-      severity: "runtime error",
-      message: error.message,
-      stack: error.stack,
-    });
-
-    return;
-  }
-
+export const completeEvent = (event: Event, store: Store<any, any>): void => {
   const patches = event.patches
     .map(patch => {
       const path = joinPath(patch.path.map(v => v.toString()));
@@ -78,9 +41,12 @@ export const doCompleteEvent = (
 
       if (patch.value && patch.value[streamSymbol]) {
         const cb = (value: any) => {
-          const event = startEvent(store, "Subscription", {});
+          const event = startEvent(store, "Subscription", {
+            id: "Subscription",
+            parentId: null,
+          });
           event.patches = [{ op: "replace", path: patch.path, value }];
-          completeEvent(store, event);
+          completeEvent(event, store);
         };
 
         store.streamStates[path] = patch.value.stream.subscribe(cb);
@@ -92,18 +58,14 @@ export const doCompleteEvent = (
     })
     .filter(p => p !== undefined);
 
-  event.stateAfter = applyPatches(store.state, patches);
-  store.state = event.stateAfter;
-  submitPatches(store, event.patches);
+  const nextUniverse = applyPatches(store.universe, patches);
+  Object.assign(store.universe, nextUniverse);
+  event.nextUniverse = nextUniverse;
+  submitPatches(store, store.universe, event.patches);
 
-  event.nextActions.forEach(({ func, args }, index) => {
-    const origin: Origin = {
-      parentId: event.id,
-      id: `${event.id}/${index}`,
-    };
-
-    func(args)(store, origin);
-  });
+  event.nextActions.map(({ func, args, origin }) =>
+    store.exec(func, args, origin),
+  );
 
   if (store.watchForComplete) {
     store.watchForComplete.count -= 1;

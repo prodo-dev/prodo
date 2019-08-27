@@ -1,19 +1,18 @@
-import { action } from "./store";
 import * as rx from "rxjs";
+import { model } from "./store";
 
 const numTimers = 20;
 const mult = 100;
 
-export const setupCounter = action(
-  "setupCounter",
-  (i: number) => ({ state, stream }) => {
+export const setupCounter = model.action(
+  ({ state, stream }) => (i: number) => {
     state.counters[i.toString()].value = stream(rx.interval)(i * mult);
   },
+  "setupCounter",
 );
 
-export const setupStreams = action(
-  "setupStream",
-  () => ({ state, dispatch }) => {
+export const setupStreams = model.action(
+  ({ state, dispatch }) => () => {
     for (let i = 1; i <= numTimers; i += 1) {
       state.counters[i.toString()] = {
         name: `${(1000 / (i * mult)).toFixed(2)} mHz`,
@@ -23,4 +22,5 @@ export const setupStreams = action(
       dispatch(setupCounter)(i);
     }
   },
+  "setupStreams",
 );

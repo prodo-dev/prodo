@@ -1,8 +1,7 @@
 import * as React from "react";
-import { connect } from "./store";
+import { model } from "./store";
 
-const Counter = connect(
-  "Counter",
+const Counter = model.connect(
   ({ state, watch }) => ({ id }: { id: string }) => {
     const counter = watch(state.counters[id]);
 
@@ -13,10 +12,10 @@ const Counter = connect(
       </div>
     );
   },
+  "Counter",
 );
 
-const App = connect(
-  "App",
+const App = model.connect(
   ({ state, watch }) => () => {
     return (
       <div className="app">
@@ -26,6 +25,7 @@ const App = connect(
       </div>
     );
   },
+  "App",
 );
 
 export default App;
