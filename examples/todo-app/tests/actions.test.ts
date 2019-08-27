@@ -5,6 +5,9 @@ describe("actions", () => {
   it("adds a todo", async () => {
     const { dispatch } = model.createStore({
       initState: { todos: {} },
+      mockEffects: {
+        randomId: ["T1"],
+      },
     });
 
     const { state } = await dispatch(newTodo)("foo");

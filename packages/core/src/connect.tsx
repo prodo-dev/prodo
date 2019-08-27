@@ -1,7 +1,7 @@
 import * as React from "react";
 import logger from "./logger";
 import { Connect, Dispatch, Node, Store, Watch } from "./types";
-import { splitPath, joinPath } from "./utils";
+import { joinPath, splitPath } from "./utils";
 import { subscribe, unsubscribe } from "./watch";
 
 export const ProdoContext = React.createContext<Store<any, any>>(null as any);
