@@ -1,6 +1,6 @@
 // tslint:disable:no-console
 
-import { Provider } from "@prodo/core";
+import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { initState, model, numItems } from "./store";
@@ -99,8 +99,8 @@ const App = () => (
 const store = model.createStore({ initState });
 
 ReactDOM.render(
-  <Provider value={store}>
+  <ProdoProvider value={store}>
     <App />
-  </Provider>,
+  </ProdoProvider>,
   document.getElementById("root"),
 );

@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Provider, Store } from "@prodo/core";
+import { ProdoProvider, Store } from "@prodo/core";
 import { render, fireEvent } from "@testing-library/react";
 import { initState, model } from "../src/store";
 import App, { Item } from "../src/App";
 
 const renderWithProdo = (ui: React.ReactElement, store: Store<any, any>) => {
   return {
-    ...render(<Provider value={store}>{ui}</Provider>),
+    ...render(<ProdoProvider value={store}>{ui}</ProdoProvider>),
     store,
   };
 };

@@ -1,4 +1,4 @@
-import { Provider } from "@prodo/core";
+import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { setupStreams } from "./actions";
@@ -10,9 +10,9 @@ import "./index.scss";
 const store = model.createStore({ initState });
 
 ReactDOM.render(
-  <Provider value={store}>
+  <ProdoProvider value={store}>
     <App />
-  </Provider>,
+  </ProdoProvider>,
   document.getElementById("root"),
 );
 
