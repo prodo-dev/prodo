@@ -1,4 +1,4 @@
-import { createBaseModel } from "@prodo/core";
+import { createModel } from "@prodo/core";
 
 interface Counter {
   name: string;
@@ -13,4 +13,4 @@ export const initState: State = {
   counters: {},
 };
 
-export const model = createBaseModel<State>();
+export const model = createModel<State>();

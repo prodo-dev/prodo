@@ -1,4 +1,4 @@
-import { createBaseModel } from "../src";
+import { createModel } from "../src";
 
 interface State {
   count: number;
@@ -10,7 +10,7 @@ const initState: State = {
   foo: "foo",
 };
 
-const model = createBaseModel<State>();
+const model = createModel<State>();
 
 const changeFoo = model.action(
   ({ state }) => () => {

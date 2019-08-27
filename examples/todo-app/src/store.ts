@@ -1,4 +1,4 @@
-import { createBaseModel, effectPlugin } from "@prodo/core";
+import { createModel, effectPlugin } from "@prodo/core";
 
 export interface State {
   todos: { [key: string]: { text: string; done: boolean } };
@@ -10,4 +10,4 @@ export const initState: State = {
   },
 };
 
-export const model = createBaseModel<State>().with(effectPlugin);
+export const model = createModel<State>().with(effectPlugin);

@@ -1,4 +1,4 @@
-import { createBaseModel } from "@prodo/core";
+import { createModel } from "@prodo/core";
 
 export const numItems = 100;
 
@@ -18,4 +18,4 @@ export const initState: State = {
   numItems,
 };
 
-export const model = createBaseModel<State>();
+export const model = createModel<State>();

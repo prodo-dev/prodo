@@ -3,7 +3,7 @@ import { completeEvent, startEvent } from "./events";
 import { stream } from "./streams";
 import { BaseStore, Origin, ProdoPlugin, WatchTree } from "./types";
 
-export const createBaseStore = <State>(
+export const createStore = <State>(
   config: { initState: State },
   plugins: Array<ProdoPlugin<any, any, any, any>>,
 ): BaseStore<State> => {

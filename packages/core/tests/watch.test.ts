@@ -1,5 +1,5 @@
 import { Node, Store } from "../src/types";
-import { createBaseModel } from "../src";
+import { createModel } from "../src";
 import * as watch from "../src/watch";
 import { joinPath } from "../src/utils";
 
@@ -32,7 +32,7 @@ const initState: State = {
   c: {},
 };
 
-const model = createBaseModel<State>();
+const model = createModel<State>();
 
 const createNode = (name: string, compId: number, pathKey: string): Node => ({
   name,

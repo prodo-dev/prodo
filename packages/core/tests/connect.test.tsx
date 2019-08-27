@@ -1,6 +1,6 @@
 import { fireEvent, render } from "@testing-library/react";
 import * as React from "react";
-import { createBaseModel, Provider } from "../src";
+import { createModel, Provider } from "../src";
 
 interface State {
   foo: string;
@@ -10,7 +10,7 @@ const initState: State = {
   foo: "foo",
 };
 
-const model = createBaseModel<State>();
+const model = createModel<State>();
 
 const changeFoo = model.action(({ state }) => () => {
   state.foo = "bar";

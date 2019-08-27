@@ -1,7 +1,7 @@
 import * as React from "react";
 import logger from "./logger";
 import { Connect, Dispatch, Node, Store, Watch } from "./types";
-import { splitPath } from "./utils";
+import { splitPath, joinPath } from "./utils";
 import { subscribe, unsubscribe } from "./watch";
 
 export const ProdoContext = React.createContext<Store<any, any>>(null as any);
@@ -19,7 +19,7 @@ const valueExtractor = (store: any, watched: any, prefixPath: any = []) => (
   x: any,
 ) => {
   const path = prefixPath.concat(x._path);
-  const pathKey = path.join("・");
+  const pathKey = joinPath(path);
   const value = path.reduce((x: any, y: any) => x[y], store.universe);
   watched[pathKey] = value;
   return value;

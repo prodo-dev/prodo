@@ -52,7 +52,14 @@ const prepareActionCtx = (
   };
 };
 
-const effectPlugin: ProdoPlugin<EffectConfig, {}, EffectActionCtx, {}> = {
+const effectPlugin: ProdoPlugin<
+  EffectConfig,
+  {},
+  EffectActionCtx,
+  {
+    test: number;
+  }
+> = {
   prepareActionCtx,
 };
 

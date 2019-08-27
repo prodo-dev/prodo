@@ -21,6 +21,7 @@ export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
   action: Action<ActionCtx>;
   connect: Connect<ViewCtx>;
   with: With<InitOptions, Universe, ActionCtx, ViewCtx>;
+  ctx: ActionCtx & ViewCtx;
 }
 
 // @ts-ignore
