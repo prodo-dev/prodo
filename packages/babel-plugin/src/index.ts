@@ -2,10 +2,7 @@ import * as Babel from "@babel/core";
 import * as nodePath from "path";
 
 const makeVisitor = ({ types: t }: { types: typeof Babel.types }) => ({
-  VariableDeclarator(
-    path: Babel.NodePath<Babel.types.VariableDeclarator>,
-    state: any,
-  ) {
+  VariableDeclarator(path: Babel.NodePath<Babel.types.VariableDeclarator>) {
     const initNode = path.node.init;
     // We only care about functions
     if (
@@ -40,13 +37,7 @@ const makeVisitor = ({ types: t }: { types: typeof Babel.types }) => ({
                   const source = parentPath.node.source;
                   if (
                     source.value.startsWith(".") &&
-                    nodePath.relative(
-                      process.cwd(),
-                      nodePath.join(
-                        nodePath.dirname(state.file.opts.filename),
-                        source.value,
-                      ),
-                    ) === "src/model"
+                    nodePath.basename(source.value) === "model"
                   ) {
                     importSpecifier = parentPath;
                     isAction = true;
