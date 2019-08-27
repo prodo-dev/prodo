@@ -2,10 +2,10 @@ import { Patch } from "immer";
 import * as React from "react";
 export const streamSymbol = Symbol("stream");
 
-export type Action<ActionCtx> = <A>(
-  func: (c: ActionCtx) => (args: A) => void,
+export type Action<ActionCtx> = <A extends any[]>(
+  func: (c: ActionCtx) => (...args: A) => void,
   name?: string,
-) => (args: A) => void;
+) => (...args: A) => void;
 
 export type Connect<ViewCtx> = <P>(
   func: (c: ViewCtx) => React.ComponentType<P>,
@@ -32,8 +32,14 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
 export interface Store<InitOptions, Universe> {
   config: InitOptions;
   universe: Universe;
-  exec: <A>(func: (c: A) => void, args: A, origin: Origin) => void;
-  dispatch: <A>(func: (c: A) => void) => (args: A) => Promise<Universe>;
+  exec: <A extends any[]>(
+    origin: Origin,
+    func: (...args: A) => void,
+    ...args: A
+  ) => void;
+  dispatch: <A extends any[]>(
+    func: (...args: A) => void,
+  ) => (...args: A) => Promise<Universe>;
   streamStates: { [path: string]: StreamState };
   watchTree: WatchTree;
   trackHistory?: boolean;
@@ -71,7 +77,9 @@ export interface Origin {
   id: string;
 }
 
-export type Dispatch = <A>(func: (a: A) => void) => (args: A) => void;
+export type Dispatch = <A extends any[]>(
+  func: (...args: A) => void,
+) => (...args: A) => void;
 
 export type UserStream<A, T> = (arg: A) => Stream<T>;
 

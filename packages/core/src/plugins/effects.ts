@@ -16,8 +16,12 @@ export interface EffectConfig {
   mockEffects?: { [name: string]: any[] };
 }
 
+type Effect = <A extends any[], R>(
+  func: (...args: A) => R,
+) => (...args: A) => R;
+
 export interface EffectActionCtx {
-  effect: <A, R>(func: (a: A) => R) => (args: A) => R;
+  effect: Effect;
 }
 
 const prepareActionCtx = (
@@ -27,7 +31,9 @@ const prepareActionCtx = (
 ) => {
   event.recordedEffects = [];
 
-  ctx.effect = <A>(func: (a: A) => any) => (args: A): any => {
+  ctx.effect = <A extends any[]>(func: (...args: A) => any) => (
+    ...args: A
+  ): any => {
     const start = Date.now();
     const name = func.name;
 
@@ -36,7 +42,7 @@ const prepareActionCtx = (
       return mockedValue;
     }
 
-    const result = func(args);
+    const result = func(...args);
     if (typeof result === "object" && result && result.then) {
       return result.then((value: any) => {
         const end = Date.now();

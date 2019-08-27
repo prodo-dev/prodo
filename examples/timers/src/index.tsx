@@ -16,4 +16,4 @@ ReactDOM.render(
   document.getElementById("root"),
 );
 
-store.dispatch(setupStreams)({});
+store.dispatch(setupStreams)();

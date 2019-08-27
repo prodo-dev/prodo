@@ -50,7 +50,7 @@ export const Buttons = model.connect(
     <div className="buttons">
       <button
         onClick={() => {
-          dispatch(deleteAll)({});
+          dispatch(deleteAll)();
         }}
       >
         delete all
