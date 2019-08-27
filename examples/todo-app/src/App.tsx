@@ -1,6 +1,6 @@
 import * as React from "react";
 import { deleteAll, deleteItem, newTodo, toggle } from "./actions";
-import { model } from "./store";
+import { model } from "./model";
 
 export const List = model.connect(
   ({ state, watch }) => () => (

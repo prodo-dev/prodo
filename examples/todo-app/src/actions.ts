@@ -1,4 +1,4 @@
-import { model } from "./store";
+import { model } from "./model";
 
 const randomId = ({}) => Math.random().toString();
 

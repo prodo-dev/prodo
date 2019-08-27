@@ -1,7 +1,8 @@
 import * as React from "react";
 import { ProdoProvider, Store } from "@prodo/core";
 import { render, fireEvent } from "@testing-library/react";
-import { initState, model } from "../src/store";
+import { model } from "../src/model";
+import { initState } from "../src/store";
 import App, { Item } from "../src/App";
 
 const renderWithProdo = (ui: React.ReactElement, store: Store<any, any>) => {
