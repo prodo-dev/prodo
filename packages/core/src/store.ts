@@ -52,7 +52,7 @@ export const createStore = <State>(
     );
 
     await produce(
-      universe,
+      store.universe,
       async u => {
         const ctx = {
           state: u.state,
