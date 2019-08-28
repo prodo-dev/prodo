@@ -33,14 +33,6 @@ jobs:
             - /home/circleci/.cache/yarn/v4
           key: v1-dependencies-{{ checksum "yarn.lock" }}
 
-      - run:
-          name: Upload test coverage data to Codecov
-          command: |
-            {
-              curl -fsS https://codecov.io/bash > codecov
-              bash codecov
-            } || :
-
 workflows:
   version: 2
   test:
