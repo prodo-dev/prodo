@@ -82,7 +82,7 @@ describe("components", () => {
     expect(await findAllByTestId("item")).toHaveLength(3);
   });
 
-  it("delete all items", () => {
+  it("delete all items", async () => {
     const { getByText, getByTestId } = renderWithProdo(
       <App />,
       model.createStore({ initState }),
@@ -90,7 +90,9 @@ describe("components", () => {
 
     expect(getByTestId("list").textContent).toContain("milk");
     fireEvent.click(getByText("delete all"));
-    expect(getByTestId("list").textContent).toContain("");
+
+    await new Promise(r => setTimeout(r, 1000));
+    expect(getByTestId("list").textContent).toBe("");
   });
 
   it("add an item", async () => {
@@ -113,7 +115,7 @@ describe("components", () => {
       keyCode: 13,
     });
 
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1000));
 
     expect((await getByTestId("list")).textContent).toContain("hello world");
   });

@@ -111,11 +111,15 @@ export const connect: Connect<any> = <P extends {}>(
       };
 
       this._watch = x => x;
-      this._dispatch = func => args =>
-        this.store.exec(func, args, {
-          id: this.name,
-          parentId: null,
-        });
+      this._dispatch = func => (...args) =>
+        this.store.exec(
+          {
+            id: this.name,
+            parentId: null,
+          },
+          func,
+          ...args,
+        );
 
       this._renderFunc = (props: any): any => {
         return (func as ((args: any) => (props: any) => any))({

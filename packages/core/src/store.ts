@@ -26,7 +26,11 @@ export const createStore = <State>(
     dispatch: null as any,
   };
 
-  store.exec = async <A>(func: (a: A) => void, args: A, origin: Origin) => {
+  store.exec = async <A extends any[]>(
+    origin: Origin,
+    func: (...args: A) => void,
+    ...args: A
+  ) => {
     const event = startEvent(
       store,
       (func as any).__name || "(unnamed)",
@@ -57,7 +61,7 @@ export const createStore = <State>(
           }
         });
 
-        await (func as any)(ctx)(args);
+        await (func as any)(ctx)(...args);
       },
       p => {
         event.patches = p;
@@ -67,7 +71,9 @@ export const createStore = <State>(
     completeEvent(event, store);
   };
 
-  store.dispatch = <A>(func: (a: A) => void) => async (args: A) => {
+  store.dispatch = <A extends any[]>(func: (...args: A) => void) => async (
+    ...args: A
+  ) => {
     const actionsCompleted = new Promise(async r => {
       store.watchForComplete = {
         count: 0,
@@ -75,10 +81,14 @@ export const createStore = <State>(
       };
     });
 
-    await store.exec(func, args, {
-      id: "dispatch",
-      parentId: null,
-    });
+    await store.exec(
+      {
+        id: "dispatch",
+        parentId: null,
+      },
+      func,
+      ...args,
+    );
 
     await actionsCompleted;
     store.watchForComplete = undefined;
