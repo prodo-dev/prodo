@@ -45,13 +45,7 @@ const shallowEqual = (objA: any, objB: any): boolean => {
 
 let _compIdCnt = 1;
 
-export interface ConnectArgs<S> {
-  state: S;
-  watch: Watch;
-  dispatch: Dispatch;
-}
-
-export type Func<S, P = {}> = (args: ConnectArgs<S>) => React.ComponentType<P>;
+export type Func<P = {}> = (args: any) => React.ComponentType<P>;
 
 export const connect: Connect<any> = <P extends {}>(
   func: any,
@@ -76,6 +70,8 @@ export const connect: Connect<any> = <P extends {}>(
     private _watch: Watch;
     private _dispatch: Dispatch;
     private _state: any;
+
+    private _viewCtx: any;
 
     constructor(props: P) {
       super(props);
@@ -122,11 +118,9 @@ export const connect: Connect<any> = <P extends {}>(
         );
 
       this._renderFunc = (props: any): any => {
-        return (func as ((args: any) => (props: any) => any))({
-          state: this._state,
-          watch: this._watch,
-          dispatch: this._dispatch,
-        })(props);
+        return (func as ((args: any) => (props: any) => any))(this._viewCtx)(
+          props,
+        );
       };
 
       logger.info(`[constructing] ${this.name}`);
@@ -190,10 +184,28 @@ export const connect: Connect<any> = <P extends {}>(
       this.status.unmounted = true;
     }
 
-    public render() {
+    private createViewCtx() {
       this.store = this.context;
       this._state = readProxy();
       this._watch = valueExtractor(this.store, this.watched, ["state"]);
+
+      const ctx = {
+        dispatch: this._dispatch,
+        state: this._state,
+        watch: this._watch,
+      };
+
+      this.store.plugins.forEach(p => {
+        if (p.prepareViewCtx) {
+          p.prepareViewCtx(this.store.config, ctx);
+        }
+      });
+
+      this._viewCtx = ctx;
+    }
+
+    public render() {
+      this.createViewCtx();
 
       const Comp = this._renderFunc;
       return <Comp {...this.props} />;

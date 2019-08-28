@@ -26,8 +26,9 @@ export interface EffectActionCtx {
 
 const prepareActionCtx = (
   ctx: EffectActionCtx,
-  event: EffectEvent,
   config: EffectConfig,
+  _universe: any,
+  event: EffectEvent,
 ) => {
   event.recordedEffects = [];
 

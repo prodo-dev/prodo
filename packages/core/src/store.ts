@@ -3,6 +3,20 @@ import { completeEvent, startEvent } from "./events";
 import { stream } from "./streams";
 import { BaseStore, Origin, ProdoPlugin, WatchTree } from "./types";
 
+const initPlugins = (
+  universe: any,
+  config: any,
+  plugins: Array<ProdoPlugin<any, any, any, any>>,
+) => {
+  produce(universe, u => {
+    plugins.forEach(p => {
+      if (p.init != null) {
+        p.init(config, u);
+      }
+    });
+  });
+};
+
 export const createStore = <State>(
   config: { initState: State },
   plugins: Array<ProdoPlugin<any, any, any, any>>,
@@ -22,9 +36,12 @@ export const createStore = <State>(
     watchTree,
     streamStates: {},
     trackHistory: true,
+    plugins,
     exec: null as any,
     dispatch: null as any,
   };
+
+  initPlugins(universe, config, plugins);
 
   store.exec = async <A extends any[]>(
     origin: Origin,
@@ -57,7 +74,7 @@ export const createStore = <State>(
 
         plugins.forEach(p => {
           if (p.prepareActionCtx) {
-            p.prepareActionCtx(ctx, event, config);
+            p.prepareActionCtx(ctx, config, u, event);
           }
         });
 
