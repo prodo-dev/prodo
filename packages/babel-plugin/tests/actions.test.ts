@@ -110,4 +110,70 @@ describe("action transpilation", () => {
       }, "myAction");
     `);
   });
+
+  it("can transpile an exported arrow function expression action", () => {
+    const sourceCode = multiline`
+      import { state } from "./src/model";
+      export const myAction = () => {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: actionVisitor(babel) }],
+    }).code;
+
+    expect(transpiled).toEqual(multiline`
+      import { model } from "./src/model";
+      export const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("can transpile an exported function expression action", () => {
+    const sourceCode = multiline`
+      import { state } from "./src/model";
+      export const myAction = function () {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: actionVisitor(babel) }],
+    }).code;
+
+    expect(transpiled).toEqual(multiline`
+      import { model } from "./src/model";
+      export const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("can transpile an exported function declaration action", () => {
+    const sourceCode = multiline`
+      import { state } from "./src/model";
+      export function myAction () {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: actionVisitor(babel) }],
+    }).code;
+
+    expect(transpiled).toEqual(multiline`
+      import { model } from "./src/model";
+      export const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
 });
