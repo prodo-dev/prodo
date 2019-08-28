@@ -22,14 +22,14 @@ const changeFoo = model.action(
 const dummy2 = model.action(
   ({ dispatch }) => async () => {
     await new Promise(r => setTimeout(r, 200));
-    dispatch(changeFoo)({});
+    dispatch(changeFoo)();
   },
   "dummy2",
 );
 
 const dummy = model.action(
   ({ dispatch }) => () => {
-    dispatch(dummy2)({});
+    dispatch(dummy2)();
   },
   "dummy",
 );
@@ -46,7 +46,7 @@ describe("actions", () => {
     const { dispatch, universe } = model.createStore({ initState });
 
     expect(universe.state.foo).toBe("foo");
-    const finalUniverse = await dispatch(changeFoo)({});
+    const finalUniverse = await dispatch(changeFoo)();
     expect(finalUniverse.state.foo).toBe("bar");
   });
 
@@ -54,7 +54,7 @@ describe("actions", () => {
     const { dispatch, universe } = model.createStore({ initState });
 
     expect(universe.state.foo).toBe("foo");
-    const finalUniverse = await dispatch(dummy)({});
+    const finalUniverse = await dispatch(dummy)();
     expect(finalUniverse.state.foo).toBe("bar");
   });
 
