@@ -6,7 +6,6 @@
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
     "start": "parcel src/index.html",
-    "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
@@ -16,8 +15,7 @@
     "pigeon-marker": "^0.3.4",
     "pigeon-overlay": "^0.2.3",
     "react": "^16.8.6",
-    "react-dom": "^16.9.0",
-    "react-openlayers": "^0.2.1"
+    "react-dom": "^16.9.0"
   },
   "devDependencies": {
     "@testing-library/react": "^9.1.3",

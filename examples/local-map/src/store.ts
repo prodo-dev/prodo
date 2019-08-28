@@ -1,6 +1,4 @@
-import { Local, State } from "./model";
-
-export const initState: State = {};
+import { Local } from "./model";
 
 export const initLocal: Local = {
   center: [51.507351, -0.127758],
