@@ -1,4 +1,4 @@
-import { State, Local } from "./model";
+import { Local, State } from "./model";
 
 export const initState: State = {};
 

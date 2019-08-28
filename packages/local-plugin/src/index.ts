@@ -1,22 +1,30 @@
-import { ProdoPlugin } from "../types";
+import { ProdoPlugin } from "@prodo/core";
+
+export interface LocalConfig<T> {
+  initLocal: T;
+  mockLocal?: boolean;
+}
 
 export interface Local<T> {
   local: T;
 }
 
-export interface LocalConfig<T> {
-  initLocal: T;
-}
-
 const localKey = "prodo-local-storage";
 const init = <T>(config: LocalConfig<T>, universe: Local<T>) => {
-  const item = localStorage.getItem(localKey);
-  if (config.initLocal && item == null) {
-    console.log("initing local storage with config");
-    localStorage.setItem(localKey, JSON.stringify(config.initLocal));
+  if (config.mockLocal) {
+    if (!config.initLocal) {
+      throw new Error(
+        "[local plugin]: Need to provide initLocal when mock is true.",
+      );
+    }
+
     universe.local = config.initLocal;
   } else {
-    console.log("found existing localstorage");
+    const item = localStorage.getItem(localKey);
+    if (config.initLocal && item == null) {
+      localStorage.setItem(localKey, JSON.stringify(config.initLocal));
+      universe.local = config.initLocal;
+    }
   }
 };
 
@@ -28,7 +36,9 @@ const prepareActionCtx = <T>(
 ) => {
   let item: T;
   try {
-    item = JSON.parse(localStorage.getItem(localKey));
+    item = config.mockLocal
+      ? universe.local
+      : JSON.parse(localStorage.getItem(localKey));
   } catch (e) {
     if (!config.initLocal) {
       throw e;
@@ -42,18 +52,17 @@ const prepareActionCtx = <T>(
     new Proxy(target, {
       get(target, key) {
         if (target[key] && typeof target[key] === "object") {
-          console.log(`getting proxied ${String(key)} on `, target);
           return createLocalProxy(target[key]);
         }
 
-        console.log(`getting primitaive ${String(key)} on `, target);
         return target[key];
       },
       set(target, key, value) {
-        console.log(`setting ${String(key)} on`, target);
         target[key] = value;
 
-        localStorage.setItem(localKey, JSON.stringify(universe.local));
+        if (!config.mockLocal) {
+          localStorage.setItem(localKey, JSON.stringify(universe.local));
+        }
         return true;
       },
     });
@@ -64,7 +73,9 @@ const prepareActionCtx = <T>(
 const prepareViewCtx = <T>(config: LocalConfig<T>, universe: Local<T>) => {
   let item: T;
   try {
-    item = JSON.parse(localStorage.getItem(localKey));
+    item = config.mockLocal
+      ? universe.local
+      : JSON.parse(localStorage.getItem(localKey));
   } catch (e) {
     if (!config.initLocal) {
       throw e;
@@ -77,7 +88,7 @@ const prepareViewCtx = <T>(config: LocalConfig<T>, universe: Local<T>) => {
 
 const localPlugin = <T>(): ProdoPlugin<
   LocalConfig<T>,
-  {},
+  Local<T>,
   Local<T>,
   Local<T>
 > => ({

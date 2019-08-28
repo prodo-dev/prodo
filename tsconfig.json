@@ -5,6 +5,8 @@
     { "path": "examples/update-testing" },
     { "path": "examples/timers" },
     { "path": "examples/local-map" },
-    { "path": "packages/core" }
+    { "path": "packages/core" },
+    { "path": "packages/effect-plugin" },
+    { "path": "packages/local-plugin" }
   ]
 }

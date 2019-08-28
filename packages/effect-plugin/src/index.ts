@@ -1,4 +1,4 @@
-import { ProdoPlugin } from "../types";
+import { ProdoPlugin } from "@prodo/core";
 
 interface RecordedEffect {
   start?: number;

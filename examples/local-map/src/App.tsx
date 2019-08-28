@@ -1,6 +1,6 @@
+import Map from "pigeon-maps";
 import * as React from "react";
 import { model } from "./model";
-import Map from "pigeon-maps";
 
 export const moveMap = model.action(
   ({ local }) => (center: [number, number], zoom: number) => {
@@ -18,7 +18,7 @@ const App = model.connect(({ dispatch, local }) => () => {
         onBoundsChanged={({ center, zoom }) => {
           dispatch(moveMap)(center, zoom);
         }}
-      ></Map>
+      />
     </div>
   );
 });

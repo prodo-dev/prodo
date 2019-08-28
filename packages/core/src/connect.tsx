@@ -184,6 +184,13 @@ export const connect: Connect<any> = <P extends {}>(
       this.status.unmounted = true;
     }
 
+    public render() {
+      this.createViewCtx();
+
+      const Comp = this._renderFunc;
+      return <Comp {...this.props} />;
+    }
+
     private createViewCtx() {
       this.store = this.context;
       this._state = readProxy();
@@ -202,12 +209,5 @@ export const connect: Connect<any> = <P extends {}>(
       });
 
       this._viewCtx = ctx;
-    }
-
-    public render() {
-      this.createViewCtx();
-
-      const Comp = this._renderFunc;
-      return <Comp {...this.props} />;
     }
   };

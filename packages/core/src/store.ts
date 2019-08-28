@@ -7,7 +7,7 @@ const initPlugins = (
   universe: any,
   config: any,
   plugins: Array<ProdoPlugin<any, any, any, any>>,
-) => {
+): any =>
   produce(universe, u => {
     plugins.forEach(p => {
       if (p.init != null) {
@@ -15,13 +15,12 @@ const initPlugins = (
       }
     });
   });
-};
 
 export const createStore = <State>(
   config: { initState: State },
   plugins: Array<ProdoPlugin<any, any, any, any>>,
 ): BaseStore<State> => {
-  const universe = { state: config.initState };
+  const universe = initPlugins({ state: config.initState }, config, plugins);
 
   const watchTree: WatchTree = {
     subs: new Set(),
@@ -40,8 +39,6 @@ export const createStore = <State>(
     exec: null as any,
     dispatch: null as any,
   };
-
-  initPlugins(universe, config, plugins);
 
   store.exec = async <A extends any[]>(
     origin: Origin,
@@ -110,7 +107,7 @@ export const createStore = <State>(
     await actionsCompleted;
     store.watchForComplete = undefined;
 
-    return universe;
+    return store.universe;
   };
 
   return store;

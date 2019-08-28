@@ -1,4 +1,5 @@
-import { createModel, localPlugin } from "@prodo/core";
+import { createModel } from "@prodo/core";
+import localPlugin from "@prodo/local-plugin";
 
 export interface State {}
 
