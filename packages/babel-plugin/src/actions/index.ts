@@ -1,6 +1,18 @@
 import * as Babel from "@babel/core";
 import * as nodePath from "path";
 
+type Context =
+  | {
+      importType: "specifiers";
+      importDeclarationPath: Babel.NodePath<Babel.types.ImportDeclaration>;
+      universe: Babel.types.ObjectPattern;
+    }
+  | {
+      importType: "namespace";
+      importDeclarationPath: Babel.NodePath<Babel.types.ImportDeclaration>;
+      universe: Babel.types.Identifier;
+    };
+
 const visitAction = (
   t: typeof Babel.types,
   name: string,
@@ -15,7 +27,7 @@ const visitAction = (
   >,
   bodyPath: Babel.NodePath<Babel.types.BlockStatement | Babel.types.Expression>,
 ) => {
-  let context;
+  let context: Context;
   bodyPath.traverse({
     Identifier(p: Babel.NodePath<Babel.types.Identifier>) {
       // Does it use `state` from `import {state} from "./model";`
@@ -32,7 +44,9 @@ const visitAction = (
               ) {
                 context = {
                   importType: "specifiers",
-                  importDeclarationPath,
+                  importDeclarationPath: importDeclarationPath as Babel.NodePath<
+                    Babel.types.ImportDeclaration
+                  >,
                   universe: t.objectPattern(
                     importDeclarationPath.node.specifiers
                       .map(specifier => {
@@ -75,7 +89,9 @@ const visitAction = (
               ) {
                 context = {
                   importType: "namespace",
-                  importDeclarationPath,
+                  importDeclarationPath: importDeclarationPath as Babel.NodePath<
+                    Babel.types.ImportDeclaration
+                  >,
                   universe: t.identifier(importPath.node.local.name),
                 };
                 p.stop();
