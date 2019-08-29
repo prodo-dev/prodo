@@ -1,5 +1,48 @@
 import * as _ from "lodash";
 
+/*
+ * Trims and indents a multiline string so that it can be easily
+ * embedded into code. For example, in
+ *
+ * ```
+ * const test = () => {
+ *   const anotherIndent = () => {
+ *     const string = multiline`
+ *       {
+ *         "foo": "foo",
+ *         "bar": {
+ *           "buzz": "buzz"
+ *         }
+ *       }
+ *     `;
+ *   };
+ * };
+ * ```
+ *
+ * the variable `string` will have value equal to
+ *
+ * ```
+ * {
+ *   "foo": "foo",
+ *   "bar": {
+ *     "buzz": "buzz"
+ *   }
+ * }
+ * ```
+ *
+ * instead of
+ *
+ * ```
+ *
+ *         {
+ *           "foo": "foo",
+ *           "bar": {
+ *             "buzz": "buzz"
+ *           }
+ *         }
+ *
+ * ```
+ */
 export function multiline(
   strings: TemplateStringsArray,
   ...expressions: string[]
