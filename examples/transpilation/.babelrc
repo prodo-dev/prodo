@@ -1,0 +1,3 @@
+{
+  "plugins": ["@prodo/babel-plugin"]
+}
