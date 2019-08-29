@@ -236,4 +236,28 @@ describe("action transpilation", () => {
       }, "myAction");
     `);
   });
+
+  it("doesn't pass blacklisted imports from the model to the universe", () => {
+    const sourceCode = multiline`
+      import { state, initState } from "./src/model";
+      const foo = initState.foo;
+      const myAction = () => {
+        state.foo = initState.foo;
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: actionVisitor(babel) }],
+    }).code;
+
+    expect(transpiled).toEqual(multiline`
+      import { model, state, initState } from "./src/model";
+      const foo = initState.foo;
+      const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = initState.foo;
+      }, "myAction");
+    `);
+  });
 });

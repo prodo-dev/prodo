@@ -13,6 +13,8 @@ type Context =
       universe: Babel.types.Identifier;
     };
 
+const universeBlacklist = ["initState", "model", "action", "connect"];
+
 const visitAction = (
   t: typeof Babel.types,
   name: string,
@@ -49,17 +51,19 @@ const visitAction = (
                   >,
                   universe: t.objectPattern(
                     importDeclarationPath.node.specifiers
-                      .map(specifier => {
-                        if (t.isImportSpecifier(specifier)) {
-                          return t.objectProperty(
-                            specifier.imported,
-                            specifier.local,
-                            false,
-                            specifier.imported.name === specifier.local.name,
-                          );
-                        }
-                      })
-                      .filter(x => x != null),
+                      .filter(specifier => t.isImportSpecifier(specifier))
+                      .filter(
+                        (specifier: Babel.types.ImportSpecifier) =>
+                          !universeBlacklist.includes(specifier.imported.name),
+                      )
+                      .map((specifier: Babel.types.ImportSpecifier) =>
+                        t.objectProperty(
+                          specifier.imported,
+                          specifier.local,
+                          false,
+                          specifier.imported.name === specifier.local.name,
+                        ),
+                      ),
                   ),
                 };
                 p.stop();
