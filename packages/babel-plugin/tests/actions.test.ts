@@ -1,5 +1,5 @@
 import * as babel from "@babel/core";
-import actionVisitor from "../src/actions";
+import actionVisitor from "../src/components-and-actions";
 import { multiline } from "./utils";
 
 describe("action transpilation", () => {

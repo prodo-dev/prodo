@@ -1,5 +1,6 @@
 import * as Babel from "@babel/core";
 import * as nodePath from "path";
+import { isInUniverse } from "./utils";
 
 type Context =
   | {
@@ -13,10 +14,9 @@ type Context =
       universe: Babel.types.Identifier;
     };
 
-const universeBlacklist = ["initState", "model", "action", "connect"];
-
-const visitAction = (
+export default (
   t: typeof Babel.types,
+  type: "action" | "component",
   name: string,
   rootPath: Babel.NodePath<
     Babel.types.FunctionDeclaration | Babel.types.VariableDeclaration
@@ -35,39 +35,39 @@ const visitAction = (
       // Does it use `state` from `import {state} from "./model";`
       if (p.isReferencedIdentifier()) {
         const importPath = p.scope.getBinding(p.node.name).path;
-        if (t.isImportSpecifier(importPath.node)) {
-          if (importPath.node.imported.name === "state") {
-            const importDeclarationPath = importPath.parentPath;
-            if (t.isImportDeclaration(importDeclarationPath.node)) {
-              const source = importDeclarationPath.node.source;
-              if (
-                source.value.startsWith(".") &&
-                /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
-              ) {
-                context = {
-                  importType: "specifiers",
-                  importDeclarationPath: importDeclarationPath as Babel.NodePath<
-                    Babel.types.ImportDeclaration
-                  >,
-                  universe: t.objectPattern(
-                    importDeclarationPath.node.specifiers
-                      .filter(specifier => t.isImportSpecifier(specifier))
-                      .filter(
-                        (specifier: Babel.types.ImportSpecifier) =>
-                          !universeBlacklist.includes(specifier.imported.name),
-                      )
-                      .map((specifier: Babel.types.ImportSpecifier) =>
-                        t.objectProperty(
-                          specifier.imported,
-                          specifier.local,
-                          false,
-                          specifier.imported.name === specifier.local.name,
-                        ),
+        if (
+          t.isImportSpecifier(importPath.node) &&
+          isInUniverse(importPath.node.imported.name)
+        ) {
+          const importDeclarationPath = importPath.parentPath;
+          if (t.isImportDeclaration(importDeclarationPath.node)) {
+            const source = importDeclarationPath.node.source;
+            if (
+              source.value.startsWith(".") &&
+              /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
+            ) {
+              context = {
+                importType: "specifiers",
+                importDeclarationPath: importDeclarationPath as Babel.NodePath<
+                  Babel.types.ImportDeclaration
+                >,
+                universe: t.objectPattern(
+                  importDeclarationPath.node.specifiers
+                    .filter(specifier => t.isImportSpecifier(specifier))
+                    .filter((specifier: Babel.types.ImportSpecifier) =>
+                      isInUniverse(specifier.imported.name),
+                    )
+                    .map((specifier: Babel.types.ImportSpecifier) =>
+                      t.objectProperty(
+                        specifier.imported,
+                        specifier.local,
+                        false,
+                        specifier.imported.name === specifier.local.name,
                       ),
-                  ),
-                };
-                p.stop();
-              }
+                    ),
+                ),
+              };
+              p.stop();
             }
           }
         }
@@ -75,7 +75,7 @@ const visitAction = (
     },
     MemberExpression(p: Babel.NodePath<Babel.types.MemberExpression>) {
       // Does it use `prodo.state` from `import * as prodo from "./model";`
-      if (!p.node.computed && p.node.property.name === "state") {
+      if (!p.node.computed && isInUniverse(p.node.property.name)) {
         const objectPath = p.get("object");
         if (
           t.isIdentifier(objectPath.node) &&
@@ -108,7 +108,7 @@ const visitAction = (
   });
 
   if (context == null) {
-    // Not an action
+    // Doesn't use the universe, so don't change anything.
     return;
   }
 
@@ -121,7 +121,7 @@ const visitAction = (
             context.importType === "namespace"
               ? t.memberExpression(context.universe, t.identifier("model"))
               : t.identifier("model"),
-            t.identifier("action"),
+            t.identifier(type === "action" ? "action" : "connect"),
           ),
           [
             t.arrowFunctionExpression(
@@ -142,41 +142,3 @@ const visitAction = (
     );
   }
 };
-
-export default ({ types: t }: typeof Babel) => ({
-  FunctionDeclaration(path: Babel.NodePath<Babel.types.FunctionDeclaration>) {
-    const name = path.node.id.name;
-    const bodyPath = path.get("body");
-
-    visitAction(t, name, path, path.node.params, bodyPath);
-  },
-  VariableDeclaration(path: Babel.NodePath<Babel.types.VariableDeclaration>) {
-    if (path.node.declarations.length !== 1) {
-      // Not yet supported
-      return;
-    }
-
-    const declarationPath = path.get("declarations")[0];
-    if (
-      !(
-        t.isArrowFunctionExpression(declarationPath.node.init) ||
-        t.isFunctionExpression(declarationPath.node.init)
-      )
-    ) {
-      // Not a function.
-      return;
-    }
-
-    if (!t.isIdentifier(declarationPath.node.id)) {
-      // Not yet supported.
-      return;
-    }
-
-    const name = declarationPath.node.id.name;
-    const bodyPath = (declarationPath.get("init") as Babel.NodePath<
-      Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
-    >).get("body");
-
-    visitAction(t, name, path, declarationPath.node.init.params, bodyPath);
-  },
-});
