@@ -16,7 +16,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => () => {
@@ -38,7 +38,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => () => {
@@ -60,7 +60,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => () => {
@@ -102,7 +102,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state as s } from "./src/model";
       const myAction = model.action(({
         state: s
       }) => () => {
@@ -124,7 +124,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state } from "./src/model";
       export const myAction = model.action(({
         state
       }) => () => {
@@ -146,7 +146,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state } from "./src/model";
       export const myAction = model.action(({
         state
       }) => () => {
@@ -168,7 +168,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state } from "./src/model";
       export const myAction = model.action(({
         state
       }) => () => {
@@ -194,7 +194,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state, dispatch as d, effect } from "./src/model";
       import { anotherAction } from "./another";
       import { myEffect } from "./effect";
       const myAction = model.action(({
@@ -225,7 +225,7 @@ describe("action transpilation", () => {
     }).code;
 
     expect(transpiled).toEqual(multiline`
-      import { model } from "./src/model";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => (foo, {

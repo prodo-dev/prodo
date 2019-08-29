@@ -132,11 +132,9 @@ const visitAction = (
   );
 
   if (context.importType === "specifiers") {
-    context.importDeclarationPath.replaceWith(
-      t.importDeclaration(
-        [t.importSpecifier(t.identifier("model"), t.identifier("model"))],
-        context.importDeclarationPath.node.source,
-      ),
+    (context.importDeclarationPath as any).unshiftContainer(
+      "specifiers",
+      t.importSpecifier(t.identifier("model"), t.identifier("model")),
     );
   }
 };
