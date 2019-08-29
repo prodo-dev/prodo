@@ -3,11 +3,24 @@ import { completeEvent, startEvent } from "./events";
 import { stream } from "./streams";
 import { BaseStore, Origin, ProdoPlugin, WatchTree } from "./types";
 
+const initPlugins = (
+  universe: any,
+  config: any,
+  plugins: Array<ProdoPlugin<any, any, any, any>>,
+): any =>
+  produce(universe, u => {
+    plugins.forEach(p => {
+      if (p.init != null) {
+        p.init(config, u);
+      }
+    });
+  });
+
 export const createStore = <State>(
   config: { initState: State },
   plugins: Array<ProdoPlugin<any, any, any, any>>,
 ): BaseStore<State> => {
-  const universe = { state: config.initState };
+  const universe = initPlugins({ state: config.initState }, config, plugins);
 
   const watchTree: WatchTree = {
     subs: new Set(),
@@ -22,11 +35,16 @@ export const createStore = <State>(
     watchTree,
     streamStates: {},
     trackHistory: true,
+    plugins,
     exec: null as any,
     dispatch: null as any,
   };
 
-  store.exec = async <A>(func: (a: A) => void, args: A, origin: Origin) => {
+  store.exec = async <A extends any[]>(
+    origin: Origin,
+    func: (...args: A) => void,
+    ...args: A
+  ) => {
     const event = startEvent(
       store,
       (func as any).__name || "(unnamed)",
@@ -34,7 +52,7 @@ export const createStore = <State>(
     );
 
     await produce(
-      universe,
+      store.universe,
       async u => {
         const ctx = {
           state: u.state,
@@ -53,11 +71,11 @@ export const createStore = <State>(
 
         plugins.forEach(p => {
           if (p.prepareActionCtx) {
-            p.prepareActionCtx(ctx, event, config);
+            p.prepareActionCtx(ctx, config, u, event);
           }
         });
 
-        await (func as any)(ctx)(args);
+        await (func as any)(ctx)(...args);
       },
       p => {
         event.patches = p;
@@ -67,7 +85,9 @@ export const createStore = <State>(
     completeEvent(event, store);
   };
 
-  store.dispatch = <A>(func: (a: A) => void) => async (args: A) => {
+  store.dispatch = <A extends any[]>(func: (...args: A) => void) => async (
+    ...args: A
+  ) => {
     const actionsCompleted = new Promise(async r => {
       store.watchForComplete = {
         count: 0,
@@ -75,15 +95,19 @@ export const createStore = <State>(
       };
     });
 
-    await store.exec(func, args, {
-      id: "dispatch",
-      parentId: null,
-    });
+    await store.exec(
+      {
+        id: "dispatch",
+        parentId: null,
+      },
+      func,
+      ...args,
+    );
 
     await actionsCompleted;
     store.watchForComplete = undefined;
 
-    return universe;
+    return store.universe;
   };
 
   return store;

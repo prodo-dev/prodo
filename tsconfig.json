@@ -4,7 +4,10 @@
     { "path": "examples/todo-app" },
     { "path": "examples/update-testing" },
     { "path": "examples/timers" },
+    { "path": "examples/local-map" },
+    { "path": "packages/babel-plugin" },
     { "path": "packages/core" },
-    { "path": "packages/babel-plugin" }
+    { "path": "packages/effect-plugin" },
+    { "path": "packages/local-plugin" }
   ]
 }

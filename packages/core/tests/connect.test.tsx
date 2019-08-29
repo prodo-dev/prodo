@@ -18,7 +18,7 @@ const changeFoo = model.action(({ state }) => () => {
 
 const App = model.connect(({ state, watch, dispatch }) => () => (
   <div data-testid="app">
-    <button data-testid="button" onClick={() => dispatch(changeFoo)({})} />
+    <button data-testid="button" onClick={() => dispatch(changeFoo)()} />
     {watch(state.foo)}
   </div>
 ));

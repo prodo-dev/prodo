@@ -1,13 +1,13 @@
 import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { setupStreams } from "./actions";
 import App from "./App";
-import { initState, model } from "./store";
+import { model } from "./model";
+import { initLocal } from "./store";
 
 import "./index.scss";
 
-const store = model.createStore({ initState });
+const store = model.createStore({ initState: {}, initLocal });
 
 ReactDOM.render(
   <ProdoProvider value={store}>
@@ -15,5 +15,3 @@ ReactDOM.render(
   </ProdoProvider>,
   document.getElementById("root"),
 );
-
-store.dispatch(setupStreams)();

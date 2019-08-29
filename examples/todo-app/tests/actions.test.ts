@@ -55,7 +55,7 @@ describe("actions", () => {
       },
     });
 
-    const { state } = await dispatch(deleteAll)({});
+    const { state } = await dispatch(deleteAll)();
     expect(Object.keys(state.todos)).toHaveLength(0);
   });
 });

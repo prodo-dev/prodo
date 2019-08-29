@@ -22,14 +22,14 @@ const changeFoo = model.action(
 const dummy2 = model.action(
   ({ dispatch }) => async () => {
     await new Promise(r => setTimeout(r, 200));
-    dispatch(changeFoo)({});
+    dispatch(changeFoo)();
   },
   "dummy2",
 );
 
 const dummy = model.action(
   ({ dispatch }) => () => {
-    dispatch(dummy2)({});
+    dispatch(dummy2)();
   },
   "dummy",
 );
@@ -41,12 +41,16 @@ const changeCount = model.action(
   "changeCount",
 );
 
+const add = model.action(({ state }) => (a: number, b: number) => {
+  state.count = a + b;
+});
+
 describe("actions", () => {
   it("has correct state after calling action", async () => {
     const { dispatch, universe } = model.createStore({ initState });
 
     expect(universe.state.foo).toBe("foo");
-    const finalUniverse = await dispatch(changeFoo)({});
+    const finalUniverse = await dispatch(changeFoo)();
     expect(finalUniverse.state.foo).toBe("bar");
   });
 
@@ -54,7 +58,7 @@ describe("actions", () => {
     const { dispatch, universe } = model.createStore({ initState });
 
     expect(universe.state.foo).toBe("foo");
-    const finalUniverse = await dispatch(dummy)({});
+    const finalUniverse = await dispatch(dummy)();
     expect(finalUniverse.state.foo).toBe("bar");
   });
 
@@ -75,5 +79,13 @@ describe("actions", () => {
     const finalUniverse = await dispatch(changeCount)(-1);
 
     expect(finalUniverse.state.count).toBe(2);
+  });
+
+  it("has correct state after calling action with multiple params", async () => {
+    const { dispatch, universe } = model.createStore({ initState });
+
+    expect(universe.state.count).toBe(0);
+    const finalUniverse = await dispatch(add)(1, 2);
+    expect(finalUniverse.state.count).toBe(3);
   });
 });
