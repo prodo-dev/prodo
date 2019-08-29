@@ -135,7 +135,15 @@ export default (
     ]),
   );
 
-  if (context.importType === "specifiers") {
+  if (
+    context.importType === "specifiers" &&
+    !context.importDeclarationPath.node.specifiers.some(
+      specifier =>
+        t.isImportSpecifier(specifier) &&
+        specifier.imported.name === "model" &&
+        specifier.local.name === "model",
+    )
+  ) {
     (context.importDeclarationPath as any).unshiftContainer(
       "specifiers",
       t.importSpecifier(t.identifier("model"), t.identifier("model")),

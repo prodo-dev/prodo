@@ -292,4 +292,59 @@ describe("action transpilation", () => {
       }, "MyComponent");
     `);
   });
+
+  it("can transpile multiple components", () => {
+    const sourceCode = `
+      import { state, watch } from "./src/model";
+      const MyComponent = () => {
+        return <div>{watch(state.foo)}</div>;
+      };
+      const MyOtherComponent = () => {
+        return <div>{watch(state.bar)}</div>;
+      };
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: ["@babel/plugin-syntax-jsx", { visitor: visitor(babel) }],
+    }).code;
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state, watch } from "./src/model";
+      const MyComponent = model.connect(({
+        state,
+        watch
+      }) => () => {
+        return <div>{watch(state.foo)}</div>;
+      }, "MyComponent");
+      const MyOtherComponent = model.connect(({
+        state,
+        watch
+      }) => () => {
+        return <div>{watch(state.bar)}</div>;
+      }, "MyOtherComponent");
+    `);
+  });
+
+  it("doesn't import the model if it's already imported", () => {
+    const sourceCode = `
+      import { model, state, watch } from "./src/model";
+      const MyComponent = () => {
+        return <div>{watch(state.foo)}</div>;
+      };
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: ["@babel/plugin-syntax-jsx", { visitor: visitor(babel) }],
+    }).code;
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state, watch } from "./src/model";
+      const MyComponent = model.connect(({
+        state,
+        watch
+      }) => () => {
+        return <div>{watch(state.foo)}</div>;
+      }, "MyComponent");
+    `);
+  });
 });

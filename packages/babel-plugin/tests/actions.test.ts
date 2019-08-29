@@ -261,4 +261,56 @@ describe("action transpilation", () => {
       }, "myAction");
     `);
   });
+
+  it("can transpile multiple actions", () => {
+    const sourceCode = `
+      import { state } from "./src/model";
+      const myAction = () => {
+        state.foo = "foo";
+      }
+      const myOtherAction = () => {
+        state.bar = "bar";
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: visitor(babel) }],
+    }).code;
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./src/model";
+      const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+      const myOtherAction = model.action(({
+        state
+      }) => () => {
+        state.bar = "bar";
+      }, "myOtherAction");
+    `);
+  });
+
+  it("doesn't import the model if it's already imported", () => {
+    const sourceCode = `
+      import { model, state } from "./src/model";
+      const myAction = () => {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: visitor(babel) }],
+    }).code;
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./src/model";
+      const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
 });
