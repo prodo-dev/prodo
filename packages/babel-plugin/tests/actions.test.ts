@@ -176,4 +176,36 @@ describe("action transpilation", () => {
       }, "myAction");
     `);
   });
+
+  it("can passes down the universe", () => {
+    const sourceCode = multiline`
+      import { state, dispatch as d, effect } from "./src/model";
+      import { anotherAction } from "./another";
+      import { myEffect } from "./effect";
+      const myAction = () => {
+        state.foo = "foo";
+        d(anotherAction)();
+        const result = effect(myEffect)();
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: actionVisitor(babel) }],
+    }).code;
+
+    expect(transpiled).toEqual(multiline`
+      import { model } from "./src/model";
+      import { anotherAction } from "./another";
+      import { myEffect } from "./effect";
+      const myAction = model.action(({
+        state,
+        dispatch: d,
+        effect
+      }) => () => {
+        state.foo = "foo";
+        d(anotherAction)();
+        const result = effect(myEffect)();
+      }, "myAction");
+    `);
+  });
 });
