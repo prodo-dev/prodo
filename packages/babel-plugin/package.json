@@ -18,11 +18,14 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.2.0",
     "@babel/traverse": "^7.5.5",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "babel-plugin-tester": "^7.0.1",
+    "expect": "^24.9.0",
     "lodash": "^4.17.15",
+    "prettier": "^1.18.2",
     "ts-jest": "^24.0.2"
   },
   "jest": {
