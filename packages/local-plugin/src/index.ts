@@ -1,7 +1,7 @@
 import { ProdoPlugin } from "@prodo/core";
 
 export interface LocalConfig<T> {
-  initLocal: T;
+  initLocal?: T;
   mockLocal?: boolean;
 }
 
