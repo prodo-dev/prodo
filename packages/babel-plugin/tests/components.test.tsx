@@ -25,6 +25,28 @@ describe("action transpilation", () => {
     `);
   });
 
+  it("doesn't transpile something that doesn't use the universe", () => {
+    const sourceCode = `
+      import { initState } from "./src/model";
+      const state = {
+        foo: "foo"
+      };
+
+      const MyComponent = () => (
+        <div>
+          <div>{initState.foo}</div>
+          <div>{state.foo}</div>
+        </div>
+      );
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: ["@babel/plugin-syntax-jsx", { visitor: visitor(babel) }],
+    }).code;
+
+    expect(transpiled).toHaveTheSameASTAs(sourceCode);
+  });
+
   it("can transpile a function expression component", () => {
     const sourceCode = `
       import { state, watch } from "./src/model";

@@ -26,6 +26,25 @@ describe("action transpilation", () => {
     `);
   });
 
+  it("doesn't transpile something that doesn't use the universe", () => {
+    const sourceCode = `
+      import { initState } from "./src/model";
+      const state = {
+        foo: "foo"
+      };
+
+      const myAction = () => {
+        return initState.foo === state.foo;
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: visitor(babel) }],
+    }).code;
+
+    expect(transpiled).toHaveTheSameASTAs(sourceCode);
+  });
+
   it("can transpile a function expression action", () => {
     const sourceCode = `
       import { state } from "./src/model";
