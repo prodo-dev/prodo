@@ -177,7 +177,7 @@ describe("action transpilation", () => {
     `);
   });
 
-  it("can passes down the universe", () => {
+  it("passes down the universe", () => {
     const sourceCode = multiline`
       import { state, dispatch as d, effect } from "./src/model";
       import { anotherAction } from "./another";
@@ -205,6 +205,34 @@ describe("action transpilation", () => {
         state.foo = "foo";
         d(anotherAction)();
         const result = effect(myEffect)();
+      }, "myAction");
+    `);
+  });
+
+  it("passes args", () => {
+    const sourceCode = multiline`
+      import { state } from "./src/model";
+      const myAction = (foo, {
+        bar
+      }) => {
+        state.foo = foo;
+        state.bar = bar;
+      }
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: actionVisitor(babel) }],
+    }).code;
+
+    expect(transpiled).toEqual(multiline`
+      import { model } from "./src/model";
+      const myAction = model.action(({
+        state
+      }) => (foo, {
+        bar
+      }) => {
+        state.foo = foo;
+        state.bar = bar;
       }, "myAction");
     `);
   });
