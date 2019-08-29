@@ -2,7 +2,7 @@ import * as Babel from "@babel/core";
 import injectUniverse from "./inject-universe";
 import { isPossibleActionName, isPossibleComponentName } from "./utils";
 
-const visitPossibleAction = (
+const visitPossibleActionOrComponent = (
   t: typeof Babel.types,
   name: string,
   rootPath: Babel.NodePath<
@@ -27,7 +27,7 @@ export default ({ types: t }: typeof Babel) => ({
   FunctionDeclaration(path: Babel.NodePath<Babel.types.FunctionDeclaration>) {
     const name = path.node.id.name;
     const bodyPath = path.get("body");
-    visitPossibleAction(t, name, path, path.node.params, bodyPath);
+    visitPossibleActionOrComponent(t, name, path, path.node.params, bodyPath);
   },
   VariableDeclaration(path: Babel.NodePath<Babel.types.VariableDeclaration>) {
     if (path.node.declarations.length !== 1) {
@@ -56,7 +56,7 @@ export default ({ types: t }: typeof Babel) => ({
       Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
     >).get("body");
 
-    visitPossibleAction(
+    visitPossibleActionOrComponent(
       t,
       name,
       path,
