@@ -34,40 +34,43 @@ export default (
     Identifier(p: Babel.NodePath<Babel.types.Identifier>) {
       // Does it use `state` from `import {state} from "./model";`
       if (p.isReferencedIdentifier()) {
-        const importPath = p.scope.getBinding(p.node.name).path;
-        if (
-          t.isImportSpecifier(importPath.node) &&
-          isInUniverse(importPath.node.imported.name)
-        ) {
-          const importDeclarationPath = importPath.parentPath;
-          if (t.isImportDeclaration(importDeclarationPath.node)) {
-            const source = importDeclarationPath.node.source;
-            if (
-              source.value.startsWith(".") &&
-              /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
-            ) {
-              context = {
-                importType: "specifiers",
-                importDeclarationPath: importDeclarationPath as Babel.NodePath<
-                  Babel.types.ImportDeclaration
-                >,
-                universe: t.objectPattern(
-                  importDeclarationPath.node.specifiers
-                    .filter(specifier => t.isImportSpecifier(specifier))
-                    .filter((specifier: Babel.types.ImportSpecifier) =>
-                      isInUniverse(specifier.imported.name),
-                    )
-                    .map((specifier: Babel.types.ImportSpecifier) =>
-                      t.objectProperty(
-                        specifier.imported,
-                        specifier.local,
-                        false,
-                        specifier.imported.name === specifier.local.name,
+        const binding = p.scope.getBinding(p.node.name);
+        if (binding != null) {
+          const importPath = binding.path;
+          if (
+            t.isImportSpecifier(importPath.node) &&
+            isInUniverse(importPath.node.imported.name)
+          ) {
+            const importDeclarationPath = importPath.parentPath;
+            if (t.isImportDeclaration(importDeclarationPath.node)) {
+              const source = importDeclarationPath.node.source;
+              if (
+                source.value.startsWith(".") &&
+                /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
+              ) {
+                context = {
+                  importType: "specifiers",
+                  importDeclarationPath: importDeclarationPath as Babel.NodePath<
+                    Babel.types.ImportDeclaration
+                  >,
+                  universe: t.objectPattern(
+                    importDeclarationPath.node.specifiers
+                      .filter(specifier => t.isImportSpecifier(specifier))
+                      .filter((specifier: Babel.types.ImportSpecifier) =>
+                        isInUniverse(specifier.imported.name),
+                      )
+                      .map((specifier: Babel.types.ImportSpecifier) =>
+                        t.objectProperty(
+                          specifier.imported,
+                          specifier.local,
+                          false,
+                          specifier.imported.name === specifier.local.name,
+                        ),
                       ),
-                    ),
-                ),
-              };
-              p.stop();
+                  ),
+                };
+                p.stop();
+              }
             }
           }
         }
