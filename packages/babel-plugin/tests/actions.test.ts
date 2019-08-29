@@ -332,4 +332,26 @@ describe("action transpilation", () => {
       }, "myAction");
     `);
   });
+
+  it("doesn't crash on undefined identifiers", () => {
+    const sourceCode = `
+      import { state } from "./src/model";
+      const myAction = () => {
+        state.foo = foo;
+      };
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: [{ visitor: visitor(babel) }],
+    }).code;
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./src/model";
+      const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = foo;
+      }, "myAction");
+    `);
+  });
 });

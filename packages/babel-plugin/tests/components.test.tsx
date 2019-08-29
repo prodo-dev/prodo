@@ -369,4 +369,37 @@ describe("action transpilation", () => {
       }, "MyComponent");
     `);
   });
+
+  it("doesn't crash on undefined identifiers", () => {
+    const sourceCode = `
+      import { state, watch } from "./src/model";
+      const MyComponent = () => {
+        return (
+          <div>
+            <div>{watch(state.foo)}</div>
+            <div>{foo}</div>
+          </div>
+        );
+      };
+    `;
+
+    const transpiled = babel.transform(sourceCode, {
+      plugins: ["@babel/plugin-syntax-jsx", { visitor: visitor(babel) }],
+    }).code;
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state, watch } from "./src/model";
+      const MyComponent = model.connect(({
+        state,
+        watch
+      }) => () => {
+        return (
+          <div>
+            <div>{watch(state.foo)}</div>
+            <div>{foo}</div>
+          </div>
+        );
+      }, "MyComponent");
+    `);
+  });
 });
