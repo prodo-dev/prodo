@@ -5130,6 +5130,21 @@ pify@^4.0.1:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
+pigeon-maps@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/pigeon-maps/-/pigeon-maps-0.13.0.tgz#03bbf941c4a4e42bc7b13865f97c3d41d085ce8f"
+  integrity sha512-Zmog5CL38c+Rh5FupQGh/M+rIbEcjc9lPHHx38+jp2xP+r8uPDrDNsfgp7bM36cMJF2LGIVtqcB44B4RgPi4mQ==
+
+pigeon-marker@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/pigeon-marker/-/pigeon-marker-0.3.4.tgz#bd00dd15a4e7622a77dc43fb746e256af5fa5f47"
+  integrity sha512-6sQoSI8Mii7eWWz3TorssbNmptVoP4heKMDt27AeU8I//MFQfQZS6JfCmW3zXF4a6dk4uisr4m26akUYSblfnQ==
+
+pigeon-overlay@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/pigeon-overlay/-/pigeon-overlay-0.2.3.tgz#46d08f5661ddb84309549cb2ff45df6c62a71e8d"
+  integrity sha512-mkHwYzDdzdd45XmWW3RB6Vxi0cj1F2CWRzFS8lyDmZcKiruKwhoAa4D3d/hfoO/R3TeHK3IJNNoVV02hP2PJ6Q==
+
 pirates@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.1.tgz#643a92caf894566f91b2b986d2c66950a8e2fb87"

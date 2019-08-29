@@ -1,4 +1,4 @@
-import { ProdoPlugin } from "../types";
+import { ProdoPlugin } from "@prodo/core";
 
 interface RecordedEffect {
   start?: number;
@@ -26,8 +26,9 @@ export interface EffectActionCtx {
 
 const prepareActionCtx = (
   ctx: EffectActionCtx,
-  event: EffectEvent,
   config: EffectConfig,
+  _universe: any,
+  event: EffectEvent,
 ) => {
   event.recordedEffects = [];
 

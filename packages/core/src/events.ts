@@ -59,7 +59,7 @@ export const completeEvent = (event: Event, store: Store<any, any>): void => {
     .filter(p => p !== undefined);
 
   const nextUniverse = applyPatches(store.universe, patches);
-  Object.assign(store.universe, nextUniverse);
+  store.universe = nextUniverse;
   event.nextUniverse = nextUniverse;
   submitPatches(store, store.universe, event.patches);
 

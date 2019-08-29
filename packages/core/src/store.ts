@@ -3,11 +3,24 @@ import { completeEvent, startEvent } from "./events";
 import { stream } from "./streams";
 import { BaseStore, Origin, ProdoPlugin, WatchTree } from "./types";
 
+const initPlugins = (
+  universe: any,
+  config: any,
+  plugins: Array<ProdoPlugin<any, any, any, any>>,
+): any =>
+  produce(universe, u => {
+    plugins.forEach(p => {
+      if (p.init != null) {
+        p.init(config, u);
+      }
+    });
+  });
+
 export const createStore = <State>(
   config: { initState: State },
   plugins: Array<ProdoPlugin<any, any, any, any>>,
 ): BaseStore<State> => {
-  const universe = { state: config.initState };
+  const universe = initPlugins({ state: config.initState }, config, plugins);
 
   const watchTree: WatchTree = {
     subs: new Set(),
@@ -22,6 +35,7 @@ export const createStore = <State>(
     watchTree,
     streamStates: {},
     trackHistory: true,
+    plugins,
     exec: null as any,
     dispatch: null as any,
   };
@@ -38,7 +52,7 @@ export const createStore = <State>(
     );
 
     await produce(
-      universe,
+      store.universe,
       async u => {
         const ctx = {
           state: u.state,
@@ -57,7 +71,7 @@ export const createStore = <State>(
 
         plugins.forEach(p => {
           if (p.prepareActionCtx) {
-            p.prepareActionCtx(ctx, event, config);
+            p.prepareActionCtx(ctx, config, u, event);
           }
         });
 
@@ -93,7 +107,7 @@ export const createStore = <State>(
     await actionsCompleted;
     store.watchForComplete = undefined;
 
-    return universe;
+    return store.universe;
   };
 
   return store;

@@ -41,6 +41,10 @@ const changeCount = model.action(
   "changeCount",
 );
 
+const add = model.action(({ state }) => (a: number, b: number) => {
+  state.count = a + b;
+});
+
 describe("actions", () => {
   it("has correct state after calling action", async () => {
     const { dispatch, universe } = model.createStore({ initState });
@@ -75,5 +79,13 @@ describe("actions", () => {
     const finalUniverse = await dispatch(changeCount)(-1);
 
     expect(finalUniverse.state.count).toBe(2);
+  });
+
+  it("has correct state after calling action with multiple params", async () => {
+    const { dispatch, universe } = model.createStore({ initState });
+
+    expect(universe.state.count).toBe(0);
+    const finalUniverse = await dispatch(add)(1, 2);
+    expect(finalUniverse.state.count).toBe(3);
   });
 });

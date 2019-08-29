@@ -26,12 +26,20 @@ export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
 
 // @ts-ignore
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
-  prepareActionCtx?: any;
+  init?: (config: InitOptions, universe: any) => void;
+  prepareActionCtx?: (
+    ctx: any,
+    config: InitOptions,
+    universe: any,
+    event: any,
+  ) => void;
+  prepareViewCtx?: (config: InitOptions, universe: any) => void;
 }
 
 export interface Store<InitOptions, Universe> {
   config: InitOptions;
   universe: Universe;
+  plugins: Array<ProdoPlugin<any, any, any, any>>;
   exec: <A extends any[]>(
     origin: Origin,
     func: (...args: A) => void,

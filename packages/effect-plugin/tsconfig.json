@@ -5,8 +5,5 @@
     "outDir": "lib"
   },
   "include": ["src"],
-  "references": [
-    { "path": "../../packages/core" },
-    { "path": "../../packages/effect-plugin" }
-  ]
+  "references": [{ "path": "../core" }]
 }
