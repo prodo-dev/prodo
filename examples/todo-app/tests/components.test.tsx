@@ -41,7 +41,7 @@ describe("components", () => {
         },
       }),
     );
-    expect(getByTestId("item").textContent).toEqual("two-x");
+    expect(getByTestId("item").textContent).toEqual("twox");
   });
 
   it("can render with empty store", async () => {
