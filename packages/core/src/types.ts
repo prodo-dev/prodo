@@ -24,16 +24,22 @@ export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
   ctx: ActionCtx & ViewCtx;
 }
 
-// @ts-ignore
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
-  init?: (config: InitOptions, universe: any) => void;
+  init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
-    ctx: any,
+    ctx: ActionCtx,
     config: InitOptions,
     universe: any,
     event: any,
   ) => void;
-  prepareViewCtx?: (ctx: any, config: InitOptions, universe: any) => void;
+  prepareViewCtx?: (
+    ctx: ViewCtx,
+    config: InitOptions,
+    universe: any,
+    comp: Comp,
+    subscribe: (path: string[]) => void,
+    dispatch: PluginDispatch<ActionCtx>,
+  ) => void;
 }
 
 export interface Store<InitOptions, Universe> {
@@ -70,12 +76,15 @@ export interface WatchTree {
   children: { [key: string]: WatchTree };
 }
 
-export interface Node {
+export interface Comp {
   name: string;
-  setState: (state: any) => void;
+  compId: number;
+}
+
+export interface Node extends Comp {
   pathKey: string;
   status: { unmounted: boolean };
-  compId: number;
+  setState: (state: any) => void;
 }
 
 export type Watch = <T>(x: T) => T;
@@ -87,6 +96,10 @@ export interface Origin {
 
 export type Dispatch = <A extends any[]>(
   func: (...args: A) => void,
+) => (...args: A) => void;
+
+export type PluginDispatch<Ctx> = <A extends any[]>(
+  func: (ctx: Ctx) => (...args: A) => void,
 ) => (...args: A) => void;
 
 export type UserStream<A, T> = (arg: A) => Stream<T>;

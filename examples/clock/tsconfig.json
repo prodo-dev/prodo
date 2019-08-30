@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.ui.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "target": "es2017",
+    "module": "esnext"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/babel-plugin" }
+  ]
+}

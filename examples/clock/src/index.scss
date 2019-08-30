@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: black;
+}
+
+.clock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 8rem;
+  font-family: monospace;
+
+  color: limegreen;
+}
+
+.time {
+  font-size: 16rem;
+  text-shadow: 4px 2px 16px limegreen;
+}

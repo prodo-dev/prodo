@@ -6,7 +6,7 @@ const verbosityLevels = {
   error: 5,
 };
 
-const logLevel = verbosityLevels.log;
+const logLevel = verbosityLevels.debug;
 
 const printWithVerbosity = (verbosity: number, ...values: any[]) => {
   if (logLevel <= verbosity && process.env.NODE_ENV === "development") {
