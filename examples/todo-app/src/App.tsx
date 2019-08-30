@@ -22,7 +22,7 @@ export const Item = model.connect(
         onChange={() => dispatch(toggle)(id)}
       />
       <span className="item-text">{watch(state.todos[id].text)}</span>
-      <button onClick={() => dispatch(deleteItem)(id)}>delete</button>
+      <button onClick={() => dispatch(deleteItem)(id)}>x</button>
     </li>
   ),
   "Item",
