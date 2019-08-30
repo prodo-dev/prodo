@@ -19,7 +19,7 @@ export const startEvent = (
 
   if (store.trackHistory) {
     if (store.history.length >= 1024) {
-      store.history.shift()
+      store.history.shift();
     }
     store.history.push(event);
   }
