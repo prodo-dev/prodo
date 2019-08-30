@@ -30,7 +30,7 @@ export const createStore = <State>(
 
   const store: BaseStore<State> = {
     config,
-    history: {},
+    history: [],
     universe,
     watchTree,
     streamStates: {},
