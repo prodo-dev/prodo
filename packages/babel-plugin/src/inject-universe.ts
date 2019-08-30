@@ -84,24 +84,26 @@ export default (
           t.isIdentifier(objectPath.node) &&
           objectPath.isReferencedIdentifier()
         ) {
-          const importPath = objectPath.scope.getBinding(objectPath.node.name)
-            .path;
-          if (t.isImportNamespaceSpecifier(importPath.node)) {
-            const importDeclarationPath = importPath.parentPath;
-            if (t.isImportDeclaration(importDeclarationPath.node)) {
-              const source = importDeclarationPath.node.source;
-              if (
-                source.value.startsWith(".") &&
-                /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
-              ) {
-                context = {
-                  importType: "namespace",
-                  importDeclarationPath: importDeclarationPath as Babel.NodePath<
-                    Babel.types.ImportDeclaration
-                  >,
-                  universe: t.identifier(importPath.node.local.name),
-                };
-                p.stop();
+          const binding = objectPath.scope.getBinding(objectPath.node.name);
+          if (binding != null) {
+            const importPath = binding.path;
+            if (t.isImportNamespaceSpecifier(importPath.node)) {
+              const importDeclarationPath = importPath.parentPath;
+              if (t.isImportDeclaration(importDeclarationPath.node)) {
+                const source = importDeclarationPath.node.source;
+                if (
+                  source.value.startsWith(".") &&
+                  /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
+                ) {
+                  context = {
+                    importType: "namespace",
+                    importDeclarationPath: importDeclarationPath as Babel.NodePath<
+                      Babel.types.ImportDeclaration
+                    >,
+                    universe: t.identifier(importPath.node.local.name),
+                  };
+                  p.stop();
+                }
               }
             }
           }
