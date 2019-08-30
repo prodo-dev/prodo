@@ -204,7 +204,7 @@ export const connect: Connect<any> = <P extends {}>(
 
       this.store.plugins.forEach(p => {
         if (p.prepareViewCtx) {
-          p.prepareViewCtx(this.store.config, ctx);
+          p.prepareViewCtx(ctx, this.store.config, this.store.universe);
         }
       });
 

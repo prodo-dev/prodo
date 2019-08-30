@@ -33,7 +33,7 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
     universe: any,
     event: any,
   ) => void;
-  prepareViewCtx?: (config: InitOptions, universe: any) => void;
+  prepareViewCtx?: (ctx: any, config: InitOptions, universe: any) => void;
 }
 
 export interface Store<InitOptions, Universe> {
