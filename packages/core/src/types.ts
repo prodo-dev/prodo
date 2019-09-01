@@ -27,20 +27,30 @@ export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
-    ctx: ActionCtx,
+    ctx: PluginActionCtx<ActionCtx> & ActionCtx,
     config: InitOptions,
     universe: any,
     event: any,
   ) => void;
   prepareViewCtx?: (
-    ctx: ViewCtx,
+    ctx: PluginViewCtx<ActionCtx> & ViewCtx,
     config: InitOptions,
     universe: any,
-    comp: Comp,
-    subscribe: (path: string[]) => void,
-    dispatch: PluginDispatch<ActionCtx>,
   ) => void;
 }
+
+export interface PluginActionCtx<ActionCtx> {
+  dispatch: PluginDispatch<ActionCtx>;
+}
+
+export interface PluginViewCtx<ActionCtx> {
+  dispatch: PluginDispatch<ActionCtx>;
+  subscribe: (path: string[]) => void;
+}
+
+export type PluginDispatch<Ctx> = <A extends any[]>(
+  func: (ctx: Ctx) => (...args: A) => void,
+) => (...args: A) => void;
 
 export interface Store<InitOptions, Universe> {
   config: InitOptions;
@@ -96,10 +106,6 @@ export interface Origin {
 
 export type Dispatch = <A extends any[]>(
   func: (...args: A) => void,
-) => (...args: A) => void;
-
-export type PluginDispatch<Ctx> = <A extends any[]>(
-  func: (ctx: Ctx) => (...args: A) => void,
 ) => (...args: A) => void;
 
 export type UserStream<A, T> = (arg: A) => Stream<T>;

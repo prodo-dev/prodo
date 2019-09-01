@@ -8,7 +8,28 @@ import { initState, model } from "./model";
 
 import "./index.scss";
 
-const store = model.createStore({ initState });
+const store = model.createStore({
+  initState,
+  delay: 1000,
+  possibilities: [
+    "peachpuff",
+    "hotpink",
+    "crimson",
+    "deeppink",
+    "coral",
+    "yellow",
+    "lavender",
+    "rebeccapuple",
+    "slateblue",
+    "lime",
+    "mediumspringgreen",
+    "aqua",
+    "deepskyblue",
+    "royalblue",
+    "lavenderblush",
+    "mistyrose",
+  ],
+});
 
 ReactDOM.render(
   <ProdoProvider value={store}>

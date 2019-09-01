@@ -1,7 +1,20 @@
 import { ProdoContext } from "./connect";
 import { createModel } from "./model";
-import { ProdoPlugin, Store, Comp, PluginDispatch } from "./types";
+import {
+  Comp,
+  PluginActionCtx,
+  PluginViewCtx,
+  ProdoPlugin,
+  Store,
+} from "./types";
 
 export const ProdoProvider = ProdoContext.Provider;
 
-export { createModel, Store, ProdoPlugin, Comp, PluginDispatch };
+export {
+  createModel,
+  Store,
+  ProdoPlugin,
+  Comp,
+  PluginViewCtx,
+  PluginActionCtx,
+};

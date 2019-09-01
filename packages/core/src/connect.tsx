@@ -1,6 +1,6 @@
 import * as React from "react";
 import logger from "./logger";
-import { Connect, Comp, Dispatch, Node, Store, Watch } from "./types";
+import { Comp, Connect, Dispatch, Node, Store, Watch } from "./types";
 import { joinPath, splitPath } from "./utils";
 import { subscribe, unsubscribe } from "./watch";
 
@@ -150,11 +150,6 @@ export const connect: Connect<any> = <P extends {}>(
     }
 
     public shouldComponentUpdate(nextProps: P, nextState: any) {
-      console.log("[prev state]", this.state.random);
-      console.log("[next state]", nextState.random);
-
-      /* const test = this.firstTime; */
-
       const test =
         !shallowEqual(this.props, nextProps) ||
         (!this.firstTime && !shallowEqual(this.state, nextState));
@@ -167,7 +162,6 @@ export const connect: Connect<any> = <P extends {}>(
 
     public componentDidUpdate() {
       logger.info(`[did update] ${this.name}`);
-      console.log(this.state);
 
       Object.keys(this.watched).forEach(pathKey => {
         const keyExisted = this.prevWatched.hasOwnProperty(pathKey);
@@ -214,18 +208,12 @@ export const connect: Connect<any> = <P extends {}>(
         dispatch: this._dispatch,
         state: this._state,
         watch: this._watch,
+        subscribe: this.subscribe,
       };
 
       this.store.plugins.forEach(p => {
         if (p.prepareViewCtx) {
-          p.prepareViewCtx(
-            ctx,
-            this.store.config,
-            this.store.universe,
-            this.comp,
-            this.subscribe,
-            this._dispatch as any,
-          );
+          p.prepareViewCtx(ctx, this.store.config, this.store.universe);
         }
       });
 

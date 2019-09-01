@@ -1,4 +1,9 @@
-import { ProdoPlugin, PluginDispatch } from "@prodo/core";
+import { PluginViewCtx, ProdoPlugin } from "@prodo/core";
+
+export interface RandomConfig {
+  possibilities: unknown[];
+  delay: number;
+}
 
 export interface RandomUniverse {
   random: { [key: string]: any };
@@ -25,40 +30,40 @@ const prepareActionCtx = (
   ctx.random = universe.random;
 };
 
+const randomValue = (possibilities: unknown[]): unknown =>
+  possibilities[Math.floor(Math.random() * possibilities.length)];
+
 const updateRandomAction = ({ random }: RandomActionCtx) => (
   key: string,
-  value: any,
+  possibilities: unknown[],
 ) => {
-  random[key] = value;
+  random[key] = randomValue(possibilities);
 };
 
 const prepareViewCtx = (
-  ctx: RandomViewCtx,
-  _config: any,
+  ctx: PluginViewCtx<RandomActionCtx> & RandomViewCtx,
+  config: RandomConfig,
   universe: RandomUniverse,
-  _comp: any,
-  subscribe: (path: string[]) => void,
-  dispatch: PluginDispatch<RandomActionCtx>,
 ) => {
   ctx.random = (key: string) => {
     if (!universe.random[key]) {
-      universe.random[key] = Math.random();
+      universe.random[key] = randomValue(config.possibilities);
 
       setInterval(() => {
-        dispatch(updateRandomAction)(key, Math.random());
-      }, 1000);
+        ctx.dispatch(updateRandomAction)(key, config.possibilities);
+      }, config.delay);
     }
 
-    subscribe(["random", key]);
+    ctx.subscribe(["random", key]);
 
     return universe.random[key];
   };
 };
 
 const randomPlugin = (): ProdoPlugin<
-  {},
+  RandomConfig,
   RandomUniverse,
-  {},
+  RandomActionCtx,
   RandomViewCtx
 > => ({
   init,
