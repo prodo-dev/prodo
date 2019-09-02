@@ -70,7 +70,11 @@ const prepareActionCtx = <T>(
   ctx.local = createLocalProxy(item);
 };
 
-const prepareViewCtx = <T>(config: LocalConfig<T>, universe: Local<T>) => {
+const prepareViewCtx = <T>(
+  ctx: Local<T>,
+  config: LocalConfig<T>,
+  universe: Local<T>,
+) => {
   let item: T;
   try {
     item = config.mockLocal
@@ -83,7 +87,7 @@ const prepareViewCtx = <T>(config: LocalConfig<T>, universe: Local<T>) => {
     item = config.initLocal;
   }
 
-  universe.local = item;
+  ctx.local = item;
 };
 
 const localPlugin = <T>(): ProdoPlugin<

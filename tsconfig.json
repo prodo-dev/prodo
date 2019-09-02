@@ -5,9 +5,12 @@
     { "path": "examples/update-testing" },
     { "path": "examples/timers" },
     { "path": "examples/local-map" },
+    { "path": "examples/clock" },
+    { "path": "examples/random" },
     { "path": "packages/babel-plugin" },
     { "path": "packages/core" },
     { "path": "packages/effect-plugin" },
-    { "path": "packages/local-plugin" }
+    { "path": "packages/local-plugin" },
+    { "path": "packages/random-plugin" }
   ]
 }
