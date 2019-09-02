@@ -7,10 +7,12 @@
     { "path": "examples/local-map" },
     { "path": "examples/clock" },
     { "path": "examples/random" },
+    { "path": "examples/chat-app" },
     { "path": "packages/babel-plugin" },
     { "path": "packages/core" },
     { "path": "packages/effect-plugin" },
     { "path": "packages/local-plugin" },
-    { "path": "packages/random-plugin" }
+    { "path": "packages/random-plugin" },
+    { "path": "packages/firestore-plugin" }
   ]
 }

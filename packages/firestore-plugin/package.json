@@ -1,0 +1,34 @@
+{
+  "name": "@prodo/firestore-plugin",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf lib tsconfig.tsbuildinfo",
+    "test": "jest",
+    "lint": "set -ex; tsc --build; tslint --project ."
+  },
+  "devDependencies": {
+    "@prodo/core": "1.0.0",
+    "@types/firebase": "^3.2.1",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.2",
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "@types/testing-library__react": "^9.1.1",
+    "ts-jest": "^24.0.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  },
+  "dependencies": {
+    "firebase": "^6.4.2"
+  }
+}

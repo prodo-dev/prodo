@@ -4,6 +4,7 @@ import {
   Comp,
   PluginActionCtx,
   PluginViewCtx,
+  PluginDispatch,
   ProdoPlugin,
   Store,
 } from "./types";
@@ -17,4 +18,5 @@ export {
   Comp,
   PluginViewCtx,
   PluginActionCtx,
+  PluginDispatch,
 };
