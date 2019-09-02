@@ -63,6 +63,7 @@ input {
 }
 
 .message {
+  display: flex;
   padding: 0 1rem;
 }
 
@@ -77,4 +78,13 @@ input {
   min-width: 10rem;
   display: inline-block;
   padding-right: 2rem;
+}
+
+.text {
+  flex-grow: 1;
+}
+
+.buttons {
+  padding-bottom: 1rem;
+  padding-left: 1rem;
 }

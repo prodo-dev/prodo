@@ -5,16 +5,30 @@ import moment from "moment";
 const saveMessage = model.action(({ db }) => async (text: string) => {
   db.messages.insert({
     text,
-    id: Math.random().toString(),
     date: Date.now(),
   });
 });
 
-const Message: React.FC<{ message: MessageModel }> = ({ message }) => (
-  <div className="message center">
-    <span className="date">{moment(message.date).fromNow()}</span>
-    <span className="text">{message.text}</span>
-  </div>
+const deleteMessage = model.action(({ db }) => async (id: string) => {
+  await db.messages.delete(id);
+});
+
+const Message = model.connect(
+  ({ dispatch }) => ({
+    message,
+  }: {
+    message: MessageModel & { id: string };
+  }) => (
+    <div className="message center">
+      <span className="date">{moment(message.date).fromNow()}</span>
+      <span className="text">{message.text}</span>
+      <span className="delete">
+        <button onClick={() => dispatch(deleteMessage)(message.id)}>
+          delete
+        </button>
+      </span>
+    </div>
+  ),
 );
 
 const Messages = model.connect(({ db }) => () => {
@@ -62,7 +76,7 @@ const Input = model.connect(({ dispatch }) => () => (
 ));
 
 const App = model.connect(({}) => () => {
-  const [showMessages, setShowMessages] = React.useState(false);
+  const [showMessages, setShowMessages] = React.useState(true);
 
   const toggleShowMessages = () => {
     setShowMessages(!showMessages);
@@ -73,7 +87,7 @@ const App = model.connect(({}) => () => {
       <div className="full">
         <h1 className="title">the chat app</h1>
 
-        <div className="center">
+        <div className="buttons center">
           <button onClick={() => toggleShowMessages()}>
             {showMessages ? "Hide" : "Show"}
           </button>

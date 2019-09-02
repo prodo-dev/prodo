@@ -3,7 +3,6 @@ import firestorePlugin, { Collection } from "@prodo/firestore-plugin";
 
 export interface Message {
   text: string;
-  id: string;
   date: number;
 }
 
