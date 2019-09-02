@@ -53,6 +53,14 @@ export const unsubscribe = (
     const prev = tree;
 
     tree = tree.children[pathKey];
+
+    if (node.unsubscribe) {
+      node.unsubscribe({
+        name: node.name,
+        compId: node.compId,
+      });
+    }
+
     tree.subs.delete(node);
 
     // there are no more subscribers to children of this tree
@@ -76,9 +84,9 @@ export const submitPatches = (
 ) => {
   const callbacksSet = new Set<Node>();
 
-  patches.forEach(({ op, path }) => {
+  patches.forEach(({ path }) => {
     let subtree = store.watchTree;
-    for (let i = 0; i < path.length - (op === "add" ? 1 : 0); i += 1) {
+    for (let i = 0; i < path.length; i += 1) {
       const key = path[i];
 
       if (!subtree.children[key]) {

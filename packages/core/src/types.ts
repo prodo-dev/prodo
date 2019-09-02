@@ -36,6 +36,7 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
     ctx: PluginViewCtx<ActionCtx> & ViewCtx,
     config: InitOptions,
     universe: any,
+    comp: Comp,
   ) => void;
 }
 
@@ -45,7 +46,7 @@ export interface PluginActionCtx<ActionCtx> {
 
 export interface PluginViewCtx<ActionCtx> {
   dispatch: PluginDispatch<ActionCtx>;
-  subscribe: (path: string[]) => void;
+  subscribe: (path: string[], unsubscribe?: () => void) => void;
 }
 
 export type PluginDispatch<Ctx> = <A extends any[]>(
@@ -95,6 +96,7 @@ export interface Node extends Comp {
   pathKey: string;
   status: { unmounted: boolean };
   setState: (state: any) => void;
+  unsubscribe?: (comp: Comp) => void;
 }
 
 export type Watch = <T>(x: T) => T;

@@ -41,6 +41,7 @@ body {
   position: absolute;
   bottom: 0;
   margin: 0 auto;
+  padding: 0 1rem;
   width: 100%;
   height: var(--input);
   display: flex;
@@ -59,6 +60,10 @@ input {
 .messages {
   height: calc(100vh - var(--header) - var(--input));
   overflow-y: auto;
+}
+
+.message {
+  padding: 0 1rem;
 }
 
 .center {

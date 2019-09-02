@@ -62,11 +62,24 @@ const Input = model.connect(({ dispatch }) => () => (
 ));
 
 const App = model.connect(({}) => () => {
+  const [showMessages, setShowMessages] = React.useState(false);
+
+  const toggleShowMessages = () => {
+    setShowMessages(!showMessages);
+  };
+
   return (
     <div className="app">
       <div className="full">
         <h1 className="title">the chat app</h1>
-        <Messages />
+
+        <div className="center">
+          <button onClick={() => toggleShowMessages()}>
+            {showMessages ? "Hide" : "Show"}
+          </button>
+        </div>
+
+        {showMessages && <Messages />}
       </div>
       <Input />
     </div>

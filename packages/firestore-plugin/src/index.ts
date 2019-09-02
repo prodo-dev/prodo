@@ -1,4 +1,4 @@
-import { ProdoPlugin, PluginViewCtx, PluginActionCtx } from "@prodo/core";
+import { Comp, ProdoPlugin, PluginViewCtx, PluginActionCtx } from "@prodo/core";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 
@@ -35,6 +35,13 @@ export interface FirestoreUniverse {
   db_cache: any;
 }
 
+export interface RefCounts {
+  [key: string]: {
+    comps: Set<Comp>;
+    unsubscribe: () => void;
+  };
+}
+
 type FetchData<T> =
   | { _fetching: true; _notFound?: never; data?: T }
   | { _notFound: true; _fetching?: never; data?: T }
@@ -62,12 +69,9 @@ export type Collection<T> = {
 let firestore: firebase.firestore.Firestore;
 
 const init = <T>(config: FirestoreConfig<T>, universe: FirestoreUniverse) => {
-  console.log(config);
   if (!config.firestoreMock) {
     firebase.initializeApp(config.firebaseConfig);
-    console.log(firebase);
     firestore = firebase.firestore();
-    console.log("created firestore");
   }
 
   universe.db_cache = {};
@@ -104,9 +108,11 @@ const createActionCollection = <T>(
 };
 
 const createViewCollection = <T>(
+  refCounts: RefCounts,
   ctx: FirestoreViewCtx<T>,
   name: string,
   universe: FirestoreUniverse,
+  comp: Comp,
 ): Collection<T> => {
   return {
     getAll: async () => {
@@ -116,44 +122,68 @@ const createViewCollection = <T>(
       throw new Error("Cannot use this method in a React component");
     },
     watchAll: (): FetchAll<T> => {
-      ctx.subscribe(["db_cache", name]);
+      const path = ["db_cache", name];
+      const pathKey = path.join(".");
 
-      if (!universe.db_cache[name]) {
-        firestore.collection(name).onSnapshot(snapshot => {
-          const data = snapshot.docs.map(doc => doc.data() as T);
-
-          console.log(snapshot);
+      if (!universe.db_cache[name] || !refCounts[pathKey]) {
+        const unsubscribe = firestore.collection(name).onSnapshot(snapshot => {
+          const data = snapshot.docs.map(doc => {
+            return doc.data() as T;
+          });
 
           ctx.dispatch(saveDataToCache)(name, data);
         });
 
-        universe.db_cache[name] = {
-          _fetching: true,
+        refCounts[pathKey] = {
+          comps: new Set(),
+          unsubscribe,
         };
-
-        return universe.db_cache[name];
       }
 
-      return {
-        _fetching: false,
-        _notFound: false,
-        data: universe.db_cache[name],
-      };
+      if (!refCounts[pathKey].comps.has(comp)) {
+        refCounts[pathKey].comps.add(comp);
+        ctx.subscribe(path, () => {
+          refCounts[pathKey].comps.delete(comp);
+
+          if (refCounts[pathKey].comps.size === 0) {
+            refCounts[pathKey].unsubscribe();
+            delete refCounts[pathKey];
+          }
+        });
+      }
+
+      if (!universe.db_cache[name]) {
+        return {
+          _fetching: true,
+        };
+      } else {
+        return {
+          _fetching: false,
+          _notFound: false,
+          data: universe.db_cache[name],
+        };
+      }
     },
   };
 };
 
-const prepareViewCtx = <T>(
+const prepareViewCtx = <T>(refCounts: RefCounts) => (
   ctx: FirestoreViewCtx<T>,
   _config: FirestoreConfig<T>,
   universe: FirestoreUniverse,
+  comp: Comp,
 ) => {
-  console.log("UNIVERSE", universe);
   ctx.db = new Proxy(
     {},
     {
       get(_target, key) {
-        return createViewCollection(ctx, key.toString(), universe);
+        return createViewCollection(
+          refCounts,
+          ctx,
+          key.toString(),
+          universe,
+          comp,
+        );
       },
     },
   ) as T;
@@ -176,15 +206,6 @@ const prepareActionCtx = <T>(
   ) as T;
 };
 
-// const hydrate = <Schema, T>(schema: Schema, data: T): T => {
-//   for (const [key, subSchema] of Object.entries(schema)) {
-//     if (subSchema._collection) {
-//       data[key] = createCollection(key, subSchema);
-//     }
-//   }
-//   return data;
-// };
-
 const firestorePlugin = <T>(): ProdoPlugin<
   FirestoreConfig<T>,
   FirestoreUniverse,
@@ -193,7 +214,7 @@ const firestorePlugin = <T>(): ProdoPlugin<
 > => ({
   init,
   prepareActionCtx,
-  prepareViewCtx,
+  prepareViewCtx: prepareViewCtx({}),
 });
 
 export default firestorePlugin;
