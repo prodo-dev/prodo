@@ -28,6 +28,7 @@ export default (
     | Babel.types.TSParameterProperty
   >,
   bodyPath: Babel.NodePath<Babel.types.BlockStatement | Babel.types.Expression>,
+  async?: boolean,
 ) => {
   let context: Context;
   bodyPath.traverse({
@@ -131,7 +132,7 @@ export default (
           [
             t.arrowFunctionExpression(
               [context.universe],
-              t.arrowFunctionExpression(params, bodyPath.node),
+              t.arrowFunctionExpression(params, bodyPath.node, async),
             ),
             t.stringLiteral(name),
           ],

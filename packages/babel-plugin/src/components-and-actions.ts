@@ -15,11 +15,12 @@ const visitPossibleActionOrComponent = (
     | Babel.types.TSParameterProperty
   >,
   bodyPath: Babel.NodePath<Babel.types.BlockStatement | Babel.types.Expression>,
+  async?: boolean,
 ) => {
   if (isPossibleComponentName(name)) {
-    injectUniverse(t, "component", name, rootPath, params, bodyPath);
+    injectUniverse(t, "component", name, rootPath, params, bodyPath, async);
   } else if (isPossibleActionName(name)) {
-    injectUniverse(t, "action", name, rootPath, params, bodyPath);
+    injectUniverse(t, "action", name, rootPath, params, bodyPath, async);
   }
 };
 
@@ -27,7 +28,14 @@ export default ({ types: t }: typeof Babel) => ({
   FunctionDeclaration(path: Babel.NodePath<Babel.types.FunctionDeclaration>) {
     const name = path.node.id.name;
     const bodyPath = path.get("body");
-    visitPossibleActionOrComponent(t, name, path, path.node.params, bodyPath);
+    visitPossibleActionOrComponent(
+      t,
+      name,
+      path,
+      path.node.params,
+      bodyPath,
+      path.node.async,
+    );
   },
   VariableDeclaration(path: Babel.NodePath<Babel.types.VariableDeclaration>) {
     if (path.node.declarations.length !== 1) {
@@ -62,6 +70,7 @@ export default ({ types: t }: typeof Babel) => ({
       path,
       declarationPath.node.init.params,
       bodyPath,
+      declarationPath.node.init.async,
     );
   },
 });
