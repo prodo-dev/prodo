@@ -57,7 +57,9 @@ export const createStore = <State>(
         const ctx = {
           state: u.state,
           stream,
-          dispatch: <A>(func: (a: A) => void) => (args: A) => {
+          dispatch: <A extends any[]>(func: (...a: A) => void) => (
+            ...args: A
+          ) => {
             event.nextActions.push({
               func,
               args,
