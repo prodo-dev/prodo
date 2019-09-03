@@ -68,7 +68,7 @@ export interface Store<InitOptions, Universe> {
   streamStates: { [path: string]: StreamState };
   watchTree: WatchTree;
   trackHistory?: boolean;
-  history: History;
+  history: Event[];
   watchForComplete?: {
     count: number;
     cb: () => void;
@@ -128,10 +128,6 @@ export interface Event {
   nextActions: NextAction[];
   prevUniverse: any;
   nextUniverse?: any;
-}
-
-export interface History {
-  [key: string]: Event;
 }
 
 interface NextAction {
