@@ -1,77 +1,23 @@
-import { Comp, ProdoPlugin, PluginViewCtx, PluginActionCtx } from "@prodo/core";
-import * as _ from "lodash";
+import { Comp, ProdoPlugin } from "@prodo/core";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
+import * as _ from "lodash";
+import { createFirestoreQuery } from "./query";
+import {
+  Collection,
+  FetchAll,
+  FetchData,
+  FirestoreActionCtx,
+  FirestoreConfig,
+  FirestoreCtx,
+  FirestoreUniverse,
+  FirestoreViewCtx,
+  Query,
+  RefCounts,
+  WithId,
+} from "./types";
 
-export interface FirebaseConfig {
-  apiKey: string;
-  authDomain: string;
-  databaseURL: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-}
-
-export interface FirestoreConfig<T> {
-  firestoreMock?: T;
-  firebaseConfig: FirebaseConfig;
-}
-
-export interface FirestoreCtx<T> {
-  db: T;
-}
-
-export interface FirestoreActionCtx<T>
-  extends FirestoreCtx<T>,
-    PluginActionCtx<FirestoreActionCtx<T>> {
-  db_cache: any;
-}
-
-export interface FirestoreViewCtx<T>
-  extends FirestoreCtx<T>,
-    PluginViewCtx<FirestoreActionCtx<T>> {}
-
-export interface FirestoreUniverse {
-  db_cache: any;
-}
-
-export interface RefCounts {
-  [key: string]: {
-    comps: Set<Comp>;
-    unsubscribe: () => void;
-  };
-}
-
-type WithId<T> = T & { id: string };
-
-type FetchData<T> =
-  | { _fetching: true; _notFound?: never; data?: T }
-  | { _notFound: true; _fetching?: never; data?: T }
-  | { _fetching?: false; _notFound?: false; data: T };
-
-export type Fetching<T> = FetchData<WithId<T>>;
-export type FetchAll<T> = FetchData<WithId<T>[]>;
-export type Collection<T> = {
-  // methods used in actions only (no risk for people to get confused and use those in react components since react components can't be async)
-
-  get: (id: string) => Promise<WithId<T>>;
-  getAll: () => Promise<WithId<T>[]>;
-  set: (id: string, value: T) => Promise<void>;
-  delete: (id: string) => Promise<void>;
-  insert: (value: T) => Promise<string>;
-  // query: (filter: Query<T>) => T[];
-
-  // methods used in React components (or inside some actions, although less likely)
-
-  // fetch: (key: string) => Fetching<T>;
-  // fetchAll: () => FetchAll<T[]>;
-  watch: (id: string) => Fetching<WithId<T>>;
-  watchAll: () => FetchAll<WithId<T>>;
-
-  // used in either case for subcollections:
-  // ref: (key: string) => T;
-};
+export { Collection };
 
 let firestore: firebase.firestore.Firestore;
 
@@ -94,31 +40,46 @@ const saveDataToCache = <T>({ db_cache }: FirestoreActionCtx<T>) => (
 const cannotUseInAction = "Cannot use this method in an action";
 const cannotUseInComponent = "Cannot use this method in a React component";
 
+const addIdToDoc = <T>(
+  doc: firebase.firestore.QueryDocumentSnapshot,
+): WithId<T> => ({
+  id: doc.id,
+  ...(doc.data() as T),
+});
+
+const getSnapshotDocs = <T>(
+  docs: firebase.firestore.QueryDocumentSnapshot[],
+): Array<WithId<T>> => docs.map(doc => addIdToDoc(doc));
+
+const getDocsById = <T>(
+  docs: firebase.firestore.QueryDocumentSnapshot[],
+): { [key: string]: WithId<T> } =>
+  _.transform(
+    getSnapshotDocs<T>(docs),
+    (byId: { [key: string]: WithId<T> }, doc) => {
+      byId[doc.id] = doc;
+    },
+  );
+
 const createActionCollection = <T>(
   ctx: FirestoreActionCtx<T>,
   collectionName: string,
 ): Collection<T> => {
   return {
-    getAll: async (): Promise<WithId<T>[]> => {
+    getAll: async (): Promise<Array<WithId<T>>> => {
       const snapshot = await firestore.collection(collectionName).get();
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...(doc.data() as T),
-      }));
 
+      const data = getDocsById<T>(snapshot.docs);
       ctx.dispatch(saveDataToCache)([collectionName], data);
 
-      return data;
+      return Object.values(data);
     },
     get: async (id: string): Promise<WithId<T>> => {
-      const snapshot = await firestore
+      const doc = await firestore
         .collection(collectionName)
         .doc(id)
         .get();
-      const data = {
-        id: snapshot.id,
-        ...(snapshot.data() as T),
-      };
+      const data = addIdToDoc<T>(doc);
 
       ctx.dispatch(saveDataToCache)([collectionName, id], data);
 
@@ -136,6 +97,18 @@ const createActionCollection = <T>(
         .doc(id)
         .delete();
     },
+    query: async (query: Query): Promise<Array<WithId<T>>> => {
+      const ref = createFirestoreQuery(
+        query,
+        firestore.collection(collectionName),
+      );
+      const snapshot = await ref.get();
+      const data = getDocsById<T>(snapshot.docs);
+
+      // ctx.dispatch(saveDataToCache)([collectionName], data);
+
+      return Object.values(data);
+    },
     insert: async (value: T): Promise<string> => {
       const ref = await firestore.collection(collectionName).add(value);
       return ref.id;
@@ -146,20 +119,24 @@ const createActionCollection = <T>(
     watchAll: () => {
       throw new Error(cannotUseInAction);
     },
+    ref: (): firebase.firestore.CollectionReference => {
+      return firestore.collection(name);
+    },
   };
 };
 
-const checkRefCounts = <T>(
+const subscribeToPath = <T>(
   refCounts: RefCounts,
   ctx: FirestoreViewCtx<T>,
   path: string[],
   comp: Comp,
 ) => {
   const pathKey = path.join(".");
-  if (!refCounts[pathKey].comps.has(comp)) {
-    refCounts[pathKey].comps.add(comp);
+  if (!refCounts[pathKey].comps.has(comp.compId)) {
+    refCounts[pathKey].comps.add(comp.compId);
+
     ctx.subscribe(path, () => {
-      refCounts[pathKey].comps.delete(comp);
+      refCounts[pathKey].comps.delete(comp.compId);
 
       if (refCounts[pathKey].comps.size === 0) {
         refCounts[pathKey].unsubscribe();
@@ -192,6 +169,9 @@ const createViewCollection = <T>(
     delete: () => {
       throw new Error(cannotUseInComponent);
     },
+    query: () => {
+      throw new Error(cannotUseInComponent);
+    },
     watch: (id: string): FetchData<WithId<T>> => {
       const path = ["db_cache", name, id];
       const pathKey = path.join(".");
@@ -200,11 +180,8 @@ const createViewCollection = <T>(
         const unsubscribe = firestore
           .collection(collectionName)
           .doc(id)
-          .onSnapshot(snapshot => {
-            const data = {
-              id: snapshot.id,
-              ...(snapshot.data() as T),
-            };
+          .onSnapshot(doc => {
+            const data = addIdToDoc<T>(doc);
 
             ctx.dispatch(saveDataToCache)([collectionName, id], data);
           });
@@ -215,7 +192,7 @@ const createViewCollection = <T>(
         };
       }
 
-      checkRefCounts(refCounts, ctx, path, comp);
+      subscribeToPath(refCounts, ctx, path, comp);
 
       if (!universe.db_cache[collectionName]) {
         return {
@@ -238,18 +215,8 @@ const createViewCollection = <T>(
         const unsubscribe = firestore
           .collection(collectionName)
           .onSnapshot(snapshot => {
-            const byId = _.transform(
-              snapshot.docs,
-              (byId: { [key: string]: WithId<T> }, doc) => {
-                byId[doc.id] = {
-                  id: doc.id,
-                  ...(doc.data() as T),
-                };
-              },
-              {},
-            );
-
-            ctx.dispatch(saveDataToCache)([collectionName], byId);
+            const docs = getDocsById(snapshot.docs);
+            ctx.dispatch(saveDataToCache)([collectionName], docs);
           });
 
         refCounts[pathKey] = {
@@ -258,7 +225,7 @@ const createViewCollection = <T>(
         };
       }
 
-      checkRefCounts(refCounts, ctx, path, comp);
+      subscribeToPath(refCounts, ctx, path, comp);
 
       if (!universe.db_cache[collectionName]) {
         return {
@@ -267,7 +234,7 @@ const createViewCollection = <T>(
       } else {
         const flatData = Object.values(
           universe.db_cache[collectionName],
-        ) as WithId<T>[];
+        ) as Array<WithId<T>>;
 
         return {
           _fetching: false,
@@ -275,6 +242,9 @@ const createViewCollection = <T>(
           data: flatData,
         };
       }
+    },
+    ref: (): firebase.firestore.CollectionReference => {
+      return firestore.collection(name);
     },
   };
 };

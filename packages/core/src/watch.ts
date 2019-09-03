@@ -86,6 +86,7 @@ export const submitPatches = (
 
   patches.forEach(({ path }) => {
     let subtree = store.watchTree;
+    // tslint:disable-next-line
     for (let i = 0; i < path.length; i += 1) {
       const key = path[i];
 

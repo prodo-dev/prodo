@@ -1,6 +1,6 @@
+import moment from "moment";
 import * as React from "react";
 import { Message as MessageModel, model } from "./model";
-import moment from "moment";
 
 const saveMessage = model.action(({ db }) => async (text: string) => {
   db.messages.insert({

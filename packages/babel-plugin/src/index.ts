@@ -6,6 +6,7 @@ import visitActions from "./actions";
 const mergeVisitors = <S>(...visitors: Array<Babel.Visitor<S>>) =>
   _.merge(
     ...visitors,
+    // @ts-ignore
     <P>(a: VisitNodeFunction<S, P>, b: VisitNodeFunction<S, P>) => (
       path: Babel.NodePath<P>,
       state: S,
