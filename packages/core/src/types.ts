@@ -24,17 +24,33 @@ export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
   ctx: ActionCtx & ViewCtx;
 }
 
-// @ts-ignore
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
-  init?: (config: InitOptions, universe: any) => void;
+  init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
-    ctx: any,
+    ctx: PluginActionCtx<ActionCtx> & ActionCtx,
     config: InitOptions,
     universe: any,
     event: any,
   ) => void;
-  prepareViewCtx?: (config: InitOptions, universe: any) => void;
+  prepareViewCtx?: (
+    ctx: PluginViewCtx<ActionCtx> & ViewCtx,
+    config: InitOptions,
+    universe: any,
+  ) => void;
 }
+
+export interface PluginActionCtx<ActionCtx> {
+  dispatch: PluginDispatch<ActionCtx>;
+}
+
+export interface PluginViewCtx<ActionCtx> {
+  dispatch: PluginDispatch<ActionCtx>;
+  subscribe: (path: string[]) => void;
+}
+
+export type PluginDispatch<Ctx> = <A extends any[]>(
+  func: (ctx: Ctx) => (...args: A) => void,
+) => (...args: A) => void;
 
 export interface Store<InitOptions, Universe> {
   config: InitOptions;
@@ -51,7 +67,7 @@ export interface Store<InitOptions, Universe> {
   streamStates: { [path: string]: StreamState };
   watchTree: WatchTree;
   trackHistory?: boolean;
-  history: History;
+  history: Event[];
   watchForComplete?: {
     count: number;
     cb: () => void;
@@ -70,12 +86,15 @@ export interface WatchTree {
   children: { [key: string]: WatchTree };
 }
 
-export interface Node {
+export interface Comp {
   name: string;
-  setState: (state: any) => void;
+  compId: number;
+}
+
+export interface Node extends Comp {
   pathKey: string;
   status: { unmounted: boolean };
-  compId: number;
+  setState: (state: any) => void;
 }
 
 export type Watch = <T>(x: T) => T;
@@ -107,10 +126,6 @@ export interface Event {
   nextActions: NextAction[];
   prevUniverse: any;
   nextUniverse?: any;
-}
-
-export interface History {
-  [key: string]: Event;
 }
 
 interface NextAction {

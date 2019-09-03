@@ -1,6 +1,6 @@
 import * as React from "react";
 import logger from "./logger";
-import { Connect, Dispatch, Node, Store, Watch } from "./types";
+import { Comp, Connect, Dispatch, Node, Store, Watch } from "./types";
 import { joinPath, splitPath } from "./utils";
 import { subscribe, unsubscribe } from "./watch";
 
@@ -25,7 +25,7 @@ const valueExtractor = (store: any, watched: any, prefixPath: any = []) => (
   return value;
 };
 
-const shallowEqual = (objA: any, objB: any): boolean => {
+export const shallowEqual = (objA: any, objB: any): boolean => {
   if (Object.is(objA, objB)) {
     return true;
   }
@@ -68,7 +68,7 @@ export const connect: Connect<any> = <P extends {}>(
   func: any,
   name: string = "(anonymous)",
 ): React.ComponentType<P> =>
-  class ConnectComponent<P> extends React.Component<P> {
+  class ConnectComponent<P> extends React.Component<P, any> {
     public static contextType = ProdoContext;
 
     public state: any;
@@ -76,9 +76,10 @@ export const connect: Connect<any> = <P extends {}>(
     private prevWatched: { [key: string]: any };
     private pathNodes: { [key: string]: Node };
     private compId: number;
+    private comp: Comp;
     private name: string;
-    private subscribe: (pathKey: string) => void;
-    private unsubscribe: (pathKey: string) => void;
+    private subscribe: (path: string[]) => void;
+    private unsubscribe: (path: string[]) => void;
     private firstTime: boolean;
     private status: { unmounted: boolean };
     private store: Store<any, any>;
@@ -104,22 +105,28 @@ export const connect: Connect<any> = <P extends {}>(
       const setState = this.setState.bind(this);
       this.status = { unmounted: false };
 
-      this.subscribe = (pathKey: string) => {
+      this.comp = {
+        name: this.name,
+        compId: this.compId,
+      };
+
+      this.subscribe = (path: string[]) => {
+        const pathKey = joinPath(path);
         const node: Node = {
-          name: this.name,
-          setState,
           pathKey,
           status: this.status,
-          compId: this.compId,
+          setState,
+          ...this.comp,
         };
 
         this.pathNodes[pathKey] = node;
-        subscribe(this.store, splitPath(pathKey), node);
+        subscribe(this.store, path, node);
       };
 
-      this.unsubscribe = (pathKey: string) => {
+      this.unsubscribe = (path: string[]) => {
+        const pathKey = joinPath(path);
         const node = this.pathNodes[pathKey];
-        unsubscribe(this.store, splitPath(pathKey), node);
+        unsubscribe(this.store, path, node);
         delete this.pathNodes[pathKey];
       };
 
@@ -148,7 +155,7 @@ export const connect: Connect<any> = <P extends {}>(
 
       Object.keys(this.watched).forEach(pathKey => {
         logger.info(`[start watching] ${this.name}: < ${pathKey} >`);
-        this.subscribe(pathKey);
+        this.subscribe(splitPath(pathKey));
       });
 
       logger.debug("store", this.store);
@@ -166,6 +173,7 @@ export const connect: Connect<any> = <P extends {}>(
 
       logger.info(`[should update] ${this.name}`, test);
       this.firstTime = false;
+
       return test;
     }
 
@@ -176,7 +184,7 @@ export const connect: Connect<any> = <P extends {}>(
         const keyExisted = this.prevWatched.hasOwnProperty(pathKey);
         if (!keyExisted) {
           logger.info(`[update] ${this.name}: now watching < ${pathKey} >`);
-          this.subscribe(pathKey);
+          this.subscribe(splitPath(pathKey));
         }
       });
 
@@ -184,7 +192,7 @@ export const connect: Connect<any> = <P extends {}>(
         const keyDeleted = !this.watched.hasOwnProperty(pathKey);
         if (keyDeleted) {
           logger.info(`[update] ${this.name}: stop watching < ${pathKey} >`);
-          this.unsubscribe(pathKey);
+          this.unsubscribe(splitPath(pathKey));
         }
       });
     }
@@ -193,7 +201,7 @@ export const connect: Connect<any> = <P extends {}>(
       logger.info(`[will unmount]: ${this.name}`, this.state);
       Object.keys(this.state).forEach(pathKey => {
         logger.info(`[unmount] ${this.name}: stop watching < ${pathKey} >`);
-        this.unsubscribe(pathKey);
+        this.unsubscribe(splitPath(pathKey));
       });
 
       logger.debug("store", this.store);
@@ -217,11 +225,12 @@ export const connect: Connect<any> = <P extends {}>(
         dispatch: this._dispatch,
         state: this._state,
         watch: this._watch,
+        subscribe: this.subscribe,
       };
 
       this.store.plugins.forEach(p => {
         if (p.prepareViewCtx) {
-          p.prepareViewCtx(this.store.config, ctx);
+          p.prepareViewCtx(ctx, this.store.config, this.store.universe);
         }
       });
 
