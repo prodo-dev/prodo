@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import visitComponentAndActions from "./components-and-actions";
 
 const mergeVisitors = <S>(...visitors: Array<Babel.Visitor<S>>) =>
-  _.merge(
+  _.mergeWith(
     ...visitors,
     <P>(a: VisitNodeFunction<S, P>, b: VisitNodeFunction<S, P>) => (
       path: Babel.NodePath<P>,
@@ -17,6 +17,5 @@ const mergeVisitors = <S>(...visitors: Array<Babel.Visitor<S>>) =>
 
 export default (babel: typeof Babel): Babel.PluginObj => ({
   name: "prodo",
-
   visitor: mergeVisitors(visitComponentAndActions(babel)),
 });
