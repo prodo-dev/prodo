@@ -10,4 +10,4 @@ export const initState: State = {
 
 export const model = createModel<State>();
 export const { action, connect } = model;
-export const { state } = model.ctx;
+export const { dispatch, state, watch } = model.ctx;
