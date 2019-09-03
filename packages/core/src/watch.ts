@@ -76,17 +76,19 @@ export const submitPatches = (
 ) => {
   const callbacksSet = new Set<Node>();
 
-  patches.forEach(({ op, path }) => {
+  patches.forEach(({ path }) => {
     let subtree = store.watchTree;
-    for (let i = 0; i < path.length - (op === "add" ? 1 : 0); i += 1) {
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < path.length; i += 1) {
       const key = path[i];
-
       if (!subtree.children[key]) {
         break;
       }
 
       subtree = subtree.children[key];
-      Array.from(subtree.esubs).forEach(x => callbacksSet.add(x));
+      Array.from(i === path.length - 1 ? subtree.subs : subtree.esubs).forEach(
+        x => callbacksSet.add(x),
+      );
     }
   });
 
