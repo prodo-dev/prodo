@@ -59,6 +59,7 @@ const getDocsById = <T>(
     (byId: { [key: string]: WithId<T> }, doc) => {
       byId[doc.id] = doc;
     },
+    {},
   );
 
 const createActionCollection = <T>(
@@ -105,7 +106,7 @@ const createActionCollection = <T>(
       const snapshot = await ref.get();
       const data = getDocsById<T>(snapshot.docs);
 
-      // ctx.dispatch(saveDataToCache)([collectionName], data);
+      ctx.dispatch(saveDataToCache)([collectionName], data);
 
       return Object.values(data);
     },
@@ -132,11 +133,11 @@ const subscribeToPath = <T>(
   comp: Comp,
 ) => {
   const pathKey = path.join(".");
-  if (!refCounts[pathKey].comps.has(comp.compId)) {
-    refCounts[pathKey].comps.add(comp.compId);
+  if (!refCounts[pathKey].comps.has(comp)) {
+    refCounts[pathKey].comps.add(comp);
 
     ctx.subscribe(path, () => {
-      refCounts[pathKey].comps.delete(comp.compId);
+      refCounts[pathKey].comps.delete(comp);
 
       if (refCounts[pathKey].comps.size === 0) {
         refCounts[pathKey].unsubscribe();
@@ -186,10 +187,12 @@ const createViewCollection = <T>(
             ctx.dispatch(saveDataToCache)([collectionName, id], data);
           });
 
-        refCounts[pathKey] = {
-          comps: new Set(),
-          unsubscribe,
-        };
+        if (!refCounts[pathKey]) {
+          refCounts[pathKey] = {
+            comps: new Set(),
+            unsubscribe,
+          };
+        }
       }
 
       subscribeToPath(refCounts, ctx, path, comp);
@@ -219,10 +222,12 @@ const createViewCollection = <T>(
             ctx.dispatch(saveDataToCache)([collectionName], docs);
           });
 
-        refCounts[pathKey] = {
-          comps: new Set(),
-          unsubscribe,
-        };
+        if (!refCounts[pathKey]) {
+          refCounts[pathKey] = {
+            comps: new Set(),
+            unsubscribe,
+          };
+        }
       }
 
       subscribeToPath(refCounts, ctx, path, comp);

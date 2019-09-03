@@ -1,4 +1,4 @@
-import { PluginActionCtx, PluginViewCtx } from "@prodo/core";
+import { Comp, PluginActionCtx, PluginViewCtx } from "@prodo/core";
 import * as firebase from "firebase/app";
 
 export interface FirebaseConfig {
@@ -36,7 +36,7 @@ export interface FirestoreUniverse {
 
 export interface RefCounts {
   [key: string]: {
-    comps: Set<number>;
+    comps: Set<Comp>;
     unsubscribe: () => void;
   };
 }
