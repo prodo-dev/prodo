@@ -1,6 +1,5 @@
 import produce from "immer";
 import { completeEvent, startEvent } from "./events";
-import { stream } from "./streams";
 import {
   BaseStore,
   Origin,
@@ -39,7 +38,6 @@ export const createStore = <State>(
     history: [],
     universe,
     watchTree,
-    streamStates: {},
     trackHistory: true,
     plugins,
     exec: null as any,
@@ -62,7 +60,6 @@ export const createStore = <State>(
       async u => {
         const ctx = {
           state: u.state,
-          stream,
           dispatch: <A extends any[]>(func: (...a: A) => void) => (
             ...args: A
           ) => {

@@ -15,4 +15,4 @@ export const initState: State = {
 
 export const model = createModel<State>();
 export const { action, connect } = model;
-export const { state, stream } = model.ctx;
+export const { state } = model.ctx;

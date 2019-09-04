@@ -5,8 +5,9 @@ const numTimers = 20;
 const mult = 100;
 
 export const setupCounter = model.action(
-  ({ state, stream }) => (i: number) => {
-    state.counters[i.toString()].value = stream(rx.interval)(i * mult);
+  () => (i: number) => {
+  //({ state, streams }) => (i: number) => {
+    rx.interval(i * mult);
   },
   "setupCounter",
 );

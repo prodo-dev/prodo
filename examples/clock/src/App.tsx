@@ -15,8 +15,8 @@ const timer = (dateFn: () => number) => {
   };
 };
 
-export const setupStreams = model.action(({ state, stream }) => () => {
-  state.seconds = stream(timer)(() => new Date().getSeconds());
+export const setupStreams = model.action(() => () => {
+  timer(() => new Date().getSeconds());
 });
 
 const timeToString = (n: number): string => {
