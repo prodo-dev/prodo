@@ -9,12 +9,12 @@ export const moveMap = model.action(
   },
 );
 
-const App = model.connect(({ dispatch, local }) => () => {
+const App = model.connect(({ dispatch, watch, local }) => () => {
   return (
     <div className="map">
       <Map
-        center={local.center}
-        zoom={local.zoom}
+        center={watch(local.center)}
+        zoom={watch(local.zoom)}
         onBoundsChanged={({ center, zoom }) => {
           dispatch(moveMap)(center, zoom);
         }}
