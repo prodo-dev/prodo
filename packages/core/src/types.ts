@@ -129,7 +129,7 @@ export interface Event {
 }
 
 interface NextAction {
-  func: (c: any) => void;
+  func: (...c: any[]) => void;
   args: any;
   origin: Origin;
 }
