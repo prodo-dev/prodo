@@ -76,7 +76,7 @@ export const submitPatches = (
 ) => {
   const callbacksSet = new Set<Node>();
 
-  patches.forEach(({ path }) => {
+  patches.forEach(({ op, path }) => {
     let subtree = store.watchTree;
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < path.length; i += 1) {
@@ -86,15 +86,14 @@ export const submitPatches = (
       }
 
       subtree = subtree.children[key];
-      Array.from(i === path.length - 1 ? subtree.subs : subtree.esubs).forEach(
-        x => callbacksSet.add(x),
-      );
+      Array.from(
+        i === path.length - 1 && op !== "remove" ? subtree.subs : subtree.esubs,
+      ).forEach(x => callbacksSet.add(x));
     }
   });
 
   const comps: { [key: string]: any } = {};
   const compIds: number[] = [];
-
   Array.from(callbacksSet)
     .sort((x: Node, y: Node) => x.compId - y.compId)
     .forEach((x: Node) => {
