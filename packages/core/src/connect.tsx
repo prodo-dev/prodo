@@ -1,6 +1,14 @@
 import * as React from "react";
 import logger from "./logger";
-import { Comp, Connect, Dispatch, Node, Store, Watch } from "./types";
+import {
+  Comp,
+  Connect,
+  Dispatch,
+  Node,
+  PluginDispatch,
+  Store,
+  Watch,
+} from "./types";
 import { joinPath, splitPath } from "./utils";
 import { subscribe, unsubscribe } from "./watch";
 
@@ -29,20 +37,37 @@ const valueExtractor = (store: any, watched: any) => (x: any) => {
 };
 
 export const shallowEqual = (objA: any, objB: any): boolean => {
-  if (objA === objB) {
+  if (Object.is(objA, objB)) {
     return true;
   }
+
+  if (
+    typeof objA !== "object" ||
+    objA === null ||
+    typeof objB !== "object" ||
+    objB === null
+  ) {
+    return false;
+  }
+
   const keysA = Object.keys(objA);
   const keysB = Object.keys(objB);
+
   if (keysA.length !== keysB.length) {
     return false;
   }
 
-  for (const key of keysA) {
-    if (!objB.hasOwnProperty(key) || objA[key] !== objB[key]) {
+  // Test for A's keys different from B.
+  // tslint:disable-next-line:prefer-for-of
+  for (let i = 0; i < keysA.length; i++) {
+    if (
+      !Object.prototype.hasOwnProperty.call(objB, keysA[i]) ||
+      !Object.is(objA[keysA[i]], objB[keysA[i]])
+    ) {
       return false;
     }
   }
+
   return true;
 };
 
@@ -76,6 +101,7 @@ export const connect: Connect<any> = <P extends {}>(
     private _renderFunc: any;
     private _watch: Watch;
     private _dispatch: Dispatch;
+    private _createPluginDispatch: (name: string) => PluginDispatch<any>;
     private _state: any;
 
     private _viewCtx: any;
@@ -121,15 +147,19 @@ export const connect: Connect<any> = <P extends {}>(
       };
 
       this._watch = x => x;
-      this._dispatch = func => (...args) =>
+
+      const createDispatch = (name: string) => func => (...args) =>
         this.store.exec(
           {
-            id: this.name,
+            id: name,
             parentId: null,
           },
           func,
           ...args,
         );
+
+      this._createPluginDispatch = createDispatch;
+      this._dispatch = createDispatch(this.name);
 
       this._renderFunc = (props: any): any => {
         return (func as ((args: any) => (props: any) => any))(this._viewCtx)(
@@ -220,11 +250,15 @@ export const connect: Connect<any> = <P extends {}>(
 
       this.store.plugins.forEach(p => {
         if (p.prepareViewCtx) {
+          (ctx as any).dispatch = this._createPluginDispatch(p.name);
+
           p.prepareViewCtx(
-            ctx,
+            {
+              ctx,
+              universe: this.store.universe,
+              comp: this.comp,
+            },
             this.store.config,
-            this.store.universe,
-            this.comp,
           );
         }
       });

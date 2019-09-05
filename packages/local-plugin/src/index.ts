@@ -35,11 +35,13 @@ const setLocalStorage = (key: string, value: any) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
-const prepareActionCtx = <T>(
-  ctx: ActionCtx<T>,
-  _config: Config<T>,
-  universe: Universe<T>,
-) => {
+const prepareActionCtx = <T>({
+  ctx,
+  universe,
+}: {
+  ctx: ActionCtx<T>;
+  universe: Universe<T>;
+}) => {
   ctx.local = new Proxy(
     {},
     {
@@ -56,11 +58,7 @@ const prepareActionCtx = <T>(
   ) as Partial<T>;
 };
 
-const prepareViewCtx = <T>(
-  ctx: ViewCtx<T>,
-  _config: Config<T>,
-  _universe: Universe<T>,
-) => {
+const prepareViewCtx = <T>({ ctx }: { ctx: ViewCtx<T> }) => {
   ctx.local = createUniverseWatcher("local");
 };
 
@@ -70,6 +68,7 @@ const localPlugin = <T>(): ProdoPlugin<
   ActionCtx<T>,
   ViewCtx<T>
 > => ({
+  name: "local",
   init,
   prepareActionCtx,
   prepareViewCtx,
