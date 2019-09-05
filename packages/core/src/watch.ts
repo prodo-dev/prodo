@@ -75,7 +75,7 @@ export const unsubscribe = (
 };
 
 export const get = (universe: any, pathKey: string): any =>
-  splitPath(pathKey).reduce((x: any, y: any) => x[y], universe);
+  splitPath(pathKey).reduce((x: any, y: any) => x && x[y], universe);
 
 export const submitPatches = (
   store: Store<any, any>,
@@ -86,22 +86,22 @@ export const submitPatches = (
 
   patches.forEach(({ path }) => {
     let subtree = store.watchTree;
-    // tslint:disable-next-line
+    // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < path.length; i += 1) {
       const key = path[i];
-
       if (!subtree.children[key]) {
         break;
       }
 
       subtree = subtree.children[key];
-      Array.from(subtree.esubs).forEach(x => callbacksSet.add(x));
+      Array.from(i === path.length - 1 ? subtree.subs : subtree.esubs).forEach(
+        x => callbacksSet.add(x),
+      );
     }
   });
 
   const comps: { [key: string]: any } = {};
   const compIds: number[] = [];
-
   Array.from(callbacksSet)
     .sort((x: Node, y: Node) => x.compId - y.compId)
     .forEach((x: Node) => {
