@@ -5,6 +5,7 @@ export interface Local<T> {
 }
 
 export interface Config<T> {
+  mockLocal?: boolean;
   initLocal?: T;
 }
 export type Universe<T> = Local<T>;
@@ -12,10 +13,17 @@ export type ActionCtx<T> = Local<T>;
 export type ViewCtx<T> = Local<T>;
 
 const init = <T>(config: Config<T>, universe: Universe<T>) => {
-  universe.local = Object.keys(localStorage).reduce(
-    (acc, key) => ({ ...acc, [key]: JSON.parse(localStorage.getItem(key)) }),
-    {},
-  );
+  if (config.mockLocal && !config.initLocal) {
+    throw new Error("initLocal is required if you are mocking local storage");
+  }
+
+  universe.local = {};
+  if (!config.mockLocal) {
+    universe.local = Object.keys(localStorage).reduce(
+      (acc, key) => ({ ...acc, [key]: JSON.parse(localStorage.getItem(key)) }),
+      {},
+    );
+  }
 
   if (config.initLocal) {
     Object.keys(config.initLocal).forEach(key => {
@@ -26,30 +34,32 @@ const init = <T>(config: Config<T>, universe: Universe<T>) => {
   }
 };
 
-const readLocalStorage = (key: string): any => {
-  const item = localStorage.getItem[key];
-  return JSON.parse(item);
-};
-
-const setLocalStorage = (key: string, value: any) => {
-  localStorage.setItem(key, JSON.stringify(value));
-};
-
-const prepareActionCtx = <T>({
-  ctx,
-  universe,
-}: {
-  ctx: ActionCtx<T>;
-  universe: Universe<T>;
-}) => {
+const prepareActionCtx = <T>(
+  {
+    ctx,
+    universe,
+  }: {
+    ctx: ActionCtx<T>;
+    universe: Universe<T>;
+  },
+  config: Config<T>,
+) => {
   ctx.local = new Proxy(
     {},
     {
       get(_target, key) {
-        return readLocalStorage(key.toString());
+        if (config.mockLocal) {
+          return config.initLocal[key.toString()];
+        }
+
+        const item = localStorage.getItem[key.toString()];
+        return JSON.parse(item);
       },
       set(_target, key, value) {
-        setLocalStorage(key.toString(), value);
+        if (!config.mockLocal) {
+          localStorage.setItem(key.toString(), JSON.stringify(value));
+        }
+
         universe.local[key.toString()] = value;
 
         return true;

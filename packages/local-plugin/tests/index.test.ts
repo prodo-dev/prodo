@@ -12,21 +12,21 @@ const setCount = model.action(({ local }) => (value: number) => {
 });
 
 describe("local plugin", () => {
-  it.skip("inits local storage with init value", async () => {
+  it("inits local storage with init value", async () => {
     const store = model.createStore({
       initState: {},
       initLocal: { count: 10 },
-      // mockLocal: true,
+      mockLocal: true,
     });
 
     expect(store.universe.local.count).toBe(10);
   });
 
-  it.skip("sets local storage value", async () => {
+  it("sets local storage value", async () => {
     const store = model.createStore({
       initState: {},
       initLocal: { count: 0 },
-      // mockLocal: true,
+      mockLocal: true,
     });
 
     expect(store.universe.local.count).toBe(0);
