@@ -86,12 +86,10 @@ export const createStore = <State>(
 
         plugins.forEach(p => {
           if (p.prepareActionCtx) {
+            (ctx as any).rootDispatch = createRootDispatch(p.name);
             p.prepareActionCtx(
               {
-                ctx: {
-                  ...(ctx as any),
-                  rootDispatch: createRootDispatch(p.name),
-                },
+                ctx,
                 universe: u,
                 event,
               },

@@ -247,9 +247,11 @@ export const connect: Connect<any> = <P extends {}>(
 
       this.store.plugins.forEach(p => {
         if (p.prepareViewCtx) {
+          (ctx as any).dispatch = this._createPluginDispatch(p.name);
+
           p.prepareViewCtx(
             {
-              ctx: { ...ctx, dispatch: this._createPluginDispatch(p.name) },
+              ctx,
               universe: this.store.universe,
               comp: this.comp,
             },
