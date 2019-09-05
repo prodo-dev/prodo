@@ -4,9 +4,9 @@ import { stream } from "./streams";
 import {
   BaseStore,
   Origin,
+  PluginDispatch,
   ProdoPlugin,
   WatchTree,
-  PluginDispatch,
 } from "./types";
 
 const initPlugins = (
