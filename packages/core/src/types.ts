@@ -25,6 +25,7 @@ export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
 }
 
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
+  name: string;
   init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
     env: {
@@ -42,6 +43,7 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
 
 export interface PluginActionCtx<ActionCtx> {
   dispatch: PluginDispatch<ActionCtx>;
+  rootDispatch: PluginDispatch<ActionCtx>;
 }
 
 export interface PluginViewCtx<ActionCtx> {

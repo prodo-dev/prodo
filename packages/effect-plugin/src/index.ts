@@ -65,6 +65,7 @@ const effectPlugin: ProdoPlugin<
     test: number;
   }
 > = {
+  name: "effect",
   prepareActionCtx,
 };
 

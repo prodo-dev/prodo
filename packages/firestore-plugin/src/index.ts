@@ -303,6 +303,7 @@ const firestorePlugin = <T>(): ProdoPlugin<
   FirestoreActionCtx<T>,
   FirestoreViewCtx<T>
 > => ({
+  name: "firestore",
   init,
   prepareActionCtx,
   prepareViewCtx: prepareViewCtx({}),

@@ -100,6 +100,7 @@ const localPlugin = <T>(): ProdoPlugin<
   Local<T>,
   Local<T>
 > => ({
+  name: "local",
   init,
   prepareActionCtx,
   prepareViewCtx,

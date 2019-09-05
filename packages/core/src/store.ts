@@ -1,7 +1,13 @@
 import produce from "immer";
 import { completeEvent, startEvent } from "./events";
 import { stream } from "./streams";
-import { BaseStore, Origin, ProdoPlugin, WatchTree } from "./types";
+import {
+  BaseStore,
+  Origin,
+  ProdoPlugin,
+  WatchTree,
+  PluginDispatch,
+} from "./types";
 
 const initPlugins = (
   universe: any,
@@ -71,9 +77,26 @@ export const createStore = <State>(
           },
         };
 
+        const createRootDispatch = (name: string): PluginDispatch<any> => <
+          A extends any[]
+        >(
+          func: (ctx: any) => (...args: A) => void,
+        ) => (...args) =>
+          store.exec({ id: name, parentId: null }, func as any, ...args);
+
         plugins.forEach(p => {
           if (p.prepareActionCtx) {
-            p.prepareActionCtx({ ctx, universe: u, event }, config);
+            p.prepareActionCtx(
+              {
+                ctx: {
+                  ...(ctx as any),
+                  rootDispatch: createRootDispatch(p.name),
+                },
+                universe: u,
+                event,
+              },
+              config,
+            );
           }
         });
 

@@ -72,6 +72,7 @@ const randomPlugin = (): ProdoPlugin<
   RandomActionCtx,
   RandomViewCtx
 > => ({
+  name: "random",
   init,
   prepareActionCtx,
   prepareViewCtx,
