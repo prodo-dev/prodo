@@ -5,7 +5,7 @@ import { Dispatch, Model, ProdoPlugin, Watch } from "./types";
 export const createModel = <State>(): Model<
   { initState: State },
   { state: State },
-  { state: State; dispatch: Dispatch; },
+  { state: State; dispatch: Dispatch },
   { state: State; dispatch: Dispatch; watch: Watch }
 > => {
   const plugins: Array<ProdoPlugin<any, any, any, any>> = [];

@@ -1,9 +1,9 @@
 import * as React from "react";
-import { model } from "./model";
+import { model, Time } from "./model";
 
-const timer = (dateFn: () => number) => {
+const timer = (dateFn: () => Time) => {
   return {
-    subscribe: (cb: (value: number) => void) => {
+    subscribe: (cb: (value: Time) => void) => {
       const interval = setInterval(() => {
         cb(dateFn());
       }, 100);
@@ -15,8 +15,15 @@ const timer = (dateFn: () => number) => {
   };
 };
 
-export const setupStreams = model.action(() => () => {
-  timer(() => new Date().getSeconds());
+export const setupStreams = model.action(({ streams }) => () => {
+  streams.time = timer(() => {
+    const date = new Date();
+    return {
+      hours: date.getHours(),
+      minutes: date.getMinutes(),
+      seconds: date.getSeconds(),
+    };
+  });
 });
 
 const timeToString = (n: number): string => {
@@ -25,22 +32,25 @@ const timeToString = (n: number): string => {
 };
 
 export default model.connect(
-  ({ state, watch, dispatch }) => () => {
+  ({ streams, watch, dispatch }) => () => {
     React.useEffect(() => {
       dispatch(setupStreams)();
     }, []);
 
+    // FIXME: without the `||` this should not typecheck
+    const { hours, minutes, seconds } = watch(streams.time) || {
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    };
+
     return (
       <div className="clock">
-        <span className="time hours">{timeToString(watch(state.hours))}</span>
+        <span className="time hours">{timeToString(hours)}</span>
         {" : "}
-        <span className="time minutes">
-          {timeToString(watch(state.minutes))}
-        </span>
+        <span className="time minutes">{timeToString(minutes)}</span>
         {" : "}
-        <span className="time seconds">
-          {timeToString(watch(state.seconds))}
-        </span>
+        <span className="time seconds">{timeToString(seconds)}</span>
       </div>
     );
   },
