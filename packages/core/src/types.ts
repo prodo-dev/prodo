@@ -30,13 +30,17 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   prepareActionCtx?: (
     env: {
       ctx: PluginActionCtx<ActionCtx> & ActionCtx;
-      universe: any;
+      universe: Universe;
       event: any;
     },
     config: InitOptions,
   ) => void;
   prepareViewCtx?: (
-    env: { ctx: PluginViewCtx<ActionCtx> & ViewCtx; universe: any; comp: Comp },
+    env: {
+      ctx: PluginViewCtx<ActionCtx> & ViewCtx;
+      universe: Universe;
+      comp: Comp;
+    },
     config: InitOptions,
   ) => void;
 }

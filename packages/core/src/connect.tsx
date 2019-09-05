@@ -14,19 +14,22 @@ import { subscribe, unsubscribe } from "./watch";
 
 export const ProdoContext = React.createContext<Store<any, any>>(null as any);
 
-const readProxy = (path: string[] = []): any =>
-  new Proxy(
-    {},
-    {
-      get: (_target: any, key: string) =>
-        key === "_path" ? path : readProxy(path.concat([key])),
-    },
-  );
+const pathSymbol = Symbol("path");
+export const createUniverseWatcher = (universePath: string) => {
+  const readProxy = (path: string[]): any =>
+    new Proxy(
+      {},
+      {
+        get: (_target, key) =>
+          key === pathSymbol ? path : readProxy(path.concat([key.toString()])),
+      },
+    );
 
-const valueExtractor = (store: any, watched: any, prefixPath: any = []) => (
-  x: any,
-) => {
-  const path = prefixPath.concat(x._path);
+  return readProxy([universePath]);
+};
+
+const valueExtractor = (store: any, watched: any) => (x: any) => {
+  const path = x[pathSymbol];
   const pathKey = joinPath(path);
   const value = path.reduce((x: any, y: any) => x[y], store.universe);
   watched[pathKey] = value;
@@ -235,8 +238,8 @@ export const connect: Connect<any> = <P extends {}>(
 
     private createViewCtx() {
       this.store = this.context;
-      this._state = readProxy();
-      this._watch = valueExtractor(this.store, this.watched, ["state"]);
+      this._state = createUniverseWatcher("state");
+      this._watch = valueExtractor(this.store, this.watched);
 
       const ctx = {
         dispatch: this._dispatch,
