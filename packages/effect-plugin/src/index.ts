@@ -25,10 +25,8 @@ export interface EffectActionCtx {
 }
 
 const prepareActionCtx = (
-  ctx: EffectActionCtx,
+  { ctx, event }: { ctx: EffectActionCtx; event: EffectEvent },
   config: EffectConfig,
-  _universe: any,
-  event: EffectEvent,
 ) => {
   event.recordedEffects = [];
 
@@ -67,6 +65,7 @@ const effectPlugin: ProdoPlugin<
     test: number;
   }
 > = {
+  name: "effect",
   prepareActionCtx,
 };
 

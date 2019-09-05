@@ -21,12 +21,13 @@ const init = (_config: any, universe: RandomUniverse) => {
   universe.random = {};
 };
 
-const prepareActionCtx = (
-  ctx: RandomActionCtx,
-  _config: unknown,
-  universe: RandomUniverse,
-  _event: unknown,
-) => {
+const prepareActionCtx = ({
+  ctx,
+  universe,
+}: {
+  ctx: RandomActionCtx;
+  universe: RandomUniverse;
+}) => {
   ctx.random = universe.random;
 };
 
@@ -41,9 +42,14 @@ const updateRandomAction = ({ random }: RandomActionCtx) => (
 };
 
 const prepareViewCtx = (
-  ctx: PluginViewCtx<RandomActionCtx> & RandomViewCtx,
+  {
+    ctx,
+    universe,
+  }: {
+    ctx: PluginViewCtx<RandomActionCtx> & RandomViewCtx;
+    universe: RandomUniverse;
+  },
   config: RandomConfig,
-  universe: RandomUniverse,
 ) => {
   ctx.random = (key: string) => {
     if (!universe.random[key]) {
@@ -66,6 +72,7 @@ const randomPlugin = (): ProdoPlugin<
   RandomActionCtx,
   RandomViewCtx
 > => ({
+  name: "random",
   init,
   prepareActionCtx,
   prepareViewCtx,

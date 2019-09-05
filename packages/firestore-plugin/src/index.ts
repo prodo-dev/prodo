@@ -9,7 +9,6 @@ import {
   FetchData,
   FirestoreActionCtx,
   FirestoreConfig,
-  FirestoreCtx,
   FirestoreUniverse,
   FirestoreViewCtx,
   Query,
@@ -254,12 +253,15 @@ const createViewCollection = <T>(
   };
 };
 
-const prepareViewCtx = <T>(refCounts: RefCounts) => (
-  ctx: FirestoreViewCtx<T>,
-  _config: FirestoreConfig<T>,
-  universe: FirestoreUniverse,
-  comp: Comp,
-) => {
+const prepareViewCtx = <T>(refCounts: RefCounts) => ({
+  ctx,
+  universe,
+  comp,
+}: {
+  ctx: FirestoreViewCtx<T>;
+  universe: FirestoreUniverse;
+  comp: Comp;
+}) => {
   ctx.db = new Proxy(
     {},
     {
@@ -276,11 +278,13 @@ const prepareViewCtx = <T>(refCounts: RefCounts) => (
   ) as T;
 };
 
-const prepareActionCtx = <T>(
-  ctx: FirestoreActionCtx<T>,
-  _config: FirestoreConfig<T>,
-  universe: FirestoreUniverse,
-) => {
+const prepareActionCtx = <T>({
+  ctx,
+  universe,
+}: {
+  ctx: FirestoreActionCtx<T>;
+  universe: FirestoreUniverse;
+}) => {
   ctx.db_cache = universe.db_cache;
 
   ctx.db = new Proxy(
@@ -296,9 +300,10 @@ const prepareActionCtx = <T>(
 const firestorePlugin = <T>(): ProdoPlugin<
   FirestoreConfig<T>,
   FirestoreUniverse,
-  FirestoreCtx<T>,
-  FirestoreCtx<T>
+  FirestoreActionCtx<T>,
+  FirestoreViewCtx<T>
 > => ({
+  name: "firestore",
   init,
   prepareActionCtx,
   prepareViewCtx: prepareViewCtx({}),

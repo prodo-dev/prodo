@@ -29,10 +29,15 @@ const init = <T>(config: LocalConfig<T>, universe: Local<T>) => {
 };
 
 const prepareActionCtx = <T>(
-  ctx: Local<T>,
+  {
+    ctx,
+    universe,
+  }: {
+    ctx: Local<T>;
+
+    universe: Local<T>;
+  },
   config: LocalConfig<T>,
-  universe: Local<T>,
-  _event: any,
 ) => {
   let item: T;
   try {
@@ -71,9 +76,8 @@ const prepareActionCtx = <T>(
 };
 
 const prepareViewCtx = <T>(
-  ctx: Local<T>,
+  { ctx, universe }: { ctx: Local<T>; universe: Local<T> },
   config: LocalConfig<T>,
-  universe: Local<T>,
 ) => {
   let item: T;
   try {
@@ -96,6 +100,7 @@ const localPlugin = <T>(): ProdoPlugin<
   Local<T>,
   Local<T>
 > => ({
+  name: "local",
   init,
   prepareActionCtx,
   prepareViewCtx,
