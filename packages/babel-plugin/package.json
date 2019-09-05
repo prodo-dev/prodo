@@ -1,5 +1,5 @@
 {
-  "name": "@prodo/babel",
+  "name": "@prodo/babel-plugin",
   "version": "0.0.1",
   "main": "lib/index.js",
   "license": "MIT",

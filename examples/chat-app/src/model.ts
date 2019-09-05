@@ -1,5 +1,5 @@
 import { createModel } from "@prodo/core";
-import firestorePlugin, { Collection } from "@prodo/firestore-plugin";
+import firestorePlugin, { Collection } from "@prodo/firestore";
 
 export interface Message {
   text: string;

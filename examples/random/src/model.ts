@@ -1,5 +1,5 @@
 import { createModel } from "@prodo/core";
-import randomPlugin from "@prodo/random-plugin";
+import randomPlugin from "@prodo/random";
 
 export interface State {
   count: number;
