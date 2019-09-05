@@ -27,16 +27,16 @@ export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
-    ctx: PluginActionCtx<ActionCtx> & ActionCtx,
+    env: {
+      ctx: PluginActionCtx<ActionCtx> & ActionCtx;
+      universe: any;
+      event: any;
+    },
     config: InitOptions,
-    universe: any,
-    event: any,
   ) => void;
   prepareViewCtx?: (
-    ctx: PluginViewCtx<ActionCtx> & ViewCtx,
+    env: { ctx: PluginViewCtx<ActionCtx> & ViewCtx; universe: any; comp: Comp },
     config: InitOptions,
-    universe: any,
-    comp: Comp,
   ) => void;
 }
 

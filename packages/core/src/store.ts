@@ -73,7 +73,7 @@ export const createStore = <State>(
 
         plugins.forEach(p => {
           if (p.prepareActionCtx) {
-            p.prepareActionCtx(ctx, config, u, event);
+            p.prepareActionCtx({ ctx, universe: u, event }, config);
           }
         });
 
