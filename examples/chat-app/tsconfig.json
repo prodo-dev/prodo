@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.ui.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/firestore-plugin" }
+  ]
+}

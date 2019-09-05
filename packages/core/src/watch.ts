@@ -53,6 +53,14 @@ export const unsubscribe = (
     const prev = tree;
 
     tree = tree.children[pathKey];
+
+    if (node.unsubscribe) {
+      node.unsubscribe({
+        name: node.name,
+        compId: node.compId,
+      });
+    }
+
     tree.subs.delete(node);
 
     // there are no more subscribers to children of this tree

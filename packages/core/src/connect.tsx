@@ -78,7 +78,10 @@ export const connect: Connect<any> = <P extends {}>(
     private compId: number;
     private comp: Comp;
     private name: string;
-    private subscribe: (path: string[]) => void;
+    private subscribe: (
+      path: string[],
+      unsubscribe?: (comp: Comp) => void,
+    ) => void;
     private unsubscribe: (path: string[]) => void;
     private firstTime: boolean;
     private status: { unmounted: boolean };
@@ -110,12 +113,13 @@ export const connect: Connect<any> = <P extends {}>(
         compId: this.compId,
       };
 
-      this.subscribe = (path: string[]) => {
+      this.subscribe = (path: string[], unsubscribe?: (comp: Comp) => void) => {
         const pathKey = joinPath(path);
         const node: Node = {
           pathKey,
           status: this.status,
           setState,
+          unsubscribe,
           ...this.comp,
         };
 
@@ -230,7 +234,12 @@ export const connect: Connect<any> = <P extends {}>(
 
       this.store.plugins.forEach(p => {
         if (p.prepareViewCtx) {
-          p.prepareViewCtx(ctx, this.store.config, this.store.universe);
+          p.prepareViewCtx(
+            ctx,
+            this.store.config,
+            this.store.universe,
+            this.comp,
+          );
         }
       });
 

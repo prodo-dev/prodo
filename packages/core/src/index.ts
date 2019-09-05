@@ -3,6 +3,7 @@ import { createModel } from "./model";
 import {
   Comp,
   PluginActionCtx,
+  PluginDispatch,
   PluginViewCtx,
   ProdoPlugin,
   Store,
@@ -11,10 +12,11 @@ import {
 export const ProdoProvider = ProdoContext.Provider;
 
 export {
-  createModel,
-  Store,
-  ProdoPlugin,
   Comp,
-  PluginViewCtx,
   PluginActionCtx,
+  PluginDispatch,
+  PluginViewCtx,
+  ProdoPlugin,
+  Store,
+  createModel,
 };
