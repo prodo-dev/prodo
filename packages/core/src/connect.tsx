@@ -1,24 +1,35 @@
 import * as React from "react";
 import logger from "./logger";
-import { Comp, Connect, Dispatch, Node, Store, Watch } from "./types";
+import {
+  Comp,
+  Connect,
+  Dispatch,
+  Node,
+  PluginDispatch,
+  Store,
+  Watch,
+} from "./types";
 import { joinPath, splitPath } from "./utils";
 import { subscribe, unsubscribe } from "./watch";
 
 export const ProdoContext = React.createContext<Store<any, any>>(null as any);
 
-const readProxy = (path: string[] = []): any =>
-  new Proxy(
-    {},
-    {
-      get: (_target: any, key: string) =>
-        key === "_path" ? path : readProxy(path.concat([key])),
-    },
-  );
+const pathSymbol = Symbol("path");
+export const createUniverseWatcher = (universePath: string) => {
+  const readProxy = (path: string[]): any =>
+    new Proxy(
+      {},
+      {
+        get: (_target, key) =>
+          key === pathSymbol ? path : readProxy(path.concat([key.toString()])),
+      },
+    );
 
-const valueExtractor = (store: any, watched: any, prefixPath: any = []) => (
-  x: any,
-) => {
-  const path = prefixPath.concat(x._path);
+  return readProxy([universePath]);
+};
+
+const valueExtractor = (store: any, watched: any) => (x: any) => {
+  const path = x[pathSymbol];
   const pathKey = joinPath(path);
   const value = path.reduce((x: any, y: any) => x[y], store.universe);
   watched[pathKey] = value;
@@ -90,6 +101,7 @@ export const connect: Connect<any> = <P extends {}>(
     private _renderFunc: any;
     private _watch: Watch;
     private _dispatch: Dispatch;
+    private _createPluginDispatch: (name: string) => PluginDispatch<any>;
     private _state: any;
 
     private _viewCtx: any;
@@ -135,15 +147,19 @@ export const connect: Connect<any> = <P extends {}>(
       };
 
       this._watch = x => x;
-      this._dispatch = func => (...args) =>
+
+      const createDispatch = (name: string) => func => (...args) =>
         this.store.exec(
           {
-            id: this.name,
+            id: name,
             parentId: null,
           },
           func,
           ...args,
         );
+
+      this._createPluginDispatch = createDispatch;
+      this._dispatch = createDispatch(this.name);
 
       this._renderFunc = (props: any): any => {
         return (func as ((args: any) => (props: any) => any))(this._viewCtx)(
@@ -222,8 +238,8 @@ export const connect: Connect<any> = <P extends {}>(
 
     private createViewCtx() {
       this.store = this.context;
-      this._state = readProxy();
-      this._watch = valueExtractor(this.store, this.watched, ["state"]);
+      this._state = createUniverseWatcher("state");
+      this._watch = valueExtractor(this.store, this.watched);
 
       const ctx = {
         dispatch: this._dispatch,
@@ -234,11 +250,15 @@ export const connect: Connect<any> = <P extends {}>(
 
       this.store.plugins.forEach(p => {
         if (p.prepareViewCtx) {
+          (ctx as any).dispatch = this._createPluginDispatch(p.name);
+
           p.prepareViewCtx(
-            ctx,
+            {
+              ctx,
+              universe: this.store.universe,
+              comp: this.comp,
+            },
             this.store.config,
-            this.store.universe,
-            this.comp,
           );
         }
       });

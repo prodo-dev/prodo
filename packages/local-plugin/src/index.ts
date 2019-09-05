@@ -1,101 +1,84 @@
-import { ProdoPlugin } from "@prodo/core";
-
-export interface LocalConfig<T> {
-  initLocal?: T;
-  mockLocal?: boolean;
-}
+import { createUniverseWatcher, ProdoPlugin } from "@prodo/core";
 
 export interface Local<T> {
-  local: T;
+  local: Partial<T>;
 }
 
-const localKey = "prodo-local-storage";
-const init = <T>(config: LocalConfig<T>, universe: Local<T>) => {
-  if (config.mockLocal) {
-    if (!config.initLocal) {
-      throw new Error(
-        "[local plugin]: Need to provide initLocal when mock is true.",
-      );
-    }
+export interface Config<T> {
+  mockLocal?: boolean;
+  initLocal?: T;
+}
+export type Universe<T> = Local<T>;
+export type ActionCtx<T> = Local<T>;
+export type ViewCtx<T> = Local<T>;
 
-    universe.local = config.initLocal;
-  } else {
-    const item = localStorage.getItem(localKey);
-    if (config.initLocal && item == null) {
-      localStorage.setItem(localKey, JSON.stringify(config.initLocal));
-      universe.local = config.initLocal;
-    }
+const init = <T>(config: Config<T>, universe: Universe<T>) => {
+  if (config.mockLocal && !config.initLocal) {
+    throw new Error("initLocal is required if you are mocking local storage");
+  }
+
+  universe.local = {};
+  if (!config.mockLocal) {
+    universe.local = Object.keys(localStorage).reduce(
+      (acc, key) => ({ ...acc, [key]: JSON.parse(localStorage.getItem(key)) }),
+      {},
+    );
+  }
+
+  if (config.initLocal) {
+    Object.keys(config.initLocal).forEach(key => {
+      if (!universe.local[key]) {
+        universe.local[key] = config.initLocal[key];
+      }
+    });
   }
 };
 
 const prepareActionCtx = <T>(
-  ctx: Local<T>,
-  config: LocalConfig<T>,
-  universe: Local<T>,
-  _event: any,
+  {
+    ctx,
+    universe,
+  }: {
+    ctx: ActionCtx<T>;
+    universe: Universe<T>;
+  },
+  config: Config<T>,
 ) => {
-  let item: T;
-  try {
-    item = config.mockLocal
-      ? universe.local
-      : JSON.parse(localStorage.getItem(localKey));
-  } catch (e) {
-    if (!config.initLocal) {
-      throw e;
-    }
-    item = config.initLocal;
-  }
-
-  universe.local = item;
-
-  const createLocalProxy = (target: any) =>
-    new Proxy(target, {
-      get(target, key) {
-        if (target[key] && typeof target[key] === "object") {
-          return createLocalProxy(target[key]);
+  ctx.local = new Proxy(
+    {},
+    {
+      get(_target, key) {
+        if (config.mockLocal) {
+          return config.initLocal[key.toString()];
         }
 
-        return target[key];
+        const item = localStorage.getItem[key.toString()];
+        return JSON.parse(item);
       },
-      set(target, key, value) {
-        target[key] = value;
-
+      set(_target, key, value) {
         if (!config.mockLocal) {
-          localStorage.setItem(localKey, JSON.stringify(universe.local));
+          localStorage.setItem(key.toString(), JSON.stringify(value));
         }
+
+        universe.local[key.toString()] = value;
+
         return true;
       },
-    });
-
-  ctx.local = createLocalProxy(item);
+    },
+  ) as Partial<T>;
 };
 
-const prepareViewCtx = <T>(
-  ctx: Local<T>,
-  config: LocalConfig<T>,
-  universe: Local<T>,
-) => {
-  let item: T;
-  try {
-    item = config.mockLocal
-      ? universe.local
-      : JSON.parse(localStorage.getItem(localKey));
-  } catch (e) {
-    if (!config.initLocal) {
-      throw e;
-    }
-    item = config.initLocal;
-  }
-
-  ctx.local = item;
+const prepareViewCtx = <T>({ ctx }: { ctx: ViewCtx<T> }) => {
+  ctx.local = createUniverseWatcher("local");
 };
 
 const localPlugin = <T>(): ProdoPlugin<
-  LocalConfig<T>,
-  Local<T>,
-  Local<T>,
-  Local<T>
+  Config<T>,
+  Universe<T>,
+  ActionCtx<T>,
+  ViewCtx<T>
 > => ({
+  name: "local",
   init,
   prepareActionCtx,
   prepareViewCtx,
