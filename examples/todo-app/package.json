@@ -1,6 +1,6 @@
 {
   "name": "@prodo-example/todo-app",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,8 +10,8 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "0.0.1",
-    "@prodo/effect": "0.0.1",
+    "@prodo/core": "^0.0.1",
+    "@prodo/effect": "^0.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.9.0"
   },
