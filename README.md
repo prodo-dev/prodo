@@ -32,4 +32,4 @@ are in `packages/`. Example apps that use the framework are in `examples/`.
 ## Publishing
 
 [lerna](https://github.com/lerna/lerna) is used to publish all packages at the
-same time. To publish just run `yarn publish`.
+same time. To publish just run `lerna publish`.

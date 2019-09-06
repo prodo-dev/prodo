@@ -9,8 +9,7 @@
     "clean": "wsrun clean",
     "test": "wsrun --serial --exclude-missing test",
     "lint": "wsrun --serial --exclude-missing lint",
-    "verify": "set -ex; yarn install; yarn build; yarn test; yarn lint",
-    "publish": "lerna publish"
+    "verify": "set -ex; yarn install; yarn build; yarn test; yarn lint"
   },
   "workspaces": [
     "examples/*",
