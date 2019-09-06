@@ -1,5 +1,5 @@
 import { createModel } from "@prodo/core";
-import localPlugin from "@prodo/local-plugin";
+import localPlugin from "@prodo/local";
 
 export interface Local {
   center: [number, number];

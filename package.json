@@ -9,13 +9,15 @@
     "clean": "wsrun clean",
     "test": "wsrun --serial --exclude-missing test",
     "lint": "wsrun --serial --exclude-missing lint",
-    "verify": "set -ex; yarn install; yarn build; yarn test; yarn lint"
+    "verify": "set -ex; yarn install; yarn build; yarn test; yarn lint",
+    "publish": "lerna publish"
   },
   "workspaces": [
     "examples/*",
     "packages/*"
   ],
   "devDependencies": {
+    "lerna": "^3.16.4",
     "prettier": "^1.17.1",
     "tslint": "^5.17.0",
     "tslint-config-prettier": "^1.18.0",
