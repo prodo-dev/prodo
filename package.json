@@ -24,5 +24,8 @@
     "tslint-react": "^4.0.0",
     "typescript": "^3.5.1",
     "wsrun": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
