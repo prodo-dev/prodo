@@ -67,7 +67,7 @@ export const createStore = <State>(
             ...args: A
           ) => {
             event.nextActions.push({
-              func,
+              func: func as any,
               args,
               origin: {
                 parentId: event.id,

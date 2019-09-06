@@ -1,4 +1,4 @@
-import { applyPatches } from "immer";
+import { applyPatches, Patch } from "immer";
 import { Event, Origin, Store, streamSymbol } from "./types";
 import { joinPath } from "./utils";
 import { submitPatches } from "./watch";
@@ -59,7 +59,7 @@ export const completeEvent = (event: Event, store: Store<any, any>): void => {
 
       return patch;
     })
-    .filter(p => p !== undefined);
+    .filter(p => p !== undefined) as Patch[];
 
   const nextUniverse = applyPatches(store.universe, patches);
   store.universe = nextUniverse;

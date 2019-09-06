@@ -116,6 +116,7 @@ export const connect: Connect<any> = <P extends {}>(
       this.firstTime = true;
       this.compId = _compIdCnt++;
       this.name = name + "." + this.compId;
+      this.store = this.context;
 
       const setState = this.setState.bind(this);
       this.status = { unmounted: false };

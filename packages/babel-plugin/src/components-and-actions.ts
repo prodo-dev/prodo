@@ -26,6 +26,10 @@ const visitPossibleActionOrComponent = (
 
 export default ({ types: t }: typeof Babel) => ({
   FunctionDeclaration(path: Babel.NodePath<Babel.types.FunctionDeclaration>) {
+    if (path.node.id == null) {
+      return;
+    }
+
     const name = path.node.id.name;
     const bodyPath = path.get("body");
     visitPossibleActionOrComponent(

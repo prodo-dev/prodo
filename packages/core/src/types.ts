@@ -108,7 +108,7 @@ export interface Node extends Comp {
 export type Watch = <T>(x: T) => T;
 
 export interface Origin {
-  parentId: string;
+  parentId: string | null;
   id: string;
 }
 
