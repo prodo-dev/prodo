@@ -1,18 +1,16 @@
 import { createModel } from "@prodo/core";
+import streamPlugin, { Stream } from "@prodo/stream-plugin";
 
-export interface State {
+export interface Time {
   hours: number;
   minutes: number;
   seconds: number;
 }
 
-const now = new Date();
-export const initState: State = {
-  hours: now.getHours(),
-  minutes: now.getMinutes(),
-  seconds: now.getSeconds(),
-};
+interface Streams {
+  time?: Stream<Time>;
+}
 
-export const model = createModel<State>();
+export const model = createModel<{}>().with(streamPlugin<Streams>());
 export const { action, connect } = model;
-export const { state, stream } = model.ctx;
+export const { state } = model.ctx;

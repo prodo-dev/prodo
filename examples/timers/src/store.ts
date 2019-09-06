@@ -1,16 +1,8 @@
 import { createModel } from "@prodo/core";
+import streamPlugin, { Stream } from "@prodo/stream-plugin";
 
-interface Counter {
-  name: string;
-  value: number;
+export interface Streams {
+  [key: string]: Stream<number>;
 }
 
-export interface State {
-  counters: { [key: string]: Counter };
-}
-
-export const initState: State = {
-  counters: {},
-};
-
-export const model = createModel<State>();
+export const model = createModel<{}>().with(streamPlugin<Streams>());
