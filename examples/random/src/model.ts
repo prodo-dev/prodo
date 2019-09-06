@@ -11,4 +11,4 @@ export const initState: State = {
 
 export const model = createModel<State>().with(randomPlugin());
 export const { action, connect } = model;
-export const { state, stream, random } = model.ctx;
+export const { state, random } = model.ctx;
