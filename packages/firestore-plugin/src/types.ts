@@ -11,27 +11,54 @@ export interface FirebaseConfig {
   appId: string;
 }
 
-export interface FirestoreConfig<T> {
+export interface DBCache {
+  docs: {
+    [collectionName: string]: DocsCollection;
+  };
+  queries: {
+    [collectionName: string]: {
+      [queryName: string]: DBQuery;
+    };
+  };
+}
+
+export interface DocsCollection {
+  [id: string]: Doc;
+}
+
+export interface Doc {
+  data: any;
+  watchers: number;
+}
+
+export interface DBQuery {
+  ids: string[];
+  watchers: string[];
+  query: any;
+  state: "success" | "fetching" | "error";
+}
+
+export interface Config<T> {
   firestoreMock?: T;
   firebaseConfig: FirebaseConfig;
 }
 
-export interface FirestoreCtx<T> {
+export interface Unsubs {
+  [queryName: string]: () => void;
+}
+
+export interface Ctx<T> {
   db: T;
 }
 
-export interface FirestoreActionCtx<T>
-  extends FirestoreCtx<T>,
-    PluginActionCtx<FirestoreActionCtx<T>> {
-  db_cache: any;
+export interface ActionCtx<T> extends Ctx<T>, PluginActionCtx<ActionCtx<T>> {
+  db_cache: DBCache;
 }
 
-export interface FirestoreViewCtx<T>
-  extends FirestoreCtx<T>,
-    PluginViewCtx<FirestoreActionCtx<T>> {}
+export interface ViewCtx<T> extends Ctx<T>, PluginViewCtx<ActionCtx<T>> {}
 
-export interface FirestoreUniverse {
-  db_cache: any;
+export interface Universe {
+  db_cache: DBCache;
 }
 
 export interface RefCounts {
@@ -62,8 +89,8 @@ export interface Collection<T> {
   query: (query: Query) => Promise<Array<WithId<T>>>;
 
   // methods for react components
-  watch: (id: string) => Fetching<WithId<T>>;
-  watchAll: () => FetchAll<WithId<T>>;
+  // watch: (id: string) => Fetching<WithId<T>>;
+  watchAll: (query?: Query) => FetchAll<WithId<T>>;
 }
 
 export interface Query {
