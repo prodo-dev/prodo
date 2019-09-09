@@ -49,8 +49,11 @@ export interface Config<T> {
   firebaseConfig: FirebaseConfig;
 }
 
-export interface Unsubs {
-  [queryName: string]: () => void;
+export interface QueryRefs {
+  [queryName: string]: {
+    unsubscribe: () => void;
+    watchers: Set<string>;
+  };
 }
 
 export interface Ctx<T> {
@@ -92,19 +95,15 @@ export interface Collection<T> {
   set: (id: string, value: T) => Promise<void>;
   delete: (id: string) => Promise<void>;
   insert: (value: T) => Promise<string>;
-  query: (query: Query) => Promise<Array<WithId<T>>>;
+  query: (query: Query<T>) => Promise<Array<WithId<T>>>;
 
   // methods for react components
   // watch: (id: string) => Fetching<WithId<T>>;
-  watchAll: (query?: Query) => FetchAll<WithId<T>>;
+  watchAll: (query?: Query<T>) => FetchAll<WithId<T>>;
 }
 
-export interface Query {
+export interface Query<T> {
   where: [
-    [
-      string | firebase.firestore.FieldPath,
-      firebase.firestore.WhereFilterOp,
-      any,
-    ], // field, op, value
+    [keyof T, firebase.firestore.WhereFilterOp, any], // field, op, value
   ];
 }

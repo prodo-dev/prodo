@@ -4,22 +4,23 @@ import "firebase/firestore";
 import * as _ from "lodash";
 import { createFirestoreQuery, createQueryName } from "./query";
 import {
+  ActionCtx,
   Collection,
-  FetchAll,
-  Unsubs,
+  Config,
+  DBQuery,
   Doc,
   DocChange,
-  ActionCtx,
-  DBQuery,
-  Config,
+  FetchAll,
+  Query,
+  QueryRefs,
   Universe,
   ViewCtx,
-  Query,
   WithId,
-  DocsCollection,
 } from "./types";
 
 export { Collection };
+
+(window as any).counter = 0;
 
 let firestore: firebase.firestore.Firestore;
 
@@ -33,14 +34,6 @@ const init = <T>(config: Config<T>, universe: Universe) => {
     docs: {},
     queries: {},
   };
-};
-
-export const saveData = <T>(_ctx: ActionCtx<T>) => (
-  collectionName: string,
-  docs: DocsCollection,
-) => {
-  console.log("saving data to", collectionName);
-  console.log(docs);
 };
 
 const cannotUseInAction = "Cannot use this method in an action";
@@ -101,7 +94,7 @@ const createActionCollection = <T>(
         .doc(id)
         .delete();
     },
-    query: async (query: Query): Promise<Array<WithId<T>>> => {
+    query: async (query: Query<T>): Promise<Array<WithId<T>>> => {
       const ref = createFirestoreQuery(
         firestore.collection(collectionName),
         query,
@@ -151,6 +144,12 @@ const updateDocs = <T>(ctx: ActionCtx<T>) => (
         ...existingDoc,
         watchers: existingDoc.watchers - 1,
       });
+
+      const doc = _.get(ctx.db_cache.docs, path);
+
+      if (doc.watchers <= 0) {
+        _.unset(ctx.db_cache.docs, path);
+      }
     }
   });
 };
@@ -159,7 +158,15 @@ const removeQuery = <T>(ctx: ActionCtx<T>) => (
   collectionName: string,
   queryName: string,
 ) => {
+  const dbQuery = ctx.db_cache.queries[collectionName][queryName];
   delete ctx.db_cache.queries[collectionName][queryName];
+
+  const docChanges: DocChange[] = dbQuery.ids.map(id => ({
+    id,
+    changeType: "removed",
+  }));
+
+  updateDocs(ctx)(collectionName, docChanges);
 };
 
 const updateQuery = <T>(ctx: ActionCtx<T>) => (
@@ -185,11 +192,11 @@ const updateQuery = <T>(ctx: ActionCtx<T>) => (
 };
 
 const createViewCollection = <T>(
-  unsubs: Unsubs,
+  queryRefs: QueryRefs,
   ctx: ViewCtx<T>,
   collectionName: string,
   universe: Universe,
-  _comp: Comp,
+  comp: Comp,
 ): Collection<T> => {
   return {
     get: () => {
@@ -210,7 +217,7 @@ const createViewCollection = <T>(
     query: () => {
       throw new Error(cannotUseInComponent);
     },
-    watchAll: (query?: Query): FetchAll<T> => {
+    watchAll: (query?: Query<T>): FetchAll<T> => {
       const queryName = createQueryName(collectionName, query);
 
       const dbQuery = _.get(universe.db_cache.queries, [
@@ -219,20 +226,17 @@ const createViewCollection = <T>(
       ]);
       const queryExists = dbQuery != null;
 
-      console.log("\n\nDB QUERY", dbQuery);
-
       // setup firestore watcher if it does not already exist
-      if (!queryExists) {
-        console.log("query does not exist");
+      if (!queryExists && !queryRefs[queryName]) {
         const ref = createFirestoreQuery(
           firestore.collection(collectionName),
           query,
         );
 
+        (window as any).counter += 1;
         const unsubscribe = ref.onSnapshot(
           snapshot => {
             const ids = snapshot.docs.map(doc => doc.id);
-            console.log(`${queryName} updated`);
 
             const docChanges: DocChange[] = snapshot
               .docChanges()
@@ -250,6 +254,7 @@ const createViewCollection = <T>(
             });
           },
           error => {
+            // tslint:disable-next-line:no-console
             console.error("onSnapshot Error", error);
             ctx.dispatch(updateQuery)(collectionName, queryName, {
               state: "error",
@@ -261,16 +266,26 @@ const createViewCollection = <T>(
           state: "fetching",
         });
 
-        unsubs[queryName] = unsubscribe;
+        queryRefs[queryName] = { unsubscribe, watchers: new Set() };
+      }
+
+      if (!queryRefs[queryName].watchers.has(comp.name)) {
+        queryRefs[queryName].watchers.add(comp.name);
       }
 
       // subscribe component to query ids and each individual id
       ctx.subscribe(
         ["db_cache", "queries", collectionName, queryName, "ids"],
-        () => {
-          console.log("unsubscribing from", queryName);
-          unsubs[queryName]();
-          ctx.dispatch(removeQuery)(collectionName, queryName);
+        (comp: Comp) => {
+          if (queryRefs[queryName]) {
+            queryRefs[queryName].watchers.delete(comp.name);
+
+            if (queryRefs[queryName].watchers.size === 0) {
+              ctx.dispatch(removeQuery)(collectionName, queryName);
+              queryRefs[queryName].unsubscribe();
+              delete queryRefs[queryName];
+            }
+          }
         },
       );
 
@@ -281,7 +296,7 @@ const createViewCollection = <T>(
       }
 
       // return data if it exists
-      if (!queryExists) {
+      if (dbQuery == null || dbQuery.state === "fetching") {
         return {
           _fetching: true,
         };
@@ -294,9 +309,10 @@ const createViewCollection = <T>(
         }
 
         // get all docs from docs cache
-        const data: Array<WithId<T>> = dbQuery.ids.map(
-          id => _.get(universe.db_cache.docs, [collectionName, id]).data,
-        );
+        const data: Array<WithId<T>> = dbQuery.ids
+          .map(id => _.get(universe.db_cache.docs, [collectionName, id]))
+          .filter(doc => doc != null)
+          .map(doc => doc.data);
 
         return {
           _fetching: false,
@@ -304,40 +320,6 @@ const createViewCollection = <T>(
           data,
         };
       }
-
-      // if (!universe.db_cache[collectionName] || !refCounts[pathKey]) {
-      //   const unsubscribe = firestore
-      //     .collection(collectionName)
-      //     .onSnapshot(snapshot => {
-      //       const docs = getDocsById(snapshot.docs);
-      //       ctx.dispatch(saveDataToCache)([collectionName], docs);
-      //     });
-
-      //   if (!refCounts[pathKey]) {
-      //     refCounts[pathKey] = {
-      //       comps: new Set(),
-      //       unsubscribe,
-      //     };
-      //   }
-      // }
-
-      // subscribeToPath(refCounts, ctx, path, comp);
-
-      // if (!universe.db_cache[collectionName]) {
-      //   return {
-      //     _fetching: true,
-      //   };
-      // } else {
-      //   const flatData = Object.values(
-      //     universe.db_cache[collectionName],
-      //   ) as Array<WithId<T>>;
-
-      //   return {
-      //     _fetching: false,
-      //     _notFound: false,
-      //     data: flatData,
-      //   };
-      // }
     },
     ref: (): firebase.firestore.CollectionReference => {
       return firestore.collection(name);
@@ -345,7 +327,7 @@ const createViewCollection = <T>(
   };
 };
 
-const prepareViewCtx = <T>(unsubs: Unsubs) => ({
+const prepareViewCtx = <T>(queryRefs: QueryRefs) => ({
   ctx,
   universe,
   comp,
@@ -359,7 +341,7 @@ const prepareViewCtx = <T>(unsubs: Unsubs) => ({
     {
       get(_target, key) {
         return createViewCollection(
-          unsubs,
+          queryRefs,
           ctx,
           key.toString(),
           universe,
