@@ -1,4 +1,4 @@
-import { createUniverseWatcher, ProdoContext } from "./connect";
+import { connect, createUniverseWatcher, ProdoContext } from "./connect";
 import { createModel } from "./model";
 import {
   Comp,
@@ -13,6 +13,7 @@ import {
 export const ProdoProvider = ProdoContext.Provider;
 
 export {
+  connect,
   Comp,
   PluginActionCtx,
   PluginDispatch,

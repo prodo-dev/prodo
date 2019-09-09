@@ -18,6 +18,5 @@ describe("store", () => {
     expect(Object.keys(store.history)).toHaveLength(0);
     expect(store.watchTree.subs.size).toBe(0);
     expect(store.watchTree.esubs.size).toBe(0);
-    expect(Object.keys(store.streamStates)).toHaveLength(0);
   });
 });

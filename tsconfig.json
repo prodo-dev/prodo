@@ -1,20 +1,21 @@
 {
   "files": [],
   "references": [
+    { "path": "examples/chat-app" },
+    { "path": "examples/clock" },
+    { "path": "examples/local-map" },
+    { "path": "examples/random" },
+    { "path": "examples/routing" },
+    { "path": "examples/timers" },
     { "path": "examples/todo-app" },
     { "path": "examples/update-testing" },
-    { "path": "examples/timers" },
-    { "path": "examples/local-map" },
-    { "path": "examples/clock" },
-    { "path": "examples/random" },
-    { "path": "examples/chat-app" },
-    { "path": "examples/routing" },
     { "path": "packages/babel-plugin" },
     { "path": "packages/core" },
     { "path": "packages/effect-plugin" },
+    { "path": "packages/firestore-plugin" },
     { "path": "packages/local-plugin" },
     { "path": "packages/random-plugin" },
-    { "path": "packages/firestore-plugin" },
-    { "path": "packages/routing-plugin" }
+    { "path": "packages/routing-plugin" },
+    { "path": "packages/stream-plugin" }
   ]
 }

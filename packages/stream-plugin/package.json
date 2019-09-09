@@ -1,8 +1,7 @@
 {
-  "name": "@prodo/firestore",
+  "name": "@prodo/stream-plugin",
   "version": "0.0.1",
   "main": "lib/index.js",
-  "private": true,
   "license": "MIT",
   "files": [
     "lib",
@@ -11,13 +10,12 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "rm -rf lib tsconfig.tsbuildinfo",
+    "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "devDependencies": {
-    "@prodo/core": "^0.0.1",
-    "@types/firebase": "^3.2.1",
+    "@prodo/core": "0.0.1",
     "@types/jest": "^24.0.18",
-    "@types/lodash": "^4.14.138",
     "@types/node": "^12.7.2",
     "@types/react": "^16.9.2",
     "@types/react-dom": "^16.9.0",
@@ -28,9 +26,5 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     }
-  },
-  "dependencies": {
-    "firebase": "^6.4.2",
-    "lodash": "^4.17.15"
   }
 }

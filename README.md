@@ -1,12 +1,6 @@
-# V2 Framework
+# Prodo
 
-This repo contains an experimental version v2 of the Prodo framework.
-
-## Architecture
-
-- `packages/core`: The main part of the framework that handles state, actions,
-  subscriptions, and connect
-- `examples/`: Example apps that use the framework
+Prodo is a full-stack framework to build apps faster.
 
 ## Running the examples
 
@@ -21,6 +15,11 @@ and open [localhost:1234](http://localhost:1234).
 To typecheck the example run `yarn build:watch` at the root of this repo. Some
 of the examples also have tests that can be run with `yarn test`.
 
+## Architecture
+
+This is a [monorepo](https://en.wikipedia.org/wiki/Monorepo). Published packages
+are in `packages/`. Example apps that use the framework are in `examples/`.
+
 ## Developing
 
 - Checkout this repo.
@@ -29,3 +28,8 @@ of the examples also have tests that can be run with `yarn test`.
   type errors.
 - Fix linting errors with `yarn lint --fix`.
 - To run a sanity check over everything, run `yarn verify`.
+
+## Publishing
+
+[lerna](https://github.com/lerna/lerna) is used to publish all packages at the
+same time. To publish just run `lerna publish`.

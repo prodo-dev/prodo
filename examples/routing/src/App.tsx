@@ -1,5 +1,5 @@
+import { Route, Switch } from "@prodo/routing-plugin";
 import * as React from "react";
-import { Route, Switch } from "react-router";
 import { redirectHome, redirectUser } from "./actions";
 import { model } from "./model";
 
@@ -11,7 +11,7 @@ const HomePage = model.connect(({ dispatch }) => () => (
 ));
 const UserPage = model.connect(({ watch, route, dispatch }) => () => (
   <div>
-    Hello {watch(route.params.username)}.
+    Hello {watch(route.path)}.
     <button onClick={() => dispatch(redirectHome)()}>Log Out</button>
   </div>
 ));

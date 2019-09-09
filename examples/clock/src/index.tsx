@@ -3,11 +3,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
-import { initState, model } from "./model";
+import { model } from "./model";
 
 import "./index.scss";
 
-const { Provider } = model.createStore({ initState });
+const { Provider } = model.createStore({ initState: {} });
 
 ReactDOM.render(
   <Provider>

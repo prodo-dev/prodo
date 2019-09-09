@@ -6,8 +6,6 @@ import {
   ProdoPlugin,
 } from "@prodo/core";
 import { createBrowserHistory, createMemoryHistory, History } from "history";
-import * as React from "react";
-import { Router } from "react-router";
 
 export interface RouteParams {
   path: string;
@@ -38,16 +36,13 @@ export interface Config {
 }
 
 const createParamString = (params?: { [key: string]: string }) => {
-  console.log({ params });
   const keys = Object.keys(params || {});
   if (keys.length === 0) {
     return "";
   }
-  return keys.reduce(
-    (acc, key) =>
-      `${acc}&${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`,
-    "?",
-  );
+  return `?${keys
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .join("&")}`;
 };
 
 const pushAction = (ctx: Routing & PluginActionCtx<Routing, Universe>) => (
@@ -58,7 +53,7 @@ const pushAction = (ctx: Routing & PluginActionCtx<Routing, Universe>) => (
   );
   ctx[universeSymbol].route = {
     path: routeParams.path,
-    params: routeParams.params,
+    params: routeParams.params || {},
   };
 };
 
@@ -70,7 +65,7 @@ const replaceAction = (ctx: Routing & PluginActionCtx<Routing, Universe>) => (
   );
   ctx[universeSymbol].route = {
     path: routeParams.path,
-    params: routeParams.params,
+    params: routeParams.params || {},
   };
 };
 
@@ -137,8 +132,9 @@ const routingPlugin: ProdoPlugin<
       ctx: Routing & PluginViewCtx<Routing, Universe>;
       universe: Universe;
     }) => prepareContext(ctx, ctx.dispatch, history, universe),
-    Provider: ({ children }) => <Router history={history}>{children}</Router>,
   };
 })();
 
 export default routingPlugin;
+
+export { Route, Switch } from "./react";
