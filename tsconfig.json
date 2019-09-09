@@ -9,6 +9,7 @@
     { "path": "examples/random" },
     { "path": "examples/chat-app" },
     { "path": "packages/babel-plugin" },
+    { "path": "packages/eslint-plugin" },
     { "path": "packages/core" },
     { "path": "packages/effect-plugin" },
     { "path": "packages/local-plugin" },
