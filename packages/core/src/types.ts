@@ -29,7 +29,7 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
     env: {
-      ctx: PluginActionCtx<ActionCtx> & ActionCtx;
+      ctx: PluginActionCtx<ActionCtx, Universe> & ActionCtx;
       universe: Universe;
       event: any;
     },
@@ -37,7 +37,7 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   ) => void;
   prepareViewCtx?: (
     env: {
-      ctx: PluginViewCtx<ActionCtx> & ViewCtx;
+      ctx: PluginViewCtx<ActionCtx, Universe> & ViewCtx;
       universe: Universe;
       comp: Comp;
     },
@@ -45,13 +45,15 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   ) => void;
 }
 
-export interface PluginActionCtx<ActionCtx> {
+export interface PluginActionCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
+  universe: Universe;
   rootDispatch: PluginDispatch<ActionCtx>;
 }
 
-export interface PluginViewCtx<ActionCtx> {
+export interface PluginViewCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
+  universe: Universe;
   subscribe: (path: string[], unsubscribe?: () => void) => void;
 }
 

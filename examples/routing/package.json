@@ -1,0 +1,37 @@
+{
+  "name": "@prodo-example/routing",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
+    "start": "parcel src/index.html",
+    "test": "jest",
+    "lint": "set -ex; tsc --build; tslint --project ."
+  },
+  "dependencies": {
+    "@prodo/core": "1.0.0",
+    "@prodo/routing-plugin": "1.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.9.0",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^9.1.3",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.2",
+    "@types/react": "^16.8.25",
+    "@types/react-dom": "^16.8.5",
+    "@types/testing-library__react": "^9.1.1",
+    "jest": "^24.9.0",
+    "parcel-bundler": "^1.12.3",
+    "sass": "^1.22.9",
+    "ts-jest": "^24.0.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  }
+}
