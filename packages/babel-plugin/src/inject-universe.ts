@@ -30,7 +30,8 @@ export default (
   bodyPath: Babel.NodePath<Babel.types.BlockStatement | Babel.types.Expression>,
   async?: boolean,
 ) => {
-  let context: Context;
+  let context: Context | null = null;
+
   bodyPath.traverse({
     Identifier(p: Babel.NodePath<Babel.types.Identifier>) {
       // Does it use `state` from `import {state} from "./model";`
@@ -49,14 +50,17 @@ export default (
                 source.value.startsWith(".") &&
                 /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
               ) {
+                const importSpecifiers = importDeclarationPath.node.specifiers.filter(
+                  specifier => t.isImportSpecifier(specifier),
+                ) as Babel.types.ImportSpecifier[];
+
                 context = {
                   importType: "specifiers",
                   importDeclarationPath: importDeclarationPath as Babel.NodePath<
                     Babel.types.ImportDeclaration
                   >,
                   universe: t.objectPattern(
-                    importDeclarationPath.node.specifiers
-                      .filter(specifier => t.isImportSpecifier(specifier))
+                    importSpecifiers
                       .filter((specifier: Babel.types.ImportSpecifier) =>
                         isInUniverse(specifier.imported.name),
                       )
@@ -117,6 +121,9 @@ export default (
     // Doesn't use the universe, so don't change anything.
     return;
   }
+
+  // https://stackoverflow.com/questions/44147937/property-does-not-exist-on-type-never
+  context = context!;
 
   rootPath.replaceWith(
     t.variableDeclaration("const", [

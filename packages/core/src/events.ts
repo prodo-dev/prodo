@@ -32,6 +32,7 @@ export const startEvent = (
 
 export const completeEvent = (event: Event, store: Store<any, any>): void => {
   const nextUniverse = applyPatches(store.universe, event.patches);
+
   store.universe = nextUniverse;
   event.nextUniverse = nextUniverse;
   submitPatches(store, store.universe, event.patches);

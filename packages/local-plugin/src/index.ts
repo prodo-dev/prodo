@@ -19,16 +19,20 @@ const init = <T>(config: Config<T>, universe: Universe<T>) => {
 
   universe.local = {};
   if (!config.mockLocal) {
-    universe.local = Object.keys(localStorage).reduce(
-      (acc, key) => ({ ...acc, [key]: JSON.parse(localStorage.getItem(key)) }),
-      {},
-    );
+    universe.local = Object.keys(localStorage).reduce((acc, key) => {
+      const item = localStorage.getItem(key);
+      if (item == null) {
+        return acc;
+      }
+
+      return { ...acc, [key]: JSON.parse(item) };
+    }, {});
   }
 
-  if (config.initLocal) {
+  if (config.initLocal != null) {
     Object.keys(config.initLocal).forEach(key => {
       if (!universe.local[key]) {
-        universe.local[key] = config.initLocal[key];
+        universe.local[key] = config.initLocal![key];
       }
     });
   }
@@ -48,7 +52,7 @@ const prepareActionCtx = <T>(
     {},
     {
       get(_target, key) {
-        if (config.mockLocal) {
+        if (config.mockLocal && config.initLocal) {
           return config.initLocal[key.toString()];
         }
 
