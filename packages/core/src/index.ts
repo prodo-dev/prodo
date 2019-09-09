@@ -6,6 +6,7 @@ import {
   PluginDispatch,
   PluginViewCtx,
   ProdoPlugin,
+  Provider,
   Store,
 } from "./types";
 
@@ -20,4 +21,5 @@ export {
   Store,
   createModel,
   createUniverseWatcher,
+  Provider,
 };

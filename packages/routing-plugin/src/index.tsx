@@ -6,10 +6,12 @@ import {
   ProdoPlugin,
 } from "@prodo/core";
 import { createBrowserHistory, createMemoryHistory, History } from "history";
+import * as React from "react";
+import { Router } from "react-router";
 
 export interface RouteParams {
   path: string;
-  params: { [key: string]: string };
+  params?: { [key: string]: string };
 }
 
 const historySymbol = Symbol("@@routing/history");
@@ -71,15 +73,6 @@ const replaceAction = (ctx: Routing & PluginActionCtx<Routing, Universe>) => (
   };
 };
 
-// const updateUniverse = (ctx: Routing & PluginActionCtx<Routing, Universe>) => (
-//   routeParams: RouteParams,
-// ) => {
-//   ctx[universeSymbol].route = {
-//     path: routeParams.path,
-//     params: routeParams.params,
-//   };
-// };
-
 const prepareContext = (
   ctx: Routing,
   dispatch: PluginDispatch<Routing>,
@@ -117,7 +110,7 @@ const routingPlugin: ProdoPlugin<
         config.routing && config.routing.testMode
           ? createMemoryHistory()
           : createBrowserHistory();
-      (window as any).myHistory = history;
+
       const currentPath = history.location.pathname;
       const searchParams = new URLSearchParams(history.location.search);
       const params: { [key: string]: string } = {};
@@ -143,6 +136,7 @@ const routingPlugin: ProdoPlugin<
       ctx: Routing & PluginViewCtx<Routing, Universe>;
       universe: Universe;
     }) => prepareContext(ctx, ctx.dispatch, history, universe),
+    Provider: ({ children }) => <Router history={history}>{children}</Router>,
   };
 })();
 

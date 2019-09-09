@@ -1,4 +1,6 @@
 import produce from "immer";
+import * as React from "react";
+import { ProdoProvider } from ".";
 import { completeEvent, startEvent } from "./events";
 import { stream } from "./streams";
 import {
@@ -6,6 +8,7 @@ import {
   Origin,
   PluginDispatch,
   ProdoPlugin,
+  Provider,
   WatchTree,
 } from "./types";
 
@@ -22,10 +25,35 @@ const initPlugins = (
     });
   });
 
+const createProvider = <State>(
+  store: BaseStore<State>,
+  plugins: Array<ProdoPlugin<any, any, any, any>>,
+): Provider =>
+  plugins.reduce(
+    (
+      next: React.ComponentType<{ children: React.ReactNode }>,
+      plugin: ProdoPlugin<any, any, any, any>,
+    ) =>
+      plugin.Provider
+        ? ({ children }: { children: React.ReactNode }) =>
+            React.createElement(plugin.Provider, {
+              children: React.createElement(next, { children }),
+            })
+        : next,
+    (({ children }: { children: React.ReactNode }) =>
+      React.createElement(ProdoProvider, {
+        value: store,
+        children,
+      })) as Provider,
+  );
+
 export const createStore = <State>(
   config: { initState: State },
   plugins: Array<ProdoPlugin<any, any, any, any>>,
-): BaseStore<State> => {
+): {
+  store: BaseStore<State>;
+  Provider: React.ComponentType<{ children: React.ReactNode }>;
+} => {
   const universe = initPlugins({ state: config.initState }, config, plugins);
 
   const watchTree: WatchTree = {
@@ -133,5 +161,7 @@ export const createStore = <State>(
     return store.universe;
   };
 
-  return store;
+  const Provider = createProvider(store, plugins);
+
+  return { store, Provider };
 };

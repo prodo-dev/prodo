@@ -17,12 +17,19 @@ export type With<InitOptions, Universe, ActionCtx, ViewCtx> = <I, U, A, V>(
 ) => Model<InitOptions & I, Universe & U, ActionCtx & A, ViewCtx & V>;
 
 export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
-  createStore: (config: InitOptions) => Store<InitOptions, Universe>;
+  createStore: (
+    config: InitOptions,
+  ) => {
+    store: Store<InitOptions, Universe>;
+    Provider: React.ComponentType<{ children: React.ReactNode }>;
+  };
   action: Action<ActionCtx>;
   connect: Connect<ViewCtx>;
   with: With<InitOptions, Universe, ActionCtx, ViewCtx>;
   ctx: ActionCtx & ViewCtx;
 }
+
+export type Provider = React.ComponentType<{ children: React.ReactNode }>;
 
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   name: string;
@@ -43,6 +50,7 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
     },
     config: InitOptions,
   ) => void;
+  Provider?: Provider;
 }
 
 export interface PluginActionCtx<ActionCtx, Universe> {
