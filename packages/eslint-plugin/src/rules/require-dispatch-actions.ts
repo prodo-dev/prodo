@@ -1,33 +1,32 @@
-import * as util from "@typescript-eslint/eslint-plugin/dist/util";
+import * as tsPluginUtil from "@typescript-eslint/eslint-plugin/dist/util";
 import {
   ParserServices,
   TSESTree,
 } from "@typescript-eslint/experimental-utils";
 import { TSNode } from "@typescript-eslint/typescript-estree";
+import { createRule } from "../utils/createRule";
 
-export default {
+export default createRule({
+  name: "require-dispatch-actions",
   meta: {
-    type: "problem",
     docs: {
-      description: "actions must be dispatched",
-      category: "Possible Errors" as
-        | "Possible Errors"
-        | "Best Practices"
-        | "Stylistic Issues"
-        | "Variables",
-      recommended: false as false | "error" | "warn",
-      url: "",
+      description: "Requires that actions must be dispatched",
+      category: "Possible Errors",
+      recommended: "error",
+      requiresTypeChecking: true,
     },
     messages: {
-      dispatchAction: "Must dispatch actions",
+      dispatch: "Must dispatch actions.",
     },
-    fixable: null,
     schema: [],
+    type: "problem",
   },
+  defaultOptions: [],
 
   create(context: any) {
-    console.log(context);
-    const parserServices: ParserServices = util.getParserServices(context);
+    const parserServices: ParserServices = tsPluginUtil.getParserServices(
+      context,
+    );
     const checker = parserServices.program.getTypeChecker();
 
     return {
@@ -36,10 +35,10 @@ export default {
         const type = checker.getTypeAtLocation(tsNode);
         context.report({
           node,
-          messageId: "actions must be dispatched",
+          messageId: "dispatch",
           data: { name: (node.callee as TSESTree.Identifier).name, type },
         });
       },
     };
   },
-};
+});

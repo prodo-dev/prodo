@@ -1,27 +1,29 @@
 import rule from "../../src/rules/require-dispatch-actions";
-import { RuleTester } from "../ruleTester";
+import { getFixturesRootDir, RuleTester } from "../ruleTester";
 
+const messageId = "dispatch";
+
+const rootDir = getFixturesRootDir();
 const ruleTester = new RuleTester({
+  parserOptions: {
+    ecmaVersion: 2018,
+    tsconfigRootDir: rootDir,
+    project: "./tsconfig.json",
+  },
   parser: "@typescript-eslint/parser",
 });
-
-const messageId = "dispatchAction";
 
 ruleTester.run("my-rule", rule, {
   valid: [
     {
-      code: "var foo = true",
+      code: "foo[bar]",
     },
   ],
 
   invalid: [
     {
-      code: "var invalidVariable = true",
-      errors: [{ messageId: "Must dispatch actions" }],
-    },
-    {
-      code: "var invalidVariable = true",
-      errors: [{ messageId: "Must dispatch actions" }],
+      code: "foo(bar)",
+      errors: [{ messageId }],
     },
   ],
 });
