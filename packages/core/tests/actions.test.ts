@@ -47,7 +47,9 @@ const add = model.action(({ state }) => (a: number, b: number) => {
 
 describe("actions", () => {
   it("has correct state after calling action", async () => {
-    const { dispatch, universe } = model.createStore({ initState });
+    const {
+      store: { dispatch, universe },
+    } = model.createStore({ initState });
 
     expect(universe.state.foo).toBe("foo");
     const finalUniverse = await dispatch(changeFoo)();
@@ -55,7 +57,9 @@ describe("actions", () => {
   });
 
   it("has correct state after calling action that calls an async action", async () => {
-    const { dispatch, universe } = model.createStore({ initState });
+    const {
+      store: { dispatch, universe },
+    } = model.createStore({ initState });
 
     expect(universe.state.foo).toBe("foo");
     const finalUniverse = await dispatch(dummy)();
@@ -63,7 +67,9 @@ describe("actions", () => {
   });
 
   it("has correct state after calling multiple actions", async () => {
-    const { dispatch, universe } = model.createStore({ initState });
+    const {
+      store: { dispatch, universe },
+    } = model.createStore({ initState });
     const state = universe.state;
 
     expect(state.count).toBe(0);
@@ -82,7 +88,9 @@ describe("actions", () => {
   });
 
   it("has correct state after calling action with multiple params", async () => {
-    const { dispatch, universe } = model.createStore({ initState });
+    const {
+      store: { dispatch, universe },
+    } = model.createStore({ initState });
 
     expect(universe.state.count).toBe(0);
     const finalUniverse = await dispatch(add)(1, 2);

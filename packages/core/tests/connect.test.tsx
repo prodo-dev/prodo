@@ -1,6 +1,6 @@
 import { fireEvent, render } from "@testing-library/react";
 import * as React from "react";
-import { createModel, ProdoProvider } from "../src";
+import { createModel } from "../src";
 
 interface State {
   foo: string;
@@ -24,9 +24,9 @@ const App = model.connect(({ state, watch, dispatch }) => () => (
 ));
 
 const renderWithProdo = (ui: React.ReactElement, initState: State) => {
-  const store = model.createStore({ initState });
+  const { store, Provider } = model.createStore({ initState });
   return {
-    ...render(<ProdoProvider value={store}>{ui}</ProdoProvider>),
+    ...render(<Provider>{ui}</Provider>),
     store,
   };
 };

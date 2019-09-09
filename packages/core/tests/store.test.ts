@@ -12,7 +12,7 @@ const model = createModel<State>();
 
 describe("store", () => {
   it("can create empty store", () => {
-    const store = model.createStore({ initState });
+    const { store } = model.createStore({ initState });
 
     expect(store.universe.state).toBe(initState);
     expect(Object.keys(store.history)).toHaveLength(0);

@@ -1,14 +1,17 @@
-import { ProdoProvider, Store } from "@prodo/core";
+import { Provider, Store } from "@prodo/core";
 import { fireEvent, render } from "@testing-library/react";
 import * as React from "react";
 import App, { Item } from "../src/App";
 import { model } from "../src/model";
 import { initState } from "../src/store";
 
-const renderWithProdo = (ui: React.ReactElement, store: Store<any, any>) => {
+const renderWithProdo = (
+  ui: React.ReactElement,
+  context: { store: Store<any, any>; Provider: Provider },
+) => {
   return {
-    ...render(<ProdoProvider value={store}>{ui}</ProdoProvider>),
-    store,
+    ...render(<context.Provider>{ui}</context.Provider>),
+    store: context.store,
   };
 };
 

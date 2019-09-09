@@ -3,7 +3,9 @@ import { model } from "../src/model";
 
 describe("actions", () => {
   it("adds a todo", async () => {
-    const { dispatch } = model.createStore({
+    const {
+      store: { dispatch },
+    } = model.createStore({
       initState: { todos: {} },
       mockEffects: {
         randomId: ["T1"],
@@ -19,7 +21,9 @@ describe("actions", () => {
   });
 
   it("toggles a todo", async () => {
-    const { dispatch } = model.createStore({
+    const {
+      store: { dispatch },
+    } = model.createStore({
       initState: {
         todos: {
           foo: { text: "foo", done: false },
@@ -32,7 +36,9 @@ describe("actions", () => {
   });
 
   it("deletes a single todo", async () => {
-    const { dispatch } = model.createStore({
+    const {
+      store: { dispatch },
+    } = model.createStore({
       initState: {
         todos: {
           foo: { text: "foo", done: true },
@@ -46,7 +52,9 @@ describe("actions", () => {
   });
 
   it("deletes all todos", async () => {
-    const { dispatch } = model.createStore({
+    const {
+      store: { dispatch },
+    } = model.createStore({
       initState: {
         todos: {
           T1: { text: "", done: false },

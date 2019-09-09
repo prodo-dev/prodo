@@ -15,7 +15,7 @@ const randomInc = model.action(({ state, effect }) => () => {
 
 describe("effect plugin", () => {
   it("should use mocked value", async () => {
-    const store = model.createStore({
+    const { store } = model.createStore({
       initState: {
         count: 0,
       },
