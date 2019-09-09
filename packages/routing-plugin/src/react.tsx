@@ -1,6 +1,7 @@
 import { connect } from "@prodo/core";
 import * as pathToRegexp from "path-to-regexp";
 import * as React from "react";
+import { RouteParams } from ".";
 
 const cache = {};
 const cacheLimit = 1000;
@@ -56,7 +57,7 @@ const routeMatches = (
 };
 
 export interface RouteProps {
-  path: string;
+  path?: string;
   exact?: boolean;
   component?: React.ComponentType;
   children?: React.ReactNode;
@@ -64,7 +65,7 @@ export interface RouteProps {
 
 export const Route = connect(
   ({ route, watch }) => ({
-    path,
+    path = "",
     exact,
     children,
     component,
@@ -98,5 +99,82 @@ export const Switch = connect(
     });
 
     return element && React.cloneElement(element, {});
+  },
+);
+
+export const Redirect = connect(
+  ({ routing }) => ({
+    push = false,
+    to,
+  }: {
+    push?: boolean;
+    to: RouteParams;
+  }) => {
+    const method = push ? routing.push : routing.replace;
+    React.useEffect(() => {
+      method(to);
+    }, [to.path, to.params]);
+    return null;
+  },
+);
+
+const Anchor = ({ onClick, navigate, ...rest }: any) => (
+  <a
+    {...rest}
+    onClick={e => {
+      try {
+        if (onClick) {
+          onClick(e);
+        }
+      } catch (ex) {
+        e.preventDefault();
+        throw ex;
+      }
+      if (
+        !e.defaultPrevented &&
+        e.button === 0 &&
+        (rest.target || rest.target === "_self") &&
+        !e.metaKey &&
+        !e.altKey &&
+        !e.ctrlKey &&
+        !e.shiftKey
+      ) {
+        e.preventDefault();
+        navigate();
+      }
+    }}
+  />
+);
+
+export const Link = connect(
+  ({ routing }) => ({
+    component = Anchor,
+    replace = false,
+    to,
+    ...rest
+  }: {
+    component?: React.ComponentType;
+    replace?: boolean;
+    to: RouteParams;
+  } & React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+    return React.createElement(component, {
+      ...rest,
+      href: `${to.path}${
+        to.params != null && Object.keys(to.params).length > 0
+          ? `?${Object.keys(to.params)
+              .map(
+                key =>
+                  `${encodeURIComponent(key)}=${encodeURIComponent(
+                    to.params[key],
+                  )}`,
+              )
+              .join("&")}`
+          : ""
+      }`,
+      navigate: () => {
+        const method = replace ? routing.replace : routing.push;
+        method(to);
+      },
+    } as any);
   },
 );

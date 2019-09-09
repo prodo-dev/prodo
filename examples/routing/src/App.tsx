@@ -1,4 +1,4 @@
-import { Route, Switch } from "@prodo/routing-plugin";
+import { Link, Redirect, Route, Switch } from "@prodo/routing-plugin";
 import * as React from "react";
 import { redirectHome, redirectUser } from "./actions";
 import { model } from "./model";
@@ -18,9 +18,12 @@ const UserPage = model.connect(({ watch, route, dispatch }) => () => (
 
 const App = () => (
   <div className="app">
+    <Redirect to={{ path: "/test-2" }} />
+    <Link to={{ path: "/test", params: { user: "tom" } }}>Click Me</Link>
     <Switch>
-      <Route exact path="/" component={HomePage} />
       <Route exact path="/user" component={UserPage} />
+      <Route exact path="/test" />}
+      <Route component={HomePage} />
     </Switch>
   </div>
 );

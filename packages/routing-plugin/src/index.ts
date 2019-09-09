@@ -137,4 +137,4 @@ const routingPlugin: ProdoPlugin<
 
 export default routingPlugin;
 
-export { Route, Switch } from "./react";
+export { Route, Switch, Link, Redirect } from "./react";
