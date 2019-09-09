@@ -3,7 +3,6 @@ import { model } from "./model";
 export const redirectHome = model.action(({ routing }) => () => {
   routing.replace({
     path: "/",
-    params: {},
   });
 });
 
