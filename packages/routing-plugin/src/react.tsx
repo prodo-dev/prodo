@@ -65,12 +65,13 @@ export interface RouteProps {
 
 export const Route = connect(
   ({ route, watch }) => ({
-    path = "",
+    path,
     exact,
     children,
     component,
   }: RouteProps): React.ReactElement => {
-    const match = routeMatches(watch(route.path), path, exact);
+    const match =
+      path == null ? {} : routeMatches(watch(route.path), path, exact);
     if (match != null) {
       if (children && React.Children.count(children) > 0) {
         return <>{children}</>;
