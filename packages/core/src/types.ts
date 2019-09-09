@@ -1,6 +1,5 @@
 import { Patch } from "immer";
 import * as React from "react";
-export const streamSymbol = Symbol("stream");
 
 export type Action<ActionCtx> = <A extends any[]>(
   func: (c: ActionCtx) => (...args: A) => void,
@@ -71,7 +70,6 @@ export interface Store<InitOptions, Universe> {
   dispatch: <A extends any[]>(
     func: (...args: A) => void,
   ) => (...args: A) => Promise<Universe>;
-  streamStates: { [path: string]: StreamState };
   watchTree: WatchTree;
   trackHistory?: boolean;
   history: Event[];
@@ -82,10 +80,6 @@ export interface Store<InitOptions, Universe> {
 }
 
 export type BaseStore<State> = Store<{ initState: State }, { state: State }>;
-
-export interface StreamState {
-  unsubscribe: () => void;
-}
 
 export interface WatchTree {
   subs: Set<Node>; // subscriptions for branch
@@ -115,16 +109,6 @@ export interface Origin {
 export type Dispatch = <A extends any[]>(
   func: (...args: A) => void,
 ) => (...args: A) => void;
-
-export type UserStream<A, T> = (arg: A) => Stream<T>;
-
-export type CreateStream = <A, T>(
-  userStream: UserStream<A, T>,
-) => (arg: A) => T;
-
-export interface Stream<T> {
-  subscribe: (cb: (value: T) => void) => { unsubscribe: () => void };
-}
 
 export interface Event {
   actionName: string;

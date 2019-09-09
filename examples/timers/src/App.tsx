@@ -2,13 +2,13 @@ import * as React from "react";
 import { model } from "./store";
 
 const Counter = model.connect(
-  ({ state, watch }) => ({ id }: { id: string }) => {
-    const counter = watch(state.counters[id]);
+  ({ streams, watch }) => ({ id }: { id: string }) => {
+    const counter = watch(streams[id]);
 
     return (
       <div className="counter">
-        <h1 className="name">{counter.name}</h1>
-        <h1 className="value">{counter.value}</h1>
+        <h1 className="name">{id}</h1>
+        <h1 className="value">{counter}</h1>
       </div>
     );
   },
@@ -16,10 +16,10 @@ const Counter = model.connect(
 );
 
 const App = model.connect(
-  ({ state, watch }) => () => {
+  ({ streams, watch }) => () => {
     return (
       <div className="app">
-        {Object.keys(watch(state.counters)).map(id => (
+        {Object.keys(watch(streams)).map(id => (
           <Counter key={id} id={id} />
         ))}
       </div>
