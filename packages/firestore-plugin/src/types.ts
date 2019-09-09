@@ -31,6 +31,12 @@ export interface Doc {
   watchers: number;
 }
 
+export interface DocChange {
+  id: string;
+  changeType: "added" | "modified" | "removed";
+  data?: any;
+}
+
 export interface DBQuery {
   ids: string[];
   watchers: string[];

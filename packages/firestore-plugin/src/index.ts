@@ -8,6 +8,7 @@ import {
   FetchAll,
   Unsubs,
   Doc,
+  DocChange,
   ActionCtx,
   DBQuery,
   Config,
@@ -123,35 +124,42 @@ const createActionCollection = <T>(
   };
 };
 
-const updateDoc = <T>(ctx: ActionCtx<T>) => (
+const updateDocs = <T>(ctx: ActionCtx<T>) => (
   collectionName: string,
-  changeType: "added" | "modified" | "removed",
-  id: string,
-  data?: any,
+  docChanges: DocChange[],
 ) => {
-  const path = [collectionName, id];
-  const existingDoc: Doc = _.get(ctx.db_cache.docs, path) || {
-    // default,
-    watchers: 0,
-  };
+  docChanges.forEach(({ id, changeType, data }) => {
+    const path = [collectionName, id];
+    const existingDoc: Doc = _.get(ctx.db_cache.docs, path) || {
+      // default,
+      watchers: 0,
+    };
 
-  if (changeType === "added") {
-    _.set(ctx.db_cache.docs, path, {
-      ...existingDoc,
-      watchers: existingDoc.watchers + 1,
-      data,
-    });
-  } else if (changeType === "modified") {
-    _.set(ctx.db_cache.docs, path, {
-      ...existingDoc,
-      data,
-    });
-  } else if (changeType === "removed") {
-    _.set(ctx.db_cache, path, {
-      ...existingDoc,
-      watchers: existingDoc.watchers - 1,
-    });
-  }
+    if (changeType === "added") {
+      _.set(ctx.db_cache.docs, path, {
+        ...existingDoc,
+        watchers: existingDoc.watchers + 1,
+        data,
+      });
+    } else if (changeType === "modified") {
+      _.set(ctx.db_cache.docs, path, {
+        ...existingDoc,
+        data,
+      });
+    } else if (changeType === "removed") {
+      _.set(ctx.db_cache.docs, path, {
+        ...existingDoc,
+        watchers: existingDoc.watchers - 1,
+      });
+    }
+  });
+};
+
+const removeQuery = <T>(ctx: ActionCtx<T>) => (
+  collectionName: string,
+  queryName: string,
+) => {
+  delete ctx.db_cache.queries[collectionName][queryName];
 };
 
 const updateQuery = <T>(ctx: ActionCtx<T>) => (
@@ -170,9 +178,9 @@ const updateQuery = <T>(ctx: ActionCtx<T>) => (
     watchers: [],
   };
 
-  _.set(ctx.db_cache, [collectionName, queryName], {
+  _.set(ctx.db_cache.queries, [collectionName, queryName], {
     ...existingDbQuery,
-    dbQuery,
+    ...dbQuery,
   });
 };
 
@@ -211,8 +219,11 @@ const createViewCollection = <T>(
       ]);
       const queryExists = dbQuery != null;
 
+      console.log("\n\nDB QUERY", dbQuery);
+
       // setup firestore watcher if it does not already exist
       if (!queryExists) {
+        console.log("query does not exist");
         const ref = createFirestoreQuery(
           firestore.collection(collectionName),
           query,
@@ -221,16 +232,17 @@ const createViewCollection = <T>(
         const unsubscribe = ref.onSnapshot(
           snapshot => {
             const ids = snapshot.docs.map(doc => doc.id);
-            // const docs = getDocsById(snapshot.docs);
+            console.log(`${queryName} updated`);
 
-            snapshot.docChanges().forEach(change => {
-              ctx.dispatch(updateDoc)(
-                collectionName,
-                change.type,
-                change.doc.id,
-                change.doc.data(),
-              );
-            });
+            const docChanges: DocChange[] = snapshot
+              .docChanges()
+              .map(change => ({
+                id: change.doc.id,
+                changeType: change.type,
+                data: addIdToDoc(change.doc),
+              }));
+
+            ctx.dispatch(updateDocs)(collectionName, docChanges);
 
             ctx.dispatch(updateQuery)(collectionName, queryName, {
               ids,
@@ -253,7 +265,15 @@ const createViewCollection = <T>(
       }
 
       // subscribe component to query ids and each individual id
-      ctx.subscribe(["db_cache", "queries", collectionName, queryName, "ids"]);
+      ctx.subscribe(
+        ["db_cache", "queries", collectionName, queryName, "ids"],
+        () => {
+          console.log("unsubscribing from", queryName);
+          unsubs[queryName]();
+          ctx.dispatch(removeQuery)(collectionName, queryName);
+        },
+      );
+
       if (queryExists) {
         dbQuery.ids.forEach(id =>
           ctx.subscribe(["db_cache", "docs", collectionName, id]),
