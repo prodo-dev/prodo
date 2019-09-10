@@ -18,7 +18,7 @@ const UserPage = model.connect(({ watch, route, dispatch }) => () => (
 
 const App = () => (
   <div className="app">
-    <Redirect to={{ path: "/test-2" }} />
+    <Redirect to="/test-2" />
     <Link to={{ path: "/test", params: { user: "tom" } }}>Click Me</Link>
     <Switch>
       <Route exact path="/user" component={UserPage} />

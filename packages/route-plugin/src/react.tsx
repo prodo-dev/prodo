@@ -111,8 +111,11 @@ export const Redirect = connect(
     to,
   }: {
     push?: boolean;
-    to: RouteParams;
+    to: RouteParams | string;
   }) => {
+    if (typeof to === "string") {
+      to = { path: to };
+    }
     const action = push ? actions.push : actions.replace;
     React.useEffect(() => {
       dispatch(action)(to);
@@ -158,8 +161,11 @@ export const Link = connect(
   }: {
     component?: React.ComponentType;
     replace?: boolean;
-    to: RouteParams;
+    to: string | RouteParams;
   } & React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+    if (typeof to === "string") {
+      to = { path: to };
+    }
     return React.createElement(component, {
       ...rest,
       href: `${to.path}${
