@@ -27,9 +27,13 @@ const ContentWrapper = styled.div`
   padding-top: 2rem;
   transition: margin-left: 250ms ease-out;
 
-  ${forWideScreen`width: calc(100vw - ${SidebarWidth + 16}px);`}
-  ${forWideScreen`margin-left: ${SidebarWidth}px;`}
-  ${forWideScreen`padding-top: 4rem`}
+  .gatsby-highlight {
+    margin-bottom: 1.5rem;
+  }
+
+  ${forWideScreen`width: calc(100vw - ${SidebarWidth + 16}px);`};
+  ${forWideScreen`margin-left: ${SidebarWidth}px;`};
+  ${forWideScreen`padding-top: 4rem`};
 `;
 
 const Overlay = styled.div<{ isOpen: boolean }>`
