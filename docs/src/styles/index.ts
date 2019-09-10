@@ -16,13 +16,15 @@ export const theme: Theme = {
   colours: {
     text: "#333",
     bg: "white",
-    primary: "#5dd9c1",
+    primary: "#00e3a0",
     secondary: "#4d3ae2",
     accent: "#4d3ae2",
   },
 };
 
 export const MaxPageWidth = 800;
+export const SidebarWidth = 300;
+export const HeaderHeight = 64;
 
 export const sizes = {
   phone: "480px",
@@ -30,7 +32,7 @@ export const sizes = {
   laptop: "1200px",
 };
 
-export const NarrowScreenWidth = sizes.phone;
+export const NarrowScreenWidth = sizes.tablet;
 
 export const forNarrowScreen = (first, ...interpolations) => css`
   @media only screen ${NarrowScreenWidth != null &&

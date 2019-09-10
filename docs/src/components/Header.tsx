@@ -2,11 +2,13 @@ import * as React from "react";
 import styled from "styled-components";
 import logo from "../logo.svg";
 import Container from "./Container";
-import Link from "./Link";
+import { EmptyLink } from "./Link";
+import { HeaderHeight } from "../styles";
 
 const StyledHeader = styled.header`
   display: flex;
   align-items: center;
+  height: ${HeaderHeight}px;
   padding: 0.5rem 0;
   background-color: #20232a;
   color: white;
@@ -30,12 +32,14 @@ const Logo = styled.img`
 const Header = () => (
   <StyledHeader>
     <Container>
-      <Link to="/" empty>
-        <LogoText>
-          <Logo src={logo} />
-          <h2>Prodo</h2>
-        </LogoText>
-      </Link>
+      <div>
+        <EmptyLink to="/">
+          <LogoText>
+            <Logo src={logo} />
+            <h2>Prodo</h2>
+          </LogoText>
+        </EmptyLink>
+      </div>
     </Container>
   </StyledHeader>
 );

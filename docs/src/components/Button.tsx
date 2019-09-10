@@ -6,7 +6,7 @@ const Button = styled.button`
   appearance: none;
   display: inline-block;
   margin: 0.15rem;
-  padding: 0.5rem;
+  padding: 0.4rem;
   height: 2.5rem;
   min-width: 8rem;
   background-color: ${props => props.theme.colours.primary};
