@@ -5,6 +5,8 @@ import App, { Item } from "../src/App";
 import { model } from "../src/model";
 import { initState } from "../src/store";
 
+import "@babel/polyfill";
+
 const renderWithProdo = (ui: React.ReactElement, store: Store<any, any>) => {
   return {
     ...render(<ProdoProvider value={store}>{ui}</ProdoProvider>),
