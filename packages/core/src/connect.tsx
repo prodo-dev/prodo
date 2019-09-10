@@ -216,6 +216,9 @@ export const connect: Connect<any> = <P extends {}>(
           this.unsubscribe(splitPath(pathKey));
         }
       });
+
+      this.prevWatched = { ...this.watched };
+      this.watched = {};
     }
 
     public componentWillUnmount() {
