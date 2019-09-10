@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useStaticQuery, graphql } from "gatsby";
 import { SidebarWidth, HeaderHeight, forNarrowScreen } from "../styles";
 import { WindowLocation } from "@reach/router";
-import Link from "./Link";
+import { EmptyLink } from "./Link";
 import { makeAnchor, removeTrailingSlash } from "../utils";
 
 interface HeadingProps {
@@ -11,9 +11,11 @@ interface HeadingProps {
   active: number;
 }
 
-const HeadingLink = styled(Link)<HeadingProps>`
-  color: ${props =>
-    props.active ? props.theme.colours.primary : props.theme.colours.text};
+const HeadingLink = styled(EmptyLink)<HeadingProps>`
+  span {
+    color: ${props =>
+      props.active ? props.theme.colours.primary : props.theme.colours.text};
+  }
 `;
 
 const StyledPageHeading = styled.div`
@@ -24,7 +26,9 @@ const StyledPageHeading = styled.div`
 
 const PageHeading: React.FC<HeadingProps> = props => (
   <StyledPageHeading>
-    <HeadingLink {...props} />
+    <HeadingLink to={props.to} active={props.active}>
+      <span>{props.children}</span>
+    </HeadingLink>
   </StyledPageHeading>
 );
 
@@ -35,7 +39,9 @@ const StyledSubHeading = styled.div`
 
 const SubHeading: React.FC<HeadingProps> = props => (
   <StyledSubHeading>
-    <HeadingLink {...props} />
+    <HeadingLink to={props.to} active={props.active}>
+      <span>{props.children}</span>
+    </HeadingLink>
   </StyledSubHeading>
 );
 
@@ -51,25 +57,27 @@ const Section: React.FC<{
     value: string;
     depth: number;
   }>;
-}> = props => (
-  <StyledSection>
-    <PageHeading to={props.slug} active={props.active ? 1 : 0}>
-      {props.title}
-    </PageHeading>
-    {props.active &&
-      props.headings
-        .filter(({ depth }) => depth <= 1)
-        .map(({ value }, i) => (
-          <SubHeading
-            key={i}
-            to={`${props.slug}#${makeAnchor(value)}`}
-            active={0}
-          >
-            {value}
-          </SubHeading>
-        ))}
-  </StyledSection>
-);
+}> = props => {
+  return (
+    <StyledSection>
+      <PageHeading to={props.slug} active={props.active ? 1 : 0}>
+        {props.title}
+      </PageHeading>
+      {props.active &&
+        props.headings
+          .filter(({ depth }) => depth <= 1)
+          .map(({ value }, i) => (
+            <SubHeading
+              key={i}
+              to={`${props.slug}#${makeAnchor(value)}`}
+              active={0}
+            >
+              {value}
+            </SubHeading>
+          ))}
+    </StyledSection>
+  );
+};
 
 const StyledSidebar = styled.div<{ isOpen: boolean }>`
   position: fixed;
@@ -139,7 +147,7 @@ interface QueryResult {
 
 const query = graphql`
   query SidebarQuery {
-    allMdx(sort: { fields: [frontmatter___title], order: ASC }) {
+    allMdx(sort: { fields: [frontmatter___order], order: ASC }) {
       nodes {
         headings {
           value

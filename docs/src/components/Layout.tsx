@@ -1,9 +1,9 @@
 import { MDXProvider } from "@mdx-js/react";
 import * as React from "react";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
-import { ExternalLink } from "../components/Link";
 import { H1, H2, H3 } from "../components/Text";
 import { theme } from "../styles";
+import Link from "../components/Link";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -19,11 +19,10 @@ const ContentWrapper = styled.div`
 `;
 
 const components = {
-  p: Text,
   h1: H1,
   h2: H2,
   h3: H3,
-  a: ExternalLink,
+  a: Link,
 };
 
 const Layout: React.FC = ({ children }) => {

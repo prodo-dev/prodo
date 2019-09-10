@@ -31,7 +31,6 @@ exports.createPages = ({ graphql, actions }) => {
     const posts = result.data.allMdx.edges;
 
     posts.forEach(post => {
-      console.log(post.node);
       createPage({
         path: post.node.fields.slug,
         component: docs,
