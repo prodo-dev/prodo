@@ -1,7 +1,9 @@
 import { connect } from "@prodo/core";
 import * as pathToRegexp from "path-to-regexp";
 import * as React from "react";
-import { RouteParams } from ".";
+import * as actions from "./actions";
+import { RouteParams } from "./types";
+import { createParamString } from "./utils";
 
 const cache = {};
 const cacheLimit = 1000;
@@ -59,7 +61,7 @@ const routeMatches = (
 export interface RouteProps {
   path?: string;
   exact?: boolean;
-  component?: React.ComponentType;
+  component?: React.ComponentType<any>;
   children?: React.ReactNode;
 }
 
@@ -104,16 +106,16 @@ export const Switch = connect(
 );
 
 export const Redirect = connect(
-  ({ routing }) => ({
+  ({ dispatch }) => ({
     push = false,
     to,
   }: {
     push?: boolean;
     to: RouteParams;
   }) => {
-    const method = push ? routing.push : routing.replace;
+    const action = push ? actions.push : actions.replace;
     React.useEffect(() => {
-      method(to);
+      dispatch(action)(to);
     }, [to.path, to.params]);
     return null;
   },
@@ -148,7 +150,7 @@ const Anchor = ({ onClick, navigate, ...rest }: any) => (
 );
 
 export const Link = connect(
-  ({ routing }) => ({
+  ({ dispatch }) => ({
     component = Anchor,
     replace = false,
     to,
@@ -162,19 +164,12 @@ export const Link = connect(
       ...rest,
       href: `${to.path}${
         to.params != null && Object.keys(to.params).length > 0
-          ? `?${Object.keys(to.params)
-              .map(
-                key =>
-                  `${encodeURIComponent(key)}=${encodeURIComponent(
-                    to.params[key],
-                  )}`,
-              )
-              .join("&")}`
+          ? createParamString(to.params)
           : ""
       }`,
       navigate: () => {
-        const method = replace ? routing.replace : routing.push;
-        method(to);
+        const action = replace ? actions.replace : actions.push;
+        dispatch(action)(to);
       },
     } as any);
   },

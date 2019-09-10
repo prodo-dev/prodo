@@ -31,7 +31,7 @@ export const createUniverseWatcher = (universePath: string) => {
 const valueExtractor = (store: any, watched: any) => (x: any) => {
   const path = x[pathSymbol];
   const pathKey = joinPath(path);
-  const value = path.reduce((x: any, y: any) => x[y], store.universe);
+  const value = path.reduce((x: any, y: any) => x && x[y], store.universe);
   watched[pathKey] = value;
   return value;
 };
@@ -76,7 +76,7 @@ let _compIdCnt = 1;
 export type Func<P = {}> = (args: any) => React.ComponentType<P>;
 
 export const connect: Connect<any> = <P extends {}>(
-  func: any,
+  func: Func<P>,
   name: string = "(anonymous)",
 ): React.ComponentType<P> =>
   class ConnectComponent<P> extends React.Component<P, any> {
@@ -142,8 +142,10 @@ export const connect: Connect<any> = <P extends {}>(
       this.unsubscribe = (path: string[]) => {
         const pathKey = joinPath(path);
         const node = this.pathNodes[pathKey];
-        unsubscribe(this.store, path, node);
-        delete this.pathNodes[pathKey];
+        if (node != null) {
+          unsubscribe(this.store, path, node);
+          delete this.pathNodes[pathKey];
+        }
       };
 
       this._watch = x => x;

@@ -1,3 +1,4 @@
+import { createBrowserHistory } from "history";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
@@ -6,7 +7,12 @@ import { initState } from "./store";
 
 import "./index.scss";
 
-const { store, Provider } = model.createStore({ initState });
+const history = createBrowserHistory();
+
+const { store, Provider } = model.createStore({
+  initState,
+  route: { history },
+});
 
 ReactDOM.render(
   <Provider>

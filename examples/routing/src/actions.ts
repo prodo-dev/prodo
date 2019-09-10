@@ -1,13 +1,14 @@
+import { push } from "@prodo/route";
 import { model } from "./model";
 
-export const redirectHome = model.action(({ routing }) => () => {
-  routing.replace({
+export const redirectHome = model.action(({ dispatch }) => () => {
+  dispatch(push)({
     path: "/",
   });
 });
 
-export const redirectUser = model.action(({ routing }) => (user: string) => {
-  routing.replace({
+export const redirectUser = model.action(({ dispatch }) => (user: string) => {
+  dispatch(push)({
     path: "/user",
     params: {
       username: user,

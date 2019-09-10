@@ -1,3 +1,4 @@
+import { action } from "./action";
 import { connect, createUniverseWatcher, ProdoContext } from "./connect";
 import { createModel } from "./model";
 import {
@@ -13,6 +14,7 @@ import {
 export const ProdoProvider = ProdoContext.Provider;
 
 export {
+  action,
   connect,
   Comp,
   PluginActionCtx,

@@ -7,6 +7,6 @@
   "include": ["src"],
   "references": [
     { "path": "../../packages/core" },
-    { "path": "../../packages/routing-plugin" }
+    { "path": "../../packages/route-plugin" }
   ]
 }

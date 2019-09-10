@@ -1,5 +1,5 @@
 import { createModel } from "@prodo/core";
-import routingPlugin from "@prodo/routing-plugin";
+import routingPlugin from "@prodo/route";
 
 // tslint:disable-next-line:no-empty-interface
 export interface State {}

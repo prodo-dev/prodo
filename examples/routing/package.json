@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@prodo/core": "0.0.1",
-    "@prodo/routing-plugin": "0.0.1",
+    "@prodo/route": "0.0.1",
+    "history": "^4.9.0",
     "react": "^16.8.6",
     "react-dom": "^16.9.0",
     "react-router": "^5.0.1",
