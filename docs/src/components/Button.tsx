@@ -22,7 +22,7 @@ export default Button;
 
 const AnyButton = Button as any;
 export const ButtonLink: React.FC<{ to: string }> = props => (
-  <AnyButton as={EmptyLink} to={props.to}>
-    {props.children}
-  </AnyButton>
+  <EmptyLink to={props.to}>
+    <AnyButton>{props.children}</AnyButton>
+  </EmptyLink>
 );
