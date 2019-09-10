@@ -1,6 +1,6 @@
 import * as React from "react";
 import { deleteAll, deleteItem, newTodo, toggle } from "./actions";
-import { state, watch, dispatch } from "./model";
+import { dispatch, state, watch } from "./model";
 
 export const List = () => (
   <ul data-testid="list">
