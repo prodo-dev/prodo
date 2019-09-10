@@ -5,9 +5,12 @@ import Container from "../components/Container";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
 import SEO from "../components/SEO";
+import { HeaderHeight } from "../styles";
 
 const Hero = styled.div`
-  padding: 8rem 0;
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - ${HeaderHeight}px);
   background-color: #282c34;
   color: white;
 `;
@@ -30,7 +33,10 @@ const Home = () => {
             The full-stack web framework to build apps faster.
           </SubTitle>
           <div>
-            <ButtonLink to="/getting_started">Get Started</ButtonLink>
+            <ButtonLink primary to="/getting_started">
+              Get Started
+            </ButtonLink>
+            <ButtonLink to="/introduction">Docs</ButtonLink>
           </div>
         </Container>
       </Hero>

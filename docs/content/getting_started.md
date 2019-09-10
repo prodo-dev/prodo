@@ -1,7 +1,21 @@
 ---
 title: "Getting Started"
-order: 2
+order: 3
 ---
+
+# Installing
+
+## NPM
+
+```shell
+npm install --save @prodo/core
+```
+
+## Yarn
+
+```shell
+yarn add @prodo/core
+```
 
 # Hello World
 

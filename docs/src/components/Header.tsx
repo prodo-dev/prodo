@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import logo from "../logo.svg";
 import Container from "./Container";
-import { EmptyLink } from "./Link";
+import Link, { EmptyLink } from "./Link";
 import { HeaderHeight } from "../styles";
 
 const StyledHeader = styled.header`
@@ -31,18 +31,33 @@ const Logo = styled.img`
   margin-bottom: 0;
 `;
 
+const HeaderContainer = styled(Container)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const HeaderLinks = styled.div`
+  a {
+    color: white;
+  }
+`;
+
 const Header = () => (
   <StyledHeader>
-    <Container>
-      <div>
-        <EmptyLink to="/">
-          <LogoText>
-            <Logo src={logo} />
-            <h2>Prodo</h2>
-          </LogoText>
-        </EmptyLink>
-      </div>
-    </Container>
+    <HeaderContainer>
+      <EmptyLink to="/">
+        <LogoText>
+          <Logo src={logo} />
+          <h2>Prodo</h2>
+        </LogoText>
+      </EmptyLink>
+      <HeaderLinks>
+        <Link to="https://github.com/prodo-ai/prodo" target="_blank">
+          Github
+        </Link>
+      </HeaderLinks>
+    </HeaderContainer>
   </StyledHeader>
 );
 

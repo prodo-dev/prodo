@@ -50,4 +50,4 @@ export increment = model.action(
 ```
 
 [^1]: for dispatching an action in response to user input, see
-[components](/components)
+    [components](/components)

@@ -1,6 +1,9 @@
 # Docs
 
-These are the docs.
+Docs are available in `content/`. The docs site is built with
+[GatsbyJS](https://www.gatsbyjs.org/).
+
+To start the docs run `yarn start` from this directory.
 
 ## Table of Contents
 
