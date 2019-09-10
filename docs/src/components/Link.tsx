@@ -2,9 +2,8 @@ import { Link as GLink } from "gatsby";
 import * as React from "react";
 import styled from "styled-components";
 
-const StyledGLink = styled(GLink)`
-  color: ${props =>
-    (props as any).empty ? "inherit" : props.theme.colours.accent};
+const StyledGLink = styled(GLink)<{ empty: number }>`
+  color: ${props => (props.empty ? "inherit" : props.theme.colours.accent)};
   text-decoration: none;
   transition: opacity 150ms ease-in-out;
 
@@ -14,7 +13,10 @@ const StyledGLink = styled(GLink)`
   }
 ` as any;
 
-const Link = (props: any) => (
+const Link: React.FC<{
+  empty: number;
+  to: string;
+}> = props => (
   <StyledGLink {...(props as any)}>
     <span>{props.children}</span>
   </StyledGLink>
@@ -28,4 +30,6 @@ export const ExternalLink: React.FC<{ to: string }> = props => (
   </StyledGLink>
 );
 
-export const EmptyLink = (props: any) => <Link empty {...props} />;
+export const EmptyLink: React.FC<{ to: string }> = props => (
+  <Link empty={1} {...props} />
+);

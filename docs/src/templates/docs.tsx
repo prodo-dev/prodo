@@ -6,6 +6,10 @@ import Container from "../components/Container";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
 import SEO from "../components/SEO";
+import Sidebar from "../components/Sidebar";
+import { Location } from "@reach/router";
+import { SidebarWidth, forWideScreen, forNarrowScreen } from "../styles";
+import Hamburger from "../components/Hamburger";
 
 export interface Props {
   data: {
@@ -18,18 +22,76 @@ export interface Props {
   };
 }
 
-const DocsContainer = styled(Container)`
-  padding-top: 1rem;
+const ContentWrapper = styled.div`
+  padding-top: 2rem;
+  transition: margin-left: 250ms ease-out;
+
+  ${forWideScreen`width: calc(100vw - ${SidebarWidth + 16}px);`}
+  ${forWideScreen`margin-left: ${SidebarWidth}px;`}
+  ${forWideScreen`padding-top: 4rem`}
 `;
 
+const Overlay = styled.div<{ isOpen: boolean }>`
+  background-color: black;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  opacity: 0;
+  transition: opacity 250ms ease-in-out;
+
+  ${forWideScreen`display: none;`}
+  ${props => !props.isOpen && forNarrowScreen`transform: translateX(-100%);`};
+  ${props => props.isOpen && forNarrowScreen`opacity: 0.6;`};
+`;
+
+const StyledSidebarButton = styled.div`
+  display: block;
+  padding-top: 1rem;
+  padding-left: 1rem;
+  cursor: pointer;
+  z-index: 1000;
+
+  ${forWideScreen`display: none;`};
+`;
+
+const SidebarButton: React.FC<{ onClick: () => void }> = props => (
+  <StyledSidebarButton onClick={() => props.onClick()}>
+    <Hamburger />
+  </StyledSidebarButton>
+);
+
 const Docs = ({ data }: Props) => {
+  const [isSidebarOpen, setSidebarOpen] = React.useState(false);
+
   return (
     <Layout>
       <SEO title={data.mdx.frontmatter.title} />
-      <Header />
-      <DocsContainer>
-        <MDXRenderer>{data.mdx.body}</MDXRenderer>
-      </DocsContainer>
+      <Location>
+        {({ location }) => (
+          <>
+            <Header />
+
+            <Sidebar isOpen={isSidebarOpen} location={location} />
+
+            <SidebarButton onClick={() => setSidebarOpen(true)} />
+
+            <ContentWrapper>
+              <Container>
+                <MDXRenderer>{data.mdx.body}</MDXRenderer>
+              </Container>
+            </ContentWrapper>
+
+            <Overlay
+              className="overlay"
+              isOpen={isSidebarOpen}
+              onClick={() => setSidebarOpen(false)}
+            />
+          </>
+        )}
+      </Location>
     </Layout>
   );
 };
