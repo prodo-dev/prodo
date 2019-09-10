@@ -1,6 +1,6 @@
 ---
 title: "Components"
-order: 4
+order: 5
 ---
 
 A Prodo component is a wrapper around a React component, giving access to the
@@ -31,10 +31,10 @@ The transpiler detects a component as any function that uses the attributes
 exported from `createModel`, and is assigned to an upper-case identifier
 (lower-case identifiers are used for [actions](./actions.md)).
 
-```jsx
-import { state } from "./model";
+```tsx
+import { state, watch } from "./model";
 
-export Counter = () => {
+export const Counter = () => {
   return <div>
     <span>Hello, {watch(state.name)}!</span>
   </div>;
@@ -43,10 +43,10 @@ export Counter = () => {
 
 is converted to
 
-```jsx
+```tsx
 import model from "./model";
 
-export Counter = model.connect(
+export const Counter = model.connect(
   ({state}: Ctx) => () => {
     return <div>
       <span>Hello, {watch(state.name)}!</span>

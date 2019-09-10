@@ -1,6 +1,6 @@
 ---
 title: "Actions"
-order: 5
+order: 6
 ---
 
 An action is a function that modifies a store.
@@ -28,20 +28,20 @@ The transpiler detects a component as any function that uses the attributes
 exported from `createModel`, and is assigned to a lower-case identifier
 (upper-case identifiers are used for [components](./components)).
 
-```jsx
+```tsx
 import { state } from "./model";
 
-export increment = () => {
+export const increment = () => {
   state.count += 1;
 }
 ```
 
 is converted to
 
-```jsx
+```tsx
 import model from "./model";
 
-export increment = model.action(
+export const increment = model.action(
   ({state}: Ctx) => () => {
     state.count += 1
   },
