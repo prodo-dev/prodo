@@ -160,5 +160,8 @@ export const createStore = <State>(
 
   const Provider = createProvider(store, plugins);
 
-  return { store, Provider };
+  return {
+    store,
+    Provider,
+  };
 };
