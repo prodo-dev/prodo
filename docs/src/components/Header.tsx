@@ -6,6 +6,8 @@ import { EmptyLink } from "./Link";
 import { HeaderHeight } from "../styles";
 
 const StyledHeader = styled.header`
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: center;
   height: ${HeaderHeight}px;

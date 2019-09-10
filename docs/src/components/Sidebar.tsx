@@ -34,7 +34,6 @@ const PageHeading: React.FC<HeadingProps> = props => (
 
 const StyledSubHeading = styled.div`
   font-size: 1em;
-  font-weight: bold;
 `;
 
 const SubHeading: React.FC<HeadingProps> = props => (
