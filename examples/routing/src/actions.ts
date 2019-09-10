@@ -2,9 +2,7 @@ import { push } from "@prodo/route";
 import { model } from "./model";
 
 export const redirectHome = model.action(({ dispatch }) => () => {
-  dispatch(push)({
-    path: "/",
-  });
+  dispatch(push)("/");
 });
 
 export const redirectUser = model.action(({ dispatch }) => (user: string) => {

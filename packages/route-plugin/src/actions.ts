@@ -10,8 +10,11 @@ import { createParamString } from "./utils";
 
 export const push = action(
   (ctx: Routing & PluginActionCtx<Routing, Universe>) => (
-    routeParams: RouteParams,
+    routeParams: RouteParams | string,
   ) => {
+    if (typeof routeParams === "string") {
+      routeParams = { path: routeParams };
+    }
     ctx[historySymbol].push(
       routeParams.path + createParamString(routeParams.params),
     );
@@ -24,8 +27,11 @@ export const push = action(
 
 export const replace = action(
   (ctx: Routing & PluginActionCtx<Routing, Universe>) => (
-    routeParams: RouteParams,
+    routeParams: RouteParams | string,
   ) => {
+    if (typeof routeParams === "string") {
+      routeParams = { path: routeParams };
+    }
     ctx[historySymbol].replace(
       routeParams.path + createParamString(routeParams.params),
     );
