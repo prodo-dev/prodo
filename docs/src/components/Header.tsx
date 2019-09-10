@@ -1,9 +1,9 @@
 import * as React from "react";
 import styled from "styled-components";
 import logo from "../logo.svg";
+import { HeaderHeight } from "../styles";
 import Container from "./Container";
 import Link, { EmptyLink } from "./Link";
-import { HeaderHeight } from "../styles";
 
 const StyledHeader = styled.header`
   position: sticky;

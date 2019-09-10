@@ -1,16 +1,16 @@
+import { Location } from "@reach/router";
 import { graphql } from "gatsby";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import * as React from "react";
 import styled from "styled-components";
 import Container from "../components/Container";
+import Hamburger from "../components/Hamburger";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
 import SEO from "../components/SEO";
 import Sidebar from "../components/Sidebar";
-import { Location } from "@reach/router";
-import { SidebarWidth, forWideScreen, forNarrowScreen } from "../styles";
-import Hamburger from "../components/Hamburger";
 import { Title } from "../components/Text";
+import { forNarrowScreen, forWideScreen, SidebarWidth } from "../styles";
 
 export interface Props {
   data: {

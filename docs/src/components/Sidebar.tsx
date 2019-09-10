@@ -1,10 +1,10 @@
+import { WindowLocation } from "@reach/router";
+import { graphql, useStaticQuery } from "gatsby";
 import * as React from "react";
 import styled from "styled-components";
-import { useStaticQuery, graphql } from "gatsby";
-import { SidebarWidth, HeaderHeight, forNarrowScreen } from "../styles";
-import { WindowLocation } from "@reach/router";
-import { EmptyLink } from "./Link";
+import { forNarrowScreen, HeaderHeight, SidebarWidth } from "../styles";
 import { makeAnchor, removeTrailingSlash } from "../utils";
+import { EmptyLink } from "./Link";
 
 interface HeadingProps {
   to: string;
