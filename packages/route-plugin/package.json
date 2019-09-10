@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "rm -rf lib tsconfig.tsbuildinfo",
+    "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "devDependencies": {
