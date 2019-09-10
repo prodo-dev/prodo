@@ -26,7 +26,7 @@ changes made to the state from the current action.
 
 The transpiler detects a component as any function that uses the attributes
 exported from `createModel`, and is assigned to a lower-case identifier
-(upper-case identifiers are used for [components](/components)).
+(upper-case identifiers are used for [components](./components)).
 
 ```jsx
 import { state } from "./model";
@@ -50,4 +50,4 @@ export increment = model.action(
 ```
 
 [^1]: for dispatching an action in response to user input, see
-    [components](/components)
+    [components](./components)

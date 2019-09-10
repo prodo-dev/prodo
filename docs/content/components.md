@@ -6,9 +6,9 @@ order: 4
 A Prodo component is a wrapper around a React component, giving access to the
 properties of a model. A component can be created from a React component
 manually with the `connect` method of a model, or automatically through
-[transpilation](#Transpilation).
+[transpilation](#transpilation).
 
-Additional variables can be provided by [plugins](./plugins.md). 
+Additional variables can be provided by [plugins](./plugins). 
 
 # State
 
