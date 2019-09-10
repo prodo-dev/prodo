@@ -6,3 +6,6 @@ export interface State {
 }
 
 export const model = createModel<State>().with(effectPlugin);
+
+const { state, watch, effect, dispatch } = model.ctx;
+export { state, watch, effect, dispatch };
