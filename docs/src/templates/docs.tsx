@@ -10,6 +10,7 @@ import Sidebar from "../components/Sidebar";
 import { Location } from "@reach/router";
 import { SidebarWidth, forWideScreen, forNarrowScreen } from "../styles";
 import Hamburger from "../components/Hamburger";
+import { Title } from "../components/Text";
 
 export interface Props {
   data: {
@@ -80,6 +81,7 @@ const Docs = ({ data }: Props) => {
 
             <ContentWrapper>
               <Container>
+                <Title>{data.mdx.frontmatter.title}</Title>
                 <MDXRenderer>{data.mdx.body}</MDXRenderer>
               </Container>
             </ContentWrapper>

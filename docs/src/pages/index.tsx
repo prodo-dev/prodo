@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
-import Button, { ButtonLink } from "../components/Button";
+import { ButtonLink } from "../components/Button";
 import Container from "../components/Container";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
