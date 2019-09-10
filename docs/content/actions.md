@@ -1,15 +1,18 @@
-# Actions
+---
+title: "Actions"
+order: 5
+---
 
 An action is a function that modifies a store.
 
-## State
+# State
 
-The `state` provided to the action is an [immer](//github.com/immerjs/immer)
+The `state` provided to the action is an [immer](https://github.com/immerjs/immer)
 proxy. All modifications to the state are private to the action until it
 completes, at which point they are committed to the store state and trigger
 re-renders of any affected components.
 
-## Dispatch
+# Dispatch
 
 The `dispatch` function is responsible for scheduling child actions, for example
 `dispatch(increment)(5)`. It takes as its only parameter the action to run, and
@@ -19,14 +22,11 @@ Within an action, dispatching an action schedules a child action[^1]. This will
 not begin execution until the current action has completed, and will see all
 changes made to the state from the current action.
 
-[^1]: for dispatching an action in response to user input, see
-[components](./components.md)
-
-## Transpilation
+# Transpilation
 
 The transpiler detects a component as any function that uses the attributes
 exported from `createModel`, and is assigned to a lower-case identifier
-(upper-case identifiers are used for [components](./components.md)).
+(upper-case identifiers are used for [components](./components)).
 
 ```jsx
 import { state } from "./model";
@@ -48,3 +48,6 @@ export increment = model.action(
   "increment"
 )
 ```
+
+[^1]: for dispatching an action in response to user input, see
+    [components](./components)
