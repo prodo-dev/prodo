@@ -6,6 +6,7 @@
     { "path": "examples/kanban" },
     { "path": "examples/local-map" },
     { "path": "examples/random" },
+    { "path": "examples/routing" },
     { "path": "examples/timers" },
     { "path": "examples/todo-app" },
     { "path": "examples/update-testing" },
@@ -16,6 +17,7 @@
     { "path": "packages/firestore-plugin" },
     { "path": "packages/local-plugin" },
     { "path": "packages/random-plugin" },
+    { "path": "packages/route-plugin" },
     { "path": "packages/stream-plugin" }
   ]
 }

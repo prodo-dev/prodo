@@ -1,4 +1,3 @@
-import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
@@ -16,12 +15,15 @@ const firebaseConfig = {
   appId: "1:958748877990:web:817a83cda239bb28",
 };
 
-const store = model.createStore({ initState: {}, firebaseConfig });
+const { store, Provider } = model.createStore({
+  initState: {},
+  firebaseConfig,
+});
 
 ReactDOM.render(
-  <ProdoProvider value={store}>
+  <Provider>
     <App />
-  </ProdoProvider>,
+  </Provider>,
   document.getElementById("root"),
 );
 

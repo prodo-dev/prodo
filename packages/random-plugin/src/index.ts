@@ -46,7 +46,7 @@ const prepareViewCtx = (
     ctx,
     universe,
   }: {
-    ctx: PluginViewCtx<RandomActionCtx> & RandomViewCtx;
+    ctx: PluginViewCtx<RandomActionCtx, RandomUniverse> & RandomViewCtx;
     universe: RandomUniverse;
   },
   config: RandomConfig,
