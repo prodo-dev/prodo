@@ -57,14 +57,7 @@ const prepareActionCtx = (
   };
 };
 
-const effectPlugin: ProdoPlugin<
-  EffectConfig,
-  {},
-  EffectActionCtx,
-  {
-    test: number;
-  }
-> = {
+const effectPlugin: ProdoPlugin<EffectConfig, {}, EffectActionCtx, {}> = {
   name: "effect",
   prepareActionCtx,
 };
