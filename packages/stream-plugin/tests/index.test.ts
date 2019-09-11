@@ -9,16 +9,20 @@ const model = createModel<{}>().with(streamPlugin<Streams>());
 
 let activeStreams = 0;
 
-const counter = (interval: number, track: Boolean = false): Stream<number> => ({
+const counter = (interval: number, track: boolean = false): Stream<number> => ({
   subscribe: cb => {
     let i = 0;
-    if (track) activeStreams++;
+    if (track) {
+      activeStreams++;
+    }
     const id = setInterval(() => {
       cb(i++);
     }, interval);
     return {
       unsubscribe: () => {
-        if (track) activeStreams--;
+        if (track) {
+          activeStreams--;
+        }
         clearInterval(id);
       },
     };
@@ -26,7 +30,7 @@ const counter = (interval: number, track: Boolean = false): Stream<number> => ({
 });
 
 const startCounter = model.action(
-  ({ streams }) => (interval: number, track: Boolean = false) => {
+  ({ streams }) => (interval: number, track: boolean = false) => {
     streams.count = counter(interval, track);
   },
 );
@@ -49,7 +53,7 @@ describe("stream plugin", () => {
   });
 
   it("unsubscribes", async () => {
-    const store = model.createStore({
+    const { store } = model.createStore({
       initState: {},
     });
 
