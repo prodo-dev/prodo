@@ -1,9 +1,9 @@
+import { graphql } from "gatsby";
 import * as React from "react";
 import styled from "styled-components";
-import { graphql } from "gatsby";
 import DocsLayout from "../components/DocsLayout";
-import { Title } from "../components/Text";
 import Link from "../components/Link";
+import { Title } from "../components/Text";
 import { normalize } from "../utils";
 
 export interface Props {
