@@ -1,23 +1,7 @@
 ---
-title: "Introduction"
-order: 1
+title: "Core Concepts"
+order: 4
 ---
-
-Prodo is a web framework that enables you to write performant and scalable web
-apps with as little boilerplate as possible. It was designed with TypeScript in
-mind and even includes a babel plugin to further reduce the amount of
-boilerplate you write.
-
-Prodo is designed so that the core framework is small and minimal. You can then
-extend the functionality of the framework with official and third party
-[plugins](./plugins.md) that easily work together. Plugins allow you to quickly
-add complex functionality to your app without having to duct tape together a
-bunch of solutions and libraries.
-
-# Get Started
-
-Follow the [getting started](./getting_started.md) guide to get up and running
-with Prodo.
 
 # Core Concepts
 
