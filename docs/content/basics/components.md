@@ -36,7 +36,7 @@ import { state, watch } from "./model";
 
 export const Counter = () => {
   return <div>
-    <span>Hello, {watch(state.name)}!</span>
+    <span>Hello, {watch(state.count)}!</span>
   </div>;
 }
 ```
@@ -49,7 +49,7 @@ import model from "./model";
 export const Counter = model.connect(
   ({state}: Ctx) => () => {
     return <div>
-      <span>Hello, {watch(state.name)}!</span>
+      <span>Hello, {watch(state.count)}!</span>
     </div>;
   },
   "Counter"
