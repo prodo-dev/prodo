@@ -1,6 +1,6 @@
 import { Patch } from "immer";
 import logger from "./logger";
-import { Node, Store, WatchTree, Event } from "./types";
+import { Event, Node, Store, WatchTree } from "./types";
 import { splitPath } from "./utils";
 
 export const subscribe = (
