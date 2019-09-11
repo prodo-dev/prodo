@@ -13,23 +13,33 @@ Additional variables can be provided by [plugins](./plugins).
 # State
 
 The `state` variable holds the current state. To ensure the component is
-re-rendered when the state is updated, accesses must be wrapped in `watch`.
+re-rendered when the state is updated, accesses must be wrapped in `watch`. For
+example:
 
-`watch` the narrowest scope possible to avoid unnecessary re-renders. For
-example `watch(state.foo.bar)` is more efficient than `watch(state.foo).bar` but
+```tsx
+<span>The value is { watch(state.count) }</span>
+```
+
+Watch the narrowest scope possible to avoid unnecessary re-renders. For example
+`watch(state.foo.bar)` is more efficient than `watch(state.foo).bar` but
 functionally equivalent.
 
 # Dispatch
 
-The `dispatch` function is responsible for running actions, for example
-`dispatch(increment)(5)`. It takes as its only parameter the action to run, and
-the result is then called with the parameters of the action.
+The `dispatch` function is responsible for running actions, for example:
+
+```tsx
+<button onClick={() => dispatch(increment)(4)>Click me!</button>
+```
+
+It takes as its only parameter the action to run, and the result is then called
+with the parameters of the action.
 
 # Transpilation
 
 The transpiler detects a component as any function that uses the attributes
 exported from `createModel`, and is assigned to an upper-case identifier
-(lower-case identifiers are used for [actions](./actions.md)).
+(lower-case identifiers are used for [actions](./actions)).
 
 ```tsx
 import { state, watch } from "./model";
