@@ -31,8 +31,10 @@ export default createRule({
 
     return {
       CallExpression(node: TSESTree.CallExpression): void {
-        const tsNode = parserServices.esTreeNodeToTSNodeMap.get<TSNode>(node);
-        const type = checker.getTypeAtLocation(tsNode);
+        const callee = parserServices.esTreeNodeToTSNodeMap.get<TSNode>(
+          node.callee,
+        );
+        const type = checker.getTypeAtLocation(callee);
         context.report({
           node,
           messageId: "dispatch",
