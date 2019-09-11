@@ -42,6 +42,7 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
     },
     config: InitOptions,
   ) => void;
+  onCompletedEvent?: (event: Event) => void;
 }
 
 export interface PluginActionCtx<ActionCtx> {
@@ -112,12 +113,14 @@ export type Dispatch = <A extends any[]>(
 
 export interface Event {
   actionName: string;
+  args: any;
   id: string;
   parentId: string | null;
   patches: Patch[];
   nextActions: NextAction[];
   prevUniverse: any;
   nextUniverse?: any;
+  rerender?: { [key: string]: boolean };
 }
 
 interface NextAction {

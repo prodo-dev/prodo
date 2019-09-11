@@ -5,12 +5,14 @@ import { submitPatches } from "./watch";
 export const startEvent = (
   store: Omit<Store<any, any>, "exec">,
   actionName: string,
+  args: any,
   origin: Origin,
 ): Event => {
   const event: Event = {
     id: origin.id,
     parentId: origin.parentId,
     actionName,
+    args,
     nextActions: [],
     patches: [],
     prevUniverse: store.universe,
@@ -35,7 +37,7 @@ export const completeEvent = (event: Event, store: Store<any, any>): void => {
 
   store.universe = nextUniverse;
   event.nextUniverse = nextUniverse;
-  submitPatches(store, store.universe, event.patches);
+  submitPatches(store, store.universe, event.patches, event);
 
   event.nextActions.map(({ func, args, origin }) =>
     store.exec(origin, func, ...args),

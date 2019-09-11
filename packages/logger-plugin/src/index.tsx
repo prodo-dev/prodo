@@ -5,12 +5,15 @@ export type LoggerConfig = {
 };
 
 const init = (config: LoggerConfig) => {
-  if (config.logger) console.log("Using logger...");
+  if (config.logger) console.log("@prodo/logger is on");
 };
 
 const loggerPlugin: ProdoPlugin<LoggerConfig, {}, {}, {}> = {
   name: "logger",
   init,
+  onCompletedEvent: e => {
+    console.log(e);
+  },
 };
 
 export default loggerPlugin;
