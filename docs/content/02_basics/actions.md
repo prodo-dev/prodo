@@ -14,13 +14,32 @@ re-renders of any affected components.
 
 # Dispatch
 
-The `dispatch` function is responsible for scheduling child actions, for example
-`dispatch(increment)(5)`. It takes as its only parameter the action to run, and
-the result is then called with the parameters of the action.
+The `dispatch` function is responsible for scheduling child actions, for example:
+
+```ts
+const parentAction = () => {
+  dispatch(childAction)("foo");
+  console.log("In parent action");
+  dispatch(childAction)("bar");
+  state.value = 4
+}
+
+const childAction = (name: string) => {
+  console.log("In child action", name, state.value)
+};
+```
 
 Within an action, dispatching an action schedules a child action[^1]. This will
 not begin execution until the current action has completed, and will see all
 changes made to the state from the current action.
+
+Dispatching `parentAction` above will produce the following output:
+
+```
+In parent action
+In child action foo 4
+In child action bar 4
+```
 
 # Transpilation
 
