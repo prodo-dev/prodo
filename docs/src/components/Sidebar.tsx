@@ -3,10 +3,9 @@ import { graphql, useStaticQuery } from "gatsby";
 import * as React from "react";
 import styled from "styled-components";
 import { forNarrowScreen, HeaderHeight, SidebarWidth } from "../styles";
-import { removeTrailingSlash } from "../utils";
-import { EmptyLink } from "./Link";
+import { normalize, removeTrailingSlash } from "../utils";
 import Caret from "./Caret";
-import { normalize } from "../utils";
+import { EmptyLink } from "./Link";
 
 interface HeadingProps {
   to: string;

@@ -2,8 +2,8 @@ import * as React from "react";
 import styled from "styled-components";
 import logo from "../logo.svg";
 import { HeaderHeight } from "../styles";
-import Link, { EmptyLink } from "./Link";
 import GithubIcon from "./GithubIcon";
+import Link, { EmptyLink } from "./Link";
 
 const StyledHeader = styled.header`
   position: sticky;
