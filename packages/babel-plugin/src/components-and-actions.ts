@@ -6,7 +6,9 @@ const visitPossibleActionOrComponent = (
   t: typeof Babel.types,
   name: string,
   rootPath: Babel.NodePath<
-    Babel.types.FunctionDeclaration | Babel.types.VariableDeclaration
+    | Babel.types.FunctionDeclaration
+    | Babel.types.ArrowFunctionExpression
+    | Babel.types.FunctionExpression
   >,
   params: Array<
     | Babel.types.Identifier
@@ -71,10 +73,49 @@ export default ({ types: t }: typeof Babel) => ({
     visitPossibleActionOrComponent(
       t,
       name,
-      path,
+      declarationPath.get("init") as Babel.NodePath<
+        Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
+      >,
       declarationPath.node.init.params,
       bodyPath,
       declarationPath.node.init.async,
+    );
+  },
+  AssignmentExpression(path: Babel.NodePath<Babel.types.AssignmentExpression>) {
+    // exports.foo = bar syntax
+    if (
+      !t.isMemberExpression(path.node.left) ||
+      !t.isIdentifier(path.node.left.object) ||
+      path.node.left.object.name !== "exports"
+    ) {
+      // Not an export.
+      return;
+    }
+    if (
+      !t.isArrowFunctionExpression(path.node.right) &&
+      !t.isFunctionExpression(path.node.right)
+    ) {
+      // Not exporting a function
+    }
+
+    const name = path.node.left.property.name;
+    const bodyPath = (path.get("right") as Babel.NodePath<
+      Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
+    >).get("body");
+
+    visitPossibleActionOrComponent(
+      t,
+      name,
+      path.get("right") as Babel.NodePath<
+        Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
+      >,
+      (path.node.right as
+        | Babel.types.ArrowFunctionExpression
+        | Babel.types.FunctionExpression).params,
+      bodyPath,
+      (path.node.right as
+        | Babel.types.ArrowFunctionExpression
+        | Babel.types.FunctionExpression).async,
     );
   },
 });

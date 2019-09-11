@@ -62,7 +62,7 @@ describe("action transpilation", () => {
       import { state } from "./src/model.ctx";
       const myAction = model.action(({
         state
-      }) => () => {
+      }) => function () {
         state.foo = "foo";
       }, "myAction");
     `);
@@ -83,7 +83,7 @@ describe("action transpilation", () => {
       import { state } from "./src/model.ctx";
       const myAction = model.action(({
         state
-      }) => () => {
+      }) => function myAction () {
         state.foo = "foo";
       }, "myAction");
     `);
@@ -203,7 +203,7 @@ describe("action transpilation", () => {
       import { state } from "./src/model.ctx";
       export const myAction = model.action(({
         state
-      }) => () => {
+      }) => function () {
         state.foo = "foo";
       }, "myAction");
     `);
@@ -224,7 +224,7 @@ describe("action transpilation", () => {
       import { state } from "./src/model.ctx";
       export const myAction = model.action(({
         state
-      }) => () => {
+      }) => function myAction () {
         state.foo = "foo";
       }, "myAction");
     `);
@@ -356,6 +356,27 @@ describe("action transpilation", () => {
         state
       }) => () => {
         state.foo = foo;
+      }, "myAction");
+    `);
+  });
+
+  it("compiles commonjs export syntax", () => {
+    const sourceCode = `
+      import { state } from "./src/model.ctx";
+      exports.myAction = () => {
+        state.foo = "foo";
+      };
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      import { state } from "./src/model.ctx";
+      exports.myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
       }, "myAction");
     `);
   });

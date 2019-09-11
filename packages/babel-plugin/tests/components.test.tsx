@@ -65,7 +65,7 @@ describe("component transpilation", () => {
       const MyComponent = model.connect(({
         state,
         watch
-      }) => () => {
+      }) => function () {
         return <div>{watch(state.foo)}</div>;
       }, "MyComponent");
     `);
@@ -87,7 +87,7 @@ describe("component transpilation", () => {
       const MyComponent = model.connect(({
         state,
         watch
-      }) => () => {
+      }) => function MyComponent () {
         return <div>{watch(state.foo)}</div>;
       }, "MyComponent");
     `);
@@ -210,7 +210,7 @@ describe("component transpilation", () => {
       export const MyComponent = model.connect(({
         state,
         watch
-      }) => () => {
+      }) => function () {
         return <div>{watch(state.foo)}</div>;
       }, "MyComponent");
     `);
@@ -232,7 +232,7 @@ describe("component transpilation", () => {
       export const MyComponent = model.connect(({
         state,
         watch
-      }) => () => {
+      }) => function MyComponent () {
         return <div>{watch(state.foo)}</div>;
       }, "MyComponent");
     `);
@@ -393,6 +393,28 @@ describe("component transpilation", () => {
             <div>{foo}</div>
           </div>
         );
+      }, "MyComponent");
+    `);
+  });
+
+  it("compiles commonjs export syntax", () => {
+    const sourceCode = `
+      import { state, watch } from "./src/model.ctx";
+      exports.MyComponent = () => {
+        return <div>{watch(state.foo)}</div>;
+      };
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
+      exports.MyComponent = model.connect(({
+        state,
+        watch
+      }) => () => {
+        return <div>{watch(state.foo)}</div>;
       }, "MyComponent");
     `);
   });

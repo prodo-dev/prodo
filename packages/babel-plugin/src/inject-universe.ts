@@ -10,7 +10,9 @@ export default (
   type: "action" | "component",
   name: string,
   rootPath: Babel.NodePath<
-    Babel.types.FunctionDeclaration | Babel.types.VariableDeclaration
+    | Babel.types.FunctionDeclaration
+    | Babel.types.FunctionExpression
+    | Babel.types.ArrowFunctionExpression
   >,
   params: Array<
     | Babel.types.Identifier
@@ -171,46 +173,62 @@ export default (
     }
   }
 
-  rootPath.replaceWith(
-    t.variableDeclaration("const", [
-      t.variableDeclarator(
-        t.identifier(name),
-        t.callExpression(
-          t.memberExpression(
-            t.identifier("model"),
-            t.identifier(type === "action" ? "action" : "connect"),
+  if (t.isFunctionDeclaration(rootPath.node)) {
+    rootPath.replaceWith(
+      t.variableDeclaration("const", [
+        t.variableDeclarator(
+          t.identifier(name),
+          t.functionExpression(
+            t.identifier(name),
+            params,
+            t.isBlockStatement(bodyPath.node)
+              ? bodyPath.node
+              : t.blockStatement([t.returnStatement(bodyPath.node)]),
+            async,
           ),
-          [
-            t.arrowFunctionExpression(
-              [
-                universeImports.namespace != null
-                  ? t.identifier(universeImports.namespace)
-                  : t.objectPattern([
-                      ...Object.keys(universeImports.specifiers)
-                        .sort()
-                        .map(key =>
-                          t.objectProperty(
-                            t.identifier(key),
-                            t.identifier(universeImports.specifiers[key]),
-                            false,
-                            key === universeImports.specifiers[key],
-                          ),
-                        ),
-                      ...(universeImports.specifierRest != null
-                        ? [
-                            t.restElement(
-                              t.identifier(universeImports.specifierRest),
-                            ),
-                          ]
-                        : []),
-                    ]),
-              ],
-              t.arrowFunctionExpression(params, bodyPath.node, async),
-            ),
-            t.stringLiteral(name),
-          ],
         ),
+      ]),
+    );
+    rootPath = rootPath.get("declarations")[0].get("init");
+  }
+
+  rootPath.replaceWith(
+    t.callExpression(
+      t.memberExpression(
+        t.identifier("model"),
+        t.identifier(type === "action" ? "action" : "connect"),
       ),
-    ]),
+      [
+        t.arrowFunctionExpression(
+          [
+            universeImports.namespace != null
+              ? t.identifier(universeImports.namespace)
+              : t.objectPattern([
+                  ...Object.keys(universeImports.specifiers)
+                    .sort()
+                    .map(key =>
+                      t.objectProperty(
+                        t.identifier(key),
+                        t.identifier(universeImports.specifiers[key]),
+                        false,
+                        key === universeImports.specifiers[key],
+                      ),
+                    ),
+                  ...(universeImports.specifierRest != null
+                    ? [
+                        t.restElement(
+                          t.identifier(universeImports.specifierRest),
+                        ),
+                      ]
+                    : []),
+                ]),
+          ],
+          rootPath.node as
+            | Babel.types.FunctionExpression
+            | Babel.types.ArrowFunctionExpression,
+        ),
+        t.stringLiteral(name),
+      ],
+    ),
   );
 };
