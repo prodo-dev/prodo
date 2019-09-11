@@ -1,4 +1,4 @@
 ---
-title: "Model"
+title: "Model / Store"
 order: 4
 ---
