@@ -1,5 +1,5 @@
 import * as Babel from "@babel/core";
-import * as nodePath from "path";
+import * as pathLib from "path";
 import injectUniverse from "./inject-universe";
 import { isPossibleActionName, isPossibleComponentName } from "./utils";
 
@@ -135,7 +135,7 @@ export default ({ types: t }: typeof Babel) => ({
       return;
     }
 
-    const name = /^[A-Z]/.test(nodePath.basename(state.file.opts.filename))
+    const name = /^[A-Z]/.test(pathLib.basename(state.file.opts.filename))
       ? "Default"
       : "default";
     const bodyPath = (declarationPath as Babel.NodePath<
