@@ -1,4 +1,5 @@
 import * as Babel from "@babel/core";
+import * as nodePath from "path";
 import injectUniverse from "./inject-universe";
 import { isPossibleActionName, isPossibleComponentName } from "./utils";
 
@@ -60,12 +61,9 @@ export default ({ types: t }: typeof Babel) => ({
       return;
     }
 
-    if (!t.isIdentifier(declarationPath.node.id)) {
-      // Not yet supported.
-      return;
-    }
-
-    const name = declarationPath.node.id.name;
+    const name = t.isIdentifier(declarationPath.node.id)
+      ? declarationPath.node.id.name
+      : "unknown";
     const bodyPath = (declarationPath.get("init") as Babel.NodePath<
       Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
     >).get("body");
@@ -116,6 +114,43 @@ export default ({ types: t }: typeof Babel) => ({
       (path.node.right as
         | Babel.types.ArrowFunctionExpression
         | Babel.types.FunctionExpression).async,
+    );
+  },
+  ExportDefaultDeclaration(
+    path: Babel.NodePath<Babel.types.ExportDefaultDeclaration>,
+    state: any,
+  ) {
+    const declarationPath = path.get("declaration");
+    if (
+      !(
+        t.isArrowFunctionExpression(declarationPath.node) ||
+        t.isFunctionExpression(declarationPath.node)
+      )
+    ) {
+      // Not a function.
+      return;
+    }
+
+    if (!state.file || !state.file.opts || !state.file.opts.filename) {
+      return;
+    }
+
+    const name = /^[A-Z]/.test(nodePath.basename(state.file.opts.filename))
+      ? "Default"
+      : "default";
+    const bodyPath = (declarationPath as Babel.NodePath<
+      Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
+    >).get("body");
+
+    visitPossibleActionOrComponent(
+      t,
+      name,
+      declarationPath as Babel.NodePath<
+        Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
+      >,
+      declarationPath.node.params,
+      bodyPath,
+      declarationPath.node.async,
     );
   },
 });

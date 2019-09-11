@@ -3,9 +3,10 @@ import visitor from "../src/components-and-actions";
 
 import "./setup";
 
-const transform = (sourceCode: string): string =>
+const transform = (sourceCode: string, filename?: string): string =>
   babel.transform(sourceCode, {
     plugins: ["@babel/plugin-syntax-jsx", { visitor: visitor(babel) }],
+    filename,
   })!.code!;
 
 describe("component transpilation", () => {
@@ -49,7 +50,7 @@ describe("component transpilation", () => {
     expect(transpiled).toHaveTheSameASTAs(sourceCode);
   });
 
-  it("can transpile a function expression component", () => {
+  it("can transpile a function expression component as long as the file name is present", () => {
     const sourceCode = `
       import { state, watch } from "./src/model.ctx";
       const MyComponent = function () {
@@ -57,7 +58,7 @@ describe("component transpilation", () => {
       }
     `;
 
-    const transpiled = transform(sourceCode);
+    const transpiled = transform(sourceCode, "Something.jsx");
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model } from "./src/model";
@@ -416,6 +417,28 @@ describe("component transpilation", () => {
       }) => () => {
         return <div>{watch(state.foo)}</div>;
       }, "MyComponent");
+    `);
+  });
+
+  it("compiles default exports", () => {
+    const sourceCode = `
+      import { state, watch } from "./src/model.ctx";
+      export default () => {
+        return <div>{watch(state.foo)}</div>;
+      };
+    `;
+
+    const transpiled = transform(sourceCode, "Component.tsx");
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
+      export default model.connect(({
+        state,
+        watch
+      }) => () => {
+        return <div>{watch(state.foo)}</div>;
+      }, "Default");
     `);
   });
 });
