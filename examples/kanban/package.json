@@ -58,6 +58,9 @@
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(svg|jpg|scss|css|png)$": "<rootDir>/tests/__mock.js"
     }
   }
 }
