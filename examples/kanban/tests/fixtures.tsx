@@ -1,6 +1,5 @@
-import { model } from "./model";
-
-export const initState = {
+import { State } from "../src/types";
+export const initState: State = {
   user: {
     _id: "ted",
     name: "ted",
@@ -26,5 +25,3 @@ export const initState = {
     C3: { _id: "C3", text: "everything", date: new Date(), color: "blue" },
   },
 };
-
-export default model.createStore({ initState });
