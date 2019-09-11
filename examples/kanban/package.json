@@ -10,8 +10,8 @@
     "lint": "set -ex; tsc --build;"
   },
   "dependencies": {
-    "@prodo/core": "^0.0.1",
-    "@prodo/effect": "^0.0.1",
+    "@prodo/core": "^0.0.3",
+    "@prodo/effect": "^0.0.3",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
     "marked": "^0.3.19",
