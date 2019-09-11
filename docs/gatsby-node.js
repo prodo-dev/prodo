@@ -6,7 +6,9 @@ const docsRoot = path.resolve(__dirname, "./content");
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
 
-  const docs = path.resolve(`./src/templates/docs.tsx`);
+  const docs = path.resolve(`./src/templates/Docs.tsx`);
+  const docsSection = path.resolve(`./src/templates/DocsSection.tsx`);
+
   return graphql(
     `
       {
@@ -19,6 +21,7 @@ exports.createPages = ({ graphql, actions }) => {
               }
               fields {
                 slug
+                section
               }
             }
           }
@@ -38,6 +41,25 @@ exports.createPages = ({ graphql, actions }) => {
         component: docs,
         context: {
           slug: post.node.fields.slug,
+        },
+      });
+    });
+
+    const sections = new Set();
+    posts.forEach(post => {
+      sections.add({
+        normalizedName: post.node.fields.section.replace(/^\d+\_/, ""),
+        fullName: post.node.fields.section,
+      });
+    });
+
+    sections.forEach(section => {
+      createPage({
+        path: "/" + section.normalizedName,
+        component: docsSection,
+        context: {
+          section: section.fullName,
+          normalizedName: section.normalizedName,
         },
       });
     });

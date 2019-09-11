@@ -3,9 +3,10 @@ import { graphql, useStaticQuery } from "gatsby";
 import * as React from "react";
 import styled from "styled-components";
 import { forNarrowScreen, HeaderHeight, SidebarWidth } from "../styles";
-import { makeAnchor, removeTrailingSlash } from "../utils";
+import { removeTrailingSlash } from "../utils";
 import { EmptyLink } from "./Link";
 import Caret from "./Caret";
+import { normalize } from "../utils";
 
 interface HeadingProps {
   to: string;
@@ -25,12 +26,10 @@ interface SectionModel {
   subsections: SubSectionModel[];
 }
 
-const capitalize = (s: string) => s[0].toUpperCase() + s.substring(1);
-
 const getSections = (data: QueryResult): SectionModel[] => {
   const nodes = data.allMdx.nodes;
 
-  const keyedSubSections = nodes.reduce(
+  const keyedSubSections: { [name: string]: SubSectionModel[] } = nodes.reduce(
     (sections: { [name: string]: SubSectionModel[] }, node) => ({
       ...sections,
       [node.fields.section]: [
@@ -50,11 +49,7 @@ const getSections = (data: QueryResult): SectionModel[] => {
     .map(([sectionName, subsections]) => {
       const order = parseInt(sectionName, 10);
       const normalizedName = sectionName.replace(/^\d+\_/, "");
-      const title = normalizedName
-        .replace(/-/g, " ")
-        .split(" ")
-        .map(capitalize)
-        .join(" ");
+      const title = normalize(normalizedName);
 
       return {
         title,
@@ -86,7 +81,8 @@ const SectionHeading = styled.div`
 `;
 
 const SectionSubHeading = styled(HeadingLink)`
-  font-size: 1.2em;
+  padding-bottom: 0.25rem;
+  font-size: 1em;
   font-weight: bold;
 `;
 
@@ -104,7 +100,7 @@ const Section: React.FC<{
   return (
     <StyledSection>
       <SectionHeading onClick={() => setExpanded(!expanded)}>
-        <span>{section.title}</span> <Caret up={expanded} />
+        <span>{section.title}</span> <Caret open={expanded} />
       </SectionHeading>
 
       {expanded &&
