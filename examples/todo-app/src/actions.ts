@@ -1,4 +1,4 @@
-import { dispatch, effect, state } from "./model";
+import { dispatch, effect, state } from "./model.ctx";
 
 const randomId = () => Math.random().toString();
 
