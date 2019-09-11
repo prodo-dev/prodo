@@ -16,6 +16,13 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
+        path: `${__dirname}/assets`,
+        name: `assets`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
         path: `${__dirname}/content`,
         name: `docs`,
       },
@@ -64,6 +71,7 @@ module.exports = {
         short_name: metadata.siteShortTitle,
         start_url: `/`,
         display: `minimal-ui`,
+        icon: `assets/icon.png`,
       },
     },
     `gatsby-plugin-remove-serviceworker`,
