@@ -25,11 +25,31 @@ export interface Props {
 const isExternalLink = (href: string): boolean =>
   href.startsWith("http://") || href.startsWith("https://");
 
-const isFileLink = (href: string): boolean => href.startsWith("/942");
+const isFileLink = (href: string): boolean => /^\/\d/.test(href);
 
 const isHashLink = (href: string): boolean => href.startsWith("#");
 
+const isRelativeLink = (href: string): boolean => /^\.\.?/.test(href);
+
+const sectionLinkRegex = new RegExp(/^\/\d+\_/);
+const isSectionLink = (href: string): boolean => sectionLinkRegex.test(href);
+
+const removeExtension = (s: string): string => {
+  const parsed = path.parse(s);
+  return `${path.join(parsed.dir, parsed.name)}`;
+};
+
 const reWriteRelativeLink = (pathname: string, href: string): string => {
+  if (isSectionLink(href)) {
+    const newHref = removeExtension(href.replace(sectionLinkRegex, ""));
+    return newHref;
+  }
+
+  if (isRelativeLink(href)) {
+    const newHref = path.join(path.dirname(pathname), href);
+    return reWriteRelativeLink(pathname, newHref);
+  }
+
   if (isHashLink(href)) {
     return `${pathname}${href}`;
   }
@@ -39,10 +59,10 @@ const reWriteRelativeLink = (pathname: string, href: string): string => {
     parts.shift();
     parts.shift();
 
-    const parsed = path.parse(parts.join(path.sep));
-    const newHref = `./${path.join(parsed.dir, parsed.name)}`;
-    return reWriteRelativeLink(pathname, newHref);
-    return href;
+    const newHref = `./${removeExtension(parts.join(path.sep))}`;
+
+    const rewritten = reWriteRelativeLink(pathname, newHref);
+    return rewritten;
   }
 
   return href;
