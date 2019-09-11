@@ -3,6 +3,11 @@ import visitor from "../src/components-and-actions";
 
 import "./setup";
 
+const transform = (sourceCode: string): string =>
+  babel.transform(sourceCode, {
+    plugins: [{ visitor: visitor(babel) }],
+  })!.code!;
+
 describe("action transpilation", () => {
   it("can transpile an arrow function action", () => {
     const sourceCode = `
@@ -12,9 +17,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -38,9 +41,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(sourceCode);
   });
@@ -53,9 +54,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -75,9 +74,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -97,9 +94,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import * as prodo from "./src/model";
@@ -117,9 +112,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state as s } from "./src/model";
@@ -139,9 +132,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -161,9 +152,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -183,9 +172,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -209,9 +196,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state, dispatch as d, effect } from "./src/model";
@@ -240,9 +225,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -266,9 +249,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state, initState } from "./src/model";
@@ -292,9 +273,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -319,9 +298,7 @@ describe("action transpilation", () => {
       }
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";
@@ -341,9 +318,7 @@ describe("action transpilation", () => {
       };
     `;
 
-    const transpiled = babel.transform(sourceCode, {
-      plugins: [{ visitor: visitor(babel) }],
-    }).code;
+    const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model, state } from "./src/model";

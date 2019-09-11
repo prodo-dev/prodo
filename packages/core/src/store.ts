@@ -35,7 +35,7 @@ const createProvider = <State>(
     ) =>
       plugin.Provider
         ? ({ children }: { children: React.ReactNode }) =>
-            React.createElement(plugin.Provider, {
+            React.createElement(plugin.Provider!, {
               children: React.createElement(next, { children }),
             })
         : next,
@@ -92,7 +92,7 @@ export const createStore = <State>(
             ...args: A
           ) => {
             event.nextActions.push({
-              func,
+              func: func as any,
               args,
               origin: {
                 parentId: event.id,

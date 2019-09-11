@@ -73,7 +73,10 @@ const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
       return true;
     },
     deleteProperty: (obj, key: keyof T) => {
-      state.states[key].unsubscribe();
+      const streamState = state.states[key];
+      if (streamState != null) {
+        streamState.unsubscribe();
+      }
       delete universe.streams[key];
       delete state.states[key];
       delete obj[key];
