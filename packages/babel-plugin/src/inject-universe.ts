@@ -27,7 +27,7 @@ export default (
 
   path.get("body").traverse({
     Identifier(p: Babel.NodePath<Babel.types.Identifier>) {
-      // Does it use `state` from `import {state} from "./model";`
+      // Does it use something from "./model.ctx"
       if (p.isReferencedIdentifier()) {
         const binding = p.scope.getBinding(p.node.name);
         if (binding != null) {
@@ -69,6 +69,7 @@ export default (
                 .value,
             )
           ) {
+            // const foo = require("./model.ctx");
             universeImports.modelSource = (bindingPath.node.init
               .arguments[0] as Babel.types.StringLiteral).value.replace(
               /\.ctx(?=\.(j|t)sx?)?$/,
@@ -165,6 +166,15 @@ export default (
     }
   }
 
+  /* 
+   * If it's a FunctionDeclaration, turn it into a VariableDeclaration
+   * 
+   * function foo () { ... }
+   * 
+   * becomes
+   * 
+   * const foo = function () { ... }
+  `*/
   if (t.isFunctionDeclaration(path.node)) {
     path.replaceWith(
       t.variableDeclaration("const", [
@@ -184,6 +194,15 @@ export default (
     path = path.get("declarations")[0].get("init");
   }
 
+  /*
+   * Surround in model.action or model.connect
+   *
+   * const foo = () => { ... }
+   *
+   * becomes
+   *
+   * const foo = model.action(({state}) => () => { ... });
+   */
   path.replaceWith(
     t.callExpression(
       t.memberExpression(
