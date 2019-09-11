@@ -3,7 +3,7 @@ import * as pathLib from "path";
 
 const isModelContextImport = (importPath: string): boolean =>
   importPath.startsWith(".") &&
-  /^model\.ctx(\.(j|t)sx?)?$/.test(pathLib.basename(importPath));
+  /^model(\.ctx)?(\.(j|t)sx?)?$/.test(pathLib.basename(importPath));
 
 export default (
   t: typeof Babel.types,
@@ -41,7 +41,7 @@ export default (
             isModelContextImport(bindingPath.parent.source.value)
           ) {
             universeImports.modelSource = bindingPath.parent.source.value.replace(
-              /\.ctx(?=\.(j|t)sx?)?$/,
+              /(\.ctx)?(?=\.(j|t)sx?)?$/,
               "",
             );
             universeImports.programPath = bindingPath.parentPath
@@ -72,7 +72,7 @@ export default (
             // const foo = require("./model.ctx");
             universeImports.modelSource = (bindingPath.node.init
               .arguments[0] as Babel.types.StringLiteral).value.replace(
-              /\.ctx(?=\.(j|t)sx?)?$/,
+              /(\.ctx)?(?=\.(j|t)sx?)?$/,
               "",
             );
             universeImports.programPath = bindingPath.parentPath
@@ -130,6 +130,7 @@ export default (
   }
 
   // Insert `import { model } from "./src/model";
+  let modelImport: { namespace: string } | { specifier: string };
   if (
     universeImports.programPath != null &&
     universeImports.modelSource != null
@@ -150,20 +151,44 @@ export default (
         "body",
         importDeclaration,
       );
+      modelImport = { specifier: "model" };
     } else {
-      const hasModel = (importDeclarationPath.node as Babel.types.ImportDeclaration).specifiers.some(
-        specifier =>
-          t.isImportSpecifier(specifier) &&
-          specifier.local.name === "model" &&
-          specifier.imported.name === "model",
-      );
-      if (!hasModel) {
+      if (
+        (importDeclarationPath.node as Babel.types.ImportDeclaration).specifiers.some(
+          specifier => t.isImportNamespaceSpecifier(specifier),
+        )
+      ) {
+        modelImport = {
+          namespace: (importDeclarationPath.node as Babel.types.ImportDeclaration).specifiers.find(
+            specifier => t.isImportNamespaceSpecifier(specifier),
+          )!.local.name,
+        };
+      } else if (
+        (importDeclarationPath.node as Babel.types.ImportDeclaration).specifiers.some(
+          specifier =>
+            t.isImportSpecifier(specifier) &&
+            specifier.imported.name === "model",
+        )
+      ) {
+        modelImport = {
+          specifier: (importDeclarationPath.node as Babel.types.ImportDeclaration).specifiers.find(
+            specifier =>
+              t.isImportSpecifier(specifier) &&
+              specifier.imported.name === "model",
+          )!.local.name,
+        };
+      } else {
         (importDeclarationPath as any).unshiftContainer(
           "specifiers",
           t.importSpecifier(t.identifier("model"), t.identifier("model")),
         );
+        modelImport = { specifier: "model" };
       }
     }
+  }
+
+  if (modelImport == null) {
+    throw new Error("Could not import the model.");
   }
 
   /* 
@@ -206,7 +231,12 @@ export default (
   path.replaceWith(
     t.callExpression(
       t.memberExpression(
-        t.identifier("model"),
+        "namespace" in modelImport
+          ? t.memberExpression(
+              t.identifier(modelImport!.namespace),
+              t.identifier("model"),
+            )
+          : t.identifier(modelImport!.specifier),
         t.identifier(type === "action" ? "action" : "connect"),
       ),
       [

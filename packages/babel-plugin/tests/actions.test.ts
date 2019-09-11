@@ -12,6 +12,26 @@ const transform = (sourceCode: string, filename?: string): string =>
 describe("action transpilation", () => {
   it("can transpile an arrow function action", () => {
     const sourceCode = `
+      import { state } from "./src/model";
+      const myAction = () => {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./src/model";
+      const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("can detect the universe from model.ctx", () => {
+    const sourceCode = `
       import { state } from "./src/model.ctx";
       const myAction = () => {
         state.foo = "foo";
@@ -31,26 +51,49 @@ describe("action transpilation", () => {
     `);
   });
 
-  it("doesn't transpile something that doesn't use the ctx", () => {
+  it("can detect the universe from explicit js files", () => {
     const sourceCode = `
-      import { initState } from "./src/model";
-      const state = {
-        foo: "foo"
-      };
-
+      import { state } from "./src/model.js";
       const myAction = () => {
-        return initState.foo === state.foo;
+        state.foo = "foo";
       }
     `;
 
     const transpiled = transform(sourceCode);
 
-    expect(transpiled).toHaveTheSameASTAs(sourceCode);
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./src/model.js";
+      const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("can detect the universe from explicit ts files", () => {
+    const sourceCode = `
+      import { state } from "./src/model.ts";
+      const myAction = () => {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./src/model.ts";
+      const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
   });
 
   it("can transpile a function expression action", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       const myAction = function () {
         state.foo = "foo";
       }
@@ -59,8 +102,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => function () {
@@ -71,7 +113,7 @@ describe("action transpilation", () => {
 
   it("can transpile a function declaration action", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       function myAction () {
         state.foo = "foo";
       }
@@ -80,8 +122,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => function myAction () {
@@ -92,7 +133,7 @@ describe("action transpilation", () => {
 
   it("can transpile an action that imports the namespace", () => {
     const sourceCode = `
-      import * as prodo from "./src/model.ctx";
+      import * as prodo from "./src/model";
       const myAction = () => {
         prodo.state.foo = "foo";
       }
@@ -101,9 +142,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import * as prodo from "./src/model.ctx";
-      const myAction = model.action(prodo => () => {
+    import * as prodo from "./src/model";
+    const myAction = prodo.model.action(prodo => () => {
         prodo.state.foo = "foo";
       }, "myAction");
     `);
@@ -111,7 +151,7 @@ describe("action transpilation", () => {
 
   it("can transpile an action that renames the import", () => {
     const sourceCode = `
-      import { state as s } from "./src/model.ctx";
+      import { state as s } from "./src/model";
       const myAction = () => {
         s.foo = "foo";
       }
@@ -120,8 +160,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state as s } from "./src/model.ctx";
+      import { model, state as s } from "./src/model";
       const myAction = model.action(({
         state: s
       }) => () => {
@@ -132,7 +171,7 @@ describe("action transpilation", () => {
 
   it("can transpile an action that uses require syntax", () => {
     const sourceCode = `
-      const prodo = require("./src/model.ctx");
+      const prodo = require("./src/model");
       const myAction = () => {
         prodo.state.foo = "foo";
       }
@@ -142,7 +181,7 @@ describe("action transpilation", () => {
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model } from "./src/model";
-      const prodo = require("./src/model.ctx");
+      const prodo = require("./src/model");
       const myAction = model.action(prodo => () => {
         prodo.state.foo = "foo";
       }, "myAction");
@@ -151,7 +190,7 @@ describe("action transpilation", () => {
 
   it("can transpile an action that uses require syntax with spread", () => {
     const sourceCode = `
-      const { state } = require("./src/model.ctx");
+      const { state } = require("./src/model");
       const myAction = () => {
         state.foo = "foo";
       }
@@ -161,7 +200,7 @@ describe("action transpilation", () => {
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model } from "./src/model";
-      const { state }= require("./src/model.ctx");
+      const { state }= require("./src/model");
       const myAction = model.action(({ state }) => () => {
         state.foo = "foo";
       }, "myAction");
@@ -170,7 +209,7 @@ describe("action transpilation", () => {
 
   it("can transpile an exported arrow function expression action", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       export const myAction = () => {
         state.foo = "foo";
       }
@@ -179,8 +218,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       export const myAction = model.action(({
         state
       }) => () => {
@@ -191,7 +229,7 @@ describe("action transpilation", () => {
 
   it("can transpile an exported function expression action", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       export const myAction = function () {
         state.foo = "foo";
       }
@@ -200,8 +238,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       export const myAction = model.action(({
         state
       }) => function () {
@@ -212,7 +249,7 @@ describe("action transpilation", () => {
 
   it("can transpile an exported function declaration action", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       export function myAction () {
         state.foo = "foo";
       }
@@ -221,8 +258,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       export const myAction = model.action(({
         state
       }) => function myAction () {
@@ -233,7 +269,7 @@ describe("action transpilation", () => {
 
   it("passes down the universe", () => {
     const sourceCode = `
-      import { dispatch as d, effect, state } from "./src/model.ctx";
+      import { dispatch as d, effect, state } from "./src/model";
       import { anotherAction } from "./another";
       import { myEffect } from "./effect";
       const myAction = () => {
@@ -246,8 +282,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { dispatch as d, effect, state } from "./src/model.ctx";
+      import { model, dispatch as d, effect, state } from "./src/model";
       import { anotherAction } from "./another";
       import { myEffect } from "./effect";
       const myAction = model.action(({
@@ -264,7 +299,7 @@ describe("action transpilation", () => {
 
   it("passes args", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       const myAction = (foo, {
         bar
       }) => {
@@ -276,8 +311,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => (foo, {
@@ -291,7 +325,7 @@ describe("action transpilation", () => {
 
   it("can transpile multiple actions", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       const myAction = () => {
         state.foo = "foo";
       }
@@ -303,8 +337,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => () => {
@@ -320,8 +353,7 @@ describe("action transpilation", () => {
 
   it("doesn't import the model if it's already imported", () => {
     const sourceCode = `
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       const myAction = () => {
         state.foo = "foo";
       }
@@ -330,9 +362,28 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("doesn't import the model if it's already imported under a different name", () => {
+    const sourceCode = `
+      import { model as m, state } from "./src/model";
+      const myAction = () => {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model as m, state } from "./src/model";
+      const myAction = m.action(({
         state
       }) => () => {
         state.foo = "foo";
@@ -342,7 +393,7 @@ describe("action transpilation", () => {
 
   it("doesn't crash on undefined identifiers", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       const myAction = () => {
         state.foo = foo;
       };
@@ -351,8 +402,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       const myAction = model.action(({
         state
       }) => () => {
@@ -363,7 +413,7 @@ describe("action transpilation", () => {
 
   it("compiles commonjs export syntax", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       exports.myAction = () => {
         state.foo = "foo";
       };
@@ -372,8 +422,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       exports.myAction = model.action(({
         state
       }) => () => {
@@ -384,7 +433,7 @@ describe("action transpilation", () => {
 
   it("compiles default exports", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       export default () => {
         state.foo = "foo";
       };
@@ -393,8 +442,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode, "src/action.ts");
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       export default model.action(({
         state
       }) => () => {
@@ -405,7 +453,7 @@ describe("action transpilation", () => {
 
   it("compiles default exports inside index files", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       export default () => {
         state.foo = "foo";
       };
@@ -414,8 +462,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode, "src/action/index.ts");
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       export default model.action(({
         state
       }) => () => {
@@ -426,7 +473,7 @@ describe("action transpilation", () => {
 
   it("removes special characters when compiling default exports", () => {
     const sourceCode = `
-      import { state } from "./src/model.ctx";
+      import { state } from "./src/model";
       export default () => {
         state.foo = "foo";
       };
@@ -435,8 +482,7 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode, "src/my-action.ts");
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model } from "./src/model";
-      import { state } from "./src/model.ctx";
+      import { model, state } from "./src/model";
       export default model.action(({
         state
       }) => () => {
