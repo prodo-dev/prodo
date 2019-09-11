@@ -2,13 +2,13 @@ import * as React from "react";
 import styled from "styled-components";
 
 interface Props {
-  up: boolean;
+  open: boolean;
 }
 
 const StyledCaret = styled.span<Props>`
   user-select: none;
   transform-origin: center center;
-  transform: rotate(${props => (props.up ? "0deg" : "180deg")});
+  transform: rotate(${props => (props.open ? "180deg" : "90deg")});
   transition: transform 100ms ease-in-out;
 `;
 

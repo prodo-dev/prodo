@@ -4,19 +4,22 @@ import Helmet from "react-helmet";
 
 export interface Props {
   title?: string;
-  data?: {
-    site: {
-      siteMetadata: {
-        siteShortTitle: string;
-        description: string;
-        url: string;
-      };
+}
+
+interface QueryResult {
+  site: {
+    siteMetadata: {
+      siteShortTitle: string;
+      description: string;
+      url: string;
+      image?: string;
+      userTwitter?: string;
     };
   };
 }
 
 function SEO(props: Props) {
-  const data = useStaticQuery(query);
+  const data: QueryResult = useStaticQuery(query);
   const meta = data.site.siteMetadata;
 
   const title =
