@@ -45,5 +45,5 @@ export increment = () => {
 Note the API of a plugin may differ between views and actions - for example,
 views will be read-only, while actions may have side effects.
 
-See [Prodo plugins](../05_advanced/creating-plugins.md) for a list of all provided plugins
+See [Prodo plugins](/advanced/creating-plugins.md) for a list of all provided plugins
 and their API.

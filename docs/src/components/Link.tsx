@@ -31,20 +31,12 @@ const isHashLink = (href: string): boolean => href.startsWith("#");
 
 const isRelativeLink = (href: string): boolean => /^\.\.?/.test(href);
 
-const sectionLinkRegex = new RegExp(/^\/\d+\_/);
-const isSectionLink = (href: string): boolean => sectionLinkRegex.test(href);
-
 const removeExtension = (s: string): string => {
   const parsed = path.parse(s);
   return `${path.join(parsed.dir, parsed.name)}`;
 };
 
 const reWriteRelativeLink = (pathname: string, href: string): string => {
-  if (isSectionLink(href)) {
-    const newHref = removeExtension(href.replace(sectionLinkRegex, ""));
-    return newHref;
-  }
-
   if (isRelativeLink(href)) {
     const newHref = path.join(path.dirname(pathname), href);
     return reWriteRelativeLink(pathname, newHref);
