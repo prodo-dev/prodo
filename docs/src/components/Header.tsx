@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import logo from "../logo.svg";
-import { HeaderHeight } from "../styles";
+import { HeaderHeight, forNarrowScreen } from "../styles";
 import GithubIcon from "./GithubIcon";
 import Link, { EmptyLink } from "./Link";
 
@@ -43,6 +43,10 @@ const HeaderLinks = styled.div`
   display: flex;
   align-items: center;
 
+  .hide-mobile {
+    ${forNarrowScreen`display: none;`};
+  }
+
   a {
     padding: 0 0.75rem;
     color: white;
@@ -67,10 +71,10 @@ const Header = () => (
         </LogoText>
       </EmptyLink>
       <HeaderLinks>
-        <Link to="/introduction/getting-started" target="_blank">
+        <Link to="/introduction/getting-started" className="hide-mobile">
           Getting Started
         </Link>
-        <Link to="/api-reference" target="_blank">
+        <Link to="/api-reference" className="hide-mobile">
           API
         </Link>
         <Link to="https://github.com/prodo-ai/prodo" target="_blank">

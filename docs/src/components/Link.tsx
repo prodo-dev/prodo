@@ -20,6 +20,7 @@ export interface Props {
   href?: string;
   empty?: boolean;
   target?: string;
+  className?: string;
 }
 
 const isExternalLink = (href: string): boolean =>
