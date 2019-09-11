@@ -15,7 +15,7 @@ function addBoard(boardId: string, userId: string, title: string) {
     title,
     lists: [],
     users: [userId],
-    color: "blue"
+    color: "blue",
   };
   state.currentBoardId = boardId;
 }
@@ -25,7 +25,7 @@ function BoardAdder({ history }: Props) {
   const userId = user ? user._id : "guest";
   const [localState, setLocalState] = React.useState({
     isOpen: false,
-    title: ""
+    title: "",
   });
   const { isOpen, title } = localState;
 
