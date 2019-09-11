@@ -73,7 +73,7 @@ const SectionHeading = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 0.25rem;
+  padding-bottom: 0.5rem;
   color: #646464;
   font-size: 1em;
   text-transform: uppercase;
@@ -87,7 +87,7 @@ const SectionSubHeading = styled(HeadingLink)`
 `;
 
 const StyledSection = styled.div`
-  padding-bottom: 1rem;
+  padding-bottom: 0.5rem;
 `;
 
 const Section: React.FC<{

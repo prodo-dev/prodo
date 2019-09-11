@@ -1,9 +1,12 @@
 ---
 title: "Getting Started"
-order: 2
+order: 1
 ---
 
-This section outlines how you can quickly get started with the Prodo framework.
+Prodo is a web framework that enables you to write performant and scalable web
+apps with as little boilerplate as possible. It was designed with TypeScript in
+mind and even includes a babel plugin to further reduce the amount of
+boilerplate you write.
 
 # Try Prodo
 

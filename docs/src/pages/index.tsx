@@ -33,10 +33,9 @@ const Home = () => {
             The full-stack web framework to build apps faster.
           </SubTitle>
           <div>
-            <ButtonLink primary to="/getting_started">
+            <ButtonLink primary to="/introduction/getting-started">
               Get Started
             </ButtonLink>
-            <ButtonLink to="/introduction">Docs</ButtonLink>
           </div>
         </Container>
       </Hero>
