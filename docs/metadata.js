@@ -1,7 +1,7 @@
 const config = {
   siteTitle: "Prodo",
   siteShortTitle: "Prodo",
-  logo: "/logos/logo-1024.png",
+  logo: "/assets/icon.png",
   url: "https://docs.prodo.dev",
   description: "",
   dateFromFormat: "YYYY-MM-DD",
