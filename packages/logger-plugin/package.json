@@ -1,0 +1,27 @@
+{
+  "name": "@prodo/logger",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "private": true,
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf lib tsconfig.tsbuildinfo",
+    "test": "jest",
+    "lint": "set -ex; tsc --build; tslint --project ."
+  },
+  "devDependencies": {
+    "@prodo/core": "^0.0.1",
+    "@types/jest": "^24.0.18",
+    "ts-jest": "^24.0.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  }
+}
