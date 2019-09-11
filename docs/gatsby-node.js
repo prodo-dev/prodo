@@ -1,6 +1,8 @@
 const path = require(`path`);
 const { createFilePath } = require(`gatsby-source-filesystem`);
 
+const docsRoot = path.resolve(__dirname, "./content");
+
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
 
@@ -46,11 +48,22 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions;
 
   if (node.internal.type === `Mdx`) {
-    const value = createFilePath({ node, getNode });
+    const slug = createFilePath({ node, getNode }).replace(/^\/\d+\_/, "/");
+
+    const section = path.dirname(
+      path.relative(docsRoot, node.fileAbsolutePath),
+    );
+
     createNodeField({
-      name: `slug`,
+      name: "slug",
       node,
-      value,
+      value: slug,
+    });
+
+    createNodeField({
+      name: "section",
+      node,
+      value: section,
     });
   }
 };
