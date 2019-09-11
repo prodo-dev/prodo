@@ -1,16 +1,16 @@
 import { ProdoPlugin } from "@prodo/core";
 
-export interface Config {
+export type LoggerConfig = {
   logger?: boolean;
-}
+};
 
-const init = (config: Config) => {
+const init = (config: LoggerConfig) => {
   if (config.logger) console.log("Using logger...");
 };
 
-const loggerPlugin = (): ProdoPlugin<Config, {}, {}, {}> => ({
+const loggerPlugin: ProdoPlugin<LoggerConfig, {}, {}, {}> = {
   name: "logger",
   init,
-});
+};
 
 export default loggerPlugin;
