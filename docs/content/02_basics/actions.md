@@ -50,8 +50,8 @@ exported from `createModel`, and is assigned to a lower-case identifier
 ```tsx
 import { state } from "./model";
 
-export const increment = () => {
-  state.count += 1;
+export const increment = (amount: number) => {
+  state.count += amount;
 }
 ```
 
@@ -61,11 +61,11 @@ is converted to
 import model from "./model";
 
 export const increment = model.action(
-  ({state}: Ctx) => () => {
-    state.count += 1
+  ({state}: Ctx) => (amount: number) => {
+    state.count += amount;
   },
   "increment"
-)
+);
 ```
 
 [^1]: for dispatching an action in response to user input, see

@@ -17,7 +17,7 @@ re-rendered when the state is updated, accesses must be wrapped in `watch`. For
 example:
 
 ```tsx
-<span>The value is { watch(state.count) }</span>
+<span>The value is {watch(state.count)}</span>
 ```
 
 Watch the narrowest scope possible to avoid unnecessary re-renders. For example
@@ -44,7 +44,7 @@ exported from `createModel`, and is assigned to an upper-case identifier
 ```tsx
 import { state, watch } from "./model";
 
-export const Counter = () => {
+export const Counter = props => {
   return <div>
     <span>Hello, {watch(state.count)}!</span>
   </div>;
@@ -57,11 +57,11 @@ is converted to
 import model from "./model";
 
 export const Counter = model.connect(
-  ({state}: Ctx) => () => {
+  ({state}: Ctx) => props => {
     return <div>
       <span>Hello, {watch(state.count)}!</span>
     </div>;
   },
   "Counter"
-)
+);
 ```
