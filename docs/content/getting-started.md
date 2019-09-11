@@ -3,21 +3,7 @@ title: "Getting Started"
 order: 2
 ---
 
-Prodo is a web framework that enables you to quickly write performant and
-scalable web apps with a simple syntax. The main concepts of Prodo are,
-
-- Flux architecture pattern
-- Minimal boilerplate
-- TypeScript first
-
-The [flux architecture pattern](https://facebook.github.io/flux/) is used to
-update your React components by dispatching actions with unidirectional data
-flow.
-
-A babel plugin is provided that automatically adds the glue needed to connect
-the code you write to valid JavaScript that will run in the browser.
-
-Prodo is developed in TypeScript and will always be TypeScript first.
+This section outlines how you can quickly get started with the Prodo framework.
 
 # Try Prodo
 
@@ -30,24 +16,22 @@ _ToDo_
 Prodo is available on [NPM](https://www.npmjs.com/package/@prodo/core). The main
 framework is `@prodo/core`.
 
-**NPM**
-
 ```shell
 npm install --save @prodo/core
 ```
 
-**Yarn**
+# Prodo Template
+
+You can get started with Prodo by cloning the [template
+project](https://github.com/prodo-ai/prodo-template). This template uses the
+[Parcel](https://parceljs.org/) module bundler.
 
 ```shell
 yarn add @prodo/core
 ```
 
-# Creating a new Project
 
-You can get started with Prodo by cloning the [template
-project](https://github.com/prodo-ai/prodo-template).
-
-# Hello World
+# Basic Example
 
 This section will walk you through the main concepts of Prodo by creating a
 simple "Counter" app. It assumes yo have basic knowledge of
@@ -61,7 +45,7 @@ The typical workflow in developing a Prodo app is too
 2. Create actions that mutate the model
 3. Create components that render the model
 
-## Creating a model
+## Creating a Model
 
 A model holds all of the types used in your actions and components. Create one
 in a file called `src/model.ts`.
@@ -83,7 +67,7 @@ and export any variables from our model that are used elsewhere in our app.
 These variables that are exported from our model are correctly typed with our
 state.
 
-## Creating and action
+## Creating an Action
 
 Actions are async functions that may change the state of your application. They can
 take arguments, trigger side effects, and trigger other actions. We can create
@@ -160,7 +144,7 @@ const App = () => (
 export default App;
 ```
 
-## Creating the store
+## Creating the Store
 
 When starting your app, you need to provide an initial state. This is done in
 `src/index.tsx`.
