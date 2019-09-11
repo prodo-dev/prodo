@@ -7,7 +7,7 @@
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
     "start": "parcel src/index.html",
     "test": "jest --passWithNoTests",
-    "lint": "set -ex; tsc --build; tslint --project ."
+    "lint": "set -ex; tsc --build;"
   },
   "dependencies": {
     "@prodo/core": "^0.0.1",
