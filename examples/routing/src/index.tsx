@@ -1,16 +1,18 @@
+import { createBrowserHistory } from "history";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
-import { Local, model } from "./model";
+import { model } from "./model";
+import { initState } from "./store";
 
 import "./index.scss";
 
-export const initLocal: Local = {
-  center: [51.507351, -0.127758],
-  zoom: 12,
-};
+const history = createBrowserHistory();
 
-const { Provider, store } = model.createStore({ initState: {}, initLocal });
+const { store, Provider } = model.createStore({
+  initState,
+  route: { history },
+});
 
 ReactDOM.render(
   <Provider>

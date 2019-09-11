@@ -59,7 +59,7 @@ const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
   ctx,
   universe,
 }: {
-  ctx: PluginActionCtx<ActionCtx<T>> & ActionCtx<T>;
+  ctx: PluginActionCtx<ActionCtx<T>, Universe<T>> & ActionCtx<T>;
   universe: Universe<T>;
 }) => {
   ctx[valueSymbol] = universe.streams;

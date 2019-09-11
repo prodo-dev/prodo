@@ -13,7 +13,7 @@ const setCount = model.action(({ local }) => (value: number) => {
 
 describe("local plugin", () => {
   it("inits local storage with init value", async () => {
-    const store = model.createStore({
+    const { store } = model.createStore({
       initState: {},
       initLocal: { count: 10 },
       mockLocal: true,
@@ -23,7 +23,7 @@ describe("local plugin", () => {
   });
 
   it("sets local storage value", async () => {
-    const store = model.createStore({
+    const { store } = model.createStore({
       initState: {},
       initLocal: { count: 0 },
       mockLocal: true,

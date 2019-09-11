@@ -16,19 +16,26 @@ export type With<InitOptions, Universe, ActionCtx, ViewCtx> = <I, U, A, V>(
 ) => Model<InitOptions & I, Universe & U, ActionCtx & A, ViewCtx & V>;
 
 export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
-  createStore: (config: InitOptions) => Store<InitOptions, Universe>;
+  createStore: (
+    config: InitOptions,
+  ) => {
+    store: Store<InitOptions, Universe>;
+    Provider: React.ComponentType<{ children: React.ReactNode }>;
+  };
   action: Action<ActionCtx>;
   connect: Connect<ViewCtx>;
   with: With<InitOptions, Universe, ActionCtx, ViewCtx>;
   ctx: ActionCtx & ViewCtx;
 }
 
+export type Provider = React.ComponentType<{ children: React.ReactNode }>;
+
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   name: string;
   init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
     env: {
-      ctx: PluginActionCtx<ActionCtx> & ActionCtx;
+      ctx: PluginActionCtx<ActionCtx, Universe> & ActionCtx;
       universe: Universe;
       event: any;
     },
@@ -36,21 +43,24 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   ) => void;
   prepareViewCtx?: (
     env: {
-      ctx: PluginViewCtx<ActionCtx> & ViewCtx;
+      ctx: PluginViewCtx<ActionCtx, Universe> & ViewCtx;
       universe: Universe;
       comp: Comp;
     },
     config: InitOptions,
   ) => void;
+  Provider?: Provider;
 }
 
-export interface PluginActionCtx<ActionCtx> {
+export interface PluginActionCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
+  universe: Universe;
   rootDispatch: PluginDispatch<ActionCtx>;
 }
 
-export interface PluginViewCtx<ActionCtx> {
+export interface PluginViewCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
+  universe: Universe;
   subscribe: (path: string[], unsubscribe?: () => void) => void;
 }
 

@@ -1,4 +1,5 @@
-import { ProdoProvider, Store } from "@prodo/core";
+import { Store } from "@prodo/core";
+import { Provider } from "@prodo/core/src";
 import { fireEvent, render } from "@testing-library/react";
 import * as React from "react";
 import App, { Item } from "../src/App";
@@ -7,10 +8,13 @@ import { initState } from "../src/store";
 
 import "@babel/polyfill";
 
-const renderWithProdo = (ui: React.ReactElement, store: Store<any, any>) => {
+const renderWithProdo = (
+  ui: React.ReactElement,
+  context: { store: Store<any, any>; Provider: Provider },
+) => {
   return {
-    ...render(<ProdoProvider value={store}>{ui}</ProdoProvider>),
-    store,
+    ...render(<context.Provider>{ui}</context.Provider>),
+    store: context.store,
   };
 };
 
