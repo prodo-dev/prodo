@@ -57,7 +57,7 @@ export default ({ types: t }: typeof Babel) => {
       // or
       // export const foo = () => {};
       if (!t.isIdentifier(path.parent.id)) {
-        // Not yet supported.
+        // const {foo} = () => {};
         return;
       }
       visitPossibleActionOrComponent(t, path.parent.id.name, path);
@@ -69,11 +69,14 @@ export default ({ types: t }: typeof Babel) => {
       t.isExpressionStatement(path.parentPath.parent) &&
       t.isProgram(path.parentPath.parentPath.parent)
     ) {
+      // exports.foo = () => {};
       visitPossibleActionOrComponent(t, path.parent.left.property.name, path);
     } else if (
       !t.isProgram(path.parent) &&
       t.isExportDefaultDeclaration(path.parent)
     ) {
+      // export default () => {};
+
       // Need to work out whether it's a component or an action
       if (!state.file || !state.file.opts || !state.file.opts.filename) {
         return;
