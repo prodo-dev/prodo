@@ -1,27 +1,19 @@
 import * as Babel from "@babel/core";
-import * as nodePath from "path";
+import * as pathLib from "path";
 
 const isModelContextImport = (importPath: string): boolean =>
   importPath.startsWith(".") &&
-  /^model\.ctx(\.(j|t)sx?)?$/.test(nodePath.basename(importPath));
+  /^model\.ctx(\.(j|t)sx?)?$/.test(pathLib.basename(importPath));
 
 export default (
   t: typeof Babel.types,
   type: "action" | "component",
   name: string,
-  rootPath: Babel.NodePath<
+  path: Babel.NodePath<
     | Babel.types.FunctionDeclaration
     | Babel.types.FunctionExpression
     | Babel.types.ArrowFunctionExpression
   >,
-  params: Array<
-    | Babel.types.Identifier
-    | Babel.types.Pattern
-    | Babel.types.RestElement
-    | Babel.types.TSParameterProperty
-  >,
-  bodyPath: Babel.NodePath<Babel.types.BlockStatement | Babel.types.Expression>,
-  async?: boolean,
 ) => {
   const universeImports: {
     namespace?: string;
@@ -33,7 +25,7 @@ export default (
     specifiers: {},
   };
 
-  bodyPath.traverse({
+  path.get("body").traverse({
     Identifier(p: Babel.NodePath<Babel.types.Identifier>) {
       // Does it use `state` from `import {state} from "./model";`
       if (p.isReferencedIdentifier()) {
@@ -173,26 +165,26 @@ export default (
     }
   }
 
-  if (t.isFunctionDeclaration(rootPath.node)) {
-    rootPath.replaceWith(
+  if (t.isFunctionDeclaration(path.node)) {
+    path.replaceWith(
       t.variableDeclaration("const", [
         t.variableDeclarator(
           t.identifier(name),
           t.functionExpression(
             t.identifier(name),
-            params,
-            t.isBlockStatement(bodyPath.node)
-              ? bodyPath.node
-              : t.blockStatement([t.returnStatement(bodyPath.node)]),
-            async,
+            path.node.params,
+            t.isBlockStatement(path.node.body)
+              ? path.node.body
+              : t.blockStatement([t.returnStatement(path.node.body)]),
+            path.node.async,
           ),
         ),
       ]),
     );
-    rootPath = rootPath.get("declarations")[0].get("init");
+    path = path.get("declarations")[0].get("init");
   }
 
-  rootPath.replaceWith(
+  path.replaceWith(
     t.callExpression(
       t.memberExpression(
         t.identifier("model"),
@@ -223,7 +215,7 @@ export default (
                     : []),
                 ]),
           ],
-          rootPath.node as
+          path.node as
             | Babel.types.FunctionExpression
             | Babel.types.ArrowFunctionExpression,
         ),

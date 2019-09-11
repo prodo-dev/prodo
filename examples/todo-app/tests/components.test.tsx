@@ -1,3 +1,4 @@
+import "@babel/polyfill";
 import { Store } from "@prodo/core";
 import { Provider } from "@prodo/core/src";
 import { fireEvent, render } from "@testing-library/react";
@@ -5,8 +6,6 @@ import * as React from "react";
 import App, { Item } from "../src/App";
 import { model } from "../src/model";
 import { initState } from "../src/store";
-
-import "@babel/polyfill";
 
 const renderWithProdo = (
   ui: React.ReactElement,

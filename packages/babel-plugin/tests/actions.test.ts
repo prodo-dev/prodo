@@ -390,7 +390,7 @@ describe("action transpilation", () => {
       };
     `;
 
-    const transpiled = transform(sourceCode, "action.ts");
+    const transpiled = transform(sourceCode, "src/action.ts");
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model } from "./src/model";
@@ -399,7 +399,49 @@ describe("action transpilation", () => {
         state
       }) => () => {
         state.foo = "foo";
-      }, "default");
+      }, "action");
+    `);
+  });
+
+  it("compiles default exports inside index files", () => {
+    const sourceCode = `
+      import { state } from "./src/model.ctx";
+      export default () => {
+        state.foo = "foo";
+      };
+    `;
+
+    const transpiled = transform(sourceCode, "src/action/index.ts");
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      import { state } from "./src/model.ctx";
+      export default model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "action");
+    `);
+  });
+
+  it("removes special characters when compiling default exports", () => {
+    const sourceCode = `
+      import { state } from "./src/model.ctx";
+      export default () => {
+        state.foo = "foo";
+      };
+    `;
+
+    const transpiled = transform(sourceCode, "src/my-action.ts");
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      import { state } from "./src/model.ctx";
+      export default model.action(({
+        state
+      }) => () => {
+        state.foo = "foo";
+      }, "myAction");
     `);
   });
 });

@@ -428,7 +428,7 @@ describe("component transpilation", () => {
       };
     `;
 
-    const transpiled = transform(sourceCode, "Component.tsx");
+    const transpiled = transform(sourceCode, "src/Component.tsx");
 
     expect(transpiled).toHaveTheSameASTAs(`
       import { model } from "./src/model";
@@ -438,7 +438,51 @@ describe("component transpilation", () => {
         watch
       }) => () => {
         return <div>{watch(state.foo)}</div>;
-      }, "Default");
+      }, "Component");
+    `);
+  });
+
+  it("compiles default exports inside index files", () => {
+    const sourceCode = `
+      import { state, watch } from "./src/model.ctx";
+      export default () => {
+        return <div>{watch(state.foo)}</div>;
+      };
+    `;
+
+    const transpiled = transform(sourceCode, "src/Component/index.tsx");
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
+      export default model.connect(({
+        state,
+        watch
+      }) => () => {
+        return <div>{watch(state.foo)}</div>;
+      }, "Component");
+    `);
+  });
+
+  it("removes special characters when compiling default exports", () => {
+    const sourceCode = `
+      import { state, watch } from "./src/model.ctx";
+      export default () => {
+        return <div>{watch(state.foo)}</div>;
+      };
+    `;
+
+    const transpiled = transform(sourceCode, "src/My-Component.tsx");
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
+      export default model.connect(({
+        state,
+        watch
+      }) => () => {
+        return <div>{watch(state.foo)}</div>;
+      }, "MyComponent");
     `);
   });
 });
