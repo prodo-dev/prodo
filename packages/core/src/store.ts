@@ -80,6 +80,7 @@ export const createStore = <State>(
     const event = startEvent(
       store,
       (func as any).__name || "(unnamed)",
+      args,
       origin,
     );
 
@@ -131,6 +132,11 @@ export const createStore = <State>(
     );
 
     completeEvent(event, store);
+    plugins.forEach(p => {
+      if (p.onCompletedEvent) {
+        p.onCompletedEvent(event);
+      }
+    });
   };
 
   store.dispatch = <A extends any[]>(func: (...args: A) => void) => async (

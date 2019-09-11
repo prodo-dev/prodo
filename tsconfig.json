@@ -3,6 +3,7 @@
   "references": [
     { "path": "examples/chat-app" },
     { "path": "examples/clock" },
+    { "path": "examples/kanban" },
     { "path": "examples/local-map" },
     { "path": "examples/random" },
     { "path": "examples/routing" },
@@ -12,6 +13,7 @@
     { "path": "packages/babel-plugin" },
     { "path": "packages/core" },
     { "path": "packages/effect-plugin" },
+    { "path": "packages/logger-plugin" },
     { "path": "packages/firestore-plugin" },
     { "path": "packages/local-plugin" },
     { "path": "packages/random-plugin" },
