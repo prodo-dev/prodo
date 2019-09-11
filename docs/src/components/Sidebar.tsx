@@ -3,7 +3,8 @@ import { graphql, useStaticQuery } from "gatsby";
 import * as React from "react";
 import styled from "styled-components";
 import { forNarrowScreen, HeaderHeight, SidebarWidth } from "../styles";
-import { makeAnchor, removeTrailingSlash } from "../utils";
+import { normalize, removeTrailingSlash } from "../utils";
+import Caret from "./Caret";
 import { EmptyLink } from "./Link";
 
 interface HeadingProps {
@@ -11,69 +12,111 @@ interface HeadingProps {
   active: number;
 }
 
+interface SubSectionModel {
+  title: string;
+  slug: string;
+  order: number;
+}
+
+interface SectionModel {
+  title: string;
+  slug: string;
+  order: number;
+  subsections: SubSectionModel[];
+}
+
+const getSections = (data: QueryResult): SectionModel[] => {
+  const nodes = data.allMdx.nodes;
+
+  const keyedSubSections: { [name: string]: SubSectionModel[] } = nodes.reduce(
+    (sections: { [name: string]: SubSectionModel[] }, node) => ({
+      ...sections,
+      [node.fields.section]: [
+        ...(sections[node.fields.section] || []),
+        {
+          slug: node.fields.slug,
+          section: node.fields.section,
+          title: node.frontmatter.title,
+          order: node.frontmatter.order,
+        },
+      ],
+    }),
+    {},
+  );
+
+  const sections: SectionModel[] = Object.entries(keyedSubSections)
+    .map(([sectionName, subsections]) => {
+      const order = parseInt(sectionName, 10);
+      const normalizedName = sectionName.replace(/^\d+\_/, "");
+      const title = normalize(normalizedName);
+
+      return {
+        title,
+        slug: "/" + normalizedName,
+        order,
+        subsections: subsections.sort((a, b) => a.order - b.order),
+      };
+    })
+    .sort((a, b) => a.order - b.order);
+
+  return sections;
+};
+
 const HeadingLink = styled(EmptyLink)<HeadingProps>`
-  span {
-    color: ${props =>
-      props.active ? props.theme.colours.primary : props.theme.colours.text};
-  }
+  display: block;
+  color: ${props =>
+    props.active ? props.theme.colours.secondary : props.theme.colours.text};
 `;
 
-const StyledPageHeading = styled.div`
+const SectionHeading = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  color: #646464;
+  font-size: 1em;
+  text-transform: uppercase;
+  cursor: pointer;
+`;
+
+const SectionSubHeading = styled(HeadingLink)`
   padding-bottom: 0.25rem;
-  font-size: 1.5em;
+  font-size: 1em;
   font-weight: bold;
 `;
 
-const PageHeading: React.FC<HeadingProps> = props => (
-  <StyledPageHeading>
-    <HeadingLink to={props.to} active={props.active}>
-      <span>{props.children}</span>
-    </HeadingLink>
-  </StyledPageHeading>
-);
-
-const StyledSubHeading = styled.div`
-  font-size: 1em;
-`;
-
-const SubHeading: React.FC<HeadingProps> = props => (
-  <StyledSubHeading>
-    <HeadingLink to={props.to} active={props.active}>
-      <span>{props.children}</span>
-    </HeadingLink>
-  </StyledSubHeading>
-);
-
 const StyledSection = styled.div`
-  padding-bottom: 1rem;
+  padding-bottom: 0.5rem;
 `;
 
 const Section: React.FC<{
   active: boolean;
-  slug: string;
-  title: string;
-  headings: Array<{
-    value: string;
-    depth: number;
-  }>;
-}> = props => {
+  section: SectionModel;
+  currentPath: string;
+}> = ({ active, section, currentPath }) => {
+  const [expanded, setExpanded] = React.useState(active);
+
   return (
     <StyledSection>
-      <PageHeading to={props.slug} active={props.active ? 1 : 0}>
-        {props.title}
-      </PageHeading>
-      {props.active &&
-        props.headings
-          .filter(({ depth }) => depth <= 1)
-          .map(({ value }, i) => (
-            <SubHeading
-              key={i}
-              to={`${props.slug}#${makeAnchor(value)}`}
-              active={0}
-            >
-              {value}
-            </SubHeading>
-          ))}
+      <SectionHeading onClick={() => setExpanded(!expanded)}>
+        <span>{section.title}</span> <Caret open={expanded} />
+      </SectionHeading>
+
+      {expanded &&
+        section.subsections.map(subSection => (
+          <SectionSubHeading
+            key={subSection.slug}
+            to={`${subSection.slug}`}
+            active={
+              removeTrailingSlash(currentPath) ===
+              removeTrailingSlash(subSection.slug)
+                ? 1
+                : 0
+            }
+          >
+            {subSection.title}
+          </SectionSubHeading>
+        ))}
     </StyledSection>
   );
 };
@@ -104,25 +147,45 @@ export interface Props {
 
 const Sidebar: React.FC<Props> = props => {
   const data: QueryResult = useStaticQuery(query);
-  const pages = data.allMdx.nodes;
   const currentPath = props.location.pathname;
+  const sections = getSections(data);
 
   return (
     <StyledSidebar className="sidebar" isOpen={props.isOpen}>
-      {pages.map(node => (
+      {sections.map(section => (
         <Section
-          key={node.fields.slug}
-          title={node.frontmatter.title}
-          headings={node.headings}
-          slug={node.fields.slug}
-          active={
-            removeTrailingSlash(currentPath) ===
-            removeTrailingSlash(node.fields.slug)
-          }
+          key={section.slug}
+          section={section}
+          active={currentPath.startsWith(section.slug)}
+          currentPath={currentPath}
         />
       ))}
     </StyledSidebar>
   );
+
+  /* return ( */
+  {
+    /* <StyledSidebar className="sidebar" isOpen={props.isOpen}> */
+  }
+  /* {pages.map(node => ( */
+  {
+    /* <Section */
+  }
+  /* key={node.fields.slug} */
+  /* title={node.frontmatter.title} */
+  /* headings={node.headings} */
+  /* slug={node.fields.slug} */
+  /* active={ */
+  /* removeTrailingSlash(currentPath) === */
+  /* removeTrailingSlash(node.fields.slug) */
+  /* } */
+  //         />
+  /* ))} */
+  {
+    /* </StyledSidebar> */
+  }
+  /* ); */
+  /* }; */
 };
 
 export default Sidebar;
@@ -132,14 +195,12 @@ interface QueryResult {
     nodes: Array<{
       fields: {
         slug: string;
+        section: string;
       };
       frontmatter: {
         title: string;
+        order: number;
       };
-      headings: Array<{
-        depth: number;
-        value: string;
-      }>;
     }>;
   };
 }
@@ -148,15 +209,13 @@ const query = graphql`
   query SidebarQuery {
     allMdx(sort: { fields: [frontmatter___order], order: ASC }) {
       nodes {
-        headings {
-          value
-          depth
-        }
         fields {
           slug
+          section
         }
         frontmatter {
           title
+          order
         }
       }
     }

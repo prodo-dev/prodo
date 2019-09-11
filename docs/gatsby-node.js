@@ -1,10 +1,14 @@
 const path = require(`path`);
 const { createFilePath } = require(`gatsby-source-filesystem`);
 
+const docsRoot = path.resolve(__dirname, "./content");
+
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
 
-  const docs = path.resolve(`./src/templates/docs.tsx`);
+  const docs = path.resolve(`./src/templates/Docs.tsx`);
+  const docsSection = path.resolve(`./src/templates/DocsSection.tsx`);
+
   return graphql(
     `
       {
@@ -17,6 +21,7 @@ exports.createPages = ({ graphql, actions }) => {
               }
               fields {
                 slug
+                section
               }
             }
           }
@@ -39,6 +44,25 @@ exports.createPages = ({ graphql, actions }) => {
         },
       });
     });
+
+    const sections = new Set();
+    posts.forEach(post => {
+      sections.add({
+        normalizedName: post.node.fields.section.replace(/^\d+\_/, ""),
+        fullName: post.node.fields.section,
+      });
+    });
+
+    sections.forEach(section => {
+      createPage({
+        path: "/" + section.normalizedName,
+        component: docsSection,
+        context: {
+          section: section.fullName,
+          normalizedName: section.normalizedName,
+        },
+      });
+    });
   });
 };
 
@@ -46,11 +70,22 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions;
 
   if (node.internal.type === `Mdx`) {
-    const value = createFilePath({ node, getNode });
+    const slug = createFilePath({ node, getNode }).replace(/^\/\d+\_/, "/");
+
+    const section = path.dirname(
+      path.relative(docsRoot, node.fileAbsolutePath),
+    );
+
     createNodeField({
-      name: `slug`,
+      name: "slug",
       node,
-      value,
+      value: slug,
+    });
+
+    createNodeField({
+      name: "section",
+      node,
+      value: section,
     });
   }
 };
