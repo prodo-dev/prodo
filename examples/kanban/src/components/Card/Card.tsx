@@ -9,7 +9,7 @@ import { state, watch } from "../../model";
 import { Card as _Card } from "../../types";
 import "./Card.scss";
 
-const toggleCheckbox: Action = (card: _Card, checked: boolean, i: number) => {
+const toggleCheckbox = (card: _Card, checked: boolean, i: number) => {
   // identify the clicked checkbox by its index and give it a new checked attribute
   const { _id, text } = card;
   let j = 0;

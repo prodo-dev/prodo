@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Redirect } from "react-router";
 import Board from "./Board";
-import { state, watch } from "../../model";
 
 type Props = {
   match: {

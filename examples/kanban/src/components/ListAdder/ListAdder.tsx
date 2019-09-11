@@ -13,14 +13,14 @@ function addList(boardId: string, listId: string, listTitle: string) {
   state.listsById[listId] = {
     _id: listId,
     title: listTitle,
-    cards: []
+    cards: [],
   };
 }
 
 function ListAdder({ boardId }: Props) {
   const [localState, setLocalState] = React.useState({
     isOpen: false,
-    listTitle: ""
+    listTitle: "",
   });
   const { isOpen, listTitle } = localState;
   const handleBlur = () => {
@@ -38,7 +38,6 @@ function ListAdder({ boardId }: Props) {
     }
   };
   const handleSubmit = () => {
-    const { listTitle } = localState;
     if (listTitle === "") return;
     const listId = shortid.generate();
     dispatch(addList)(boardId, listId, listTitle);
