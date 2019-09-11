@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import logo from "../logo.svg";
-import { HeaderHeight, forNarrowScreen } from "../styles";
+import { forNarrowScreen, HeaderHeight } from "../styles";
 import GithubIcon from "./GithubIcon";
 import Link, { EmptyLink } from "./Link";
 
