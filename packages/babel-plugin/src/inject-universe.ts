@@ -1,18 +1,9 @@
 import * as Babel from "@babel/core";
 import * as nodePath from "path";
-import { isInUniverse } from "./utils";
 
-type Context =
-  | {
-      importType: "specifiers";
-      importDeclarationPath: Babel.NodePath<Babel.types.ImportDeclaration>;
-      universe: Babel.types.ObjectPattern;
-    }
-  | {
-      importType: "namespace";
-      importDeclarationPath: Babel.NodePath<Babel.types.ImportDeclaration>;
-      universe: Babel.types.Identifier;
-    };
+const isModelContextImport = (importPath: string): boolean =>
+  importPath.startsWith(".") &&
+  /^model\.ctx(\.(j|t)sx?)?$/.test(nodePath.basename(importPath));
 
 export default (
   t: typeof Babel.types,
@@ -30,7 +21,15 @@ export default (
   bodyPath: Babel.NodePath<Babel.types.BlockStatement | Babel.types.Expression>,
   async?: boolean,
 ) => {
-  let context: Context | null = null;
+  const universeImports: {
+    namespace?: string;
+    specifiers: { [key: string]: string };
+    specifierRest?: string;
+    programPath?: Babel.NodePath<Babel.types.Program>;
+    modelSource?: string;
+  } = {
+    specifiers: {},
+  };
 
   bodyPath.traverse({
     Identifier(p: Babel.NodePath<Babel.types.Identifier>) {
@@ -38,77 +37,76 @@ export default (
       if (p.isReferencedIdentifier()) {
         const binding = p.scope.getBinding(p.node.name);
         if (binding != null) {
-          const importPath = binding.path;
-          if (
-            t.isImportSpecifier(importPath.node) &&
-            isInUniverse(importPath.node.imported.name)
-          ) {
-            const importDeclarationPath = importPath.parentPath;
-            if (t.isImportDeclaration(importDeclarationPath.node)) {
-              const source = importDeclarationPath.node.source;
-              if (
-                source.value.startsWith(".") &&
-                /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
-              ) {
-                const importSpecifiers = importDeclarationPath.node.specifiers.filter(
-                  specifier => t.isImportSpecifier(specifier),
-                ) as Babel.types.ImportSpecifier[];
+          const bindingPath = binding.path;
 
-                context = {
-                  importType: "specifiers",
-                  importDeclarationPath: importDeclarationPath as Babel.NodePath<
-                    Babel.types.ImportDeclaration
-                  >,
-                  universe: t.objectPattern(
-                    importSpecifiers
-                      .filter((specifier: Babel.types.ImportSpecifier) =>
-                        isInUniverse(specifier.imported.name),
-                      )
-                      .map((specifier: Babel.types.ImportSpecifier) =>
-                        t.objectProperty(
-                          specifier.imported,
-                          specifier.local,
-                          false,
-                          specifier.imported.name === specifier.local.name,
-                        ),
-                      ),
-                  ),
-                };
-                p.stop();
-              }
+          if (
+            (t.isImportSpecifier(bindingPath.node) ||
+              t.isImportNamespaceSpecifier(bindingPath.node) ||
+              t.isImportDefaultSpecifier(bindingPath.node)) &&
+            t.isImportDeclaration(bindingPath.parent) &&
+            isModelContextImport(bindingPath.parent.source.value)
+          ) {
+            universeImports.modelSource = bindingPath.parent.source.value.replace(
+              /\.ctx(?=\.(j|t)sx?)?$/,
+              "",
+            );
+            universeImports.programPath = bindingPath.parentPath
+              .parentPath as Babel.NodePath<Babel.types.Program>;
+            if (t.isImportSpecifier(bindingPath.node)) {
+              // import {foo} from "./model.ctx";
+              universeImports.specifiers[bindingPath.node.imported.name] =
+                bindingPath.node.local.name;
+            } else if (t.isImportNamespaceSpecifier(bindingPath.node)) {
+              // import * as foo from "./model.ctx";
+              universeImports.namespace = bindingPath.node.local.name;
+            } else if (t.isImportDefaultSpecifier(bindingPath.node)) {
+              // import foo from "./model.ctx";
+              universeImports.specifiers.default = bindingPath.node.local.name;
             }
-          }
-        }
-      }
-    },
-    MemberExpression(p: Babel.NodePath<Babel.types.MemberExpression>) {
-      // Does it use `prodo.state` from `import * as prodo from "./model";`
-      if (!p.node.computed && isInUniverse(p.node.property.name)) {
-        const objectPath = p.get("object");
-        if (
-          t.isIdentifier(objectPath.node) &&
-          objectPath.isReferencedIdentifier()
-        ) {
-          const binding = objectPath.scope.getBinding(objectPath.node.name);
-          if (binding != null) {
-            const importPath = binding.path;
-            if (t.isImportNamespaceSpecifier(importPath.node)) {
-              const importDeclarationPath = importPath.parentPath;
-              if (t.isImportDeclaration(importDeclarationPath.node)) {
-                const source = importDeclarationPath.node.source;
-                if (
-                  source.value.startsWith(".") &&
-                  /^model(\.(j|t)s)?$/.test(nodePath.basename(source.value))
-                ) {
-                  context = {
-                    importType: "namespace",
-                    importDeclarationPath: importDeclarationPath as Babel.NodePath<
-                      Babel.types.ImportDeclaration
-                    >,
-                    universe: t.identifier(importPath.node.local.name),
-                  };
-                  p.stop();
-                }
+          } else if (
+            t.isVariableDeclarator(bindingPath.node) &&
+            t.isCallExpression(bindingPath.node.init) &&
+            t.isIdentifier(bindingPath.node.init.callee) &&
+            bindingPath.node.init.callee.name === "require" &&
+            bindingPath.node.init.arguments.length === 1 &&
+            t.isStringLiteral(bindingPath.node.init.arguments[0]) &&
+            isModelContextImport(
+              (bindingPath.node.init.arguments[0] as Babel.types.StringLiteral)
+                .value,
+            )
+          ) {
+            universeImports.modelSource = (bindingPath.node.init
+              .arguments[0] as Babel.types.StringLiteral).value.replace(
+              /\.ctx(?=\.(j|t)sx?)?$/,
+              "",
+            );
+            universeImports.programPath = bindingPath.parentPath
+              .parentPath as Babel.NodePath<Babel.types.Program>;
+            if (t.isIdentifier(bindingPath.node.id)) {
+              // const foo = require("./model.ctx");
+              universeImports.namespace = bindingPath.node.id.name;
+            } else if (t.isObjectPattern(bindingPath.node.id)) {
+              const property = bindingPath.node.id.properties.find(
+                (prop: Babel.types.ObjectProperty | Babel.types.RestElement) =>
+                  t.isObjectProperty(prop)
+                    ? t.isIdentifier(prop.value) &&
+                      prop.value.name === p.node.name
+                    : t.isIdentifier(prop.argument) &&
+                      prop.argument.name === p.node.name,
+              );
+              if (property == null) {
+                throw new Error(
+                  "You are using require in a way that the transpiler can't understand.",
+                );
+              }
+              if (t.isObjectProperty(property)) {
+                // const {foo} = require("./model.ctx");
+                universeImports.specifiers[
+                  property.key.name
+                ] = (property.value as Babel.types.Identifier).name;
+              } else {
+                // const {...foo} = require("./model.ctx");
+                universeImports.specifierRest = (property.argument as Babel.types.Identifier).name;
               }
             }
           }
@@ -117,13 +115,61 @@ export default (
     },
   });
 
-  if (context == null) {
+  if (
+    universeImports.namespace == null &&
+    Object.keys(universeImports.specifiers).length === 0 &&
+    universeImports.specifierRest == null
+  ) {
     // Doesn't use the universe, so don't change anything.
     return;
   }
 
-  // https://stackoverflow.com/questions/44147937/property-does-not-exist-on-type-never
-  context = context!;
+  if (
+    universeImports.namespace != null &&
+    (Object.keys(universeImports.specifiers).length > 0 ||
+      universeImports.specifierRest != null)
+  ) {
+    throw new Error(
+      "Cannot import the context as both a namespace and using named imports.",
+    );
+  }
+
+  // Insert `import { model } from "./src/model";
+  if (
+    universeImports.programPath != null &&
+    universeImports.modelSource != null
+  ) {
+    const importDeclarationPath = universeImports.programPath
+      .get("body")
+      .find(
+        expressionPath =>
+          t.isImportDeclaration(expressionPath.node) &&
+          expressionPath.node.source.value === universeImports.modelSource,
+      );
+    if (importDeclarationPath == null) {
+      const importDeclaration = t.importDeclaration(
+        [t.importSpecifier(t.identifier("model"), t.identifier("model"))],
+        t.stringLiteral(universeImports.modelSource),
+      );
+      (universeImports.programPath as any).unshiftContainer(
+        "body",
+        importDeclaration,
+      );
+    } else {
+      const hasModel = (importDeclarationPath.node as Babel.types.ImportDeclaration).specifiers.some(
+        specifier =>
+          t.isImportSpecifier(specifier) &&
+          specifier.local.name === "model" &&
+          specifier.imported.name === "model",
+      );
+      if (!hasModel) {
+        (importDeclarationPath as any).unshiftContainer(
+          "specifiers",
+          t.importSpecifier(t.identifier("model"), t.identifier("model")),
+        );
+      }
+    }
+  }
 
   rootPath.replaceWith(
     t.variableDeclaration("const", [
@@ -131,14 +177,34 @@ export default (
         t.identifier(name),
         t.callExpression(
           t.memberExpression(
-            context.importType === "namespace"
-              ? t.memberExpression(context.universe, t.identifier("model"))
-              : t.identifier("model"),
+            t.identifier("model"),
             t.identifier(type === "action" ? "action" : "connect"),
           ),
           [
             t.arrowFunctionExpression(
-              [context.universe],
+              [
+                universeImports.namespace != null
+                  ? t.identifier(universeImports.namespace)
+                  : t.objectPattern([
+                      ...Object.keys(universeImports.specifiers)
+                        .sort()
+                        .map(key =>
+                          t.objectProperty(
+                            t.identifier(key),
+                            t.identifier(universeImports.specifiers[key]),
+                            false,
+                            key === universeImports.specifiers[key],
+                          ),
+                        ),
+                      ...(universeImports.specifierRest != null
+                        ? [
+                            t.restElement(
+                              t.identifier(universeImports.specifierRest),
+                            ),
+                          ]
+                        : []),
+                    ]),
+              ],
               t.arrowFunctionExpression(params, bodyPath.node, async),
             ),
             t.stringLiteral(name),
@@ -147,19 +213,4 @@ export default (
       ),
     ]),
   );
-
-  if (
-    context.importType === "specifiers" &&
-    !context.importDeclarationPath.node.specifiers.some(
-      specifier =>
-        t.isImportSpecifier(specifier) &&
-        specifier.imported.name === "model" &&
-        specifier.local.name === "model",
-    )
-  ) {
-    (context.importDeclarationPath as any).unshiftContainer(
-      "specifiers",
-      t.importSpecifier(t.identifier("model"), t.identifier("model")),
-    );
-  }
 };

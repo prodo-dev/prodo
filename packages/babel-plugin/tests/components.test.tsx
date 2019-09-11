@@ -8,10 +8,10 @@ const transform = (sourceCode: string): string =>
     plugins: ["@babel/plugin-syntax-jsx", { visitor: visitor(babel) }],
   })!.code!;
 
-describe("action transpilation", () => {
+describe("component transpilation", () => {
   it("can transpile an arrow function component", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = () => (
         <div>{watch(state.foo)}</div>
       );
@@ -20,7 +20,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = model.connect(
         ({ state, watch }) => () => <div>{watch(state.foo)}</div>,
         "MyComponent"
@@ -50,7 +51,7 @@ describe("action transpilation", () => {
 
   it("can transpile a function expression component", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = function () {
         return <div>{watch(state.foo)}</div>;
       }
@@ -59,7 +60,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = model.connect(({
         state,
         watch
@@ -71,7 +73,7 @@ describe("action transpilation", () => {
 
   it("can transpile a function declaration component", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       function MyComponent () {
         return <div>{watch(state.foo)}</div>;
       }
@@ -80,7 +82,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = model.connect(({
         state,
         watch
@@ -92,7 +95,7 @@ describe("action transpilation", () => {
 
   it("can transpile a component that imports the namespace", () => {
     const sourceCode = `
-      import * as prodo from "./src/model";
+      import * as prodo from "./src/model.ctx";
       const MyComponent = () => {
         return <div>{prodo.watch(prodo.state.foo)}</div>;
       }
@@ -101,8 +104,9 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import * as prodo from "./src/model";
-      const MyComponent = prodo.model.connect(prodo => () => {
+      import { model } from "./src/model";
+      import * as prodo from "./src/model.ctx";
+      const MyComponent = model.connect(prodo => () => {
         return <div>{prodo.watch(prodo.state.foo)}</div>;
       }, "MyComponent");
     `);
@@ -110,7 +114,7 @@ describe("action transpilation", () => {
 
   it("can transpile a component that renames the import", () => {
     const sourceCode = `
-      import { state as s, watch as w } from "./src/model";
+      import { state as s, watch as w } from "./src/model.ctx";
       const MyComponent = () => {
         return <div>{w(s.foo)}</div>
       }
@@ -119,7 +123,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state as s, watch as w } from "./src/model";
+      import { model } from "./src/model";
+      import { state as s, watch as w } from "./src/model.ctx";
       const MyComponent = model.connect(({
         state: s,
         watch: w
@@ -131,7 +136,7 @@ describe("action transpilation", () => {
 
   it("can transpile an exported arrow function expression component", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       export const MyComponent = () => {
         return <div>{watch(state.foo)}</div>;
       }
@@ -140,7 +145,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       export const MyComponent = model.connect(({
         state,
         watch
@@ -152,7 +158,7 @@ describe("action transpilation", () => {
 
   it("can transpile an exported function expression component", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       export const MyComponent = function () {
         return <div>{watch(state.foo)}</div>;
       }
@@ -161,7 +167,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       export const MyComponent = model.connect(({
         state,
         watch
@@ -173,7 +180,7 @@ describe("action transpilation", () => {
 
   it("can transpile an exported function declaration component", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       export function MyComponent () {
         return <div>{watch(state.foo)}</div>;
       }
@@ -182,7 +189,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       export const MyComponent = model.connect(({
         state,
         watch
@@ -194,7 +202,7 @@ describe("action transpilation", () => {
 
   it("passes down the universe", () => {
     const sourceCode = `
-      import { state, dispatch as d, watch } from "./src/model";
+      import { dispatch as d, state, watch } from "./src/model.ctx";
       import { anotherAction } from "./another";
       import * as React from "react";
       const MyComponent = () => {
@@ -208,12 +216,13 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, dispatch as d, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { dispatch as d, state, watch } from "./src/model.ctx";
       import { anotherAction } from "./another";
       import * as React from "react";
       const MyComponent = model.connect(({
-        state,
         dispatch: d,
+        state,
         watch
       }) => () => {
         React.useEffect(() => {
@@ -226,7 +235,7 @@ describe("action transpilation", () => {
 
   it("passes args", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = ({
         foo,
         bar
@@ -244,7 +253,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = model.connect(({
         state,
         watch
@@ -263,42 +273,9 @@ describe("action transpilation", () => {
     `);
   });
 
-  it("doesn't pass blacklisted imports from the model to the universe", () => {
-    const sourceCode = `
-      import { state, initState, watch } from "./src/model";
-      const foo = initState.foo;
-      const MyComponent = () => {
-        return (
-          <div>
-            <div>{initState.foo}</div>
-            <div>{watch(state.foo)}</div>
-          </div>
-        );
-      }
-    `;
-
-    const transpiled = transform(sourceCode);
-
-    expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, initState, watch } from "./src/model";
-      const foo = initState.foo;
-      const MyComponent = model.connect(({
-        state,
-        watch
-      }) => () => {
-        return (
-          <div>
-            <div>{initState.foo}</div>
-            <div>{watch(state.foo)}</div>
-          </div>
-        );
-      }, "MyComponent");
-    `);
-  });
-
   it("can transpile multiple components", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = () => {
         return <div>{watch(state.foo)}</div>;
       };
@@ -310,7 +287,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = model.connect(({
         state,
         watch
@@ -328,7 +306,8 @@ describe("action transpilation", () => {
 
   it("doesn't import the model if it's already imported", () => {
     const sourceCode = `
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = () => {
         return <div>{watch(state.foo)}</div>;
       };
@@ -337,7 +316,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = model.connect(({
         state,
         watch
@@ -349,7 +329,7 @@ describe("action transpilation", () => {
 
   it("doesn't crash on undefined identifiers", () => {
     const sourceCode = `
-      import { state, watch } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = () => {
         return (
           <div>
@@ -363,7 +343,8 @@ describe("action transpilation", () => {
     const transpiled = transform(sourceCode);
 
     expect(transpiled).toHaveTheSameASTAs(`
-      import { model, state, watch } from "./src/model";
+      import { model } from "./src/model";
+      import { state, watch } from "./src/model.ctx";
       const MyComponent = model.connect(({
         state,
         watch
