@@ -1,6 +1,6 @@
 {
   "name": "@prodo-example/timers",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,8 +9,8 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "^0.0.2",
-    "@prodo/stream-plugin": "^0.0.2",
+    "@prodo/core": "^0.0.3",
+    "@prodo/stream-plugin": "^0.0.3",
     "react": "^16.8.6",
     "react-dom": "^16.9.0",
     "rxjs": "^6.5.2"
