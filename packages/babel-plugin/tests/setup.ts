@@ -9,11 +9,17 @@ declare global {
   }
 }
 
+const removeBlankLines = (str: string) =>
+  str
+    .split("\n")
+    .filter(line => line.length > 0)
+    .join("\n");
+
 expect.extend({
   toHaveTheSameASTAs(received, expected) {
     return matchers.toEqual(
-      prettier.format(received, { parser: "babel" }),
-      prettier.format(expected, { parser: "babel" }),
+      prettier.format(removeBlankLines(received), { parser: "babel" }),
+      prettier.format(removeBlankLines(expected), { parser: "babel" }),
     );
   },
 });

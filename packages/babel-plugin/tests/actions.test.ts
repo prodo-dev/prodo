@@ -129,6 +129,44 @@ describe("action transpilation", () => {
     `);
   });
 
+  it("can transpile an action that uses require syntax", () => {
+    const sourceCode = `
+      const prodo = require("./src/model.ctx");
+      const myAction = () => {
+        prodo.state.foo = "foo";
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      const prodo = require("./src/model.ctx");
+      const myAction = model.action(prodo => () => {
+        prodo.state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("can transpile an action that uses require syntax with spread", () => {
+    const sourceCode = `
+      const { state } = require("./src/model.ctx");
+      const myAction = () => {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      const { state }= require("./src/model.ctx");
+      const myAction = model.action(({ state }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
   it("can transpile an exported arrow function expression action", () => {
     const sourceCode = `
       import { state } from "./src/model.ctx";

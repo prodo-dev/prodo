@@ -134,6 +134,44 @@ describe("component transpilation", () => {
     `);
   });
 
+  it("can transpile an action that uses require syntax", () => {
+    const sourceCode = `
+      const prodo = require("./src/model.ctx");
+      const MyComponent = () => {
+        return <div>{prodo.watch(prodo.state.foo)}</div>;
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      const prodo = require("./src/model.ctx");
+      const MyComponent = model.connect(prodo => () => {
+        return <div>{prodo.watch(prodo.state.foo)}</div>;
+      }, "MyComponent");
+    `);
+  });
+
+  it("can transpile an action that uses require syntax with spread", () => {
+    const sourceCode = `
+      const { state, watch } = require("./src/model.ctx");
+      const MyComponent = () => {
+        return <div>{watch(state.foo)}</div>;
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model } from "./src/model";
+      const { state, watch } = require("./src/model.ctx");
+      const MyComponent = model.connect(({ state, watch }) => () => {
+        return <div>{watch(state.foo)}</div>;
+      }, "MyComponent");
+    `);
+  });
+
   it("can transpile an exported arrow function expression component", () => {
     const sourceCode = `
       import { state, watch } from "./src/model.ctx";
