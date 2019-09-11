@@ -31,7 +31,7 @@ A plugin provides the following attributes (only `name` is required):
 
 - `name`: The name of the plugin
 - `init`: Any set-up code that must be run, taking the configuration and
-preparing the [Universe](#Universe).
+preparing the [Universe](#universe).
 - `prepareActionCtx` and `prepareViewCtx`: Functions to prepare the context
 passed in to the view or action. At least one of these should be defined for a
 plugin to be useful.
