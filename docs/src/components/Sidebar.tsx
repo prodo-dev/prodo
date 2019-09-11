@@ -126,7 +126,7 @@ const StyledSidebar = styled.div<{ isOpen: boolean }>`
   top: ${HeaderHeight}px;
   left: 0;
   bottom: 0;
-  min-height: 100vh;
+  min-height: calc(100vh - ${HeaderHeight}px);
   width: ${SidebarWidth}px;
   max-width: ${SidebarWidth}px;
   padding: 1rem;
@@ -162,30 +162,6 @@ const Sidebar: React.FC<Props> = props => {
       ))}
     </StyledSidebar>
   );
-
-  /* return ( */
-  {
-    /* <StyledSidebar className="sidebar" isOpen={props.isOpen}> */
-  }
-  /* {pages.map(node => ( */
-  {
-    /* <Section */
-  }
-  /* key={node.fields.slug} */
-  /* title={node.frontmatter.title} */
-  /* headings={node.headings} */
-  /* slug={node.fields.slug} */
-  /* active={ */
-  /* removeTrailingSlash(currentPath) === */
-  /* removeTrailingSlash(node.fields.slug) */
-  /* } */
-  //         />
-  /* ))} */
-  {
-    /* </StyledSidebar> */
-  }
-  /* ); */
-  /* }; */
 };
 
 export default Sidebar;
