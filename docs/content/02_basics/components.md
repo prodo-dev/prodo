@@ -29,7 +29,7 @@ functionally equivalent.
 The `dispatch` function is responsible for running actions, for example:
 
 ```tsx
-<button onClick={() => dispatch(increment)(4)>Click me!</button>
+<button onClick={() => dispatch(increment)(4)}>Click me!</button>
 ```
 
 It takes as its only parameter the action to run, and the result is then called
@@ -44,11 +44,11 @@ exported from `createModel`, and is assigned to an upper-case identifier
 ```tsx
 import { state, watch } from "./model";
 
-export const Counter = props => {
-  return <div>
+export const Counter = props => (
+  <div>
     <span>Hello, {watch(state.count)}!</span>
-  </div>;
-}
+  </div>
+);
 ```
 
 is converted to
@@ -57,11 +57,11 @@ is converted to
 import model from "./model";
 
 export const Counter = model.connect(
-  ({state}: Ctx) => props => {
-    return <div>
+  ({state}: Ctx) => props => (
+    <div>
       <span>Hello, {watch(state.count)}!</span>
     </div>;
-  },
+  ),
   "Counter"
 );
 ```

@@ -32,3 +32,59 @@ test("increases the count", async () => {
 ```
 
 ## Components
+
+Like actions, you can test components with any testing library. However, we
+recommend using [Jest](https://jestjs.io/) and [React testing
+library](https://testing-library.com/docs/react-testing-library/intro).
+
+Any components you want to test must be wrapped in a Prodo context. Create a
+function to wrap the render from `@testing-library/react`.
+
+```tsx
+import { ProdoProvider, Store } from "@prodo/core";
+import { render } from "@testing-library/react";
+import * as React from "react";
+import App from "../src/App";
+import { model } from "../src/model";
+
+const renderWithProdo = (ui: React.ReactElement, store: Store<any, any>) => {
+  return {
+    ...render(<ProdoProvider value={store}>{ui}</ProdoProvider>),
+    store,
+  };
+};
+```
+
+You can test your component with different store configs.
+
+```tsx
+test("can render with initial state", async () => {
+  const { container } = renderWithProdo(
+    <App />,
+    model.createStore({ initState }),
+  );
+
+  expect(container.textContent).toBe("0");
+});
+```
+
+Trigger an action with `fireEvent`.
+
+```tsx
+import { fireEvent, render, waitForDomChange } from "@testing-library/react";
+
+// ...
+
+test("increases the count when the button is clicked", async () => {
+  const { container, getByText } = renderWithProdo(
+    <App />,
+    model.createStore({ initState }),
+  );
+
+  expect(container.textContent).toBe("0");
+  fireEvent.click(getByText("+"));
+  await waitForDomChange({ container });
+  expect(container.textContent).toBe("1");
+});
+
+```
