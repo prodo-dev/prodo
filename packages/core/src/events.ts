@@ -37,7 +37,7 @@ export const completeEvent = (event: Event, store: Store<any, any>): void => {
 
   store.universe = nextUniverse;
   event.nextUniverse = nextUniverse;
-  submitPatches(store, store.universe, event.patches, event);
+  submitPatches(store, store.universe, event);
 
   event.nextActions.map(({ func, args, origin }) =>
     store.exec(origin, func, ...args),
