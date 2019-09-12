@@ -47,45 +47,45 @@ const add = model.action(({ state }) => (a: number, b: number) => {
 
 describe("actions", () => {
   it("has correct state after calling action", async () => {
-    const { dispatch, universe } = model.createStore({ initState });
+    const { store } = model.createStore({ initState });
 
-    expect(universe.state.foo).toBe("foo");
-    const finalUniverse = await dispatch(changeFoo)();
+    expect(store.universe.state.foo).toBe("foo");
+    const finalUniverse = await store.dispatch(changeFoo)();
     expect(finalUniverse.state.foo).toBe("bar");
   });
 
   it("has correct state after calling action that calls an async action", async () => {
-    const { dispatch, universe } = model.createStore({ initState });
+    const { store } = model.createStore({ initState });
 
-    expect(universe.state.foo).toBe("foo");
-    const finalUniverse = await dispatch(dummy)();
+    expect(store.universe.state.foo).toBe("foo");
+    const finalUniverse = await store.dispatch(dummy)();
     expect(finalUniverse.state.foo).toBe("bar");
   });
 
   it("has correct state after calling multiple actions", async () => {
-    const { dispatch, universe } = model.createStore({ initState });
-    const state = universe.state;
+    const { store } = model.createStore({ initState });
+    const state = store.universe.state;
 
     expect(state.count).toBe(0);
 
-    await dispatch(changeCount)(1);
-    await dispatch(changeCount)(1);
-    await dispatch(changeCount)(1);
-    await dispatch(changeCount)(1);
-    await dispatch(changeCount)(1);
+    await store.dispatch(changeCount)(1);
+    await store.dispatch(changeCount)(1);
+    await store.dispatch(changeCount)(1);
+    await store.dispatch(changeCount)(1);
+    await store.dispatch(changeCount)(1);
 
-    await dispatch(changeCount)(-1);
-    await dispatch(changeCount)(-1);
-    const finalUniverse = await dispatch(changeCount)(-1);
+    await store.dispatch(changeCount)(-1);
+    await store.dispatch(changeCount)(-1);
+    const finalUniverse = await store.dispatch(changeCount)(-1);
 
     expect(finalUniverse.state.count).toBe(2);
   });
 
   it("has correct state after calling action with multiple params", async () => {
-    const { dispatch, universe } = model.createStore({ initState });
+    const { store } = model.createStore({ initState });
 
-    expect(universe.state.count).toBe(0);
-    const finalUniverse = await dispatch(add)(1, 2);
+    expect(store.universe.state.count).toBe(0);
+    const finalUniverse = await store.dispatch(add)(1, 2);
     expect(finalUniverse.state.count).toBe(3);
   });
 });

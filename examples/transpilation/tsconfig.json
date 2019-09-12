@@ -2,9 +2,7 @@
   "extends": "../../tsconfig.ui.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "lib",
-    "target": "es2017",
-    "module": "esnext"
+    "outDir": "lib"
   },
   "include": ["src"],
   "references": [

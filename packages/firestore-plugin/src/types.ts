@@ -22,13 +22,13 @@ export interface FirestoreCtx<T> {
 
 export interface FirestoreActionCtx<T>
   extends FirestoreCtx<T>,
-    PluginActionCtx<FirestoreActionCtx<T>> {
+    PluginActionCtx<FirestoreActionCtx<T>, FirestoreUniverse> {
   db_cache: any;
 }
 
 export interface FirestoreViewCtx<T>
   extends FirestoreCtx<T>,
-    PluginViewCtx<FirestoreActionCtx<T>> {}
+    PluginViewCtx<FirestoreActionCtx<T>, FirestoreUniverse> {}
 
 export interface FirestoreUniverse {
   db_cache: any;

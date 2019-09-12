@@ -1,6 +1,5 @@
-import { Patch } from "immer";
 import logger from "./logger";
-import { Node, Store, WatchTree } from "./types";
+import { Event, Node, Store, WatchTree } from "./types";
 import { splitPath } from "./utils";
 
 export const subscribe = (
@@ -80,9 +79,10 @@ export const get = (universe: any, pathKey: string): any =>
 export const submitPatches = (
   store: Store<any, any>,
   universe: any,
-  patches: Patch[],
+  event: Event,
 ) => {
   const callbacksSet = new Set<Node>();
+  const { patches } = event;
 
   patches.forEach(({ path }) => {
     let subtree = store.watchTree;
@@ -123,9 +123,11 @@ export const submitPatches = (
 
   logger.info("[update cycle]", comps);
 
+  event.rerender = {};
   Object.keys(comps).forEach(compId => {
     const { setState, name, newValues, status } = comps[compId];
     if (!status.unmounted) {
+      event.rerender![comps[compId].name] = true;
       logger.info(`[upcoming state update] ${name}`, newValues, status);
       setState(newValues);
     }

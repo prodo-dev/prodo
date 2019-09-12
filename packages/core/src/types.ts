@@ -1,6 +1,5 @@
 import { Patch } from "immer";
 import * as React from "react";
-export const streamSymbol = Symbol("stream");
 
 export type Action<ActionCtx> = <A extends any[]>(
   func: (c: ActionCtx) => (...args: A) => void,
@@ -17,19 +16,26 @@ export type With<InitOptions, Universe, ActionCtx, ViewCtx> = <I, U, A, V>(
 ) => Model<InitOptions & I, Universe & U, ActionCtx & A, ViewCtx & V>;
 
 export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
-  createStore: (config: InitOptions) => Store<InitOptions, Universe>;
+  createStore: (
+    config: InitOptions,
+  ) => {
+    store: Store<InitOptions, Universe>;
+    Provider: React.ComponentType<{ children: React.ReactNode }>;
+  };
   action: Action<ActionCtx>;
   connect: Connect<ViewCtx>;
   with: With<InitOptions, Universe, ActionCtx, ViewCtx>;
   ctx: ActionCtx & ViewCtx;
 }
 
+export type Provider = React.ComponentType<{ children: React.ReactNode }>;
+
 export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   name: string;
   init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
     env: {
-      ctx: PluginActionCtx<ActionCtx> & ActionCtx;
+      ctx: PluginActionCtx<ActionCtx, Universe> & ActionCtx;
       universe: Universe;
       event: any;
     },
@@ -37,21 +43,25 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   ) => void;
   prepareViewCtx?: (
     env: {
-      ctx: PluginViewCtx<ActionCtx> & ViewCtx;
+      ctx: PluginViewCtx<ActionCtx, Universe> & ViewCtx;
       universe: Universe;
       comp: Comp;
     },
     config: InitOptions,
   ) => void;
+  onCompletedEvent?: (event: Event) => void;
+  Provider?: Provider;
 }
 
-export interface PluginActionCtx<ActionCtx> {
+export interface PluginActionCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
+  universe: Universe;
   rootDispatch: PluginDispatch<ActionCtx>;
 }
 
-export interface PluginViewCtx<ActionCtx> {
+export interface PluginViewCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
+  universe: Universe;
   subscribe: (path: string[], unsubscribe?: () => void) => void;
 }
 
@@ -71,7 +81,6 @@ export interface Store<InitOptions, Universe> {
   dispatch: <A extends any[]>(
     func: (...args: A) => void,
   ) => (...args: A) => Promise<Universe>;
-  streamStates: { [path: string]: StreamState };
   watchTree: WatchTree;
   trackHistory?: boolean;
   history: Event[];
@@ -82,10 +91,6 @@ export interface Store<InitOptions, Universe> {
 }
 
 export type BaseStore<State> = Store<{ initState: State }, { state: State }>;
-
-export interface StreamState {
-  unsubscribe: () => void;
-}
 
 export interface WatchTree {
   subs: Set<Node>; // subscriptions for branch
@@ -108,7 +113,7 @@ export interface Node extends Comp {
 export type Watch = <T>(x: T) => T;
 
 export interface Origin {
-  parentId: string;
+  parentId: string | null;
   id: string;
 }
 
@@ -116,24 +121,16 @@ export type Dispatch = <A extends any[]>(
   func: (...args: A) => void,
 ) => (...args: A) => void;
 
-export type UserStream<A, T> = (arg: A) => Stream<T>;
-
-export type CreateStream = <A, T>(
-  userStream: UserStream<A, T>,
-) => (arg: A) => T;
-
-export interface Stream<T> {
-  subscribe: (cb: (value: T) => void) => { unsubscribe: () => void };
-}
-
 export interface Event {
   actionName: string;
+  args: any;
   id: string;
   parentId: string | null;
   patches: Patch[];
   nextActions: NextAction[];
   prevUniverse: any;
   nextUniverse?: any;
+  rerender?: { [key: string]: boolean };
 }
 
 interface NextAction {

@@ -3,12 +3,14 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
+    "jsx": "react",
     "target": "es2017",
     "module": "esnext"
   },
   "include": ["src"],
   "references": [
     { "path": "../../packages/core" },
-    { "path": "../../packages/babel-plugin" }
+    { "path": "../../packages/babel-plugin" },
+    { "path": "../../packages/stream-plugin" }
   ]
 }

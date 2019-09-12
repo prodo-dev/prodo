@@ -1,16 +1,18 @@
 import { deleteAll, deleteItem, newTodo, toggle } from "../src/actions";
 import { model } from "../src/model";
 
+import "@babel/polyfill";
+
 describe("actions", () => {
   it("adds a todo", async () => {
-    const { dispatch } = model.createStore({
+    const { store } = model.createStore({
       initState: { todos: {} },
       mockEffects: {
         randomId: ["T1"],
       },
     });
 
-    const { state } = await dispatch(newTodo)("foo");
+    const { state } = await store.dispatch(newTodo)("foo");
     expect(Object.keys(state.todos)).toHaveLength(1);
 
     const item = state.todos.T1;
@@ -19,7 +21,7 @@ describe("actions", () => {
   });
 
   it("toggles a todo", async () => {
-    const { dispatch } = model.createStore({
+    const { store } = model.createStore({
       initState: {
         todos: {
           foo: { text: "foo", done: false },
@@ -27,12 +29,12 @@ describe("actions", () => {
       },
     });
 
-    const { state } = await dispatch(toggle)("foo");
+    const { state } = await store.dispatch(toggle)("foo");
     expect(state.todos.foo.done).toBe(true);
   });
 
   it("deletes a single todo", async () => {
-    const { dispatch } = model.createStore({
+    const { store } = model.createStore({
       initState: {
         todos: {
           foo: { text: "foo", done: true },
@@ -41,12 +43,12 @@ describe("actions", () => {
       },
     });
 
-    const { state } = await dispatch(deleteItem)("foo");
+    const { state } = await store.dispatch(deleteItem)("foo");
     expect(Object.keys(state.todos)).toHaveLength(1);
   });
 
   it("deletes all todos", async () => {
-    const { dispatch } = model.createStore({
+    const { store } = model.createStore({
       initState: {
         todos: {
           T1: { text: "", done: false },
@@ -55,7 +57,7 @@ describe("actions", () => {
       },
     });
 
-    const { state } = await dispatch(deleteAll)();
+    const { state } = await store.dispatch(deleteAll)();
     expect(Object.keys(state.todos)).toHaveLength(0);
   });
 });

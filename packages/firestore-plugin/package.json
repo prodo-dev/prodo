@@ -1,6 +1,6 @@
 {
   "name": "@prodo/firestore",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "main": "lib/index.js",
   "private": true,
   "license": "MIT",
@@ -14,7 +14,7 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "devDependencies": {
-    "@prodo/core": "^0.0.1",
+    "@prodo/core": "^0.0.5",
     "@types/firebase": "^3.2.1",
     "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.138",

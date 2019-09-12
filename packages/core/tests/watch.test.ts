@@ -1,7 +1,7 @@
-import { Node, Store } from "../src/types";
 import { createModel } from "../src";
-import * as watch from "../src/watch";
+import { Node, Store } from "../src/types";
 import { joinPath } from "../src/utils";
+import * as watch from "../src/watch";
 
 interface State {
   [key: string]: {
@@ -55,7 +55,7 @@ const subscribe = (
 
 describe("subscribe", () => {
   it("should subscribe to root of state", () => {
-    const store = model.createStore({ initState });
+    const { store } = model.createStore({ initState });
 
     subscribe(store, 0, []);
 
@@ -64,7 +64,7 @@ describe("subscribe", () => {
   });
 
   it("should subscribe to single leaf of the state", () => {
-    const store = model.createStore({ initState });
+    const { store } = model.createStore({ initState });
 
     const node = subscribe(store, 0, ["a", "aa", "aaa"]);
 
@@ -93,7 +93,7 @@ describe("subscribe", () => {
 
 describe("unsubscribe", () => {
   it("should unsubscribe and not prune tree when subscriptions remaining", () => {
-    const store = model.createStore({ initState });
+    const { store } = model.createStore({ initState });
 
     const path = ["a"];
     const node = subscribe(store, 0, path);
@@ -112,7 +112,7 @@ describe("unsubscribe", () => {
   });
 
   it("should unsubscribe and prune tree when no subscriptions remaining", () => {
-    const store = model.createStore({ initState });
+    const { store } = model.createStore({ initState });
 
     const path = ["a", "aa"];
     const node = subscribe(store, 0, path);
