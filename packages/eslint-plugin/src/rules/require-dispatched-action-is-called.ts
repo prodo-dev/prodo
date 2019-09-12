@@ -5,6 +5,7 @@ import {
 } from "@typescript-eslint/experimental-utils";
 import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
 import { TSRuleModule } from "../types/rules";
+import { matchModel } from "../utils/matchModel";
 
 const rule: TSRuleModule = {
   meta: {
@@ -20,9 +21,6 @@ const rule: TSRuleModule = {
   },
 
   create(context: any) {
-    const matchModel = (name: string) =>
-      /(\.|\/)+model\.(ctx.)?(tsx?|jsx?)/.test(name);
-
     let importsDispatchFromModel: boolean = false;
     const parserServices: ParserServices = tsPluginUtil.getParserServices(
       context,
