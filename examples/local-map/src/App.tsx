@@ -1,6 +1,6 @@
 import Map from "pigeon-maps";
 import * as React from "react";
-import { watch, local, dispatch } from "./model";
+import { dispatch, local, watch } from "./model";
 
 export const moveMap = (center: [number, number], zoom: number) => {
   local.center = center;
