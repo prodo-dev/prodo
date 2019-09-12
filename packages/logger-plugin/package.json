@@ -1,29 +1,21 @@
 {
-  "name": "@prodo/babel-plugin",
+  "name": "@prodo/logger",
   "version": "0.0.5",
   "main": "lib/index.js",
   "license": "MIT",
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "scripts": {
     "build": "tsc --build",
     "clean": "rm -rf lib tsconfig.tsbuildinfo",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
-  "dependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/types": "^7.5.5"
-  },
   "devDependencies": {
-    "@babel/plugin-syntax-jsx": "^7.2.0",
-    "@babel/traverse": "^7.5.5",
+    "@prodo/core": "^0.0.5",
     "@types/jest": "^24.0.18",
-    "@types/node": "^12.7.2",
-    "babel-plugin-tester": "^7.0.1",
-    "expect": "^24.9.0",
-    "prettier": "^1.18.2",
     "ts-jest": "^24.0.2"
   },
   "jest": {
