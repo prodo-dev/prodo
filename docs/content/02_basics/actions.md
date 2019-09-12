@@ -21,11 +21,11 @@ const parentAction = () => {
   dispatch(childAction)("foo");
   console.log("In parent action");
   dispatch(childAction)("bar");
-  state.value = 4
+  state.value = 4;
 }
 
 const childAction = (name: string) => {
-  console.log("In child action", name, state.value)
+  console.log("In child action", name, state.value);
 };
 ```
 
