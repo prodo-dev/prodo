@@ -62,7 +62,7 @@ export interface RouteProps {
   path?: string;
   exact?: boolean;
   component?: React.ComponentType<any>;
-  children?: React.ReactChild;
+  children?: React.ReactNode;
 }
 
 export const Route = connect(
