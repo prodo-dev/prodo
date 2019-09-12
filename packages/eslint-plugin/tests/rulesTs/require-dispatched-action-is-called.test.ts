@@ -13,7 +13,7 @@ ruleTester.run("my-rule", rule, {
       filename: defaultTsFile,
     },
     {
-      code: `dispatch(foo)()`,
+      code: `dispatch(foo)`,
       filename: defaultTsFile,
     },
     {
@@ -36,7 +36,7 @@ ruleTester.run("my-rule", rule, {
       filename: defaultTsFile,
     },
     {
-      code: `import {dispatch} from '../../model.ts'; dispatch(foo)();`,
+      code: `import {dispatch} from '../../model.ctx.tsx'; dispatch(foo)();`,
       filename: defaultTsFile,
     },
   ],
