@@ -18,7 +18,7 @@ At a high level, the main concepts of Prodo are
   
 The types for your app state and any plugin state are contained in your
 **model**. You then use variables from this model to watch parts of the state,
-dispatch actions, or interact with plugins. The beneifit of using variables from
+dispatch actions, or interact with plugins. The benefit of using variables from
 your model is that they are all typed properly.
 
 ```ts
@@ -29,7 +29,7 @@ export const { state, watch, dispatch } = model.ctx;
 ```
 
 Your application state is all contained in a single **store** which is created
-from your model. This store is your apps single source of truth.
+from your model. This store is your app's single source of truth.
 
 ```ts
 const store = model.createStore({

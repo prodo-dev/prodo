@@ -28,7 +28,7 @@ const ContentWrapper = styled.div`
   }
 
   .gatsby-highlight + h1 {
-    margin-top: 2rem;
+    margin-top: 3rem;
   }
 
   ${forWideScreen`width: calc(100vw - ${SidebarWidth + 16}px);`};

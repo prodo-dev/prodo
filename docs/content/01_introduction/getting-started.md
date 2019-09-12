@@ -14,24 +14,11 @@ boilerplate you write.
 
 _ToDo_
 
-## Installation
-
-Prodo is available on [NPM](https://www.npmjs.com/package/@prodo/core). The main
-framework is `@prodo/core`.
-
-```shell
-npm install --save @prodo/core
-```
-
 # Prodo Template
 
 You can get started with Prodo by cloning the [template
 project](https://github.com/prodo-ai/prodo-template). This template uses the
 [Parcel](https://parceljs.org/) module bundler.
-
-```shell
-yarn add @prodo/core
-```
 
 
 # Basic Example
@@ -42,7 +29,7 @@ simple "Counter" app. It assumes yo have basic knowledge of
 The following example assumes you have cloned the starting template. All code
 snippets use the babel plugin.
 
-The typical workflow in developing a Prodo app is too
+The typical workflow in developing a Prodo app is to
 
 1. Create a model
 2. Create actions that mutate the model
@@ -64,7 +51,7 @@ export const model = createModel<State>();
 export const { state, watch, dispatch } = model.ctx;
 ```
 
-Here we defined the type our state in our app will be. In our case, it will just
+Here we defined the type of our state in our app will be. In our case, it will just
 contain a single `count` value. We then create our model with this state type
 and export any variables from our model that are used elsewhere in our app.
 These variables that are exported from our model are correctly typed with our
@@ -72,7 +59,7 @@ state.
 
 ## Creating an Action
 
-Actions are async functions that may change the state of your application. They can
+Actions are async functions that access the state or use a plugin. They can
 take arguments, trigger side effects, and trigger other actions. We can create
 an action in the `src/App.tsx` file.
 
@@ -166,22 +153,21 @@ This store is then passed to the `ProdoProvider`, which makes it accessible in
 to all of your components.
 
 ```tsx
-import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
 import { model } from "./model";
 
-const store = model.createStore({
+const { Provider } = model.createStore({
   initState: {
     count: 0,
   },
 });
 
 ReactDOM.render(
-  <ProdoProvider value={store}>
+  <Provider>
     <App />
-  </ProdoProvider>,
+  </Provider>,
   document.getElementById("root"),
 );
 ```
