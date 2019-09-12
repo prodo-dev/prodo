@@ -242,11 +242,6 @@ const createViewCollection = <DB, T extends { id: string }>(
             snapshot => {
               const ids = [id];
 
-              console.log({
-                exists: snapshot.exists,
-                data: snapshot.data(),
-              });
-
               if (snapshot.exists) {
                 const docChanges: DocChange[] = [
                   {
