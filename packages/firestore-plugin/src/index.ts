@@ -243,16 +243,23 @@ const createViewCollection = <DB, T extends { id: string }>(
             snapshot => {
               const ids = [id];
 
-              const docChanges: DocChange[] = [];
+              console.log({
+                exists: snapshot.exists,
+                data: snapshot.data(),
+              });
+
               if (snapshot.exists) {
-                docChanges.push({
-                  id,
-                  data: addIdToDoc(snapshot),
-                  changeType: firstTime ? "added" : "modified",
-                });
+                const docChanges: DocChange[] = [
+                  {
+                    id,
+                    data: addIdToDoc(snapshot),
+                    changeType: firstTime ? "added" : "modified",
+                  },
+                ];
 
                 firstTime = false;
 
+                ctx.dispatch(updateDocs)(collectionName, docChanges);
                 ctx.dispatch(updateQuery)(collectionName, queryName, {
                   ids,
                   state: "success",
@@ -261,19 +268,20 @@ const createViewCollection = <DB, T extends { id: string }>(
                 firstTime = true;
 
                 // document does not exist
-                docChanges.push({
-                  id,
-                  data: addIdToDoc(snapshot),
-                  changeType: "removed",
-                });
+                const docChanges: DocChange[] = [
+                  {
+                    id,
+                    data: addIdToDoc(snapshot),
+                    changeType: "removed",
+                  },
+                ];
 
+                ctx.dispatch(updateDocs)(collectionName, docChanges);
                 ctx.dispatch(updateQuery)(collectionName, queryName, {
                   ids,
                   state: "error",
                 });
               }
-
-              ctx.dispatch(updateDocs)(collectionName, docChanges);
             },
             error => {
               // tslint:disable-next-line:no-console
@@ -331,15 +339,15 @@ const createViewCollection = <DB, T extends { id: string }>(
         }
 
         // get all docs from docs cache
-        const data: T[] = dbQuery.ids
+        const data: T = dbQuery.ids
           .map(id => _.get(universe.db_cache.docs, [collectionName, id]))
           .filter(doc => doc != null)
-          .map(doc => doc.data);
+          .map(doc => doc.data)[0];
 
         return {
           _fetching: false,
           _notFound: false,
-          data: data[0],
+          data,
         };
       }
     },
