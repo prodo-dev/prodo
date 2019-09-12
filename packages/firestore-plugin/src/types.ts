@@ -82,8 +82,8 @@ export interface RefCounts {
 }
 
 export type FetchData<T> =
-  | { _fetching: true; _notFound?: never; data?: T }
-  | { _notFound: true; _fetching?: never; data?: T }
+  | { _fetching: true; _notFound?: false; data?: T }
+  | { _notFound: true; _fetching?: false; data?: T }
   | { _fetching?: false; _notFound?: false; data: T };
 
 export type Fetching<T> = FetchData<T>;
@@ -95,13 +95,13 @@ export interface Collection<T extends { id: string }> {
   // methods for actions
   get: (id: string) => Promise<T>;
   getAll: () => Promise<T[]>;
-  set: (id: string, value: T) => Promise<void>;
+  set: (id: string, value: Partial<T>) => Promise<void>;
   delete: (id: string) => Promise<void>;
   insert: (value: Omit<T, "id">) => Promise<string>;
   query: (query: Query<T>) => Promise<T[]>;
 
   // methods for react components
-  // watch: (id: string) => Fetching<WithId<T>>;
+  watch: (id: string) => Fetching<T>;
   watchAll: (query?: Query<T>) => FetchAll<T>;
 }
 

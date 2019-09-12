@@ -11,6 +11,7 @@
   "dependencies": {
     "@prodo/core": "^0.0.5",
     "@prodo/firestore": "^0.0.5",
+    "@prodo/logger": "^0.0.5",
     "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-dom": "^16.9.0"
