@@ -4,6 +4,7 @@ import firestorePlugin, { Collection } from "@prodo/firestore";
 export interface Message {
   text: string;
   date: number;
+  id: string;
 }
 
 export interface DB {

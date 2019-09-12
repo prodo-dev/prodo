@@ -15,7 +15,6 @@ import {
   QueryRefs,
   Universe,
   ViewCtx,
-  WithId,
 } from "./types";
 
 export { Collection };
@@ -41,39 +40,38 @@ const cannotUseInComponent = "Cannot use this method in a React component";
 
 const addIdToDoc = <T>(
   doc: firebase.firestore.QueryDocumentSnapshot,
-): WithId<T> => ({
+): T & { id: string } => ({
   id: doc.id,
   ...(doc.data() as T),
 });
 
 const getSnapshotDocs = <T>(
   docs: firebase.firestore.QueryDocumentSnapshot[],
-): Array<WithId<T>> => docs.map(doc => addIdToDoc(doc));
+): Array<T & { id: string }> => docs.map(doc => addIdToDoc(doc));
 
 const getDocsById = <T>(
   docs: firebase.firestore.QueryDocumentSnapshot[],
-): { [key: string]: WithId<T> } =>
+): { [key: string]: T } =>
   _.transform(
     getSnapshotDocs<T>(docs),
-    (byId: { [key: string]: WithId<T> }, doc) => {
+    (byId: { [key: string]: T }, doc) => {
       byId[doc.id] = doc;
     },
     {},
   );
 
-const createActionCollection = <T>(
-  _ctx: ActionCtx<T>,
+const createActionCollection = <DB, T extends { id: string }>(
+  _ctx: ActionCtx<DB>,
   collectionName: string,
 ): Collection<T> => {
   return {
-    getAll: async (): Promise<Array<WithId<T>>> => {
+    getAll: async (): Promise<T[]> => {
       const snapshot = await firestore.collection(collectionName).get();
 
-      const data = getDocsById<T>(snapshot.docs);
-
-      return Object.values(data);
+      const data = getSnapshotDocs<T>(snapshot.docs);
+      return data;
     },
-    get: async (id: string): Promise<WithId<T>> => {
+    get: async (id: string): Promise<T> => {
       const doc = await firestore
         .collection(collectionName)
         .doc(id)
@@ -94,7 +92,7 @@ const createActionCollection = <T>(
         .doc(id)
         .delete();
     },
-    query: async (query: Query<T>): Promise<Array<WithId<T>>> => {
+    query: async (query: Query<T>): Promise<T[]> => {
       const ref = createFirestoreQuery(
         firestore.collection(collectionName),
         query,
@@ -117,7 +115,7 @@ const createActionCollection = <T>(
   };
 };
 
-const updateDocs = <T>(ctx: ActionCtx<T>) => (
+const updateDocs = <DB>(ctx: ActionCtx<DB>) => (
   collectionName: string,
   docChanges: DocChange[],
 ) => {
@@ -154,7 +152,7 @@ const updateDocs = <T>(ctx: ActionCtx<T>) => (
   });
 };
 
-const removeQuery = <T>(ctx: ActionCtx<T>) => (
+const removeQuery = <DB>(ctx: ActionCtx<DB>) => (
   collectionName: string,
   queryName: string,
 ) => {
@@ -169,7 +167,7 @@ const removeQuery = <T>(ctx: ActionCtx<T>) => (
   updateDocs(ctx)(collectionName, docChanges);
 };
 
-const updateQuery = <T>(ctx: ActionCtx<T>) => (
+const updateQuery = <DB>(ctx: ActionCtx<DB>) => (
   collectionName: string,
   queryName: string,
   dbQuery: Partial<DBQuery>,
@@ -191,13 +189,13 @@ const updateQuery = <T>(ctx: ActionCtx<T>) => (
   });
 };
 
-const createViewCollection = <T>(
+const createViewCollection = <DB, T extends { id: string }>(
   queryRefs: QueryRefs,
-  ctx: ViewCtx<T>,
+  ctx: ViewCtx<DB>,
   collectionName: string,
   universe: Universe,
   comp: Comp,
-): Collection<T> => {
+) => {
   return {
     get: () => {
       throw new Error(cannotUseInComponent);
@@ -309,7 +307,7 @@ const createViewCollection = <T>(
         }
 
         // get all docs from docs cache
-        const data: Array<WithId<T>> = dbQuery.ids
+        const data: Array<T> = dbQuery.ids
           .map(id => _.get(universe.db_cache.docs, [collectionName, id]))
           .filter(doc => doc != null)
           .map(doc => doc.data);
@@ -327,12 +325,12 @@ const createViewCollection = <T>(
   };
 };
 
-const prepareViewCtx = <T>(queryRefs: QueryRefs) => ({
+const prepareViewCtx = <DB>(queryRefs: QueryRefs) => ({
   ctx,
   universe,
   comp,
 }: {
-  ctx: ViewCtx<T>;
+  ctx: ViewCtx<DB>;
   universe: Universe;
   comp: Comp;
 }) => {
@@ -349,14 +347,14 @@ const prepareViewCtx = <T>(queryRefs: QueryRefs) => ({
         );
       },
     },
-  ) as T;
+  ) as DB;
 };
 
-const prepareActionCtx = <T>({
+const prepareActionCtx = <DB>({
   ctx,
   universe,
 }: {
-  ctx: ActionCtx<T>;
+  ctx: ActionCtx<DB>;
   universe: Universe;
 }) => {
   ctx.db_cache = universe.db_cache;
@@ -368,14 +366,14 @@ const prepareActionCtx = <T>({
         return createActionCollection(ctx, key.toString());
       },
     },
-  ) as T;
+  ) as DB;
 };
 
-const firestorePlugin = <T>(): ProdoPlugin<
-  Config<T>,
+const firestorePlugin = <DB>(): ProdoPlugin<
+  Config<DB>,
   Universe,
-  ActionCtx<T>,
-  ViewCtx<T>
+  ActionCtx<DB>,
+  ViewCtx<DB>
 > => ({
   name: "firestore",
   init,
