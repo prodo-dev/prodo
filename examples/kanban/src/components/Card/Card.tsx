@@ -6,7 +6,7 @@ import CardBadges from "../CardBadges/CardBadges";
 import formatMarkdown from "./formatMarkdown";
 import { findCheckboxes } from "../utils";
 import Spinner from "../Spinner/Spinner";
-import { state, watch, db } from "../../model";
+import { db } from "../../model";
 import { Card as _Card } from "../../types";
 import "./Card.scss";
 
@@ -30,13 +30,12 @@ type Props = {
 };
 
 export function Card({ cardId, listId, isDraggingOver, index }: Props) {
-  const cards = db.cardsById.watchAll({ where: [["id", "==", cardId]] });
-  if (cards._fetching) return <Spinner />;
-  if (cards._notFound || cards.data.length === 0) return <div>NOT FOUND</div>;
+  const fetchingCard = db.cardsById.watch(cardId);
+  if (fetchingCard._fetching) return <Spinner />;
+  if (fetchingCard._notFound) return <div>NOT FOUND</div>;
+  console.log({ fetchingCard });
+  const card = fetchingCard.data;
 
-  console.log("CARDS", cards);
-
-  const card = cards.data[0];
   const [isModalOpen, setModalOpen] = React.useState(false);
   const toggleCardEditor = () => setModalOpen(!isModalOpen);
   const checkboxes = findCheckboxes(card.text);
