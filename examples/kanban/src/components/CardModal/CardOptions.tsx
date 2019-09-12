@@ -10,7 +10,7 @@ import ClickOutside from "../ClickOutside/ClickOutside";
 import colorIcon from "../../assets/images/color-icon.png";
 import "./CardOptions.scss";
 import { Card } from "../../types";
-import { state, dispatch } from "../../model";
+import { dispatch, db } from "../../model";
 
 type Props = {
   isColorPickerOpen: boolean;
@@ -21,12 +21,12 @@ type Props = {
   toggleColorPicker: Function;
 };
 
-function changeCardColor(_id: string, color: string) {
-  state.cardsById[_id].color = color;
+function changeCardColor(id: string, color: string) {
+  db.cardsById.set(id, { color });
 }
 
-function deleteCard(_id: string) {
-  delete state.cardsById[_id];
+function deleteCard(id: string) {
+  db.cardsById.delete(id);
 }
 
 function CardOptions({
@@ -35,14 +35,14 @@ function CardOptions({
   isCardNearRightBorder,
   isThinDisplay,
   boundingRect,
-  toggleColorPicker
+  toggleColorPicker,
 }: Props) {
   const [isCalendarOpen, setCalendarOpen] = React.useState(false);
   let colorPickerButton: any;
 
   const changeColor = color => {
     if (card.color !== color) {
-      dispatch(changeCardColor)(card._id, color);
+      dispatch(changeCardColor)(card.id, color);
     }
     toggleColorPicker();
     colorPickerButton.focus(); // WAT???
@@ -67,27 +67,27 @@ function CardOptions({
   const calendarStyle = {
     content: {
       top: Math.min(boundingRect.bottom + 10, window.innerHeight - 300),
-      left: boundingRect.left
-    }
+      left: boundingRect.left,
+    },
   };
 
   const calendarMobileStyle = {
     content: {
       top: 110,
       left: "50%",
-      transform: "translateX(-50%)"
-    }
+      transform: "translateX(-50%)",
+    },
   };
   return (
     <div
       className="options-list"
       style={{
-        alignItems: isCardNearRightBorder ? "flex-end" : "flex-start"
+        alignItems: isCardNearRightBorder ? "flex-end" : "flex-start",
       }}
     >
       <div>
         <button
-          onClick={() => dispatch(deleteCard)(card._id)}
+          onClick={() => dispatch(deleteCard)(card.id)}
           className="options-list-button"
         >
           <div className="modal-icon">
@@ -147,7 +147,7 @@ function CardOptions({
         style={isThinDisplay ? calendarMobileStyle : calendarStyle}
       >
         <Calendar
-          cardId={card._id}
+          cardId={card.id}
           date={card.date}
           toggleCalendar={toggleCalendar}
         />

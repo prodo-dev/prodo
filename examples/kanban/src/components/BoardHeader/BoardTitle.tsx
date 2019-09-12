@@ -1,7 +1,9 @@
 import * as React from "react";
 import { withRouter } from "react-router-dom";
 import "./BoardTitle.scss";
-import { dispatch, state, watch } from "../../model";
+import { dispatch, db } from "../../model";
+import Spinner from "../Spinner/Spinner";
+import NotFound from "../NotFound/NotFound";
 
 type Props = {
   match: {
@@ -11,13 +13,16 @@ type Props = {
   };
 };
 
-function changeBoardTitle(boardId: string, newTitle: string) {
-  state.boardsById[boardId].title = newTitle;
-}
+const changeBoardTitle = (boardId: string, title: string) => {
+  db.boardsById.set(boardId, { title });
+};
 
 function BoardTitle({ match }: Props) {
   const { boardId } = match.params;
-  const boardTitle = watch(state.boardsById[boardId].title);
+  const board = db.boardsById.watch(boardId);
+  if (board._fetching) return <Spinner />;
+  if (board._notFound) return <NotFound />;
+  const boardTitle = board.data.title;
   const [isOpen, setOpen] = React.useState(false);
   const [newTitle, setNewTitle] = React.useState(boardTitle);
 

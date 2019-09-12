@@ -19,11 +19,7 @@ const { store, Provider } = model.createStore({
     appId: "1:269426456584:web:899ccf22d228cf05a839bd",
   },
   initState: {
-    user: {
-      _id: "ted",
-      name: "ted",
-      imageUrl: "https://profiles.utdallas.edu/img/default.png",
-    },
+    userId: "guest",
     currentBoardId: "B1",
     // boardsById: {
     //   B1: {

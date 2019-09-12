@@ -16,7 +16,7 @@ import "./LandingPage.scss";
 import { dispatch, state } from "../../model";
 
 function enterAsGuest() {
-  state.isGuest = true;
+  state.userId = "guest";
 }
 
 function LandingPage({}) {
@@ -42,8 +42,8 @@ function LandingPage({}) {
             <h1>React Kanban</h1>
           </div>
           <p className="landing-page-description">
-            An open source kanban application inspired by Trello. Check out the
-            source code on{" "}
+            An open source kanban application inspired by Yogaboll's Trello
+            clone. Check out their source code on{" "}
             <a
               href="https://github.com/yogaboll/react-kanban"
               target="_blank"

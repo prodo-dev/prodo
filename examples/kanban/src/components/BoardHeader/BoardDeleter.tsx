@@ -4,7 +4,7 @@ import { Button, Wrapper, Menu, MenuItem } from "react-aria-menubutton";
 // @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
 import "./BoardDeleter.scss";
-import { state, dispatch } from "../../model";
+import { dispatch, db } from "../../model";
 
 type Props = {
   match: {
@@ -16,7 +16,7 @@ type Props = {
 };
 
 function deleteBoard(boardId) {
-  delete state.boardsById[boardId];
+  db.boardsById.delete(boardId);
 }
 
 function BoardDeleter({ match, history }: Props) {

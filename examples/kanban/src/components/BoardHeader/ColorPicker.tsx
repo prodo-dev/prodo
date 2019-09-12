@@ -7,20 +7,25 @@ import FaCheck from "react-icons/lib/fa/check";
 // @ts-ignore
 import colorIcon from "../../assets/images/color-icon.png";
 import "./ColorPicker.scss";
-import { state, watch, dispatch } from "../../model";
+import { dispatch, db } from "../../model";
+import NotFound from "../NotFound/NotFound";
+import Spinner from "../Spinner/Spinner";
 
 type Props = {
   match: { params: { boardId: string } };
 };
 
-function changeBoardColor(boardId, color) {
-  console.log("changeBoardColor", { boardId, color });
-  state.boardsById[boardId].color = color;
+function changeBoardColor(boardId: string, color: string) {
+  db.boardsById.set(boardId, { color });
 }
 
 function ColorPicker({ match }: Props) {
   const { boardId } = match.params;
-  const boardColor = watch(state.boardsById[boardId].color);
+  const board = db.boardsById.watch(boardId);
+  if (board._fetching) return <Spinner />;
+  if (board._notFound) return <NotFound />;
+
+  const boardColor = board.data.color;
 
   const colors = ["blue", "green", "red", "pink"];
   return (

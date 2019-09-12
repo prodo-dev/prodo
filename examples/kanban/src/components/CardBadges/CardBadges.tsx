@@ -23,7 +23,7 @@ function DueDate({ date }: Partial<Props>) {
   }
   const dueDateFromToday = differenceInCalendarDays(date, new Date());
 
-  let dueDateString;
+  let dueDateString: string;
   if (dueDateFromToday < -1) {
     dueDateString = `${Math.abs(dueDateFromToday)} days ago`;
   } else if (dueDateFromToday === -1) {
@@ -36,7 +36,7 @@ function DueDate({ date }: Partial<Props>) {
     dueDateString = format(date, "D MMM");
   }
 
-  let dueDateColor;
+  let dueDateColor: string;
   if (dueDateFromToday < 0) {
     dueDateColor = "red";
   } else if (dueDateFromToday === 0) {

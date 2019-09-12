@@ -2,30 +2,30 @@ import * as React from "react";
 import slugify from "slugify";
 import shortid from "shortid";
 import ClickOutside from "../ClickOutside/ClickOutside";
-import { state, dispatch, watch } from "../../model";
+import { state, dispatch, db } from "../../model";
 import { withRouter } from "react-router-dom";
 
 type Props = {
   history: any;
 };
 
-function addBoard(boardId: string, userId: string, title: string) {
-  state.boardsById[boardId] = {
-    _id: boardId,
+const addBoard = async (title: string) => {
+  const user = await db.users.get(state.userId);
+  const boardId = await db.boardsById.insert({
     title,
     lists: [],
-    users: [userId],
-    color: "blue"
-  };
+    users: [state.userId],
+    color: "blue",
+  });
+  user.boards.push(boardId);
+  db.users.set(state.userId, { boards: user.boards });
   state.currentBoardId = boardId;
-}
+};
 
 function BoardAdder({ history }: Props) {
-  const user = watch(state.user);
-  const userId = user ? user._id : "guest";
   const [localState, setLocalState] = React.useState({
     isOpen: false,
-    title: ""
+    title: "",
   });
   const { isOpen, title } = localState;
 
@@ -44,7 +44,7 @@ function BoardAdder({ history }: Props) {
       return;
     }
     const boardId = shortid.generate();
-    dispatch(addBoard)(boardId, userId, title);
+    dispatch(addBoard)(title);
     const urlSlug = slugify(title, { lower: true });
     history.push(`/b/${boardId}/${urlSlug}`);
     setLocalState({ isOpen: false, title: "" });

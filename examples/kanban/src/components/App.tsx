@@ -7,10 +7,9 @@ import "./App.scss";
 import { watch, state } from "../model";
 
 const App = ({}) => {
-  const user = watch(state.user);
-  const isGuest = watch(state.isGuest);
-  // Serve different pages depending on if user is logged in or not
-  if (user || isGuest) {
+  const user = watch(state.userId);
+  if (user) {
+    // logged in
     return (
       <Switch>
         <Route exact path="/" component={Home} />
@@ -18,14 +17,15 @@ const App = ({}) => {
         <Redirect to="/" />
       </Switch>
     );
+  } else {
+    // not logged in
+    return (
+      <Switch>
+        <Route exact path="/" component={LandingPage} />
+        <Redirect to="/" />
+      </Switch>
+    );
   }
-  // If not logged in, always redirect to landing page
-  return (
-    <Switch>
-      <Route exact path="/" component={LandingPage} />
-      <Redirect to="/" />
-    </Switch>
-  );
 };
 
 // Use withRouter to prevent strange glitch where other components

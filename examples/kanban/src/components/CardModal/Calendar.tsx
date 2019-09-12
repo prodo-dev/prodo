@@ -1,7 +1,7 @@
 import * as React from "react";
 import DayPicker from "react-day-picker";
 import "./ReactDayPicker.css";
-import { dispatch, state } from "../../model";
+import { dispatch, db } from "../../model";
 
 type Props = {
   cardId: string;
@@ -10,12 +10,12 @@ type Props = {
 };
 
 function changeCardDate(date: Date, cardId: string) {
-  state.cardsById[cardId].date = date;
+  db.cardsById.set(cardId, { date });
 }
 
 function Calendar({ cardId, date, toggleCalendar }: Props) {
   const [selectedDay, selectDay] = React.useState(
-    date ? new Date(date) : undefined
+    date ? new Date(date) : undefined,
   );
   return (
     <div className="calendar">

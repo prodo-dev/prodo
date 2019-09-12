@@ -2,7 +2,7 @@ import * as React from "react";
 import Textarea from "react-textarea-autosize";
 import ClickOutside from "../ClickOutside/ClickOutside";
 import "./CardAdder.scss";
-import { dispatch, state, db } from "../../model";
+import { dispatch, db } from "../../model";
 
 type Props = {
   listId: string;

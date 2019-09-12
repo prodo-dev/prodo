@@ -8,7 +8,15 @@ export type Board = {
   lists: string[];
 };
 
+export type User = {
+  id: string;
+  name: string;
+  imageUrl: string;
+  boards: string[];
+};
+
 export type DB = {
+  users: Collection<User>;
   cardsById: Collection<Card>;
   listsById: Collection<List>;
   boardsById: Collection<Board>;
@@ -28,7 +36,6 @@ export type Card = {
 };
 
 export type State = {
-  user?: { _id: string; name: string; imageUrl: string };
-  isGuest?: boolean;
+  userId?: string;
   currentBoardId?: string;
 };
