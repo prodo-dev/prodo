@@ -12,6 +12,16 @@ export type Universe<T> = Local<T>;
 export type ActionCtx<T> = Local<T>;
 export type ViewCtx<T> = Local<T>;
 
+const parseItem = (key: string, item: string): any => {
+  try {
+    return JSON.parse(item);
+  } catch (e) {
+    throw new Error(
+      `Error parsing '${key.toString()}' from localStorage\n\n${item}`,
+    );
+  }
+};
+
 const init = <T>(config: Config<T>, universe: Universe<T>) => {
   if (config.mockLocal && !config.initLocal) {
     throw new Error("initLocal is required if you are mocking local storage");
@@ -25,7 +35,7 @@ const init = <T>(config: Config<T>, universe: Universe<T>) => {
         return acc;
       }
 
-      return { ...acc, [key]: JSON.parse(item) };
+      return { ...acc, [key]: parseItem(key, item) };
     }, {});
   }
 
@@ -57,7 +67,8 @@ const prepareActionCtx = <T>(
         }
 
         const item = localStorage.getItem[key.toString()];
-        return JSON.parse(item);
+
+        return parseItem(key.toString(), item);
       },
       set(_target, key, value) {
         if (!config.mockLocal) {

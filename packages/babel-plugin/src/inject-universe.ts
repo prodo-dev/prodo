@@ -130,7 +130,7 @@ export default (
   }
 
   // Insert `import { model } from "./src/model";
-  let modelImport: { namespace: string } | { specifier: string };
+  let modelImport: { namespace: string } | { specifier: string } | undefined;
   if (
     universeImports.programPath != null &&
     universeImports.modelSource != null
