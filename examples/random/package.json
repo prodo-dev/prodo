@@ -1,6 +1,6 @@
 {
   "name": "@prodo-example/random",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,8 +9,8 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "^0.0.3",
-    "@prodo/random": "^0.0.3",
+    "@prodo/core": "^0.0.4",
+    "@prodo/random": "^0.0.4",
     "react": "^16.8.6",
     "react-dom": "^16.9.0"
   },
