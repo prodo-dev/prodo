@@ -25,23 +25,23 @@ const { store, Provider } = model.createStore({
       imageUrl: "https://profiles.utdallas.edu/img/default.png",
     },
     currentBoardId: "B1",
-    boardsById: {
-      B1: {
-        _id: "B1",
-        title: "todos",
-        color: "blue",
-        lists: ["L1", "L2"],
-        users: ["ted"],
-      },
-    },
-    listsById: {
-      L1: { _id: "L1", title: "doing", cards: ["C1", "C2"] },
-      L2: {
-        _id: "L2",
-        title: "done-ish",
-        cards: ["C3", "M0zOwZpuqz2jeM3lgauY"],
-      },
-    },
+    // boardsById: {
+    //   B1: {
+    //     _id: "B1",
+    //     title: "todos",
+    //     color: "blue",
+    //     lists: ["L1", "L2"],
+    //     users: ["ted"],
+    //   },
+    // },
+    // listsById: {
+    //   L1: { _id: "L1", title: "doing", cards: ["C1", "C2"] },
+    //   L2: {
+    //     _id: "L2",
+    //     title: "done-ish",
+    //     cards: ["C3", "M0zOwZpuqz2jeM3lgauY"],
+    //   },
+    // },
     // cardsById: {
     //   C1: { _id: "C1", text: "Hello", date: new Date(), color: "white" },
     //   C2: { _id: "C2", text: "World", date: new Date(), color: "green" },

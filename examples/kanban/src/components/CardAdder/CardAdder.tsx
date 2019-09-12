@@ -10,7 +10,9 @@ type Props = {
 
 const addCard = async (newText: string, listId: string) => {
   const cardId = await db.cardsById.insert({ text: newText });
-  state.listsById[listId].cards.push(cardId);
+  const list = await db.listsById.get(listId);
+  list.cards.push(cardId);
+  db.listsById.set(listId, list);
 };
 
 function CardAdder({ listId }: Props) {

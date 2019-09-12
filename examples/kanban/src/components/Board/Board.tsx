@@ -8,7 +8,10 @@ import Header from "../Header/Header";
 import BoardHeader from "../BoardHeader/BoardHeader";
 import "./Board.scss";
 import { Board as _Board } from "../../types";
-import { watch, state, dispatch } from "../../model";
+import { watch, state, dispatch, db } from "../../model";
+
+import Spinner from "../Spinner/Spinner";
+import NotFound from "../NotFound/NotFound";
 
 type Props = {
   boardId: string;
@@ -18,41 +21,52 @@ function setCurrentBoard(boardId) {
   state.currentBoardId = boardId;
 }
 
-function moveList(boardId: string, oldListIndex: number, newListIndex: number) {
-  const newLists = Array.from(state.boardsById[boardId].lists);
+const moveList = async (
+  boardId: string,
+  oldListIndex: number,
+  newListIndex: number,
+) => {
+  const board = await db.boardsById.get(boardId);
+  const newLists = board.lists;
   const [removedList] = newLists.splice(oldListIndex, 1);
   newLists.splice(newListIndex, 0, removedList);
-  state.boardsById[boardId].lists = newLists;
-}
+  db.boardsById.set(boardId, { ...board, lists: newLists });
+};
 
-function moveCard(
+const moveCard = async (
   oldCardIndex: number,
   newCardIndex: number,
   sourceListId: string,
   destListId: string,
-) {
+) => {
   if (sourceListId === destListId) {
     // Move within the same list
-    const newCards = state.listsById[sourceListId].cards;
+    const list = await db.listsById.get(sourceListId);
+    const newCards = list.cards;
     const [removedCard] = newCards.splice(oldCardIndex, 1);
     newCards.splice(newCardIndex, 0, removedCard);
-    state.listsById[sourceListId].cards = newCards;
+    db.listsById.set(sourceListId, { ...list, cards: newCards });
   } else {
     // Move card from one list to another
-    const sourceCards = Array.from(state.listsById[sourceListId].cards);
+    const source = await db.listsById.get(sourceListId);
+    const sourceCards = source.cards;
     const [removedCard] = sourceCards.splice(oldCardIndex, 1);
-    const destinationCards = Array.from(state.listsById[destListId].cards);
+    const dest = await db.listsById.get(destListId);
+    const destinationCards = dest.cards;
     destinationCards.splice(newCardIndex, 0, removedCard);
-    state.listsById[sourceListId].cards = sourceCards;
-    state.listsById[destListId].cards = destinationCards;
+    db.listsById.set(sourceListId, { ...source, cards: sourceCards });
+    db.listsById.set(destListId, { ...dest, cards: destinationCards });
   }
-}
+};
 
 function Board({ boardId }: Props) {
-  const board = watch(state.boardsById[boardId]);
+  const boardQ = db.boardsById.watch(boardId);
+  if (boardQ._fetching) return <Spinner />;
+  if (boardQ._notFound) return <NotFound />;
+  const board = boardQ.data;
   const boardTitle = board.title;
   const boardColor = board.color;
-  const lists = board.lists.map(listId => watch(state.listsById[listId]));
+  const lists = board.lists.map(listId => db.listsById.watch(listId));
   const [localState, setLocalState] = React.useState({
     startX: null,
     startScrollX: null,
@@ -162,14 +176,18 @@ function Board({ boardId }: Props) {
             >
               {provided => (
                 <div className="lists" ref={provided.innerRef}>
-                  {lists.map((list, index) => (
-                    <List
-                      list={list}
-                      boardId={boardId}
-                      index={index}
-                      key={list._id}
-                    />
-                  ))}
+                  {lists.map((list, index) => {
+                    if (list._fetching) return <Spinner />;
+                    if (list._notFound) return <NotFound />;
+                    return (
+                      <List
+                        list={list.data}
+                        boardId={boardId}
+                        index={index}
+                        key={list.data.id}
+                      />
+                    );
+                  })}
                   {provided.placeholder}
                   <ListAdder boardId={boardId} />
                 </div>
