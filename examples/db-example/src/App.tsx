@@ -1,6 +1,8 @@
 import * as React from "react";
 import { db, dispatch } from "./model";
 
+import "@babel/polyfill";
+
 const saveStuff = async (text: string) => {
   db.stuff.insert({
     text,

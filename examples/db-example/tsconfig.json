@@ -3,7 +3,9 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "module": "esnext"
   },
   "include": ["src", "src-transpiled"],
   "references": [
