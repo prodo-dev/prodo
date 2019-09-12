@@ -335,6 +335,14 @@
     "@babel/helper-remap-async-to-generator" "^7.1.0"
     "@babel/plugin-syntax-async-generators" "^7.2.0"
 
+"@babel/plugin-proposal-class-properties@^7.5.5":
+  version "7.5.5"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-class-properties/-/plugin-proposal-class-properties-7.5.5.tgz#a974cfae1e37c3110e71f3c6a2e48b8e71958cd4"
+  integrity sha512-AF79FsnWFxjlaosgdi421vmYG6/jg79bVD0dpD44QdgobzHKuLZ6S3vl8la9qIeSwGi8i1fS0O1mfuDAAdo1/A==
+  dependencies:
+    "@babel/helper-create-class-features-plugin" "^7.5.5"
+    "@babel/helper-plugin-utils" "^7.0.0"
+
 "@babel/plugin-proposal-dynamic-import@^7.5.0":
   version "7.5.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-dynamic-import/-/plugin-proposal-dynamic-import-7.5.0.tgz#e532202db4838723691b10a67b8ce509e397c506"
@@ -2188,30 +2196,6 @@
   dependencies:
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
-
-<<<<<<< HEAD
-"@prodo/babel-plugin@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@prodo/babel-plugin/-/babel-plugin-0.0.1.tgz#689c3767f9497defc5d7375599b75d4ae621e859"
-  integrity sha512-i/G67n/3cQxywfLL3jFDH4IhhrjPTOa+nw0QWYUd6d7J5zU3t1GK4iJn14Irf7wV+nV6BY9F7EInCq4R8mVRNQ==
-  dependencies:
-    "@babel/core" "^7.5.5"
-    "@babel/types" "^7.5.5"
-=======
-"@prodo/core@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@prodo/core/-/core-0.0.1.tgz#932f935782ea630654b55490d895c64365a82884"
-  integrity sha512-thxKuoy7FRxKm8XIzb/Ho8yZ6xppHF/XAQPeFrBw15rxn2NPBql8vQwQHNF6Oq96eQh8MXawAucXojlmArWjLQ==
-  dependencies:
-    immer "^3.2.0"
-    react "^16.9.0"
-    react-dom "^16.9.0"
-
-"@prodo/effect@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@prodo/effect/-/effect-0.0.1.tgz#a977f28107ac9791632e68e2c1832cd6d38b3a7c"
-  integrity sha512-9lSWEFZfyaVmnPMWvQfWXdLKykgQUr7vElPr/VRsNm+mliGxTN+i8ZZesIzmWE1IwslesI23f7NpP7Aj0q/yhQ==
->>>>>>> master
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
