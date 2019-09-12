@@ -168,7 +168,7 @@ describe("component transpilation", () => {
     `);
   });
 
-  it("can transpile an action that uses require syntax", () => {
+  it("can transpile a component that uses require syntax", () => {
     const sourceCode = `
       const prodo = require("./src/model");
       const MyComponent = () => {
