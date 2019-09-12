@@ -2,38 +2,37 @@ import { Comp, ProdoPlugin } from "@prodo/core";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 import * as _ from "lodash";
-import { createFirestoreQuery } from "./query";
+import { createFirestoreQuery, createQueryName } from "./query";
 import {
+  ActionCtx,
   Collection,
+  Config,
+  DBQuery,
+  Doc,
+  DocChange,
   FetchAll,
-  FetchData,
-  FirestoreActionCtx,
-  FirestoreConfig,
-  FirestoreUniverse,
-  FirestoreViewCtx,
   Query,
-  RefCounts,
-  WithId,
+  QueryRefs,
+  Universe,
+  ViewCtx,
 } from "./types";
 
 export { Collection };
 
+(window as any).counter = 0;
+
 let firestore: firebase.firestore.Firestore;
 
-const init = <T>(config: FirestoreConfig<T>, universe: FirestoreUniverse) => {
+const init = <T>(config: Config<T>, universe: Universe) => {
   if (!config.firestoreMock) {
     firebase.initializeApp(config.firebaseConfig);
     firestore = firebase.firestore();
   }
 
-  universe.db_cache = {};
-};
-
-const saveDataToCache = <T>({ db_cache }: FirestoreActionCtx<T>) => (
-  pathKey: string[],
-  value: any,
-) => {
-  _.set(db_cache, pathKey, value);
+  universe.db_cache = {
+    docs: {},
+    queries: {},
+  };
 };
 
 const cannotUseInAction = "Cannot use this method in an action";
@@ -41,47 +40,43 @@ const cannotUseInComponent = "Cannot use this method in a React component";
 
 const addIdToDoc = <T>(
   doc: firebase.firestore.DocumentSnapshot,
-): WithId<T> => ({
+): T & { id: string } => ({
   id: doc.id,
   ...(doc.data() as T),
 });
 
 const getSnapshotDocs = <T>(
   docs: firebase.firestore.QueryDocumentSnapshot[],
-): Array<WithId<T>> => docs.map(doc => addIdToDoc(doc));
+): Array<T & { id: string }> => docs.map(doc => addIdToDoc(doc));
 
 const getDocsById = <T>(
   docs: firebase.firestore.QueryDocumentSnapshot[],
-): { [key: string]: WithId<T> } =>
+): { [key: string]: T } =>
   _.transform(
     getSnapshotDocs<T>(docs),
-    (byId: { [key: string]: WithId<T> }, doc) => {
+    (byId: { [key: string]: T }, doc) => {
       byId[doc.id] = doc;
     },
     {},
   );
 
-const createActionCollection = <T>(
-  ctx: FirestoreActionCtx<T>,
+const createActionCollection = <DB, T extends { id: string }>(
+  _ctx: ActionCtx<DB>,
   collectionName: string,
 ): Collection<T> => {
   return {
-    getAll: async (): Promise<Array<WithId<T>>> => {
+    getAll: async (): Promise<T[]> => {
       const snapshot = await firestore.collection(collectionName).get();
 
-      const data = getDocsById<T>(snapshot.docs);
-      ctx.dispatch(saveDataToCache)([collectionName], data);
-
-      return Object.values(data);
+      const data = getSnapshotDocs<T>(snapshot.docs);
+      return data;
     },
-    get: async (id: string): Promise<WithId<T>> => {
+    get: async (id: string): Promise<T> => {
       const doc = await firestore
         .collection(collectionName)
         .doc(id)
         .get();
       const data = addIdToDoc<T>(doc);
-
-      ctx.dispatch(saveDataToCache)([collectionName, id], data);
 
       return data;
     },
@@ -97,24 +92,19 @@ const createActionCollection = <T>(
         .doc(id)
         .delete();
     },
-    query: async (query: Query): Promise<Array<WithId<T>>> => {
+    query: async (query: Query<T>): Promise<T[]> => {
       const ref = createFirestoreQuery(
-        query,
         firestore.collection(collectionName),
+        query,
       );
       const snapshot = await ref.get();
       const data = getDocsById<T>(snapshot.docs);
-
-      ctx.dispatch(saveDataToCache)([collectionName], data);
 
       return Object.values(data);
     },
     insert: async (value: T): Promise<string> => {
       const ref = await firestore.collection(collectionName).add(value);
       return ref.id;
-    },
-    watch: () => {
-      throw new Error(cannotUseInAction);
     },
     watchAll: () => {
       throw new Error(cannotUseInAction);
@@ -125,34 +115,87 @@ const createActionCollection = <T>(
   };
 };
 
-const subscribeToPath = <T>(
-  refCounts: RefCounts,
-  ctx: FirestoreViewCtx<T>,
-  path: string[],
-  comp: Comp,
+const updateDocs = <DB>(ctx: ActionCtx<DB>) => (
+  collectionName: string,
+  docChanges: DocChange[],
 ) => {
-  const pathKey = path.join(".");
-  if (!refCounts[pathKey].comps.has(comp)) {
-    refCounts[pathKey].comps.add(comp);
+  docChanges.forEach(({ id, changeType, data }) => {
+    const path = [collectionName, id];
+    const existingDoc: Doc = _.get(ctx.db_cache.docs, path) || {
+      // default,
+      watchers: 0,
+    };
 
-    ctx.subscribe(path, () => {
-      refCounts[pathKey].comps.delete(comp);
+    if (changeType === "added") {
+      _.set(ctx.db_cache.docs, path, {
+        ...existingDoc,
+        watchers: existingDoc.watchers + 1,
+        data,
+      });
+    } else if (changeType === "modified") {
+      _.set(ctx.db_cache.docs, path, {
+        ...existingDoc,
+        data,
+      });
+    } else if (changeType === "removed") {
+      _.set(ctx.db_cache.docs, path, {
+        ...existingDoc,
+        watchers: existingDoc.watchers - 1,
+      });
 
-      if (refCounts[pathKey].comps.size === 0) {
-        refCounts[pathKey].unsubscribe();
-        delete refCounts[pathKey];
+      const doc = _.get(ctx.db_cache.docs, path);
+
+      if (doc.watchers <= 0) {
+        _.unset(ctx.db_cache.docs, path);
       }
-    });
-  }
+    }
+  });
 };
 
-const createViewCollection = <T>(
-  refCounts: RefCounts,
-  ctx: FirestoreViewCtx<T>,
+const removeQuery = <DB>(ctx: ActionCtx<DB>) => (
   collectionName: string,
-  universe: FirestoreUniverse,
+  queryName: string,
+) => {
+  const dbQuery = ctx.db_cache.queries[collectionName][queryName];
+  delete ctx.db_cache.queries[collectionName][queryName];
+
+  const docChanges: DocChange[] = dbQuery.ids.map(id => ({
+    id,
+    changeType: "removed",
+  }));
+
+  updateDocs(ctx)(collectionName, docChanges);
+};
+
+const updateQuery = <DB>(ctx: ActionCtx<DB>) => (
+  collectionName: string,
+  queryName: string,
+  dbQuery: Partial<DBQuery>,
+) => {
+  const existingDbQuery = _.get(ctx.db_cache.queries, [
+    collectionName,
+    queryName,
+  ]) || {
+    // deafult db query
+    ids: [],
+    query: {},
+    state: "fetching",
+    watchers: [],
+  };
+
+  _.set(ctx.db_cache.queries, [collectionName, queryName], {
+    ...existingDbQuery,
+    ...dbQuery,
+  });
+};
+
+const createViewCollection = <DB, T extends { id: string }>(
+  queryRefs: QueryRefs,
+  ctx: ViewCtx<DB>,
+  collectionName: string,
+  universe: Universe,
   comp: Comp,
-): Collection<T> => {
+) => {
   return {
     get: () => {
       throw new Error(cannotUseInComponent);
@@ -172,78 +215,107 @@ const createViewCollection = <T>(
     query: () => {
       throw new Error(cannotUseInComponent);
     },
-    watch: (id: string): FetchData<WithId<T>> => {
-      const path = ["db_cache", name, id];
-      const pathKey = path.join(".");
+    watchAll: (query?: Query<T>): FetchAll<T> => {
+      const queryName = createQueryName(collectionName, query);
 
-      if (!universe.db_cache[collectionName] || !refCounts[pathKey]) {
-        const unsubscribe = firestore
-          .collection(collectionName)
-          .doc(id)
-          .onSnapshot(doc => {
-            const data = addIdToDoc<T>(doc);
+      const dbQuery = _.get(universe.db_cache.queries, [
+        collectionName,
+        queryName,
+      ]);
+      const queryExists = dbQuery != null;
 
-            ctx.dispatch(saveDataToCache)([collectionName, id], data);
-          });
+      // setup firestore watcher if it does not already exist
+      if (!queryExists && !queryRefs[queryName]) {
+        const ref = createFirestoreQuery(
+          firestore.collection(collectionName),
+          query,
+        );
 
-        if (!refCounts[pathKey]) {
-          refCounts[pathKey] = {
-            comps: new Set(),
-            unsubscribe,
-          };
-        }
+        (window as any).counter += 1;
+        const unsubscribe = ref.onSnapshot(
+          snapshot => {
+            const ids = snapshot.docs.map(doc => doc.id);
+
+            const docChanges: DocChange[] = snapshot
+              .docChanges()
+              .map(change => ({
+                id: change.doc.id,
+                changeType: change.type,
+                data: addIdToDoc(change.doc),
+              }));
+
+            ctx.dispatch(updateDocs)(collectionName, docChanges);
+
+            ctx.dispatch(updateQuery)(collectionName, queryName, {
+              ids,
+              state: "success",
+            });
+          },
+          error => {
+            // tslint:disable-next-line:no-console
+            console.error("onSnapshot Error", error);
+            ctx.dispatch(updateQuery)(collectionName, queryName, {
+              state: "error",
+            });
+          },
+        );
+
+        ctx.dispatch(updateQuery)(collectionName, queryName, {
+          state: "fetching",
+        });
+
+        queryRefs[queryName] = { unsubscribe, watchers: new Set() };
       }
 
-      subscribeToPath(refCounts, ctx, path, comp);
+      if (!queryRefs[queryName].watchers.has(comp.name)) {
+        queryRefs[queryName].watchers.add(comp.name);
+      }
 
-      if (!universe.db_cache[collectionName]) {
+      // subscribe component to query ids and each individual id
+      ctx.subscribe(
+        ["db_cache", "queries", collectionName, queryName, "ids"],
+        (comp: Comp) => {
+          if (queryRefs[queryName]) {
+            queryRefs[queryName].watchers.delete(comp.name);
+
+            if (queryRefs[queryName].watchers.size === 0) {
+              ctx.dispatch(removeQuery)(collectionName, queryName);
+              queryRefs[queryName].unsubscribe();
+              delete queryRefs[queryName];
+            }
+          }
+        },
+      );
+
+      if (queryExists) {
+        dbQuery.ids.forEach(id =>
+          ctx.subscribe(["db_cache", "docs", collectionName, id]),
+        );
+      }
+
+      // return data if it exists
+      if (dbQuery == null || dbQuery.state === "fetching") {
         return {
           _fetching: true,
         };
       } else {
-        const data = _.get(universe.db_cache, path) as WithId<T>;
+        // query error
+        if (dbQuery.state === "error") {
+          return {
+            _notFound: true,
+          };
+        }
+
+        // get all docs from docs cache
+        const data: Array<T> = dbQuery.ids
+          .map(id => _.get(universe.db_cache.docs, [collectionName, id]))
+          .filter(doc => doc != null)
+          .map(doc => doc.data);
+
         return {
           _fetching: false,
           _notFound: false,
           data,
-        };
-      }
-    },
-    watchAll: (): FetchAll<T> => {
-      const path = ["db_cache", collectionName];
-      const pathKey = path.join(".");
-
-      if (!universe.db_cache[collectionName] || !refCounts[pathKey]) {
-        const unsubscribe = firestore
-          .collection(collectionName)
-          .onSnapshot(snapshot => {
-            const docs = getDocsById(snapshot.docs);
-            ctx.dispatch(saveDataToCache)([collectionName], docs);
-          });
-
-        if (!refCounts[pathKey]) {
-          refCounts[pathKey] = {
-            comps: new Set(),
-            unsubscribe,
-          };
-        }
-      }
-
-      subscribeToPath(refCounts, ctx, path, comp);
-
-      if (!universe.db_cache[collectionName]) {
-        return {
-          _fetching: true,
-        };
-      } else {
-        const flatData = Object.values(
-          universe.db_cache[collectionName],
-        ) as Array<WithId<T>>;
-
-        return {
-          _fetching: false,
-          _notFound: false,
-          data: flatData,
         };
       }
     },
@@ -253,13 +325,13 @@ const createViewCollection = <T>(
   };
 };
 
-const prepareViewCtx = <T>(refCounts: RefCounts) => ({
+const prepareViewCtx = <DB>(queryRefs: QueryRefs) => ({
   ctx,
   universe,
   comp,
 }: {
-  ctx: FirestoreViewCtx<T>;
-  universe: FirestoreUniverse;
+  ctx: ViewCtx<DB>;
+  universe: Universe;
   comp: Comp;
 }) => {
   ctx.db = new Proxy(
@@ -267,7 +339,7 @@ const prepareViewCtx = <T>(refCounts: RefCounts) => ({
     {
       get(_target, key) {
         return createViewCollection(
-          refCounts,
+          queryRefs,
           ctx,
           key.toString(),
           universe,
@@ -275,15 +347,15 @@ const prepareViewCtx = <T>(refCounts: RefCounts) => ({
         );
       },
     },
-  ) as T;
+  ) as DB;
 };
 
-const prepareActionCtx = <T>({
+const prepareActionCtx = <DB>({
   ctx,
   universe,
 }: {
-  ctx: FirestoreActionCtx<T>;
-  universe: FirestoreUniverse;
+  ctx: ActionCtx<DB>;
+  universe: Universe;
 }) => {
   ctx.db_cache = universe.db_cache;
 
@@ -294,14 +366,14 @@ const prepareActionCtx = <T>({
         return createActionCollection(ctx, key.toString());
       },
     },
-  ) as T;
+  ) as DB;
 };
 
-const firestorePlugin = <T>(): ProdoPlugin<
-  FirestoreConfig<T>,
-  FirestoreUniverse,
-  FirestoreActionCtx<T>,
-  FirestoreViewCtx<T>
+const firestorePlugin = <DB>(): ProdoPlugin<
+  Config<DB>,
+  Universe,
+  ActionCtx<DB>,
+  ViewCtx<DB>
 > => ({
   name: "firestore",
   init,

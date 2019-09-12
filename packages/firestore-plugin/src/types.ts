@@ -11,27 +11,67 @@ export interface FirebaseConfig {
   appId: string;
 }
 
-export interface FirestoreConfig<T> {
+export interface DBCache {
+  docs: {
+    [collectionName: string]: DocsCollection;
+  };
+  queries: {
+    [collectionName: string]: {
+      [queryName: string]: DBQuery;
+    };
+  };
+}
+
+export interface DocsCollection {
+  [id: string]: Doc;
+}
+
+export interface Doc {
+  data: any;
+  watchers: number;
+}
+
+export interface DocChange {
+  id: string;
+  changeType: "added" | "modified" | "removed";
+  data?: any;
+}
+
+export interface DBQuery {
+  ids: string[];
+  watchers: string[];
+  query: any;
+  state: "success" | "fetching" | "error";
+}
+
+export interface Config<T> {
   firestoreMock?: T;
   firebaseConfig: FirebaseConfig;
 }
 
-export interface FirestoreCtx<T> {
+export interface QueryRefs {
+  [queryName: string]: {
+    unsubscribe: () => void;
+    watchers: Set<string>;
+  };
+}
+
+export interface Ctx<T> {
   db: T;
 }
 
-export interface FirestoreActionCtx<T>
-  extends FirestoreCtx<T>,
-    PluginActionCtx<FirestoreActionCtx<T>, FirestoreUniverse> {
-  db_cache: any;
+export interface ActionCtx<T>
+  extends Ctx<T>,
+    PluginActionCtx<ActionCtx<T>, Universe> {
+  db_cache: DBCache;
 }
 
-export interface FirestoreViewCtx<T>
-  extends FirestoreCtx<T>,
-    PluginViewCtx<FirestoreActionCtx<T>, FirestoreUniverse> {}
+export interface ViewCtx<T>
+  extends Ctx<T>,
+    PluginViewCtx<ActionCtx<T>, Universe> {}
 
-export interface FirestoreUniverse {
-  db_cache: any;
+export interface Universe {
+  db_cache: DBCache;
 }
 
 export interface RefCounts {
@@ -41,37 +81,32 @@ export interface RefCounts {
   };
 }
 
-export type WithId<T> = T & { id: string };
-
 export type FetchData<T> =
   | { _fetching: true; _notFound?: never; data?: T }
   | { _notFound: true; _fetching?: never; data?: T }
   | { _fetching?: false; _notFound?: false; data: T };
 
-export type Fetching<T> = FetchData<WithId<T>>;
-export type FetchAll<T> = FetchData<Array<WithId<T>>>;
-export interface Collection<T> {
+export type Fetching<T> = FetchData<T>;
+export type FetchAll<T> = FetchData<T[]>;
+
+export interface Collection<T extends { id: string }> {
   ref: (key: string) => firebase.firestore.CollectionReference;
 
   // methods for actions
-  get: (id: string) => Promise<WithId<T>>;
-  getAll: () => Promise<Array<WithId<T>>>;
+  get: (id: string) => Promise<T>;
+  getAll: () => Promise<T[]>;
   set: (id: string, value: T) => Promise<void>;
   delete: (id: string) => Promise<void>;
-  insert: (value: T) => Promise<string>;
-  query: (query: Query) => Promise<Array<WithId<T>>>;
+  insert: (value: Omit<T, "id">) => Promise<string>;
+  query: (query: Query<T>) => Promise<T[]>;
 
   // methods for react components
-  watch: (id: string) => Fetching<WithId<T>>;
-  watchAll: () => FetchAll<WithId<T>>;
+  // watch: (id: string) => Fetching<WithId<T>>;
+  watchAll: (query?: Query<T>) => FetchAll<T>;
 }
 
-export interface Query {
+export interface Query<T> {
   where: [
-    [
-      string | firebase.firestore.FieldPath,
-      firebase.firestore.WhereFilterOp,
-      any,
-    ], // field, op, value
+    [keyof T, firebase.firestore.WhereFilterOp, any], // field, op, value
   ];
 }

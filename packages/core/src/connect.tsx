@@ -28,10 +28,16 @@ export const createUniverseWatcher = (universePath: string) => {
   return readProxy([universePath]);
 };
 
-const valueExtractor = (store: any, watched: any) => (x: any) => {
+const getValue = (path: string[], obj: any): any =>
+  path.reduce((x: any, y: any) => x && x[y], obj);
+
+const valueExtractor = (
+  store: Store<any, any>,
+  watched: { [key: string]: any },
+) => (x: any) => {
   const path = x[pathSymbol];
   const pathKey = joinPath(path);
-  const value = path.reduce((x: any, y: any) => x && x[y], store.universe);
+  const value = getValue(path, store.universe);
   watched[pathKey] = value;
   return value;
 };
@@ -128,7 +134,8 @@ export const connect: Connect<any> = <P extends {}>(
 
       this.subscribe = (path: string[], unsubscribe?: (comp: Comp) => void) => {
         const pathKey = joinPath(path);
-        const node: Node = {
+
+        const node: Node = this.pathNodes[pathKey] || {
           pathKey,
           status: this.status,
           setState,
@@ -247,11 +254,17 @@ export const connect: Connect<any> = <P extends {}>(
       this._state = createUniverseWatcher("state");
       this._watch = valueExtractor(this.store, this.watched);
 
+      const subscribe = (path: string[], unsubscribe?: () => void): void => {
+        const pathKey = joinPath(path);
+        this.watched[pathKey] = getValue(path, this.store.universe);
+        this.subscribe(path, unsubscribe);
+      };
+
       const ctx = {
         dispatch: this._dispatch,
         state: this._state,
         watch: this._watch,
-        subscribe: this.subscribe,
+        subscribe,
       };
 
       this.store.plugins.forEach(p => {

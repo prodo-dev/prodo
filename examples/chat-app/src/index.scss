@@ -37,7 +37,7 @@ body {
   flex-grow: 1;
 }
 
-.input {
+.new-chat-message {
   position: absolute;
   bottom: 0;
   margin: 0 auto;
@@ -58,13 +58,18 @@ input {
 }
 
 .messages {
-  height: calc(100vh - var(--header) - var(--input));
+  // height: calc(100vh - var(--header) - var(--input));
+  padding-bottom: 2rem;
   overflow-y: auto;
 }
 
 .message {
   display: flex;
   align-items: center;
+  padding: 0 1rem;
+}
+
+.status {
   padding: 0 1rem;
 }
 
@@ -88,4 +93,15 @@ input {
 .buttons {
   padding-bottom: 1rem;
   padding-left: 1rem;
+}
+
+.top-bar {
+  display: flex;
+  padding: 1rem;
+  padding-top: 0;
+
+  input {
+    margin-left: 0.5rem;
+  }
+
 }

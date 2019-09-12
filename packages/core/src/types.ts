@@ -61,8 +61,8 @@ export interface PluginActionCtx<ActionCtx, Universe> {
 
 export interface PluginViewCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
+  subscribe: (path: string[], unsubscribe?: (comp: Comp) => void) => void;
   universe: Universe;
-  subscribe: (path: string[], unsubscribe?: () => void) => void;
 }
 
 export type PluginDispatch<Ctx> = <A extends any[]>(

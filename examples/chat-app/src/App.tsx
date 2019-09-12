@@ -31,20 +31,49 @@ const Message = model.connect(
   ),
 );
 
-const Messages = model.connect(({ db }) => () => {
-  const data = db.messages.watchAll();
+const Messages = model.connect(({ db }) => ({ query }: { query: string }) => {
+  const data =
+    query === ""
+      ? db.messages.watchAll()
+      : db.messages.watchAll({ where: [["text", "==", query]] });
 
   return (
     <div className="messages">
       {data._fetching ? (
-        <h1 className="center">Fetching...</h1>
+        <h1 className="status center">Fetching...</h1>
       ) : data._notFound ? (
-        <h1 className="center">Collection not found</h1>
+        <h1 className="status center">Collection not found</h1>
       ) : (
         data.data
           .sort((a, b) => a.date - b.date)
           .map(message => <Message message={message} key={message.id} />)
       )}
+    </div>
+  );
+});
+
+const QueryMessages = model.connect(({}) => () => {
+  const [query, setQuery] = React.useState<string>("");
+  const [showMessages, setShowMessages] = React.useState(true);
+
+  return (
+    <div className="query">
+      <div className="top-bar center">
+        <button onClick={() => setShowMessages(!showMessages)}>
+          {showMessages ? "Hide" : "Show"}
+        </button>
+        <input
+          type="text"
+          placeholder="Filter messages"
+          onKeyUp={(e: any) => {
+            if (e.keyCode === 13) {
+              setQuery(e.target.value);
+            }
+          }}
+        />
+      </div>
+
+      {showMessages && <Messages query={query} />}
     </div>
   );
 });
@@ -58,8 +87,8 @@ const words = [
   "meaningful",
 ];
 
-const Input = model.connect(({ dispatch }) => () => (
-  <div className="input">
+const NewChatMessage = model.connect(({ dispatch }) => () => (
+  <div className="new-chat-message">
     <input
       placeholder={`Something ${
         words[Math.floor(Math.random() * words.length)]
@@ -76,26 +105,18 @@ const Input = model.connect(({ dispatch }) => () => (
 ));
 
 const App = model.connect(({}) => () => {
-  const [showMessages, setShowMessages] = React.useState(true);
-
-  const toggleShowMessages = () => {
-    setShowMessages(!showMessages);
-  };
-
   return (
     <div className="app">
       <div className="full">
         <h1 className="title">the chat app</h1>
 
-        <div className="buttons center">
-          <button onClick={() => toggleShowMessages()}>
-            {showMessages ? "Hide" : "Show"}
-          </button>
+        <div className="queries">
+          <QueryMessages />
+          <QueryMessages />
+          <QueryMessages />
         </div>
-
-        {showMessages && <Messages />}
       </div>
-      <Input />
+      <NewChatMessage />
     </div>
   );
 });
