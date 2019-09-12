@@ -1,4 +1,9 @@
-import { TSESTree } from "@typescript-eslint/experimental-utils";
+import * as tsPluginUtil from "@typescript-eslint/eslint-plugin/dist/util";
+import {
+  ParserServices,
+  TSESTree,
+} from "@typescript-eslint/experimental-utils";
+import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
 import { TSRuleModule } from "../types/rules";
 
 const rule: TSRuleModule = {
@@ -8,16 +13,42 @@ const rule: TSRuleModule = {
       category: "Possible Errors",
     },
     messages: {
-      mustBeCalled: "Dispatched actions must be called",
+      mustBeCalled: "Dispatched actions must be called immediately",
     },
     schema: [],
     type: "problem",
   },
 
   create(context: any) {
+    const matchModel = (name: string) =>
+      /(\.|\/)+model\.(ctx.)?(tsx?|jsx?)/.test(name);
+
+    let importsDispatchFromModel: boolean = false;
+    const parserServices: ParserServices = tsPluginUtil.getParserServices(
+      context,
+    );
+
     return {
+      ImportDeclaration(path: TSESTree.ImportDeclaration): void {
+        const specifiers = path.specifiers;
+        if (path.source.type === AST_NODE_TYPES.Literal) {
+          if (matchModel(path.source.value as string)) {
+            specifiers.forEach(specifier => {
+              if (specifier.type === AST_NODE_TYPES.ImportSpecifier) {
+                const specifierTsNode = parserServices.esTreeNodeToTSNodeMap.get<
+                  TSNode
+                >(specifier);
+                if (specifierTsNode.getFullText() === "dispatch") {
+                  importsDispatchFromModel = true;
+                }
+              }
+            });
+          }
+        }
+      },
       CallExpression(node: TSESTree.CallExpression): void {
         if (
+          importsDispatchFromModel &&
           node &&
           node.callee.type === "Identifier" &&
           node.callee.name === "dispatch" &&

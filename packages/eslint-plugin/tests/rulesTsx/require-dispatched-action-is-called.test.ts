@@ -9,13 +9,17 @@ const messageId = "mustBeCalled";
 tsxRuleTester.run("my-rule", rule, {
   valid: [
     {
-      code: `<button className="btn"></button>`,
+      code: `import {dispatch} from './model.js'; <div onClick={() => dispatch(foo)()} />`,
+      filename: defaultTsxFile,
+    },
+    {
+      code: `<div onClick={() => dispatch(foo)} />`,
       filename: defaultTsxFile,
     },
   ],
   invalid: [
     {
-      code: `<div>{dispatch(foo)}</div>`,
+      code: `import {dispatch} from './model.js'; <div onClick={() => dispatch(foo)} />`,
       errors: [{ messageId }],
       filename: defaultTsxFile,
     },

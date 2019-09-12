@@ -13,14 +13,6 @@ ruleTester.run("my-rule", rule, {
       filename: defaultTsFile,
     },
     {
-      code: `foo`,
-      filename: defaultTsFile,
-    },
-    {
-      code: `foo()`,
-      filename: defaultTsFile,
-    },
-    {
       code: `dispatch(foo)()`,
       filename: defaultTsFile,
     },
@@ -32,16 +24,28 @@ ruleTester.run("my-rule", rule, {
       code: `[dispatch](foo)`,
       filename: defaultTsFile,
     },
+    {
+      code: `import {dispatch} from 'foo.ts'; dispatch(foo);`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import {dispatch} from '../../model.ts'; [dispatch](foo);`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import {dispatch} from '../../model.ts'; dispatch(foo)();`,
+      filename: defaultTsFile,
+    },
   ],
 
   invalid: [
     {
-      code: `dispatch(foo)`,
+      code: `import {dispatch} from '../../model.tsx'; dispatch(foo);`,
       errors: [{ messageId }],
       filename: defaultTsFile,
     },
     {
-      code: `dispatch(foo)[bar]`,
+      code: `import {dispatch} from './model.ctx.js'; dispatch(foo)[bar];`,
       errors: [{ messageId }],
       filename: defaultTsFile,
     },
