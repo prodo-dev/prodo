@@ -1,0 +1,29 @@
+{
+  "name": "@prodo/devtools-core",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
+    "start": "parcel index.html"
+  },
+  "dependencies": {
+    "@prodo/core": "^0.0.5",
+    "react": "^16.8.6",
+    "react-dom": "^16.9.0",
+    "styled-components": "^4.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.6.0",
+    "@prodo/babel-plugin": "^0.0.3",
+    "@types/node": "^12.7.2",
+    "@types/react": "^16.8.25",
+    "@types/react-dom": "^16.8.5",
+    "parcel-bundler": "^1.12.3",
+    "typescript": "^3.6.3"
+  }
+}
