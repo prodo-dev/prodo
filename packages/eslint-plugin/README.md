@@ -1,4 +1,4 @@
-# eslint-plugin-prodo
+# @prodo/eslint-plugin
 
 prodo plugin for eslint
 
@@ -10,42 +10,30 @@ You'll first need to install [ESLint](http://eslint.org):
 $ npm i eslint --save-dev
 ```
 
-Next, install `eslint-plugin-prodo`:
+Next, install `@prodo/eslint-plugin`:
 
 ```
-$ npm install eslint-plugin-prodo --save-dev
+$ npm install @prodo/eslint-plugin --save-dev
 ```
 
-**Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-prodo` globally.
+**Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `@prodo/eslint-plugin` globally.
 
 ## Usage
 
-Add `prodo` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
+Add `@prodo/eslint-plugin` to the plugins section of your `.eslintrc` configuration file.prefix:
 
 ```json
 {
-    "plugins": [
-        "prodo"
-    ]
+  "plugins": ["@prodo/eslint-plugin"]
 }
 ```
-
 
 Then configure the rules you want to use under the rules section.
 
 ```json
 {
-    "rules": {
-        "prodo/rule-name": 2
-    }
+  "rules": {
+    "@prodo/eslint-plugin/rule-name": 2
+  }
 }
 ```
-
-## Supported Rules
-
-* Fill in provided rules here
-
-
-
-
-

@@ -1,5 +1,5 @@
 import rule from "../../src/rules/require-dispatched-action-is-called";
-import { defaultTsFile, RuleTester } from "../ruleTester";
+import { defaultTsFile, defaultTsxFile, RuleTester } from "../ruleTester";
 
 const ruleTester = new RuleTester({
   parser: require.resolve("@typescript-eslint/parser"),

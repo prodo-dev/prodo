@@ -1,5 +1,5 @@
 {
-  "name": "@prodo/eslint",
+  "name": "@prodo/eslint-plugin",
   "version": "0.0.1",
   "description": "prodo plugin for eslint",
   "files": [
@@ -16,6 +16,7 @@
   "main": "lib/index.js",
   "dependencies": {},
   "devDependencies": {
+    "@types/eslint": "^6.1.1",
     "@typescript-eslint/eslint-plugin": "^2.1.0",
     "@typescript-eslint/experimental-utils": "^2.1.0",
     "@typescript-eslint/parser": "^2.1.0",

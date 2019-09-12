@@ -1,4 +1,4 @@
-import { RuleTester } from "eslint";
+import { RuleTester } from "eslint/lib/rule-tester";
 import * as path from "path";
 
 const getFixturesRootDir = (): string => {

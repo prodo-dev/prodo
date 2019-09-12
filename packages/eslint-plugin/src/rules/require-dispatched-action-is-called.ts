@@ -1,14 +1,11 @@
 import { TSESTree } from "@typescript-eslint/experimental-utils";
-import { createRule } from "../utils/createRule";
+import { TSRuleModule } from "../types/rules";
 
-export default createRule({
-  name: "require-dispatched-action-is-called",
+const rule: TSRuleModule = {
   meta: {
     docs: {
       description: "Requires that dispatched actions are called",
       category: "Possible Errors",
-      recommended: "error",
-      requiresTypeChecking: false,
     },
     messages: {
       mustBeCalled: "Dispatched actions must be called",
@@ -16,7 +13,6 @@ export default createRule({
     schema: [],
     type: "problem",
   },
-  defaultOptions: [],
 
   create(context: any) {
     return {
@@ -36,4 +32,6 @@ export default createRule({
       },
     };
   },
-});
+};
+
+export default rule;
