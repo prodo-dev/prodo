@@ -1,6 +1,6 @@
 import * as React from "react";
 import { initialize } from "./actions";
-import { dispatch, state, watch } from "./model";
+import { dispatch, state, watch } from "./model.ctx";
 
 export const App = () => {
   React.useEffect(() => {

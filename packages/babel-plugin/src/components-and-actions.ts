@@ -1,4 +1,5 @@
 import * as Babel from "@babel/core";
+import * as pathLib from "path";
 import injectUniverse from "./inject-universe";
 import { isPossibleActionName, isPossibleComponentName } from "./utils";
 
@@ -6,71 +7,91 @@ const visitPossibleActionOrComponent = (
   t: typeof Babel.types,
   name: string,
   rootPath: Babel.NodePath<
-    Babel.types.FunctionDeclaration | Babel.types.VariableDeclaration
+    | Babel.types.FunctionDeclaration
+    | Babel.types.ArrowFunctionExpression
+    | Babel.types.FunctionExpression
   >,
-  params: Array<
-    | Babel.types.Identifier
-    | Babel.types.Pattern
-    | Babel.types.RestElement
-    | Babel.types.TSParameterProperty
-  >,
-  bodyPath: Babel.NodePath<Babel.types.BlockStatement | Babel.types.Expression>,
-  async?: boolean,
 ) => {
   if (isPossibleComponentName(name)) {
-    injectUniverse(t, "component", name, rootPath, params, bodyPath, async);
+    injectUniverse(t, "component", name, rootPath);
   } else if (isPossibleActionName(name)) {
-    injectUniverse(t, "action", name, rootPath, params, bodyPath, async);
+    injectUniverse(t, "action", name, rootPath);
   }
 };
 
-export default ({ types: t }: typeof Babel) => ({
-  FunctionDeclaration(path: Babel.NodePath<Babel.types.FunctionDeclaration>) {
-    const name = path.node.id.name;
-    const bodyPath = path.get("body");
-    visitPossibleActionOrComponent(
-      t,
-      name,
-      path,
-      path.node.params,
-      bodyPath,
-      path.node.async,
-    );
-  },
-  VariableDeclaration(path: Babel.NodePath<Babel.types.VariableDeclaration>) {
-    if (path.node.declarations.length !== 1) {
-      // Not yet supported
+const extractName = (filePath: string) => {
+  const basename = pathLib.basename(filePath);
+  const fileName = basename.slice(
+    0,
+    basename.length - pathLib.extname(basename).length,
+  );
+  return fileName === "index"
+    ? extractName(pathLib.dirname(filePath))
+    : fileName.replace(/[-_](\w)/g, w => w.toUpperCase()).replace(/[-_]/g, "");
+};
+
+export default ({ types: t }: typeof Babel) => {
+  const visitFunctionDeclaration = (
+    path: Babel.NodePath<Babel.types.FunctionDeclaration>,
+  ) => {
+    if (path.node.id == null) {
       return;
     }
 
-    const declarationPath = path.get("declarations")[0];
-    if (
-      !(
-        t.isArrowFunctionExpression(declarationPath.node.init) ||
-        t.isFunctionExpression(declarationPath.node.init)
-      )
-    ) {
-      // Not a function.
-      return;
-    }
+    visitPossibleActionOrComponent(t, path.node.id.name, path);
+  };
 
-    if (!t.isIdentifier(declarationPath.node.id)) {
-      // Not yet supported.
-      return;
-    }
-
-    const name = declarationPath.node.id.name;
-    const bodyPath = (declarationPath.get("init") as Babel.NodePath<
+  const visitFunctionExpression = (
+    path: Babel.NodePath<
       Babel.types.ArrowFunctionExpression | Babel.types.FunctionExpression
-    >).get("body");
+    >,
+    state: any,
+  ) => {
+    if (
+      t.isVariableDeclarator(path.parent) &&
+      t.isVariableDeclaration(path.parentPath.parent) &&
+      (t.isProgram(path.parentPath.parentPath.parent) ||
+        t.isExportNamedDeclaration(path.parentPath.parentPath.parent))
+    ) {
+      // const foo = () => {};
+      // or
+      // export const foo = () => {};
+      if (!t.isIdentifier(path.parent.id)) {
+        // const {foo} = () => {};
+        return;
+      }
+      visitPossibleActionOrComponent(t, path.parent.id.name, path);
+    } else if (
+      t.isAssignmentExpression(path.parent) &&
+      t.isMemberExpression(path.parent.left) &&
+      t.isIdentifier(path.parent.left.object) &&
+      path.parent.left.object.name === "exports" &&
+      t.isExpressionStatement(path.parentPath.parent) &&
+      t.isProgram(path.parentPath.parentPath.parent)
+    ) {
+      // exports.foo = () => {};
+      visitPossibleActionOrComponent(t, path.parent.left.property.name, path);
+    } else if (
+      !t.isProgram(path.parent) &&
+      t.isExportDefaultDeclaration(path.parent)
+    ) {
+      // export default () => {};
 
-    visitPossibleActionOrComponent(
-      t,
-      name,
-      path,
-      declarationPath.node.init.params,
-      bodyPath,
-      declarationPath.node.init.async,
-    );
-  },
-});
+      // Need to work out whether it's a component or an action
+      if (!state.file || !state.file.opts || !state.file.opts.filename) {
+        return;
+      }
+      visitPossibleActionOrComponent(
+        t,
+        extractName(state.file.opts.filename),
+        path,
+      );
+    }
+  };
+
+  return {
+    FunctionDeclaration: visitFunctionDeclaration,
+    FunctionExpression: visitFunctionExpression,
+    ArrowFunctionExpression: visitFunctionExpression,
+  };
+};

@@ -60,11 +60,15 @@ export interface Ctx<T> {
   db: T;
 }
 
-export interface ActionCtx<T> extends Ctx<T>, PluginActionCtx<ActionCtx<T>> {
+export interface ActionCtx<T>
+  extends Ctx<T>,
+    PluginActionCtx<ActionCtx<T>, Universe> {
   db_cache: DBCache;
 }
 
-export interface ViewCtx<T> extends Ctx<T>, PluginViewCtx<ActionCtx<T>> {}
+export interface ViewCtx<T>
+  extends Ctx<T>,
+    PluginViewCtx<ActionCtx<T>, Universe> {}
 
 export interface Universe {
   db_cache: DBCache;

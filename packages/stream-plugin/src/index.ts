@@ -59,7 +59,7 @@ const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
   ctx,
   universe,
 }: {
-  ctx: PluginActionCtx<ActionCtx<T>> & ActionCtx<T>;
+  ctx: PluginActionCtx<ActionCtx<T>, Universe<T>> & ActionCtx<T>;
   universe: Universe<T>;
 }) => {
   ctx[valueSymbol] = universe.streams;
@@ -73,7 +73,10 @@ const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
       return true;
     },
     deleteProperty: (obj, key: keyof T) => {
-      state.states[key].unsubscribe();
+      const streamState = state.states[key];
+      if (streamState != null) {
+        streamState.unsubscribe();
+      }
       delete universe.streams[key];
       delete state.states[key];
       delete obj[key];

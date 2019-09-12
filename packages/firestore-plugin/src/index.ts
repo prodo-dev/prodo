@@ -39,7 +39,7 @@ const cannotUseInAction = "Cannot use this method in an action";
 const cannotUseInComponent = "Cannot use this method in a React component";
 
 const addIdToDoc = <T>(
-  doc: firebase.firestore.QueryDocumentSnapshot,
+  doc: firebase.firestore.DocumentSnapshot,
 ): T & { id: string } => ({
   id: doc.id,
   ...(doc.data() as T),

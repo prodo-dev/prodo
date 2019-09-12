@@ -1,4 +1,3 @@
-import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
@@ -11,12 +10,12 @@ export const initLocal: Local = {
   zoom: 12,
 };
 
-const store = model.createStore({ initState: {}, initLocal });
+const { Provider, store } = model.createStore({ initState: {}, initLocal });
 
 ReactDOM.render(
-  <ProdoProvider value={store}>
+  <Provider>
     <App />
-  </ProdoProvider>,
+  </Provider>,
   document.getElementById("root"),
 );
 
