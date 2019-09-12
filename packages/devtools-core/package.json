@@ -1,12 +1,14 @@
 {
   "name": "@prodo/devtools-core",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "main": "lib/index.js",
   "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
-    "start": "parcel index.html"
+    "start": "parcel index.html",
+    "build": "tsc --build",
+    "build:watch": "yarn build --watch"
   },
   "dependencies": {
     "@prodo/core": "^0.0.5",

@@ -1,16 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import App from "./App";
+import { DevToolsApp } from "./App";
 import { model } from "./model";
 import { initState } from "./store";
 
 import "./styles.css";
 
-const { store, Provider } = model.createStore({ initState });
+export default DevToolsApp;
+
+const { Provider } = model.createStore({ initState });
 
 ReactDOM.render(
   <Provider>
-    <App />
+    <DevToolsApp />
   </Provider>,
   document.getElementById("root"),
 );
