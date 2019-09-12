@@ -5,20 +5,21 @@ import CardModal from "../CardModal/CardModal";
 import CardBadges from "../CardBadges/CardBadges";
 import formatMarkdown from "./formatMarkdown";
 import { findCheckboxes } from "../utils";
-import { state, watch } from "../../model";
+import Spinner from "../Spinner/Spinner";
+import { state, watch, db } from "../../model";
 import { Card as _Card } from "../../types";
 import "./Card.scss";
 
 const toggleCheckbox = (card: _Card, checked: boolean, i: number) => {
   // identify the clicked checkbox by its index and give it a new checked attribute
-  const { _id, text } = card;
+  const { id, text } = card;
   let j = 0;
   const newText = text.replace(/\[(\s|x)\]/g, match => {
     const newString = i !== j ? match : checked ? "[x]" : "[ ]";
     j += 1;
     return newString;
   });
-  state.cardsById[_id].text = newText;
+  db.cardsById.set(id, { ...card, text: newText });
 };
 
 type Props = {
@@ -29,14 +30,20 @@ type Props = {
 };
 
 export function Card({ cardId, listId, isDraggingOver, index }: Props) {
-  const card = watch(state.cardsById[cardId]);
+  const cards = db.cardsById.watchAll({ where: [["id", "==", cardId]] });
+  if (cards._fetching) return <Spinner />;
+  if (cards._notFound || cards.data.length === 0) return <div>NOT FOUND</div>;
+
+  console.log("CARDS", cards);
+
+  const card = cards.data[0];
   const [isModalOpen, setModalOpen] = React.useState(false);
   const toggleCardEditor = () => setModalOpen(!isModalOpen);
   const checkboxes = findCheckboxes(card.text);
   const _ref = React.useRef(undefined);
   return (
     <>
-      <Draggable draggableId={card._id} index={index}>
+      <Draggable draggableId={card.id} index={index}>
         {(provided, snapshot) => (
           <>
             <div

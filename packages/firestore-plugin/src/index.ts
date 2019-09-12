@@ -159,6 +159,7 @@ const removeQuery = <DB>(ctx: ActionCtx<DB>) => (
   const dbQuery = ctx.db_cache.queries[collectionName][queryName];
   delete ctx.db_cache.queries[collectionName][queryName];
 
+  // TODO HANDLE WHEN ids does not exist
   const docChanges: DocChange[] = dbQuery.ids.map(id => ({
     id,
     changeType: "removed",
@@ -217,6 +218,7 @@ const createViewCollection = <DB, T extends { id: string }>(
     },
     watchAll: (query?: Query<T>): FetchAll<T> => {
       const queryName = createQueryName(collectionName, query);
+      console.log(queryName);
 
       const dbQuery = _.get(universe.db_cache.queries, [
         collectionName,

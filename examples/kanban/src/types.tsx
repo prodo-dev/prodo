@@ -1,9 +1,15 @@
+import { Collection } from "@prodo/firestore";
+
 export type Board = {
   _id: string;
   title: string;
   color: string;
   users: string[];
   lists: string[];
+};
+
+export type DB = {
+  cardsById: Collection<Card>;
 };
 
 export type List = {
@@ -13,7 +19,7 @@ export type List = {
 };
 
 export type Card = {
-  _id: string;
+  id: string;
   text: string;
   color?: string;
   date?: Date;
@@ -23,7 +29,6 @@ export type State = {
   user?: { _id: string; name: string; imageUrl: string };
   isGuest?: boolean;
   currentBoardId?: string;
-  cardsById: { [key: string]: Card };
   listsById: { [key: string]: List };
   boardsById: { [key: string]: Board };
 };

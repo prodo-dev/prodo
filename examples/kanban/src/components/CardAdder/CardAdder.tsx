@@ -1,23 +1,22 @@
 import * as React from "react";
 import Textarea from "react-textarea-autosize";
-import * as shortid from "shortid";
 import ClickOutside from "../ClickOutside/ClickOutside";
 import "./CardAdder.scss";
-import { dispatch, state } from "../../model";
+import { dispatch, state, db } from "../../model";
 
 type Props = {
   listId: string;
 };
 
-function addCard(newText: string, cardId: string, listId: string) {
+const addCard = async (newText: string, listId: string) => {
+  const cardId = await db.cardsById.insert({ text: newText });
   state.listsById[listId].cards.push(cardId);
-  state.cardsById[cardId] = { _id: cardId, text: newText };
-}
+};
 
 function CardAdder({ listId }: Props) {
   const [localState, setLocalState] = React.useState({
     newText: "",
-    isOpen: false
+    isOpen: false,
   });
   const { newText, isOpen } = localState;
 
@@ -40,8 +39,7 @@ function CardAdder({ listId }: Props) {
   const handleSubmit = (event: any) => {
     event.preventDefault();
     if (newText === "") return;
-    const cardId = shortid.generate();
-    dispatch(addCard)(newText, cardId, listId);
+    dispatch(addCard)(newText, listId);
     toggleCardComposer();
     setLocalState({ ...localState, newText: "" });
   };
