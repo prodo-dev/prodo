@@ -1,3 +1,4 @@
+import * as ts from "@typescript-eslint/eslint-plugin";
 import * as tsPluginUtil from "@typescript-eslint/eslint-plugin/dist/util";
 import {
   ParserServices,
@@ -22,10 +23,11 @@ const rule: TSRuleModule = {
 
   create(context: any) {
     let importsDispatchFromModel: boolean = false;
+    let dispatchImportSymbol: ts.Symbol;
     const parserServices: ParserServices = tsPluginUtil.getParserServices(
       context,
     );
-
+    const checker = parserServices.program.getTypeChecker();
     return {
       ImportDeclaration(path: TSESTree.ImportDeclaration): void {
         const specifiers = path.specifiers;
@@ -38,6 +40,7 @@ const rule: TSRuleModule = {
                 >(specifier);
                 if (specifierTsNode.getFullText() === "dispatch") {
                   importsDispatchFromModel = true;
+                  dispatchImportSymbol = (specifierTsNode as any).symbol;
                 }
               }
             });
@@ -52,11 +55,18 @@ const rule: TSRuleModule = {
           node.callee.name === "dispatch" &&
           node.parent.type !== "CallExpression"
         ) {
-          context.report({
-            node,
-            messageId: "mustBeCalled",
-            data: { name: (node.callee as TSESTree.Identifier).name },
-          });
+          const calleeNode = parserServices.esTreeNodeToTSNodeMap.get<TSNode>(
+            node.callee,
+          );
+          if (
+            checker.getSymbolAtLocation(calleeNode) === dispatchImportSymbol
+          ) {
+            context.report({
+              node,
+              messageId: "mustBeCalled",
+              data: { name: (node.callee as TSESTree.Identifier).name },
+            });
+          }
         }
       },
     };

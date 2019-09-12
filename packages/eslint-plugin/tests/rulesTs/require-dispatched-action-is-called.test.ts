@@ -17,11 +17,14 @@ ruleTester.run("my-rule", rule, {
       filename: defaultTsFile,
     },
     {
-      code: `dispatch(foo)(bar)`,
+      code: `[dispatch](foo)`,
       filename: defaultTsFile,
     },
     {
-      code: `[dispatch](foo)`,
+      code: `import { dispatch } from "./model";
+      const myDispatchToProps = (dispatch) => ({
+        foo: () => dispatch(foo),
+      });`,
       filename: defaultTsFile,
     },
     {
