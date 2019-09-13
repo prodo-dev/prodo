@@ -26,6 +26,7 @@ const Tabs = styled.div`
 export const DevTools = () => {
   React.useEffect(() => {
     window.addEventListener("message", eventListener(dispatch));
+    return () => window.removeEventListener("message", eventListener(dispatch));
   }, []);
 
   const [selectedPanel, setSelectedPanel] = React.useState(

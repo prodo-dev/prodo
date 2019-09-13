@@ -2,6 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
 import { eventListener } from "../communication";
+import { dispatch } from "../model";
 
 const StyledIFrame = styled.iframe`
   width: 60%;
@@ -28,10 +29,13 @@ const UserAppContainer = (props: Props) => {
       iFrameRef.current.addEventListener("load", handleLoad);
       iFrameRef.current.contentWindow.addEventListener(
         "message",
-        eventListener,
+        eventListener(dispatch),
       );
+      return () => {
+        window.removeEventListener("load", handleLoad);
+        window.removeEventListener("message", eventListener(dispatch));
+      };
     }
-    // Unmount - remove listeners?
   }, []);
 
   const renderFrameContents = () => {
