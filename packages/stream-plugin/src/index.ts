@@ -16,38 +16,38 @@ export interface Stream<T> {
   subscribe: (cb: (value: T) => void) => StreamState;
 }
 
-type UnStreams<T extends { [K in keyof T]?: Stream<any> }> = {
-  [K in keyof T]?: T[K] extends Stream<infer V> ? V : never;
+export type UnStreams<T extends { [K in keyof T]: Stream<any> }> = {
+  [K in keyof T]: T[K] extends Stream<infer V> ? V : never
 };
 
 // Stores the latest values
-export interface Universe<T extends { [K in keyof T]?: Stream<any> }> {
-  streams: UnStreams<T>;
+export interface Universe<T extends { [K in keyof T]: Stream<any> }> {
+  streams: Partial<UnStreams<T>>;
 }
 
-interface State<T extends { [K in keyof T]?: Stream<any> }> {
+interface State<T extends { [K in keyof T]: Stream<any> }> {
   streams: T;
   states: { [K in keyof T]?: StreamState };
 }
 
-export interface ViewCtx<T extends { [K in keyof T]?: Stream<any> }> {
-  streams: UnStreams<T>;
+export interface ViewCtx<T extends { [K in keyof T]: Stream<any> }> {
+  streams: Partial<UnStreams<T>>;
 }
 
-export interface ActionCtx<T extends { [K in keyof T]?: Stream<any> }> {
-  streams: T;
+export interface ActionCtx<T extends { [K in keyof T]: Stream<any> }> {
+  streams: Partial<T>;
   // Private to streamUpdate
-  [valueSymbol]: UnStreams<T>;
+  [valueSymbol]: Partial<UnStreams<T>>;
 }
 
-const init = <T extends { [K in keyof T]?: Stream<any> }>(
+const init = <T extends { [K in keyof T]: Stream<any> }>(
   _config: {},
   universe: Universe<T>,
 ) => {
   universe.streams = {};
 };
 
-const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
+const prepareActionCtx = <T extends { [K in keyof T]: Stream<any> }>(
   state: State<T>,
   streamUpdate: PluginAction<ActionCtx<T>, [keyof T, any]>,
 ) => ({
@@ -80,7 +80,7 @@ const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
   });
 };
 
-const prepareViewCtx = <T extends { [K in keyof T]?: Stream<any> }>({
+const prepareViewCtx = <T extends { [K in keyof T]: Stream<any> }>({
   ctx,
 }: {
   ctx: ViewCtx<T>;
@@ -88,9 +88,12 @@ const prepareViewCtx = <T extends { [K in keyof T]?: Stream<any> }>({
   ctx.streams = createUniverseWatcher("streams");
 };
 
-const streamPlugin = <
-  T extends { [K in keyof T]?: Stream<any> }
->(): ProdoPlugin<{}, Universe<T>, ActionCtx<T>, ViewCtx<T>> => {
+const streamPlugin = <T extends { [K in keyof T]: Stream<any> }>(): ProdoPlugin<
+  {},
+  Universe<T>,
+  ActionCtx<T>,
+  ViewCtx<T>
+> => {
   const state: State<T> = {
     streams: {} as any,
     states: {},
