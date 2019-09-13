@@ -33,8 +33,30 @@ jobs:
             - /home/circleci/.cache/yarn/v4
           key: v1-dependencies-{{ checksum "yarn.lock" }}
 
+  deploy:
+    docker:
+      - image: circleci/node:10
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Deploy
+          command: ./node_modules/.bin/firebase deploy
+
 workflows:
   version: 2
   test:
     jobs:
       - test
+  deploy:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master
