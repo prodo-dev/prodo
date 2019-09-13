@@ -15,7 +15,8 @@ const StyledDevtools = styled.div`
   display: flex;
   flex-direction: column;
 
-  width: 450px;
+  width: 500px;
+  padding: 1rem;
 `;
 
 const Tabs = styled.div`
@@ -29,9 +30,7 @@ export const DevTools = () => {
     return () => window.removeEventListener("message", eventListener(dispatch));
   }, []);
 
-  const [selectedPanel, setSelectedPanel] = React.useState(
-    "actionLog" as Panel,
-  );
+  const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
 
   return (
     <StyledDevtools>

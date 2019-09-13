@@ -5,8 +5,10 @@ import { eventListener } from "../communication";
 import { dispatch } from "../model";
 
 const StyledIFrame = styled.iframe`
-  width: 60%;
-  min-height: 600px;
+  min-height: calc(100vh - 2rem);
+  height: 100%;
+
+  min-width: 50%;
 `;
 
 interface Props {
