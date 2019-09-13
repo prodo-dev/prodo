@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  test:
+  build:
     docker:
       - image: circleci/node:10
 
@@ -10,7 +10,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "docs/yarn.lock"}}
 
       - run:
           name: Install Dependencies
@@ -31,7 +31,7 @@ jobs:
       - save_cache:
           paths:
             - /home/circleci/.cache/yarn/v4
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
+          key: v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "docs/yarn.lock"}}
 
   deploy:
     docker:
@@ -42,7 +42,11 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "docs/yarn.lock"}}
+
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile
 
       - run:
           name: Deploy
@@ -50,12 +54,12 @@ jobs:
 
 workflows:
   version: 2
-  test:
+  build_and_deploy:
     jobs:
-      - test
-  deploy:
-    jobs:
+      - build
       - deploy:
+          requires:
+            - build
           filters:
             branches:
               only:
