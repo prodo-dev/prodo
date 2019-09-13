@@ -54,28 +54,20 @@ interface ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx> {
 }
 
 type PluginMandatoryKeys = "name";
+type AtLeastOneOf<T, Keys extends keyof T> = {
+  [K in Keys]-?: Required<Pick<T, K>> & Pick<T, Keys>;
+}[Keys];
 export type ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> = Pick<
   ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
   PluginMandatoryKeys
 > &
-  {
-    [K in Exclude<
+  AtLeastOneOf<
+    ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
+    Exclude<
       keyof ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
       PluginMandatoryKeys
-    >]-?: Required<
-      Pick<ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>, K>
-    > &
-      Pick<
-        ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
-        Exclude<
-          keyof ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
-          PluginMandatoryKeys
-        >
-      >;
-  }[Exclude<
-    keyof ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
-    PluginMandatoryKeys
-  >];
+    >
+  >;
 
 export interface PluginActionCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
