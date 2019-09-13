@@ -27,6 +27,7 @@ const devtoolsPlugin: ProdoPlugin<DevToolsConfig, {}, {}, {}> = {
       contents: e,
     };
     window.postMessage(message, "*");
+    window.parent.postMessage(message, "*");
   },
 };
 

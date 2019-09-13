@@ -1,24 +1,10 @@
 import * as React from "react";
 import styled from "styled-components";
-import { dispatch, state } from "../model";
+import { eventListener } from "../communication";
+import { dispatch } from "../model";
 import { Panel } from "../types";
 import { ActionLogPanel } from "./ActionLogPanel";
 import { StatePanel } from "./StatePanel";
-
-const recordAction = (action: any) => {
-  state.app.actionLog.push(action);
-};
-
-// TODO: types
-window.addEventListener("message", (event: MessageEvent) => {
-  if (event.data.destination === "devtools") {
-    if (event.data.type === "completedEvent") {
-      // tslint:disable-next-line:no-console
-      console.log("Devtools got message", event.data);
-      dispatch(recordAction)(event.data.contents);
-    }
-  }
-});
 
 const panels: { [key in Panel]: React.ReactElement } = {
   state: <StatePanel />,
@@ -29,7 +15,7 @@ const StyledDevtools = styled.div`
   display: flex;
   flex-direction: column;
 
-  width: 30%;
+  width: 450px;
 `;
 
 const Tabs = styled.div`
@@ -38,7 +24,13 @@ const Tabs = styled.div`
 `;
 
 export const DevTools = () => {
-  const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
+  React.useEffect(() => {
+    window.addEventListener("message", eventListener(dispatch));
+  }, []);
+
+  const [selectedPanel, setSelectedPanel] = React.useState(
+    "actionLog" as Panel,
+  );
 
   return (
     <StyledDevtools>

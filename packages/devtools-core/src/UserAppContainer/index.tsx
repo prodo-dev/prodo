@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
+import { eventListener } from "../communication";
 
 const StyledIFrame = styled.iframe`
   width: 60%;
@@ -25,9 +26,12 @@ const UserAppContainer = (props: Props) => {
   React.useEffect(() => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentWindow) {
       iFrameRef.current.addEventListener("load", handleLoad);
+      iFrameRef.current.contentWindow.addEventListener(
+        "message",
+        eventListener,
+      );
     }
-    // Unmount?
-    //    this.state.iFrameRef.current.removeEventListener("load", this.handleLoad);
+    // Unmount - remove listeners?
   }, []);
 
   const renderFrameContents = () => {

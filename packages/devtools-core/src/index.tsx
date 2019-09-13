@@ -1,18 +1,30 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { DevToolsApp } from "./App";
+import App from "./App";
 import { model } from "./model";
 import { initState } from "./store";
 
 import "./styles.css";
 
-export default DevToolsApp;
+const store = model.createStore({ initState });
+const { Provider } = store;
 
-const { Provider } = model.createStore({ initState });
+// @ts-ignore
+window.devtools_store = store; // for debugging
+console.log("Provider", Provider, model.ctx, initState);
 
-ReactDOM.render(
+interface Props {
+  children?: React.ReactNode;
+}
+
+const DevToolsApp = (props: Props) => (
   <Provider>
-    <DevToolsApp />
-  </Provider>,
-  document.getElementById("root"),
+    <App url={!props.children && "http://localhost:1234"}>
+      {props.children || "Hello World"}
+    </App>
+  </Provider>
 );
+
+ReactDOM.render(<DevToolsApp />, document.getElementById("root"));
+
+export default DevToolsApp;

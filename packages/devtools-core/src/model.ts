@@ -1,8 +1,10 @@
 import { createModel } from "@prodo/core";
 
+// TODO: action type
 export interface State {
   app: {
     state: any;
+    actionLog: any[];
   };
   ui: {
     iframe: HTMLIFrameElement | null;
@@ -11,3 +13,4 @@ export interface State {
 
 export const model = createModel<State>();
 export const { state, watch, dispatch } = model.ctx;
+console.log("AK1", model, state, dispatch);
