@@ -71,7 +71,7 @@ export const Route = connect(
     exact,
     children,
     component,
-  }: RouteProps): React.ReactElement => {
+  }: RouteProps): React.ReactElement | null => {
     const match =
       path == null ? {} : routeMatches(watch(route.path), path, exact);
     if (match != null) {
@@ -87,8 +87,8 @@ export const Route = connect(
 
 export const Switch = connect(
   ({ route, watch }) => ({ children }: { children: React.ReactNode }) => {
-    let element = null;
-    React.Children.forEach(children, child => {
+    let element: React.ReactNode | null = null;
+    React.Children.forEach(children, (child: React.ReactNode) => {
       if (element == null && React.isValidElement(child)) {
         const path = child.props.path;
         if (path != null) {
@@ -115,6 +115,9 @@ export const Redirect = connect(
   }) => {
     if (typeof to === "string") {
       to = { path: to };
+    }
+    if (to.params == null) {
+      to.params = {};
     }
     const action = push ? actions.push : actions.replace;
     React.useEffect(() => {
@@ -164,14 +167,15 @@ export const Link = connect(
     to: string | RouteParams;
   } & React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
     if (typeof to === "string") {
-      to = { path: to };
+      to = { path: to, params: {} };
+    }
+    if (to.params == null) {
+      to.params = {};
     }
     return React.createElement(component, {
       ...rest,
       href: `${to.path}${
-        to.params != null && Object.keys(to.params).length > 0
-          ? createParamString(to.params)
-          : ""
+        Object.keys(to.params).length > 0 ? createParamString(to.params) : ""
       }`,
       navigate: () => {
         const action = replace ? actions.replace : actions.push;

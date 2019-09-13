@@ -9,13 +9,13 @@ export const historySymbol = Symbol("@@routing/history");
 export const universeSymbol = Symbol("@@routing/universe");
 
 export interface Universe {
-  route: RouteParams;
+  route: Required<RouteParams>;
 }
 
 export interface Routing {
   [historySymbol]: History;
   [universeSymbol]: Universe;
-  route: RouteParams;
+  route: Required<RouteParams>;
 }
 
 export interface Config {
