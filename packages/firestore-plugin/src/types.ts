@@ -39,7 +39,6 @@ export interface DocChange {
 
 export interface DBQuery {
   ids: string[];
-  watchers: string[];
   query: any;
   state: "success" | "fetching" | "error";
 }
