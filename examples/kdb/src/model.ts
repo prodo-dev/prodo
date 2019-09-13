@@ -18,8 +18,8 @@ export interface Trade extends Event {
 
 
 export interface Streams {
-  quotes?: Stream<Quote[]>;
-  trades?: Stream<Trade[]>;
+  quotes: Stream<Quote[]>;
+  trades: Stream<Trade[]>;
 }
 
 export const model = createModel<{}>().with(streamPlugin<Streams>());

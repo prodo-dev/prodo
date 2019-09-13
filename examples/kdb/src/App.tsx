@@ -1,6 +1,7 @@
 import * as React from "react";
-import { model, Quote, Trade } from "./model";
+import { model, Streams, Quote, Trade } from "./model";
 import { webSocket } from "rxjs/webSocket";
+import { UnStreams } from "@prodo/stream-plugin";
 import * as op from "rxjs/operators";
 
 type Msg =
@@ -56,55 +57,42 @@ export const setupStreams = model.action(({ streams }) => () => {
   streams.trades = trades;
 });
 
-const Trades = model.connect(
-  ({ streams, watch }) => () => {
-    return (
-      <table>
-        <caption>Trades</caption>
-        <tbody>
-          <tr>
-            <th>Symbol</th>
-            <th>Price</th>
-            <th>Size</th>
-          </tr>
-          {(watch(streams.trades) || []).map(({ sym, price, size }) => (
-            <tr key={sym}>
-              <td>{sym}</td>
-              <td>{price}</td>
-              <td>{size}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  },
-  "Trades",
-);
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-const Quotes = model.connect(
-  ({ streams, watch }) => () => {
-    return (
-      <table>
-        <caption>Quotes</caption>
-        <tbody>
-          <tr>
-            <th>Symbol</th>
-            <th>Bid</th>
-            <th>Ask</th>
-          </tr>
-          {(watch(streams.quotes) || []).map(({ sym, bid, ask }) => (
-            <tr key={sym}>
-              <td>{sym}</td>
-              <td>{bid}</td>
-              <td>{ask}</td>
+const Table = <
+  K extends keyof Streams,
+  J extends keyof UnStreams<Streams>[K][0]
+>(
+  data: K,
+  props: J[],
+) =>
+  model.connect(
+    ({ streams, watch }) => () => {
+      return (
+        <table>
+          <caption>{capitalize(data)}</caption>
+          <tbody>
+            <tr>
+              {(props as any[]).map(prop => (
+                <th>{capitalize(prop)}</th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  },
-  "Trades",
-);
+            {((watch(streams[data]) as any[]) || []).map(value => (
+              <tr key={value.sym}>
+                {props.map(prop => (
+                  <td>{value[prop]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    },
+    capitalize(data),
+  );
+
+const Trades = Table("trades", ["sym", "price", "size"]);
+const Quotes = Table("quotes", ["sym", "bid", "ask"]);
 
 export default model.connect(
   ({ dispatch }) => () => {
