@@ -50,17 +50,6 @@ const getSnapshotDocs = <T>(
   docs: firebase.firestore.QueryDocumentSnapshot[],
 ): Array<T & { id: string }> => docs.map(doc => addIdToDoc(doc));
 
-const getDocsById = <T>(
-  docs: firebase.firestore.QueryDocumentSnapshot[],
-): { [key: string]: T } =>
-  _.transform(
-    getSnapshotDocs<T>(docs),
-    (byId: { [key: string]: T }, doc) => {
-      byId[doc.id] = doc;
-    },
-    {},
-  );
-
 const createActionCollection = <DB, T extends { id: string }>(
   _ctx: ActionCtx<DB>,
   collectionName: string,
@@ -99,9 +88,9 @@ const createActionCollection = <DB, T extends { id: string }>(
         query,
       );
       const snapshot = await ref.get();
-      const data = getDocsById<T>(snapshot.docs);
 
-      return Object.values(data);
+      const data = getSnapshotDocs<T>(snapshot.docs);
+      return data;
     },
     insert: async (value: T): Promise<string> => {
       const ref = await firestore.collection(collectionName).add(value);
