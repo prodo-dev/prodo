@@ -1,7 +1,6 @@
 import * as React from "react";
 import { model, Quote, Trade } from "./model";
-import * as rx from "rxjs";
-import { webSocket, WebSocketSubject } from "rxjs/webSocket";
+import { webSocket } from "rxjs/webSocket";
 import * as op from "rxjs/operators";
 
 type Msg =
@@ -18,19 +17,35 @@ type Msg =
       result: string[];
     };
 
+const filterQuotes = (
+  msg: Msg | string,
+): msg is {
+  func: "getQuotes";
+  result: Quote[];
+} => typeof msg !== "string" && msg.func === "getQuotes";
+
+const filterTrades = (
+  msg: Msg | string,
+): msg is {
+  func: "getTrades";
+  result: Trade[];
+} => typeof msg !== "string" && msg.func === "getTrades";
+
 const kdbSocket = (url: string = "ws://localhost:5001") => {
-  const ws = new WebSocketSubject<Msg>({ url, serializer: msg => msg });
+  const ws = webSocket<Msg | string>({
+    url,
+    serializer: msg => (typeof msg === "string" ? msg : JSON.stringify(msg)),
+  });
   ws.next("loadPage[]");
 
   const quotes = ws.pipe(
-    op.filter(msg => msg.func == "getQuotes"),
+    op.filter(filterQuotes),
     op.map(({ result }) => result),
   );
   const trades = ws.pipe(
-    op.filter(msg => msg.func == "getTrades"),
+    op.filter(filterTrades),
     op.map(({ result }) => result),
   );
-  trades.subscribe(console.log);
 
   return { quotes, trades };
 };
@@ -77,7 +92,7 @@ const Quotes = model.connect(
             <th>Bid</th>
             <th>Ask</th>
           </tr>
-          {(watch(streams.quotes) || []).map(({ sym, bid, ask}) => (
+          {(watch(streams.quotes) || []).map(({ sym, bid, ask }) => (
             <tr key={sym}>
               <td>{sym}</td>
               <td>{bid}</td>
@@ -92,7 +107,7 @@ const Quotes = model.connect(
 );
 
 export default model.connect(
-  ({ streams, dispatch }) => () => {
+  ({ dispatch }) => () => {
     React.useEffect(() => {
       dispatch(setupStreams)();
     }, []);

@@ -6,18 +6,18 @@ interface Event {
   sym: string;
 }
 
-interface Quote extends Event {
+export interface Quote extends Event {
   ask: number;
   bid: number;
 }
 
-interface Trade extends Event {
+export interface Trade extends Event {
   price: number;
   size: number;
 }
 
 
-interface Streams {
+export interface Streams {
   quotes?: Stream<Quote[]>;
   trades?: Stream<Trade[]>;
 }
