@@ -13,14 +13,9 @@ export const createModel = <State>(): Model<
 
   const model: Model<any, any, any, any> = {
     createStore: config => createStore(config, plugins),
-    action: action as any,
-    connect(func: any, name = "(anonymous component)") {
-      return connect(
-        func,
-        name,
-      );
-    },
-    with: p => {
+    action,
+    connect,
+    with: (p: ProdoPlugin<any, any, any, any>) => {
       plugins.push(p);
       return model;
     },
