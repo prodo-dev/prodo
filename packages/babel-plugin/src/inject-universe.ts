@@ -206,11 +206,12 @@ export default (
         t.variableDeclarator(
           t.identifier(name),
           t.functionExpression(
-            t.identifier(name),
+            null,
             path.node.params,
             t.isBlockStatement(path.node.body)
               ? path.node.body
               : t.blockStatement([t.returnStatement(path.node.body)]),
+            path.node.generator,
             path.node.async,
           ),
         ),
