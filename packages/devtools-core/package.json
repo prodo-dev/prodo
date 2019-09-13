@@ -8,7 +8,7 @@
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
     "start": "parcel index.html",
     "build": "tsc --build",
-    "build:watch": "yarn build --watch"
+    "css": "cp src/*.css lib/"
   },
   "dependencies": {
     "@prodo/core": "^0.0.5",

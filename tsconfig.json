@@ -19,6 +19,8 @@
     { "path": "packages/local-plugin" },
     { "path": "packages/random-plugin" },
     { "path": "packages/route-plugin" },
-    { "path": "packages/stream-plugin" }
+    { "path": "packages/stream-plugin" },
+    { "path": "packages/devtools-core" },
+    { "path": "packages/devtools-plugin" }
   ]
 }

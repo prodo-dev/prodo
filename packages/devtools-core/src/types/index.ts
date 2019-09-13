@@ -1,1 +1,1 @@
-export type Panel = "state" | "actions";
+export type Panel = "state" | "actionLog";

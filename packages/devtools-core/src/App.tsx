@@ -15,11 +15,9 @@ interface Props {
   children?: React.ReactNode;
 }
 
-export const DevToolsApp = (props: Props) => (
+export default (props: Props) => (
   <Layout>
     <UserAppContainer url={props.url}>{props.children}</UserAppContainer>
     <DevTools />
   </Layout>
 );
-
-export default DevToolsApp;
