@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.ui.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../devtools-core" },
+    { "path": "../../examples/todo-app" }
+  ]
+}
