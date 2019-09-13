@@ -1,64 +1,6 @@
-import * as Express from "express";
-import * as http from "http";
-import * as Bundler from "parcel-bundler";
 import * as path from "path";
-
-const createBundler = async (entryFiles: string[], outputDirectory: string) => {
-  const options = {
-    outDir: outputDirectory,
-    watch: true,
-    cache: true,
-    minify: false,
-    scopeHoist: false,
-    hmr: true,
-    hmrPort: 0,
-    detailedReport: false,
-    bundleNodeModules: true,
-    logLevel: 1 as 1, // errors only,
-  };
-  return new Bundler(entryFiles, options);
-};
-
-const createBundlerServer = async (
-  entryFile: string,
-  outDir: string,
-  port: number,
-): Promise<any> => {
-  const app = Express();
-  app.use(Express.static(outDir));
-  app.get("/*", async (_request: any, response: any) => {
-    response.sendFile(entryFile);
-  });
-
-  const httpServer = new http.Server(app);
-  await new Promise(resolve => httpServer.listen(port, resolve));
-
-  return {
-    port,
-    server: httpServer,
-  };
-};
-
-const createStaticServer = async (
-  entryFile: string,
-  port: number,
-): Promise<any> => {
-  const dir = path.dirname(entryFile);
-
-  const app = Express();
-  app.use(Express.static(dir));
-  app.get("/*", async (_request, response) => {
-    response.sendFile(entryFile);
-  });
-
-  const httpServer = new http.Server(app);
-  await new Promise(resolve => httpServer.listen(port, resolve));
-
-  return {
-    port,
-    server: httpServer,
-  };
-};
+import { createBundler } from "./bundler";
+import { createBundlerServer, createStaticServer } from "./server";
 
 // Serve user app on port 1234
 // Serve devtools with user app in iframe on port 1235
