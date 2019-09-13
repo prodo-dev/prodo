@@ -5,8 +5,8 @@ export interface Local<T> {
 }
 
 export interface Config<T> {
-  mockLocal?: boolean;
-  initLocal?: T;
+  localFixture?: Partial<T>;
+  initLocal?: Partial<T>;
 }
 export type Universe<T> = Local<T>;
 export type ActionCtx<T> = Local<T>;
@@ -22,13 +22,33 @@ const parseItem = (key: string, item: string): any => {
   }
 };
 
-const init = <T>(config: Config<T>, universe: Universe<T>) => {
-  if (config.mockLocal && !config.initLocal) {
-    throw new Error("initLocal is required if you are mocking local storage");
+const getItem = <T>(config: Config<T>, key: string): any => {
+  if (config.localFixture != null && config.localFixture[key] != null) {
+    // use fixtures
+    return parseItem(key, JSON.stringify(config.localFixture[key]));
   }
 
+  const localItem = localStorage.getItem(key);
+  if (localItem != null) {
+    return parseItem(key, localItem);
+  }
+
+  return undefined;
+};
+
+const keyExists = <T>(config: Config<T>, key: string): boolean => {
+  if (config.localFixture) {
+    return Object.keys(config.localFixture).includes(key);
+  }
+
+  return Object.keys(localStorage).includes(key);
+};
+
+const init = <T>(config: Config<T>, universe: Universe<T>) => {
   universe.local = {};
-  if (!config.mockLocal) {
+
+  // no fixture was provided, load all values from local storage into universe
+  if (config.localFixture == null) {
     universe.local = Object.keys(localStorage).reduce((acc, key) => {
       const item = localStorage.getItem(key);
       if (item == null) {
@@ -39,6 +59,7 @@ const init = <T>(config: Config<T>, universe: Universe<T>) => {
     }, {});
   }
 
+  // use initLocal for any values that have not yet been loaded
   if (config.initLocal != null) {
     Object.keys(config.initLocal).forEach(key => {
       if (!universe.local[key]) {
@@ -62,16 +83,20 @@ const prepareActionCtx = <T>(
     {},
     {
       get(_target, key) {
-        if (config.mockLocal && config.initLocal) {
-          return config.initLocal[key.toString()];
+        // key does not exist, return undefined
+        if (!keyExists<T>(config, key.toString())) {
+          // attempt to use initLocal
+          if (config.initLocal) {
+            return config.initLocal[key.toString()];
+          }
+
+          // fallback to returning undefined
         }
 
-        const item = localStorage.getItem[key.toString()];
-
-        return parseItem(key.toString(), item);
+        return getItem(config, key.toString());
       },
       set(_target, key, value) {
-        if (!config.mockLocal) {
+        if (config.localFixture == null) {
           localStorage.setItem(key.toString(), JSON.stringify(value));
         }
 
