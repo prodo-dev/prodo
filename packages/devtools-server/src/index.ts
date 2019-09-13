@@ -1,12 +1,14 @@
 import * as path from "path";
 import { createBundler } from "./bundler";
-import { createBundlerServer, createStaticServer } from "./server";
+import {
+  createBundlerServer,
+  createStaticServer,
+  findFreePort,
+} from "./server";
 
-// Serve user app on port 1234
-// Serve devtools with user app in iframe on port 1235
 const startServers = async () => {
-  const appServerPort = 1234;
-  const devServerPort = 1235;
+  const appServerPort = await findFreePort(1234);
+  const devServerPort = await findFreePort(appServerPort + 1);
 
   // const appPath = path.join(
   //   path.dirname(path.dirname(require.resolve("@prodo-example/todo-app"))),
@@ -25,7 +27,12 @@ const startServers = async () => {
   ];
 
   await createBundlerServer(appFile, outputDirectory, appServerPort);
+  // tslint:disable-next-line:no-console
+  console.log("appServerPort", appServerPort);
+
   await createStaticServer(devFile, devServerPort);
+  // tslint:disable-next-line:no-console
+  console.log("devServerPort", devServerPort);
 };
 
 startServers();
