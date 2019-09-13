@@ -1,4 +1,4 @@
 ---
 title: "Babel Plugin"
-order: 9
+order: 7
 ---

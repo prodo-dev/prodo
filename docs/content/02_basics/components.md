@@ -1,6 +1,6 @@
 ---
 title: "Components"
-order: 5
+order: 3
 ---
 
 A Prodo component is a wrapper around a React component, giving access to the

@@ -39,8 +39,8 @@ const store = model.createStore({
 });
 ```
 
-Actions are functions that may modify the store. They are just regular
-functions.
+Actions are functions that may modify the store. They are written as regular
+functions that get transpiled into Prodo actions.
 
 ```ts
 const myAction = (arg: string) => {

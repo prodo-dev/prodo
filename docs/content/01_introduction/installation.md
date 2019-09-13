@@ -22,7 +22,9 @@ yarn add @prodo/core
 
 ## Babel Plugin
 
-You will often also want to use the babel plugin. It is available on
+You will also often want to use the babel plugin as it further reduces the
+amount of boilerplate you have to write (see [Babel
+Plugin](/basics/babel-plugin) for more details). It is available on
 [NPM](https://www.npmjs.com/package/@prodo/babel-plugin) as well at
 `@prodo/babel-plugin`.
 

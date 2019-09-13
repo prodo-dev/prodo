@@ -37,7 +37,7 @@ The typical workflow in developing a Prodo app is to
 
 ## Creating a Model
 
-A model holds all of the types used in your actions and components. Create one
+A [model](/basics/model) holds all of the types used in your actions and components. Create one
 in a file called `src/model.ts`.
 
 ```ts
@@ -59,7 +59,7 @@ state.
 
 ## Creating an Action
 
-Actions are async functions that access the state or use a plugin. They can
+[Actions](/basics/actions) are async functions that access the state or use a plugin. They can
 take arguments, trigger side effects, and trigger other actions. We can create
 an action in the `src/App.tsx` file.
 
@@ -80,7 +80,7 @@ dispatch(changeCount)(1);
 
 ## Creating a component
 
-Components take the state of your application and render it as JSX. Prodo
+[Components](/basics/components) take the state of your application and render it as JSX. Prodo
 components are defined in the same way to React components. However, the
 component can "subscribe" to part of the apps state. Whenever this state
 changes, the component will re-render. Prodo performs optimizations behind the
@@ -136,8 +136,8 @@ export default App;
 
 ## Creating the Store
 
-When starting your app, you need to provide an initial state. This is done in
-`src/index.tsx`.
+When starting your app, you need to create a [store](/basics/store) with your
+app's initial state. This is done in `src/index.tsx`.
 
 ```tsx
 import { model } from "./model";
@@ -149,8 +149,9 @@ const store = model.createStore({
 });
 ```
 
-This store is then passed to the `ProdoProvider`, which makes it accessible in
-to all of your components.
+The [Provider](/api-reference) returned from
+[`createStore`](/api-reference/createStore) is used to wrap your app which makes
+the store accessible in all of your components.
 
 ```tsx
 import * as React from "react";

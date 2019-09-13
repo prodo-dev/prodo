@@ -7,8 +7,8 @@ order: 1
 createModel<State>();
 ```
 
-Creates a [`Model`](./model). Takes no parameters and is parameratized by your
-apps `State`.
+Creates a [`Model`](./model). Takes no parameters and is parameterized by your
+app's `State`.
 
 **Usage**
 

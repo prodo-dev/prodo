@@ -31,6 +31,10 @@ const ContentWrapper = styled.div`
     margin-top: 3rem;
   }
 
+  .gatsby-highlight + h2 {
+    margin-top: 3rem;
+  }
+
   ${forWideScreen`width: calc(100vw - ${SidebarWidth + 16}px);`};
   ${forWideScreen`margin-left: ${SidebarWidth}px;`};
   ${forWideScreen`padding-top: 4rem`};

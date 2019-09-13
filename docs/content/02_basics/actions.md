@@ -1,20 +1,28 @@
 ---
 title: "Actions"
-order: 6
+order: 4
 ---
 
-An action is a function that modifies a store.
+An action is a function that modifies a store. It cannot return anything. For
+example:
+
+```ts
+const changeCount = (amount: number) => {
+  state.count += amount;
+}
+```
 
 # State
 
-The `state` provided to the action is an [immer](https://github.com/immerjs/immer)
-proxy. All modifications to the state are private to the action until it
-completes, at which point they are committed to the store state and trigger
-re-renders of any affected components.
+Actions may modify the `state` directly. However, this isn't a mutation on the
+global store. The `state` is actually an
+[immer](https://github.com/immerjs/immer) proxy and all modifications to the
+state are private to the action until it completes, at which point they are committed
+to the store state and trigger re-renders of any affected components.
 
 # Dispatch
 
-The `dispatch` function is responsible for scheduling child actions, for example:
+Actions may trigger child actions with the `dispatch` function. for example:
 
 ```ts
 const parentAction = () => {
@@ -29,9 +37,10 @@ const childAction = (name: string) => {
 };
 ```
 
-Within an action, dispatching an action schedules a child action[^1]. This will
-not begin execution until the current action has completed, and will see all
-changes made to the state from the current action.
+Within an action, dispatching an action schedules a child action (for
+dispatching an action in reponse to user input, see [components](./components)).
+This will not begin execution until the current action has completed, and will
+see all changes made to the state from the current action.
 
 Dispatching `parentAction` above will produce the following output:
 
@@ -43,7 +52,7 @@ In child action bar 4
 
 # Transpilation
 
-The transpiler detects a component as any function that uses the attributes
+The transpiler detects an action as any function that uses the attributes
 exported from `createModel`, and is assigned to a lower-case identifier
 (upper-case identifiers are used for [components](./components)).
 
@@ -67,6 +76,3 @@ export const increment = model.action(
   "increment"
 );
 ```
-
-[^1]: for dispatching an action in response to user input, see
-    [components](./components)
