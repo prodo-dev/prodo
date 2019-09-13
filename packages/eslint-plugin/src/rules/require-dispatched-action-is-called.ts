@@ -5,7 +5,7 @@ import {
   TSESTree,
 } from "@typescript-eslint/experimental-utils";
 import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
-import { TSRuleModule } from "../types/rules";
+import { TSRuleContext, TSRuleModule } from "../types/rules";
 import { matchModel } from "../utils/matchModel";
 
 const rule: TSRuleModule = {
@@ -21,21 +21,22 @@ const rule: TSRuleModule = {
     type: "problem",
   },
 
-  create(context: any) {
+  create(context: TSRuleContext) {
     let importsDispatchFromModel: boolean = false;
     let dispatchImportSymbol: ts.Symbol;
     const parserServices: ParserServices = tsPluginUtil.getParserServices(
       context,
     );
-    const checker = parserServices.program.getTypeChecker();
+
+    const checker = parserServices.program!.getTypeChecker();
     return {
-      ImportDeclaration(path: TSESTree.ImportDeclaration): void {
-        const specifiers = path.specifiers;
-        if (path.source.type === AST_NODE_TYPES.Literal) {
-          if (matchModel(path.source.value as string)) {
+      ImportDeclaration: (node: TSESTree.ImportDeclaration): void => {
+        const specifiers = node.specifiers;
+        if (node.source.type === AST_NODE_TYPES.Literal) {
+          if (matchModel(node.source.value as string)) {
             specifiers.forEach(specifier => {
               if (specifier.type === AST_NODE_TYPES.ImportSpecifier) {
-                const specifierTsNode = parserServices.esTreeNodeToTSNodeMap.get<
+                const specifierTsNode = parserServices.esTreeNodeToTSNodeMap!.get<
                   TSNode
                 >(specifier);
                 if (specifierTsNode.getFullText() === "dispatch") {
@@ -47,15 +48,16 @@ const rule: TSRuleModule = {
           }
         }
       },
-      CallExpression(node: TSESTree.CallExpression): void {
+      CallExpression: (node: TSESTree.CallExpression): void => {
         if (
           importsDispatchFromModel &&
           node &&
           node.callee.type === "Identifier" &&
           node.callee.name === "dispatch" &&
+          node.parent &&
           node.parent.type !== "CallExpression"
         ) {
-          const calleeNode = parserServices.esTreeNodeToTSNodeMap.get<TSNode>(
+          const calleeNode = parserServices.esTreeNodeToTSNodeMap!.get<TSNode>(
             node.callee,
           );
           if (
