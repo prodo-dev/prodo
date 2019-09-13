@@ -6,16 +6,11 @@ export interface Message {
   contents: any;
 }
 
-export interface DevToolsConfig {
-  logger?: boolean;
-}
+// tslint:disable-next-line:no-empty-interface
+export interface DevToolsConfig {}
 
-const init = (config: DevToolsConfig) => {
-  if (config.logger) {
-    // tslint:disable-next-line
-    console.log("@prodo/devtools is on");
-  }
-};
+// tslint:disable-next-line:no-empty
+const init = (_config: DevToolsConfig) => {};
 
 const devtoolsPlugin: ProdoPlugin<DevToolsConfig, {}, {}, {}> = {
   name: "devtools",
@@ -27,6 +22,7 @@ const devtoolsPlugin: ProdoPlugin<DevToolsConfig, {}, {}, {}> = {
       contents: e,
     };
     window.postMessage(message, "*");
+    // TODO: Would perhaps just one be enough?
     window.parent.postMessage(message, "*");
   },
 };
