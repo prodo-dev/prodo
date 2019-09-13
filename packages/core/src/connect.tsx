@@ -73,10 +73,10 @@ export const shallowEqual = (objA: any, objB: any): boolean => {
 
 let _compIdCnt = 1;
 
-export type Func<P = {}> = (args: any) => React.ComponentType<P>;
+export type Func<V, P = {}> = (viewCtx: V) => React.ComponentType<P>;
 
 export const connect: Connect<any> = <P extends {}>(
-  func: Func<P>,
+  func: Func<any, P>,
   name: string = "(anonymous)",
 ): React.ComponentType<P> =>
   class ConnectComponent<P> extends React.Component<P, any> {
