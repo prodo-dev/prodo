@@ -106,7 +106,9 @@ export interface Collection<T extends { id: string }> {
 }
 
 export interface Query<T> {
-  where: [
+  where?: [
     [keyof T, firebase.firestore.WhereFilterOp, any], // field, op, value
   ];
+  orderBy?: [[keyof T] | [keyof T, "asc" | "desc"]];
+  limit?: number;
 }

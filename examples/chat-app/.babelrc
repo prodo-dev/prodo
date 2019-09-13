@@ -5,5 +5,5 @@
     "@babel/preset-env"
   ],
   "plugins": ["@prodo/babel-plugin"],
-  "sourceMaps": true
+  "sourceMaps": "both"
 }

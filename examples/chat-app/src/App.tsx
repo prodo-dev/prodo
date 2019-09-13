@@ -33,8 +33,11 @@ const Message = ({ message }: { message: MessageModel & { id: string } }) => (
 const Messages = ({ query }: { query: string }) => {
   const data =
     query === ""
-      ? db.messages.watchAll()
-      : db.messages.watchAll({ where: [["text", "==", query]] });
+      ? db.messages.watchAll({ orderBy: [["date"]] })
+      : db.messages.watchAll({
+          where: [["text", "==", query]],
+          orderBy: [["date"]],
+        });
 
   return (
     <div className="messages">
@@ -43,9 +46,7 @@ const Messages = ({ query }: { query: string }) => {
       ) : data._notFound ? (
         <h1 className="status center">Collection not found</h1>
       ) : (
-        data.data
-          .sort((a, b) => a.date - b.date)
-          .map(message => <Message message={message} key={message.id} />)
+        data.data.map(message => <Message message={message} key={message.id} />)
       )}
     </div>
   );
