@@ -13,4 +13,3 @@ export interface State {
 
 export const model = createModel<State>();
 export const { state, watch, dispatch } = model.ctx;
-console.log("AK1", model, state, dispatch);

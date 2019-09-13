@@ -11,19 +11,13 @@ export * from "./DevTools";
 const store = model.createStore({ initState });
 const { Provider } = store;
 
-// @ts-ignore
-window.devtools_store = store; // for debugging
-console.log("Provider", Provider, model.ctx, initState);
-
 interface Props {
   children?: React.ReactNode;
 }
 
 const DevToolsApp = (props: Props) => (
   <Provider>
-    <App url={!props.children && "http://localhost:1234"}>
-      {props.children || "Hello World"}
-    </App>
+    <App url={!props.children && "http://localhost:1234"}>{props.children}</App>
   </Provider>
 );
 

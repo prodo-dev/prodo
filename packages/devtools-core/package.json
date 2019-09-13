@@ -1,14 +1,16 @@
 {
   "name": "@prodo/devtools-core",
   "version": "0.0.5",
-  "main": "lib/index.js",
+  "main": "transpiled/index.js",
   "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
     "start": "parcel index.html",
     "build": "tsc --build",
-    "css": "cp src/*.css lib/"
+    "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
+    "build:babel:watch": "yarn build:babel --watch",
+    "css": "cp src/*.css lib/ && cp src/*.css transpiled/"
   },
   "dependencies": {
     "@prodo/core": "^0.0.5",
@@ -17,6 +19,7 @@
     "styled-components": "^4.3.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.6.0",
     "@babel/core": "^7.6.0",
     "@babel/preset-env": "^7.6.0",
     "@babel/preset-react": "^7.0.0",
