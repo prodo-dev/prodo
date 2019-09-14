@@ -123,7 +123,7 @@ describe("component transpilation", () => {
       const MyComponent = model.connect(({
         state,
         watch
-      }) => function MyComponent () {
+      }) => function () {
         return <div>{watch(state.foo)}</div>;
       }, "MyComponent");
     `);
@@ -263,7 +263,7 @@ describe("component transpilation", () => {
       export const MyComponent = model.connect(({
         state,
         watch
-      }) => function MyComponent () {
+      }) => function () {
         return <div>{watch(state.foo)}</div>;
       }, "MyComponent");
     `);

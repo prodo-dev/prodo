@@ -103,5 +103,12 @@ input {
   input {
     margin-left: 0.5rem;
   }
+}
 
+.pinned-message {
+  padding: 1rem;
+  white-space: pre;
+  font-family: monospace;
+  font-size: 1.3em;
+  min-height: 200px;
 }

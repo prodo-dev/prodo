@@ -10,8 +10,8 @@ import {
   DBQuery,
   Doc,
   DocChange,
-  Fetching,
   FetchAll,
+  Fetching,
   Query,
   QueryRefs,
   Universe,
@@ -50,17 +50,6 @@ const getSnapshotDocs = <T>(
   docs: firebase.firestore.QueryDocumentSnapshot[],
 ): Array<T & { id: string }> => docs.map(doc => addIdToDoc(doc));
 
-const getDocsById = <T>(
-  docs: firebase.firestore.QueryDocumentSnapshot[],
-): { [key: string]: T } =>
-  _.transform(
-    getSnapshotDocs<T>(docs),
-    (byId: { [key: string]: T }, doc) => {
-      byId[doc.id] = doc;
-    },
-    {},
-  );
-
 const createActionCollection = <DB, T extends { id: string }>(
   _ctx: ActionCtx<DB>,
   collectionName: string,
@@ -81,7 +70,7 @@ const createActionCollection = <DB, T extends { id: string }>(
 
       return data;
     },
-    set: async (id: string, value: T): Promise<void> => {
+    set: async (id: string, value: Partial<T>): Promise<void> => {
       await firestore
         .collection(collectionName)
         .doc(id)
@@ -99,11 +88,11 @@ const createActionCollection = <DB, T extends { id: string }>(
         query,
       );
       const snapshot = await ref.get();
-      const data = getDocsById<T>(snapshot.docs);
 
-      return Object.values(data);
+      const data = getSnapshotDocs<T>(snapshot.docs);
+      return data;
     },
-    insert: async (value: T): Promise<string> => {
+    insert: async (value: Pick<T, Exclude<keyof T, "id">>): Promise<string> => {
       const ref = await firestore.collection(collectionName).add(value);
       return ref.id;
     },
@@ -177,7 +166,7 @@ const updateQuery = <DB>(ctx: ActionCtx<DB>) => (
   queryName: string,
   dbQuery: Partial<DBQuery>,
 ) => {
-  const existingDbQuery = _.get(ctx.db_cache.queries, [
+  const existingDbQuery: DBQuery = _.get(ctx.db_cache.queries, [
     collectionName,
     queryName,
   ]) || {
@@ -185,13 +174,92 @@ const updateQuery = <DB>(ctx: ActionCtx<DB>) => (
     ids: [],
     query: {},
     state: "fetching",
-    watchers: [],
   };
 
   _.set(ctx.db_cache.queries, [collectionName, queryName], {
     ...existingDbQuery,
     ...dbQuery,
   });
+};
+
+// subscribe component to query and every id in the query
+// when component is unsubscribed, cleanup queries and docs in universe
+const subscribeComponent = <DB>({
+  queryRefs,
+  ctx,
+  collectionName,
+  queryName,
+  comp,
+  dbQuery,
+}: {
+  queryRefs: QueryRefs;
+  ctx: ViewCtx<DB>;
+  collectionName: string;
+  queryName: string;
+  comp: Comp;
+  dbQuery: DBQuery;
+}) => {
+  if (!queryRefs[queryName].watchers.has(comp.name)) {
+    queryRefs[queryName].watchers.add(comp.name);
+  }
+
+  // subscribe component to query ids and each individual id
+  ctx.subscribe(
+    ["db_cache", "queries", collectionName, queryName, "ids"],
+    (comp: Comp) => {
+      if (queryRefs[queryName]) {
+        queryRefs[queryName].watchers.delete(comp.name);
+
+        if (queryRefs[queryName].watchers.size === 0) {
+          ctx.dispatch(removeQuery)(collectionName, queryName);
+          queryRefs[queryName].unsubscribe();
+          delete queryRefs[queryName];
+        }
+      }
+    },
+  );
+
+  if (dbQuery != null) {
+    dbQuery.ids.forEach(id =>
+      ctx.subscribe(["db_cache", "docs", collectionName, id]),
+    );
+  }
+};
+
+// try to get all docs for a query from the universe
+const getDocsFromUniverse = <T>({
+  dbQuery,
+  universe,
+  collectionName,
+}: {
+  dbQuery: DBQuery;
+  universe: Universe;
+  collectionName: string;
+}): FetchAll<T> => {
+  if (dbQuery == null || dbQuery.state === "fetching") {
+    return {
+      _fetching: true,
+    };
+  } else {
+    // query error
+    if (dbQuery.state === "error") {
+      return {
+        _notFound: true,
+      };
+    }
+
+    // get all docs from docs cache
+    const data: T[] = dbQuery.ids
+      .map(id => _.get(universe.db_cache.docs, [collectionName, id]))
+      .filter(doc => doc != null)
+      .map(doc => doc.data);
+
+    return {
+      _fetching: false,
+      _notFound: false,
+      data,
+    };
+  }
 };
 
 const createViewCollection = <DB, T extends { id: string }>(
@@ -243,11 +311,14 @@ const createViewCollection = <DB, T extends { id: string }>(
             snapshot => {
               const ids = [id];
 
+<<<<<<< HEAD
               console.log({
                 exists: snapshot.exists,
                 data: snapshot.data(),
               });
 
+=======
+>>>>>>> db-plugin-queries
               if (snapshot.exists) {
                 const docChanges: DocChange[] = [
                   {
@@ -299,57 +370,41 @@ const createViewCollection = <DB, T extends { id: string }>(
         queryRefs[queryName] = { unsubscribe, watchers: new Set() };
       }
 
-      if (!queryRefs[queryName].watchers.has(comp.name)) {
-        queryRefs[queryName].watchers.add(comp.name);
-      }
+      subscribeComponent({
+        queryRefs,
+        ctx,
+        collectionName,
+        queryName,
+        comp,
+        dbQuery,
+      });
 
-      // subscribe component to query ids and each individual id
-      ctx.subscribe(
-        ["db_cache", "queries", collectionName, queryName, "ids"],
-        (comp: Comp) => {
-          if (queryRefs[queryName]) {
-            queryRefs[queryName].watchers.delete(comp.name);
+      // get all data for the query
+      const data = getDocsFromUniverse<T>({
+        dbQuery,
+        universe,
+        collectionName,
+      });
 
-            if (queryRefs[queryName].watchers.size === 0) {
-              ctx.dispatch(removeQuery)(collectionName, queryName);
-              queryRefs[queryName].unsubscribe();
-              delete queryRefs[queryName];
-            }
-          }
-        },
-      );
-
-      if (queryExists) {
-        dbQuery.ids.forEach(id =>
-          ctx.subscribe(["db_cache", "docs", collectionName, id]),
-        );
-      }
-
-      // return data if it exists
-      if (dbQuery == null || dbQuery.state === "fetching") {
+      // convert array of data to single item, if it exists
+      if (data._fetching) {
         return {
           _fetching: true,
         };
-      } else {
-        // query error
-        if (dbQuery.state === "error") {
-          return {
-            _notFound: true,
-          };
-        }
+      }
 
-        // get all docs from docs cache
-        const data: T = dbQuery.ids
-          .map(id => _.get(universe.db_cache.docs, [collectionName, id]))
-          .filter(doc => doc != null)
-          .map(doc => doc.data)[0];
-
+      if (data._notFound) {
         return {
-          _fetching: false,
-          _notFound: false,
-          data,
+          _notFound: true,
         };
       }
+
+      const element = data.data[0];
+      return {
+        _fetching: false,
+        _notFound: false,
+        data: element,
+      };
     },
     watchAll: (query?: Query<T>): FetchAll<T> => {
       const queryName = createQueryName(collectionName, query);
@@ -405,57 +460,21 @@ const createViewCollection = <DB, T extends { id: string }>(
         queryRefs[queryName] = { unsubscribe, watchers: new Set() };
       }
 
-      if (!queryRefs[queryName].watchers.has(comp.name)) {
-        queryRefs[queryName].watchers.add(comp.name);
-      }
+      subscribeComponent({
+        queryRefs,
+        ctx,
+        collectionName,
+        queryName,
+        comp,
+        dbQuery,
+      });
 
-      // subscribe component to query ids and each individual id
-      ctx.subscribe(
-        ["db_cache", "queries", collectionName, queryName, "ids"],
-        (comp: Comp) => {
-          if (queryRefs[queryName]) {
-            queryRefs[queryName].watchers.delete(comp.name);
-
-            if (queryRefs[queryName].watchers.size === 0) {
-              ctx.dispatch(removeQuery)(collectionName, queryName);
-              queryRefs[queryName].unsubscribe();
-              delete queryRefs[queryName];
-            }
-          }
-        },
-      );
-
-      if (queryExists) {
-        dbQuery.ids.forEach(id =>
-          ctx.subscribe(["db_cache", "docs", collectionName, id]),
-        );
-      }
-
-      // return data if it exists
-      if (dbQuery == null || dbQuery.state === "fetching") {
-        return {
-          _fetching: true,
-        };
-      } else {
-        // query error
-        if (dbQuery.state === "error") {
-          return {
-            _notFound: true,
-          };
-        }
-
-        // get all docs from docs cache
-        const data: T[] = dbQuery.ids
-          .map(id => _.get(universe.db_cache.docs, [collectionName, id]))
-          .filter(doc => doc != null)
-          .map(doc => doc.data);
-
-        return {
-          _fetching: false,
-          _notFound: false,
-          data,
-        };
-      }
+      const data = getDocsFromUniverse<T>({
+        dbQuery,
+        universe,
+        collectionName,
+      });
+      return data;
     },
     ref: (): firebase.firestore.CollectionReference => {
       return firestore.collection(name);

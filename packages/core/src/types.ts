@@ -30,7 +30,7 @@ export interface Model<InitOptions, Universe, ActionCtx, ViewCtx> {
 
 export type Provider = React.ComponentType<{ children: React.ReactNode }>;
 
-export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
+interface ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx> {
   name: string;
   init?: (config: InitOptions, universe: Universe) => void;
   prepareActionCtx?: (
@@ -52,6 +52,22 @@ export interface ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> {
   onCompletedEvent?: (event: Event) => void;
   Provider?: Provider;
 }
+
+type PluginMandatoryKeys = "name";
+type AtLeastOneOf<T, Keys extends keyof T> = {
+  [K in Keys]-?: Required<Pick<T, K>> & Pick<T, Keys>;
+}[Keys];
+export type ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx> = Pick<
+  ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
+  PluginMandatoryKeys
+> &
+  AtLeastOneOf<
+    ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
+    Exclude<
+      keyof ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx>,
+      PluginMandatoryKeys
+    >
+  >;
 
 export interface PluginActionCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;

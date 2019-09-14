@@ -12,6 +12,12 @@ export interface DB {
   messages: Collection<Message>;
 }
 
-export const model = createModel<{}>()
+export interface State {
+  pinnedMessage?: string;
+}
+
+export const model = createModel<State>()
   .with(firestorePlugin<DB>())
   .with(loggerPlugin);
+
+export const { state, dispatch, db, watch } = model.ctx;

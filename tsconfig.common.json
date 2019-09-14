@@ -13,6 +13,7 @@
     "noImplicitAny": false,
     "noImplicitReturns": false,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "strict": true
   }
 }

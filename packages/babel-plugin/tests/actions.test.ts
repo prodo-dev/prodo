@@ -125,7 +125,7 @@ describe("action transpilation", () => {
       import { model, state } from "./src/model";
       const myAction = model.action(({
         state
-      }) => function myAction () {
+      }) => function () {
         state.foo = "foo";
       }, "myAction");
     `);
@@ -261,7 +261,7 @@ describe("action transpilation", () => {
       import { model, state } from "./src/model";
       export const myAction = model.action(({
         state
-      }) => function myAction () {
+      }) => function () {
         state.foo = "foo";
       }, "myAction");
     `);
@@ -486,6 +486,66 @@ describe("action transpilation", () => {
       export default model.action(({
         state
       }) => () => {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("transpiles async function declarations", () => {
+    const sourceCode = `
+      import { state } from "./model";
+      async function myAction () {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./model";
+      const myAction = model.action(({
+        state
+      }) => async function () {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("transpiles async function expressions", () => {
+    const sourceCode = `
+      import { state } from "./model";
+      const myAction = async function () {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./model";
+      const myAction = model.action(({
+        state
+      }) => async function () {
+        state.foo = "foo";
+      }, "myAction");
+    `);
+  });
+
+  it("transpiles async arrow function expressions", () => {
+    const sourceCode = `
+      import { state } from "./model";
+      const myAction = async () => {
+        state.foo = "foo";
+      }
+    `;
+
+    const transpiled = transform(sourceCode);
+
+    expect(transpiled).toHaveTheSameASTAs(`
+      import { model, state } from "./model";
+      const myAction = model.action(({
+        state
+      }) => async () => {
         state.foo = "foo";
       }, "myAction");
     `);
