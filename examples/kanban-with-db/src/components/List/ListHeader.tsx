@@ -5,7 +5,7 @@ import { Button, Wrapper, Menu, MenuItem } from "react-aria-menubutton";
 import FaTrash from "react-icons/lib/fa/trash";
 import "./ListHeader.scss";
 
-import { dispatch, state } from "../../model";
+import { dispatch, db } from "../../model";
 
 type Props = {
   listTitle: string;
@@ -16,28 +16,30 @@ type Props = {
 };
 
 function changeListTitle(listId: string, newTitle: string) {
-  state.listsById[listId].title = newTitle;
+  db.listsById.set(listId, { title: newTitle });
 }
 
-function deleteList(cards: string[], listId: string, boardId: string) {
-  delete state.listsById[listId];
-  const board = state.boardsById[boardId];
-  board.lists = board.lists.filter(id => id !== listId);
-  cards.forEach(id => {
-    delete state.cardsById[id];
+const deleteList = async (cards: string[], listId: string, boardId: string) => {
+  db.listsById.delete(listId);
+  const board = await db.boardsById.get(boardId);
+  db.boardsById.set(boardId, {
+    lists: board.lists.filter(id => id !== listId),
   });
-}
+  cards.forEach(id => {
+    db.cardsById.delete(id);
+  });
+};
 
 function ListTitle({
   listTitle,
   listId,
   boardId,
   cards,
-  dragHandleProps
+  dragHandleProps,
 }: Props) {
   const [localState, setLocalState] = React.useState({
     isOpen: false,
-    newTitle: listTitle
+    newTitle: listTitle,
   });
   const { isOpen, newTitle } = localState;
 

@@ -1,21 +1,20 @@
 import * as React from "react";
 import Textarea from "react-textarea-autosize";
-import * as shortid from "shortid";
 import "./ListAdder.scss";
-import { dispatch, state } from "../../model";
+import { dispatch, db } from "../../model";
 
 type Props = {
   boardId: string;
 };
 
-function addList(boardId: string, listId: string, listTitle: string) {
-  state.boardsById[boardId].lists.push(listId);
-  state.listsById[listId] = {
-    _id: listId,
+const addList = async (boardId: string, listTitle: string) => {
+  const listId = await db.listsById.insert({
     title: listTitle,
     cards: [],
-  };
-}
+  });
+  const board = await db.boardsById.get(boardId);
+  db.boardsById.set(boardId, { lists: board.lists.concat([listId]) });
+};
 
 function ListAdder({ boardId }: Props) {
   const [localState, setLocalState] = React.useState({
@@ -39,8 +38,7 @@ function ListAdder({ boardId }: Props) {
   };
   const handleSubmit = () => {
     if (listTitle === "") return;
-    const listId = shortid.generate();
-    dispatch(addList)(boardId, listId, listTitle);
+    dispatch(addList)(boardId, listTitle);
     setLocalState({ isOpen: false, listTitle: "" });
   };
   if (!isOpen) {

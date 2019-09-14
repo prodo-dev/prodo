@@ -1,14 +1,19 @@
 import * as React from "react";
 import { Droppable } from "react-beautiful-dnd";
 import Card from "../Card/Card";
-import { watch, state } from "../../model";
+import { db } from "../../model";
+import Spinner from "../Spinner/Spinner";
+import NotFound from "../NotFound/NotFound";
 
 type Props = {
   listId: string;
 };
 
 function Cards({ listId }: Props) {
-  const cards = watch(state.listsById[listId].cards);
+  const list = db.listsById.watch(listId);
+  if (list._notFound) return <NotFound />;
+  if (list._fetching) return <Spinner />;
+  const cards = list.data.cards;
   React.useEffect(() => {
     // TODO: find a nice way to implement the below with hooks...
     // componentDidUpdate = prevProps => {

@@ -8,7 +8,7 @@ import Header from "../Header/Header";
 import BoardHeader from "../BoardHeader/BoardHeader";
 import "./Board.scss";
 import { Board as _Board } from "../../types";
-import { watch, state, dispatch, db } from "../../model";
+import { state, dispatch, db } from "../../model";
 
 import Spinner from "../Spinner/Spinner";
 import NotFound from "../NotFound/NotFound";

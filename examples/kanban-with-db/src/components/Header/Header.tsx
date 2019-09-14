@@ -9,10 +9,14 @@ import FaSignIn from "react-icons/lib/fa/sign-in";
 // @ts-ignore
 import kanbanLogo from "../../assets/images/kanban-logo.svg";
 import "./Header.scss";
-import { state, watch } from "../../model";
+import { state, watch, db } from "../../model";
+import Spinner from "../Spinner/Spinner";
+import NotFound from "../NotFound/NotFound";
 
 function Header() {
-  const user = watch(state.user);
+  const user = db.users.watch(watch(state.userId));
+  if (user._notFound) return <NotFound />;
+  if (user._fetching) return <Spinner />;
   return (
     <header>
       <Link to="/" className="header-title">
@@ -22,10 +26,10 @@ function Header() {
       <div className="header-right-side">
         {user ? (
           <img
-            src={user.imageUrl}
-            alt={user.name}
+            src={user.data.imageUrl}
+            alt={user.data.name}
             className="user-thumbnail"
-            title={user.name}
+            title={user.data.name}
           />
         ) : (
           <FaUserSecret className="guest-icon" />

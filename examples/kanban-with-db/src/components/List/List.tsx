@@ -16,7 +16,7 @@ type Props = {
 function List({ boardId, index, list }: Props) {
   return (
     <Draggable
-      draggableId={list._id}
+      draggableId={list.id}
       index={index}
       disableInteractiveElementBlocking
     >
@@ -29,21 +29,21 @@ function List({ boardId, index, list }: Props) {
           >
             <div
               className={classnames("list", {
-                "list--drag": snapshot.isDragging
+                "list--drag": snapshot.isDragging,
               })}
             >
               <ListHeader
                 dragHandleProps={provided.dragHandleProps}
                 listTitle={list.title}
-                listId={list._id}
+                listId={list.id}
                 cards={list.cards}
                 boardId={boardId}
               />
               <div className="cards-wrapper">
-                <Cards listId={list._id} />
+                <Cards listId={list.id} />
               </div>
             </div>
-            <CardAdder listId={list._id} />
+            <CardAdder listId={list.id} />
           </div>
           {provided.placeholder}
         </>
