@@ -41,7 +41,7 @@ function Cards({ listId }: Props) {
             {provided.placeholder}
             <div
               style={{ float: "left", clear: "both" }}
-              ref={() => {
+              ref={el => {
                 // TODO: handle refs...
                 // this.listEnd = el;
               }}
