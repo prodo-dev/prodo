@@ -70,7 +70,7 @@ const createActionCollection = <DB, T extends { id: string }>(
 
       return data;
     },
-    set: async (id: string, value: T): Promise<void> => {
+    set: async (id: string, value: Partial<T>): Promise<void> => {
       await firestore
         .collection(collectionName)
         .doc(id)
@@ -92,7 +92,7 @@ const createActionCollection = <DB, T extends { id: string }>(
       const data = getSnapshotDocs<T>(snapshot.docs);
       return data;
     },
-    insert: async (value: T): Promise<string> => {
+    insert: async (value: Pick<T, Exclude<keyof T, "id">>): Promise<string> => {
       const ref = await firestore.collection(collectionName).add(value);
       return ref.id;
     },
