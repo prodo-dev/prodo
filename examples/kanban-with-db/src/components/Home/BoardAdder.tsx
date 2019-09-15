@@ -1,6 +1,5 @@
 import * as React from "react";
 import slugify from "slugify";
-import shortid from "shortid";
 import ClickOutside from "../ClickOutside/ClickOutside";
 import { state, dispatch, db } from "../../model";
 import { withRouter } from "react-router-dom";
@@ -9,7 +8,7 @@ type Props = {
   history: any;
 };
 
-const addBoard = async (title: string) => {
+const addBoard = async (title: string, historyPush: any) => {
   const user = await db.users.get(state.userId);
   const boardId = await db.boardsById.insert({
     title,
@@ -20,6 +19,10 @@ const addBoard = async (title: string) => {
   user.boards.push(boardId);
   db.users.set(state.userId, { boards: user.boards });
   state.currentBoardId = boardId;
+  setTimeout(() => {
+    const urlSlug = slugify(title, { lower: true });
+    historyPush(`/b/${boardId}/${urlSlug}`);
+  }, 100);
 };
 
 function BoardAdder({ history }: Props) {
@@ -43,10 +46,7 @@ function BoardAdder({ history }: Props) {
     if (title === "") {
       return;
     }
-    const boardId = shortid.generate();
-    dispatch(addBoard)(title);
-    const urlSlug = slugify(title, { lower: true });
-    history.push(`/b/${boardId}/${urlSlug}`);
+    dispatch(addBoard)(title, history.push);
     setLocalState({ isOpen: false, title: "" });
   };
 

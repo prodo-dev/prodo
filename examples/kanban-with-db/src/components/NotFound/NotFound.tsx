@@ -1,2 +1,2 @@
 import * as React from "react";
-export default () => <div>???</div>;
+export default ({ missing }: { missing: string }) => <div>404 - {missing}</div>;

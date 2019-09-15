@@ -62,7 +62,7 @@ const moveCard = async (
 function Board({ boardId }: Props) {
   const boardQ = db.boardsById.watch(boardId);
   if (boardQ._fetching) return <Spinner />;
-  if (boardQ._notFound) return <NotFound />;
+  if (boardQ._notFound) return <NotFound missing={`boardsById.${boardId}`} />;
   const board = boardQ.data;
   const boardTitle = board.title;
   const boardColor = board.color;
@@ -178,7 +178,8 @@ function Board({ boardId }: Props) {
                 <div className="lists" ref={provided.innerRef}>
                   {lists.map((list, index) => {
                     if (list._fetching) return <Spinner />;
-                    if (list._notFound) return <NotFound />;
+                    if (list._notFound)
+                      return <NotFound missing={`listsById.?`} />;
                     return (
                       <List
                         list={list.data}

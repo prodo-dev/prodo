@@ -11,7 +11,7 @@ type Props = {
 
 function Cards({ listId }: Props) {
   const list = db.listsById.watch(listId);
-  if (list._notFound) return <NotFound />;
+  if (list._notFound) return <NotFound missing={`listsById.${listId}`} />;
   if (list._fetching) return <Spinner />;
   const cards = list.data.cards;
   React.useEffect(() => {

@@ -21,7 +21,7 @@ function BoardTitle({ match }: Props) {
   const { boardId } = match.params;
   const board = db.boardsById.watch(boardId);
   if (board._fetching) return <Spinner />;
-  if (board._notFound) return <NotFound />;
+  if (board._notFound) return <NotFound missing={`boardsById.${boardId}`} />;
   const boardTitle = board.data.title;
   const [isOpen, setOpen] = React.useState(false);
   const [newTitle, setNewTitle] = React.useState(boardTitle);

@@ -14,8 +14,9 @@ import Spinner from "../Spinner/Spinner";
 import NotFound from "../NotFound/NotFound";
 
 function Header() {
-  const user = db.users.watch(watch(state.userId));
-  if (user._notFound) return <NotFound />;
+  const userId = watch(state.userId);
+  const user = db.users.watch(userId);
+  if (user._notFound) return <NotFound missing={`users.${userId}`} />;
   if (user._fetching) return <Spinner />;
   return (
     <header>

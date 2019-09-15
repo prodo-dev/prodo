@@ -11,9 +11,10 @@ import Spinner from "../Spinner/Spinner";
 import NotFound from "../NotFound/NotFound";
 
 function Home() {
-  const user = db.users.watch(watch(state.userId));
+  const userId = watch(state.userId);
+  const user = db.users.watch(userId);
   if (user._fetching) return <Spinner />;
-  if (user._notFound) return <NotFound />;
+  if (user._notFound) return <NotFound missing={`users.${userId}`} />;
   const boards = user.data.boards.map((id: string) => db.boardsById.watch(id));
   return (
     <>
@@ -25,7 +26,8 @@ function Home() {
           <div className="boards">
             {boards.map(board => {
               if (board._fetching) return <Spinner />;
-              if (board._notFound) return <NotFound />;
+              if (board._notFound) return <NotFound missing="boardsById.?" />;
+              console.log({ board });
               const heights = board.data.lists.map(listId => {
                 const list = db.listsById.watch(listId);
                 if (list._fetching || list._notFound) {
