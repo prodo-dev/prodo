@@ -17,12 +17,14 @@ const addBoard = async (title: string, historyPush: any) => {
     color: "blue",
   });
   user.boards.push(boardId);
-  db.users.set(state.userId, { boards: user.boards });
+  await db.users.set(state.userId, { boards: user.boards });
   state.currentBoardId = boardId;
-  setTimeout(() => {
-    const urlSlug = slugify(title, { lower: true });
-    historyPush(`/b/${boardId}/${urlSlug}`);
-  }, 100);
+  dispatch(redirectToBoard)(boardId, title, historyPush);
+};
+
+const redirectToBoard = (boardId, title, historyPush) => {
+  const urlSlug = slugify(title, { lower: true });
+  historyPush(`/b/${boardId}/${urlSlug}`);
 };
 
 function BoardAdder({ history }: Props) {
