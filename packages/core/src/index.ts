@@ -18,5 +18,4 @@ export {
   PluginViewCtxFn,
   PluginActionCtxFn,
   PluginOnCompleteEventFn,
-  createPluginAction,
 } from "./plugins";
