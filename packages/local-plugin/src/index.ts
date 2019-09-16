@@ -1,4 +1,11 @@
-import { createUniverseWatcher, ProdoPlugin } from "@prodo/core";
+import {
+  PluginActionCtxFn,
+  PluginInitFn,
+  PluginViewCtxFn,
+  ProdoPlugin,
+  createPlugin,
+  createUniverseWatcher,
+} from "@prodo/core";
 
 export interface Local<T> {
   local: Partial<T>;
@@ -44,7 +51,10 @@ const keyExists = <T>(config: Config<T>, key: string): boolean => {
   return Object.keys(localStorage).includes(key);
 };
 
-const init = <T>(config: Config<T>, universe: Universe<T>) => {
+const initFn = <T>(): PluginInitFn<Config<T>, Universe<T>> => (
+  config,
+  universe,
+) => {
   universe.local = {};
 
   // init universe with values from localStorage or fixtures
@@ -76,16 +86,11 @@ const init = <T>(config: Config<T>, universe: Universe<T>) => {
   }
 };
 
-const prepareActionCtx = <T>(
-  {
-    ctx,
-    universe,
-  }: {
-    ctx: ActionCtx<T>;
-    universe: Universe<T>;
-  },
-  config: Config<T>,
-) => {
+const prepareActionCtxFn = <T>(): PluginActionCtxFn<
+  Config<T>,
+  Universe<T>,
+  ActionCtx<T>
+> => ({ ctx, universe }, config: Config<T>) => {
   ctx.local = new Proxy(
     {},
     {
@@ -115,7 +120,12 @@ const prepareActionCtx = <T>(
   ) as Partial<T>;
 };
 
-const prepareViewCtx = <T>({ ctx }: { ctx: ViewCtx<T> }) => {
+const prepareViewCtxFn = <T>(): PluginViewCtxFn<
+  Config<T>,
+  Universe<T>,
+  ActionCtx<T>,
+  ViewCtx<T>
+> => ({ ctx }) => {
   ctx.local = createUniverseWatcher("local");
 };
 
@@ -124,11 +134,16 @@ const localPlugin = <T>(): ProdoPlugin<
   Universe<T>,
   ActionCtx<T>,
   ViewCtx<T>
-> => ({
-  name: "local",
-  init,
-  prepareActionCtx,
-  prepareViewCtx,
-});
+> => {
+  const plugin = createPlugin<Config<T>, Universe<T>, ActionCtx<T>, ViewCtx<T>>(
+    "local",
+  );
+
+  plugin.init(initFn<T>());
+  plugin.prepareActionCtx(prepareActionCtxFn<T>());
+  plugin.prepareViewCtx(prepareViewCtxFn<T>());
+
+  return plugin;
+};
 
 export default localPlugin;

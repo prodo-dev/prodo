@@ -17,7 +17,12 @@ export type PluginInitFn<InitOptions, Universe> = (
   universe: Universe,
 ) => void;
 
-export type PluginActionCtxFn<InitOptions, Universe, ActionCtx, CustomEvent> = (
+export type PluginActionCtxFn<
+  InitOptions,
+  Universe,
+  ActionCtx,
+  CustomEvent = {}
+> = (
   env: {
     ctx: PluginActionCtx<ActionCtx, Universe> & ActionCtx;
     universe: Universe;
