@@ -1,4 +1,4 @@
-import { ProdoPlugin } from "@prodo/core";
+import { createPlugin } from "@prodo/core";
 
 interface RecordedEffect {
   start?: number;
@@ -24,10 +24,11 @@ export interface EffectActionCtx {
   effect: Effect;
 }
 
-const prepareActionCtx = (
-  { ctx, event }: { ctx: EffectActionCtx; event: EffectEvent },
-  config: EffectConfig,
-) => {
+const plugin = createPlugin<EffectConfig, {}, EffectActionCtx, {}, EffectEvent>(
+  "effect",
+);
+
+plugin.prepareActionCtx(({ ctx, event }, config) => {
   event.recordedEffects = [];
 
   ctx.effect = <A extends any[]>(func: (...args: A) => any) => (
@@ -55,11 +56,6 @@ const prepareActionCtx = (
       return result;
     }
   };
-};
+});
 
-const effectPlugin: ProdoPlugin<EffectConfig, {}, EffectActionCtx, {}> = {
-  name: "effect",
-  prepareActionCtx,
-};
-
-export default effectPlugin;
+export default plugin;
