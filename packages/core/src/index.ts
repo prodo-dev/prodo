@@ -8,4 +8,14 @@ export { createModel } from "./model";
 
 export { Comp, PluginDispatch, Provider, Store } from "./types";
 
-export { ProdoPlugin, createPlugin } from "./plugins";
+export {
+  ProdoPlugin,
+  createPlugin,
+  PluginAction,
+  PluginInitFn,
+  PluginViewCtx,
+  PluginActionCtx,
+  PluginViewCtxFn,
+  PluginActionCtxFn,
+  PluginOnCompleteEventFn,
+} from "./plugins";
