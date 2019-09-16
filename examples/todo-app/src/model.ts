@@ -1,10 +1,13 @@
 import { createModel } from "@prodo/core";
+import devToolsPlugin from "@prodo/devtools-plugin";
 import effectPlugin from "@prodo/effect";
 
 export interface State {
   todos: { [key: string]: { text: string; done: boolean } };
 }
 
-export const model = createModel<State>().with(effectPlugin);
+export const model = createModel<State>()
+  .with(effectPlugin)
+  .with(devToolsPlugin);
 
 export const { state, watch, effect, dispatch } = model.ctx;

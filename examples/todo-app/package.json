@@ -12,8 +12,11 @@
   "dependencies": {
     "@prodo/core": "^0.0.5",
     "@prodo/effect": "^0.0.5",
+    "@prodo/devtools-plugin": "^0.0.5",
+    "@prodo/devtools-core": "^0.0.5",
     "react": "^16.8.6",
-    "react-dom": "^16.9.0"
+    "react-dom": "^16.9.0",
+    "@babel/polyfill": "^7.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
