@@ -2,6 +2,7 @@ import * as React from "react";
 import { model, Streams, Quote, Trade } from "./model";
 import { webSocket } from "rxjs/webSocket";
 import { UnStreams } from "@prodo/stream-plugin";
+import { Graph } from "./Graph";
 import * as op from "rxjs/operators";
 
 type Msg =
@@ -80,7 +81,7 @@ const Table = <
             {((watch(streams[data]) as any[]) || []).map(value => (
               <tr key={value.sym}>
                 {props.map(prop => (
-                  <td key={prop}>{value[prop]}</td>
+                  <td key={prop as string}>{value[prop]}</td>
                 ))}
               </tr>
             ))}
@@ -104,6 +105,7 @@ export default model.connect(
       <>
         <Trades />
         <Quotes />
+        <Graph />
       </>
     );
   },
