@@ -5,7 +5,7 @@ import { Local, model } from "./model";
 
 import "./index.scss";
 
-export const initLocal: Local = {
+export const initLocal: Partial<Local> = {
   center: [51.507351, -0.127758],
   zoom: 12,
 };
