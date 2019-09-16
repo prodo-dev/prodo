@@ -6,10 +6,10 @@ import {
   BaseStore,
   Origin,
   PluginDispatch,
-  ProdoPlugin,
   Provider,
   WatchTree,
 } from "./types";
+import { ProdoPlugin } from "./plugins";
 
 const initPlugins = (
   universe: any,
@@ -18,33 +18,21 @@ const initPlugins = (
 ): any =>
   produce(universe, u => {
     plugins.forEach(p => {
-      if (p.init != null) {
-        p.init(config, u);
+      if (p._internals.init != null) {
+        p._internals.init(config, u);
       }
     });
   });
 
-const createProvider = <State>(
-  store: BaseStore<State>,
-  plugins: Array<ProdoPlugin<any, any, any, any>>,
-): Provider =>
-  plugins.reduce(
-    (
-      next: React.ComponentType<{ children: React.ReactNode }>,
-      plugin: ProdoPlugin<any, any, any, any>,
-    ) =>
-      plugin.Provider
-        ? ({ children }: { children: React.ReactNode }) =>
-            React.createElement(plugin.Provider!, {
-              children: React.createElement(next, { children }),
-            })
-        : next,
-    (({ children }: { children: React.ReactNode }) =>
-      React.createElement(ProdoProvider, {
-        value: store,
-        children,
-      })) as Provider,
-  );
+const createProvider = <State>(store: BaseStore<State>): Provider => ({
+  children,
+}: {
+  children: React.ReactNode;
+}) =>
+  React.createElement(ProdoProvider, {
+    value: store,
+    children,
+  });
 
 export const createStore = <State>(
   config: { initState: State },
@@ -111,9 +99,9 @@ export const createStore = <State>(
           store.exec({ id: name, parentId: null }, func as any, ...args);
 
         plugins.forEach(p => {
-          if (p.prepareActionCtx) {
+          if (p._internals.actionCtx) {
             (ctx as any).rootDispatch = createRootDispatch(p.name);
-            p.prepareActionCtx(
+            p._internals.actionCtx(
               {
                 ctx,
                 universe: u,
@@ -133,8 +121,8 @@ export const createStore = <State>(
 
     completeEvent(event, store);
     plugins.forEach(p => {
-      if (p.onCompletedEvent) {
-        p.onCompletedEvent(event);
+      if (p._internals.onCompleteEvent) {
+        p._internals.onCompleteEvent(event);
       }
     });
   };
@@ -164,7 +152,7 @@ export const createStore = <State>(
     return store.universe;
   };
 
-  const Provider = createProvider(store, plugins);
+  const Provider = createProvider(store);
 
   return {
     store,

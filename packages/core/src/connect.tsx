@@ -255,10 +255,10 @@ export const connect: Connect<any> = <P extends {}>(
       };
 
       this.store.plugins.forEach(p => {
-        if (p.prepareViewCtx) {
+        if (p._internals.viewCtx) {
           (ctx as any).dispatch = this._createPluginDispatch(p.name);
 
-          p.prepareViewCtx(
+          p._internals.viewCtx(
             {
               ctx,
               universe: this.store.universe,
