@@ -131,7 +131,7 @@ export const createPlugin = <
     },
     action: (func, actionName) => {
       (func as any).__name = actionName;
-      (func as any).__plugin = name;
+      (func as any).__pluginName = name;
       return func as any;
     },
     _internals: prodoInternals,
