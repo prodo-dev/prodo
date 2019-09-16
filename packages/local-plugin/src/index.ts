@@ -86,11 +86,11 @@ const initFn = <T>(): PluginInitFn<Config<T>, Universe<T>> => (
   }
 };
 
-const prepareActionCtxFn = <T>(): PluginActionCtxFn<
+const prepareActionCtx = <T>(): PluginActionCtxFn<
   Config<T>,
   Universe<T>,
   ActionCtx<T>
-> => ({ ctx, universe }, config: Config<T>) => {
+> => ({ ctx, universe }, config) => {
   ctx.local = new Proxy(
     {},
     {
@@ -120,7 +120,7 @@ const prepareActionCtxFn = <T>(): PluginActionCtxFn<
   ) as Partial<T>;
 };
 
-const prepareViewCtxFn = <T>(): PluginViewCtxFn<
+const prepareViewCtx = <T>(): PluginViewCtxFn<
   Config<T>,
   Universe<T>,
   ActionCtx<T>,
@@ -140,8 +140,8 @@ const localPlugin = <T>(): ProdoPlugin<
   );
 
   plugin.init(initFn<T>());
-  plugin.prepareActionCtx(prepareActionCtxFn<T>());
-  plugin.prepareViewCtx(prepareViewCtxFn<T>());
+  plugin.prepareActionCtx(prepareActionCtx<T>());
+  plugin.prepareViewCtx(prepareViewCtx<T>());
 
   return plugin;
 };
