@@ -6,7 +6,7 @@ const ruleTester = new RuleTester({
 });
 const messageId = "mustBeCalled";
 
-ruleTester.run("my-rule", rule, {
+ruleTester.run("require-dispatched-action-is-called", rule, {
   valid: [
     {
       code: `foo(bar)()`,

@@ -6,7 +6,7 @@ const tsxRuleTester = new RuleTester({
 });
 
 const messageId = "mustBeCalled";
-tsxRuleTester.run("my-rule", rule, {
+tsxRuleTester.run("require-dispatched-action-is-called", rule, {
   valid: [
     {
       code: `import {dispatch} from './model.js'; <div onClick={() => dispatch(foo)()} />`,

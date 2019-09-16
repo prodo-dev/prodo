@@ -4,9 +4,9 @@ type CodePath = Rule.CodePath;
 type CodePathSegment = Rule.CodePathSegment;
 
 interface TSRuleListener {
-  onCodePathStart?(codePath: CodePath, node: TSESTree.Node): void;
+  onCodePathStart?: (codePath: CodePath, node: any) => void;
 
-  onCodePathEnd?(codePath: CodePath, node: TSESTree.Node): void;
+  onCodePathEnd?: (codePath: CodePath, node: any) => void;
 
   onCodePathSegmentStart?(segment: CodePathSegment, node: TSESTree.Node): void;
 
@@ -19,10 +19,15 @@ interface TSRuleListener {
   ): void;
 
   [key: string]:
+    | (() => void)
+    | ((node: TSESTree.Identifier) => void)
     | ((node: TSESTree.ImportDeclaration) => void)
     | ((node: TSESTree.CallExpression) => void)
     | ((codePath: CodePath, node: TSESTree.Node) => void)
     | ((segment: CodePathSegment, node: TSESTree.Node) => void)
+    | ((node: TSESTree.FunctionDeclaration) => void)
+    | ((node: TSESTree.FunctionExpression) => void)
+    | ((node: TSESTree.ArrowFunctionExpression) => void)
     | ((
         fromSegment: CodePathSegment,
         toSegment: CodePathSegment,
