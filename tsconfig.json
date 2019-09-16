@@ -12,6 +12,7 @@
     { "path": "examples/todo-app" },
     { "path": "examples/update-testing" },
     { "path": "packages/babel-plugin" },
+    { "path": "packages/eslint-plugin" },
     { "path": "packages/core" },
     { "path": "packages/effect-plugin" },
     { "path": "packages/logger-plugin" },

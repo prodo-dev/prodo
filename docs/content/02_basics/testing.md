@@ -1,15 +1,15 @@
 ---
 title: "Testing"
-order: 7
+order: 5
 ---
 
-A goal of the Prodo framework is to ensure testing your app is just as easy as
-writing it. You can use any testing framework you are familiar with, such as
-[Jest](https://jestjs.io/), which will be used in this example.
+One of the goals of the Prodo framework is to ensure testing your app is just as
+easy as writing it. You can use any testing framework you are familiar with,
+such as [Jest](https://jestjs.io/), which will be used in this example.
 
 ## Actions
 
-Testing actions consists of creating a store from your mode, dispatching some
+Testing actions consists of creating a store from your model, dispatching some
 actions, and checking the final state.
 
 Lets create a test for the `changeCount` action created in the [getting
@@ -22,12 +22,12 @@ import { changeCount } from "../src/App";
 test("increases the count", async () => {
   const { dispatch } = model.createStore({
     initState: {
-	  count: 0
-	},
+      count: 0,
+    },
   });
 
   const { state } = await dispatch(changeCount)(1);
-  expect(state.count).toBeEqual(1)
+  expect(state.count).toBeEqual(1);
 });
 ```
 
@@ -58,6 +58,8 @@ const renderWithProdo = (ui: React.ReactElement, store: Store<any, any>) => {
 You can test your component with different store configs.
 
 ```tsx
+import { initState } from "./model";
+
 test("can render with initial state", async () => {
   const { container } = renderWithProdo(
     <App />,
@@ -66,9 +68,22 @@ test("can render with initial state", async () => {
 
   expect(container.textContent).toBe("0");
 });
+
+test("can render with count set to 100", async () => {
+  const { container } = renderWithProdo(
+    <App />,
+    model.createStore({
+      initState: {
+        count: 100,
+      },
+    }),
+  );
+
+  expect(container.textContent).toBe("100");
+});
 ```
 
-Trigger an action with `fireEvent`.
+Interact with DOM elements with `fireEvent`.
 
 ```tsx
 import { fireEvent, render, waitForDomChange } from "@testing-library/react";
@@ -86,5 +101,4 @@ test("increases the count when the button is clicked", async () => {
   await waitForDomChange({ container });
   expect(container.textContent).toBe("1");
 });
-
 ```

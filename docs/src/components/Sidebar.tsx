@@ -74,7 +74,7 @@ const SectionHeading = styled.div`
   align-items: center;
   padding-bottom: 0.5rem;
   color: #646464;
-  font-size: 1em;
+  font-size: 0.95em;
   text-transform: uppercase;
   cursor: pointer;
 `;

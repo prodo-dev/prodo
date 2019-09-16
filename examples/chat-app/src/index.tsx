@@ -17,6 +17,7 @@ const firebaseConfig = {
 
 const { store, Provider } = model.createStore({
   initState: {},
+  logger: true,
   firebaseConfig,
 });
 
