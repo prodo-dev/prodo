@@ -168,6 +168,7 @@ export const createStore = <State>(
 
   const Provider = createProvider(store, plugins);
 
+  // TODO: is this the right place...
   window.addEventListener("message", event => {
     if (event.data.destination === "app") {
       if (event.data.type === "setState") {
@@ -217,6 +218,7 @@ export const createStore = <State>(
             nextUniverse: store.universe,
             nextActions: [],
           });
+          console.log("Updated?", store.universe.state, event.data.contents);
         }
       } else {
         // tslint:disable-next-line:no-console
