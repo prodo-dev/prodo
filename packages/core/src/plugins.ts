@@ -9,7 +9,7 @@ export interface PluginActionCtx<ActionCtx, Universe> {
 export interface PluginViewCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;
   universe: Universe;
-  subscribe: (path: string[], unsubscribe?: () => void) => void;
+  subscribe: (path: string[], unsubscribe?: (comp: Comp) => void) => void;
 }
 
 export type PluginInitFn<InitOptions, Universe> = (
@@ -56,7 +56,7 @@ export interface ProdoInternals<
 export type PluginAction<ActionCtx> = <A extends any[]>(
   func: (ctx: ActionCtx) => (...args: A) => void,
   name: string,
-) => (...args: A) => void;
+) => (ctx: ActionCtx) => (...args: A) => void;
 
 export interface ProdoPlugin<
   InitOptions,
