@@ -55,7 +55,7 @@ export const createQueryName = <T>(
   if (query.orderBy) {
     name = query.orderBy.reduce(
       (name: string, orderBy) =>
-        `${name}-${orderBy[0]}${orderBy.length === 2 ? "-" + orderBy[1] : ""}}`,
+        `${name}-${orderBy[0]}${orderBy.length === 2 ? "-" + orderBy[1] : ""}`,
       name,
     );
   }
