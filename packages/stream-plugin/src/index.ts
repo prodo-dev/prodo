@@ -1,10 +1,13 @@
 import {
-  createUniverseWatcher,
   PluginActionCtx,
   ProdoPlugin,
+  createPlugin,
+  createUniverseWatcher,
 } from "@prodo/core";
 
 const valueSymbol = Symbol("streamValues");
+
+type Config = {};
 
 interface StreamState {
   unsubscribe: () => void;
@@ -95,17 +98,21 @@ const prepareViewCtx = <T extends { [K in keyof T]?: Stream<any> }>({
 
 const streamPlugin = <
   T extends { [K in keyof T]?: Stream<any> }
->(): ProdoPlugin<{}, Universe<T>, ActionCtx<T>, ViewCtx<T>> => {
+>(): ProdoPlugin<Config, Universe<T>, ActionCtx<T>, ViewCtx<T>> => {
   const state = {
     streams: {},
     states: {},
   };
-  return {
-    name: "stream",
-    init,
-    prepareActionCtx: prepareActionCtx(state),
-    prepareViewCtx,
-  };
+
+  const plugin = createPlugin<{}, Universe<T>, ActionCtx<T>, ViewCtx<T>>(
+    "stream",
+  );
+
+  plugin.init(init);
+  plugin.prepareActionCtx(prepareActionCtx(state));
+  plugin.prepareViewCtx(prepareViewCtx);
+
+  return plugin;
 };
 
 export default streamPlugin;
