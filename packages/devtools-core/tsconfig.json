@@ -6,6 +6,6 @@
     "target": "es2017",
     "module": "esnext"
   },
-  "include": ["src"],
+  "include": ["src", "typings"],
   "references": [{ "path": "../core" }]
 }

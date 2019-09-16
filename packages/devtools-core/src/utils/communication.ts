@@ -1,4 +1,4 @@
-import { state } from "./model";
+import { state } from "../model";
 
 const recordState = (newState: any) => {
   state.app.state = newState;
@@ -18,6 +18,7 @@ export const eventListener = (dispatch: any) => (event: MessageEvent) => {
     }
     if (event.data.type === "completedEvent") {
       dispatch(recordAction)(event.data.contents);
+      dispatch(recordState)(event.data.contents.nextUniverse);
     }
   }
 };

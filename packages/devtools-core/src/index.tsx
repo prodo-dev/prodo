@@ -13,11 +13,17 @@ const { Provider } = store;
 
 interface Props {
   children?: React.ReactNode;
+  skipUserApp?: boolean;
 }
 
 const DevToolsApp = (props: Props) => (
   <Provider>
-    <App url={!props.children && "http://localhost:1234"}>{props.children}</App>
+    <App
+      skipUserApp={props.skipUserApp}
+      url={!props.children && "http://localhost:1234"}
+    >
+      {props.children}
+    </App>
   </Provider>
 );
 

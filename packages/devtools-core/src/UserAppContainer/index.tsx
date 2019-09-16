@@ -1,14 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
-import { eventListener } from "../communication";
 import { dispatch } from "../model";
+import { eventListener } from "../utils/communication";
 
 const StyledIFrame = styled.iframe`
+  flex-grow: 1;
+
   min-height: calc(100vh - 2rem);
   height: 100%;
 
   min-width: 50%;
+
+  border: none;
 `;
 
 interface Props {
@@ -42,7 +46,6 @@ const UserAppContainer = (props: Props) => {
 
   const renderFrameContents = () => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
-      // Copy over CSS if needed (TODO verify)
       const cssLink = document.createElement("link");
       cssLink.href = "style.css";
       document.head.childNodes.forEach((link: any) => {

@@ -3,21 +3,24 @@ import styled from "styled-components";
 import { DevTools } from "./DevTools";
 import UserAppContainer from "./UserAppContainer";
 
+import "@babel/polyfill";
+
 const Layout = styled.div`
   display: flex;
   justify-content: space-between;
-
-  padding: 1rem;
 `;
 
 interface Props {
   url?: string;
   children?: React.ReactNode;
+  skipUserApp?: boolean;
 }
 
 export default (props: Props) => (
   <Layout>
-    <UserAppContainer url={props.url}>{props.children}</UserAppContainer>
+    {!props.skipUserApp && (
+      <UserAppContainer url={props.url}>{props.children}</UserAppContainer>
+    )}
     <DevTools />
   </Layout>
 );

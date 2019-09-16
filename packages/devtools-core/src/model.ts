@@ -1,10 +1,10 @@
 import { createModel } from "@prodo/core";
+import { Action } from "./types";
 
-// TODO: action type
 export interface State {
   app: {
     state: any;
-    actionLog: any[];
+    actionLog: Action[];
   };
   ui: {
     iframe: HTMLIFrameElement | null;
