@@ -89,6 +89,7 @@ export type Dispatch = <A extends any[]>(
 
 export interface Event {
   actionName: string;
+  pluginName: string;
   args: any;
   id: string;
   parentId: string | null;

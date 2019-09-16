@@ -68,6 +68,7 @@ export const createStore = <State>(
     const event = startEvent(
       store,
       (func as any).__name || "(unnamed)",
+      (func as any).__pluginName || "(user)",
       args,
       origin,
     );

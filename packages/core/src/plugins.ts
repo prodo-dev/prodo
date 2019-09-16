@@ -58,9 +58,9 @@ export interface ProdoInternals<
   onCompleteEvent?: PluginOnCompleteEventFn<CustomEvent>;
 }
 
-export type PluginAction<ActionCtx> = <A extends any[]>(
+export type PluginActionCreator<ActionCtx> = <A extends any[]>(
   func: (ctx: ActionCtx) => (...args: A) => void,
-  name: string,
+  actionName: string,
 ) => (ctx: ActionCtx) => (...args: A) => void;
 
 export interface ProdoPlugin<
@@ -86,7 +86,7 @@ export interface ProdoPlugin<
   onCompleteEvent: (
     completeEventFn: PluginOnCompleteEventFn<CustomEvent>,
   ) => void;
-  action: PluginAction<ActionCtx>;
+  action: PluginActionCreator<ActionCtx>;
   _internals: ProdoInternals<
     InitOptions,
     Universe,
@@ -129,8 +129,9 @@ export const createPlugin = <
     onCompleteEvent: onCompleteEventFn => {
       prodoInternals.onCompleteEvent = onCompleteEventFn;
     },
-    action: (func, name) => {
-      (func as any).__name = name;
+    action: (func, actionName) => {
+      (func as any).__name = actionName;
+      (func as any).__plugin = name;
       return func as any;
     },
     _internals: prodoInternals,

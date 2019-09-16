@@ -11,11 +11,12 @@ export { Comp, PluginDispatch, Provider, Store } from "./types";
 export {
   ProdoPlugin,
   createPlugin,
-  PluginAction,
+  PluginActionCreator,
   PluginInitFn,
   PluginViewCtx,
   PluginActionCtx,
   PluginViewCtxFn,
   PluginActionCtxFn,
   PluginOnCompleteEventFn,
+  createPluginAction,
 } from "./plugins";
