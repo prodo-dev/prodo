@@ -13,9 +13,11 @@
   },
   "workspaces": [
     "examples/*",
-    "packages/*"
+    "packages/*",
+    "docs/"
   ],
   "devDependencies": {
+    "firebase-tools": "^7.3.2",
     "lerna": "^3.16.4",
     "prettier": "^1.17.1",
     "tslint": "^5.17.0",

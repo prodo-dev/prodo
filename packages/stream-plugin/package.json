@@ -1,5 +1,5 @@
 {
-  "name": "@prodo/stream-plugin",
+  "name": "@prodo/stream",
   "version": "0.0.5",
   "main": "lib/index.js",
   "license": "MIT",

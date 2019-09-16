@@ -1,5 +1,5 @@
 import { createModel } from "@prodo/core";
-import streamPlugin, { Stream } from "@prodo/stream-plugin";
+import streamPlugin, { Stream } from "@prodo/stream";
 
 export interface Streams {
   [key: string]: Stream<number>;

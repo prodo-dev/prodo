@@ -1,0 +1,8 @@
+{
+  "hosting": {
+    "public": "docs/public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "predeploy": "set -ex; cd docs; yarn build;",
+    "cleanUrls": true
+  }
+}
