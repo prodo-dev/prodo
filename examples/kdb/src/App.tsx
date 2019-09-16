@@ -74,13 +74,13 @@ const Table = <
           <tbody>
             <tr>
               {(props as any[]).map(prop => (
-                <th>{capitalize(prop)}</th>
+                <th key={prop}>{capitalize(prop)}</th>
               ))}
             </tr>
             {((watch(streams[data]) as any[]) || []).map(value => (
               <tr key={value.sym}>
                 {props.map(prop => (
-                  <td>{value[prop]}</td>
+                  <td key={prop}>{value[prop]}</td>
                 ))}
               </tr>
             ))}
