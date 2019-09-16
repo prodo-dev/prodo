@@ -62,7 +62,7 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const Table = <
   K extends keyof Streams,
-  J extends keyof UnStreams<Streams>[K][0]
+  J extends keyof UnStreams<Streams>[K][0] & string
 >(
   data: K,
   props: J[],
@@ -74,14 +74,14 @@ const Table = <
           <caption>{capitalize(data)}</caption>
           <tbody>
             <tr>
-              {(props as any[]).map(prop => (
+              {props.map(prop => (
                 <th key={prop}>{capitalize(prop)}</th>
               ))}
             </tr>
             {((watch(streams[data]) as any[]) || []).map(value => (
               <tr key={value.sym}>
                 {props.map(prop => (
-                  <td key={prop as string}>{value[prop]}</td>
+                  <td key={prop}>{value[prop]}</td>
                 ))}
               </tr>
             ))}
