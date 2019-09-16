@@ -7,16 +7,19 @@
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
     "start": "parcel index.html",
-    "build": "tsc --build",
+    "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
     "build:babel:watch": "yarn build:babel --watch",
-    "css": "cp src/*.css lib/ && cp src/*.css transpiled/"
+    "build:monaco": "./build-monaco.sh",
+    "css": "cp src/*.css lib/ && cp src/*.css transpiled/",
+    "build": "set -ex; yarn build:monaco; yarn build:code; yarn build:babel"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@prodo/core": "^0.0.5",
+    "@prodo/logger": "^0.0.5",
     "color": "^3.1.2",
     "fast-stable-stringify": "^1.0.0",
     "lodash": "^4.17.15",
@@ -36,7 +39,6 @@
   "devDependencies": {
     "@babel/cli": "^7.6.0",
     "@babel/core": "^7.6.0",
-    "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.6.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.6.0",

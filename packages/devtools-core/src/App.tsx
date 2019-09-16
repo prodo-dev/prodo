@@ -3,8 +3,6 @@ import styled from "styled-components";
 import { DevTools } from "./DevTools";
 import UserAppContainer from "./UserAppContainer";
 
-import "@babel/polyfill";
-
 const Layout = styled.div`
   display: flex;
   justify-content: space-between;

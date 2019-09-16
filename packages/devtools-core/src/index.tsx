@@ -8,7 +8,7 @@ import "./styles.css";
 
 export * from "./DevTools";
 
-const store = model.createStore({ initState });
+const store = model.createStore({ initState, logger: true });
 const { Provider } = store;
 
 interface Props {
@@ -20,7 +20,7 @@ const DevToolsApp = (props: Props) => (
   <Provider>
     <App
       skipUserApp={props.skipUserApp}
-      url={!props.children && "http://localhost:1234"}
+      url={!props.children ? "http://localhost:1234" : undefined}
     >
       {props.children}
     </App>
