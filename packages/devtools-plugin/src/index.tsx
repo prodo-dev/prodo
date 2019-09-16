@@ -1,6 +1,8 @@
 import { ProdoPlugin } from "@prodo/core";
 import { original } from "immer";
 
+export { default as DevTools } from "@prodo/devtools-core";
+
 type Destination = "devtools" | "app";
 type MessageType = "completedEvent" | "state";
 

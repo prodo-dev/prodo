@@ -56,9 +56,7 @@ export const DevTools = () => {
     return () => window.removeEventListener("message", eventListener(dispatch));
   }, []);
 
-  const [selectedPanel, setSelectedPanel] = React.useState(
-    "actionLog" as Panel,
-  );
+  const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
 
   return (
     <StyledDevtools>

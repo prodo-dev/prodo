@@ -22,3 +22,7 @@ export const eventListener = (dispatch: any) => (event: MessageEvent) => {
     }
   }
 };
+
+export const sendMessage = (message: { type: string; data: any }) => {
+  window.postMessage({ destination: "app", ...message }, "*");
+};
