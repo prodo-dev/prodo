@@ -7,4 +7,10 @@ order: 4
 interface Store<InitOptions, Universe>;
 ```
 
-Represents the entire state of your app.
+Represents the entire state of your app. Created with [`createStore`](./createStore).
+
+**Example**
+
+```ts
+const store = model.createStore({ initState });
+```

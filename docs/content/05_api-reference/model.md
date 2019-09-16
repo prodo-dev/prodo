@@ -7,6 +7,15 @@ order: 3
 interface Model<InitOptions, Universe, ActionCtx, ViewCtx>;
 ```
 
+Stores all types and plugins use in your app. Created with [`createModel`](./createModel).
+
+**Example**
+
+```ts
+const model = createModel<State>();
+```
+
+
 ## Methods
 
 ```

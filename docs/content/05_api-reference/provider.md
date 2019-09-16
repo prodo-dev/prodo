@@ -3,9 +3,8 @@ title: "Provider"
 order: 5
 ---
 
-Wrap your app with a Prodo [context](https://reactjs.org/docs/context.html).
-
-Takes in the [`Store`](./store) as the `value` prop.
+[React context](https://reactjs.org/docs/context.html) provider used to expose a
+[`Store`](./store) to all components in your app.
 
 **Usage**
 
@@ -13,16 +12,16 @@ Takes in the [`Store`](./store) as the `value` prop.
 import App from "./App";
 import { model } from "./model";
 
-const { store, Provider } = model.createStore({
+const { Provider } = model.createStore({
   initState: {
     count: 0
   }
 });
 
 ReactDOM.render(
-  <ProdoProvider value={store}>
+  <Provider>
     <App />
-  </ProdoProvider>,
+  </Provider>,
   document.getElementById("root"),
 );
 ```
