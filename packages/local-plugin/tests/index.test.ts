@@ -38,9 +38,7 @@ describe("local plugin", () => {
       },
     });
 
-    expect(store.universe.local.count).toBe(undefined);
-    const finalUniverse = await store.dispatch(setCount)();
-    expect(finalUniverse.local.count).toBe(200);
+    expect(store.universe.local.count).toBe(200);
   });
 
   it("sets local storage value", async () => {
@@ -75,7 +73,7 @@ describe("local plugin", () => {
       },
     });
 
-    expect(store.universe.local.count).toBe(undefined);
+    expect(store.universe.local.count).toBe(2);
     const finalUniverse = await store.dispatch(increaseCount)(400);
     expect(finalUniverse.local.count).toBe(402);
   });

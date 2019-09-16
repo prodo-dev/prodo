@@ -47,17 +47,24 @@ const keyExists = <T>(config: Config<T>, key: string): boolean => {
 const init = <T>(config: Config<T>, universe: Universe<T>) => {
   universe.local = {};
 
-  // no fixture was provided, load all values from local storage into universe
-  if (config.localFixture == null) {
-    universe.local = Object.keys(localStorage).reduce((acc, key) => {
-      const item = localStorage.getItem(key);
-      if (item == null) {
-        return acc;
-      }
+  // init universe with values from localStorage or fixtures
+  const keys =
+    config.localFixture == null
+      ? Object.keys(localStorage)
+      : Object.keys(config.localFixture);
 
-      return { ...acc, [key]: parseItem(key, item) };
-    }, {});
-  }
+  universe.local = keys.reduce((acc, key) => {
+    const item =
+      config.localFixture == null
+        ? localStorage.getItem(key)
+        : JSON.stringify(config.localFixture[key]);
+
+    if (item == null) {
+      return acc;
+    }
+
+    return { ...acc, [key]: parseItem(key, item) };
+  }, {});
 
   // use initLocal for any values that have not yet been loaded
   if (config.initLocal != null) {
