@@ -2,6 +2,7 @@ import produce from "immer";
 import * as React from "react";
 import { ProdoProvider } from ".";
 import { completeEvent, startEvent } from "./events";
+import { ProdoPlugin } from "./plugins";
 import {
   BaseStore,
   Origin,
@@ -9,7 +10,6 @@ import {
   Provider,
   WatchTree,
 } from "./types";
-import { ProdoPlugin } from "./plugins";
 
 const initPlugins = (
   universe: any,

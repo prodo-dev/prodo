@@ -24,11 +24,11 @@ export interface EffectActionCtx {
   effect: Effect;
 }
 
-const plugin = createPlugin<EffectConfig, {}, EffectActionCtx, {}, EffectEvent>(
+const effect = createPlugin<EffectConfig, {}, EffectActionCtx, {}, EffectEvent>(
   "effect",
 );
 
-plugin.prepareActionCtx(({ ctx, event }, config) => {
+effect.prepareActionCtx(({ ctx, event }, config) => {
   event.recordedEffects = [];
 
   ctx.effect = <A extends any[]>(func: (...args: A) => any) => (
@@ -58,4 +58,4 @@ plugin.prepareActionCtx(({ ctx, event }, config) => {
   };
 });
 
-export default plugin;
+export default effect;

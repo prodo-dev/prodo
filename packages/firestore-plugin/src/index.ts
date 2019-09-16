@@ -1,11 +1,11 @@
 import {
   Comp,
-  ProdoPlugin,
   createPlugin,
-  PluginViewCtxFn,
+  PluginActionCtxFn,
   PluginInitFn,
   PluginViewCtx,
-  PluginActionCtxFn,
+  PluginViewCtxFn,
+  ProdoPlugin,
 } from "@prodo/core";
 import * as firebase from "firebase/app";
 import "firebase/firestore";

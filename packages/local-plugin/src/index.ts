@@ -1,10 +1,10 @@
 import {
+  createPlugin,
+  createUniverseWatcher,
   PluginActionCtxFn,
   PluginInitFn,
   PluginViewCtxFn,
   ProdoPlugin,
-  createPlugin,
-  createUniverseWatcher,
 } from "@prodo/core";
 
 export interface Local<T> {

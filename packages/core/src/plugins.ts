@@ -1,4 +1,4 @@
-import { Comp, PluginDispatch, Event } from "./types";
+import { Comp, Event, PluginDispatch } from "./types";
 
 export interface PluginActionCtx<ActionCtx, Universe> {
   dispatch: PluginDispatch<ActionCtx>;

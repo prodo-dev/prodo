@@ -1,4 +1,4 @@
-import { createUniverseWatcher, createPlugin } from "@prodo/core";
+import { createPlugin, createUniverseWatcher } from "@prodo/core";
 import { History } from "history";
 import {
   Config,

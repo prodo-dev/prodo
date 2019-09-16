@@ -1,8 +1,8 @@
 import { action } from "./action";
 import { connect } from "./connect";
+import { ProdoPlugin } from "./plugins";
 import { createStore } from "./store";
 import { Dispatch, Model, Watch } from "./types";
-import { ProdoPlugin } from "./plugins";
 
 export const createModel = <State>(): Model<
   { initState: State },

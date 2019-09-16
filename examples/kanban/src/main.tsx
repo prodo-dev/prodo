@@ -1,4 +1,3 @@
-import { ProdoProvider } from "@prodo/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
@@ -10,13 +9,15 @@ import "./styles.scss";
 //@ts-ignore
 window.store = store; // for debugging
 
+const Provider = store.Provider;
+
 ReactDOM.render(
   <ErrorBoundary>
     <BrowserRouter>
-      <ProdoProvider value={store}>
+      <Provider>
         <App />
-      </ProdoProvider>
+      </Provider>
     </BrowserRouter>
   </ErrorBoundary>,
-  document.getElementById("root")
+  document.getElementById("root"),
 );
