@@ -1,4 +1,5 @@
 import produce from "immer";
+import * as _ from "lodash";
 import * as React from "react";
 import { ProdoProvider } from ".";
 import { completeEvent, startEvent } from "./events";
@@ -10,6 +11,7 @@ import {
   Provider,
   WatchTree,
 } from "./types";
+import { submitPatches } from "./watch";
 
 const initPlugins = (
   universe: any,
@@ -165,6 +167,63 @@ export const createStore = <State>(
   };
 
   const Provider = createProvider(store, plugins);
+
+  window.addEventListener("message", event => {
+    if (event.data.destination === "app") {
+      if (event.data.type === "setState") {
+        const prevUniverse = store.universe;
+        store.universe.state = event.data.contents.newState;
+        submitPatches(store, store.universe, {
+          actionName: "updateState",
+          id: "updateState",
+          parentId: null,
+          args: {},
+          patches: [
+            {
+              op: "replace",
+              path: ["state"],
+              value: event.data.contents.newState,
+            },
+          ],
+          prevUniverse,
+          nextUniverse: store.universe,
+          nextActions: [],
+        });
+      } else if (event.data.type === "updateState") {
+        const prevUniverse = store.universe;
+        if (
+          _.get(store.universe.state, event.data.contents.path) !== undefined
+        ) {
+          _.set(
+            store.universe.state as any,
+            event.data.contents.path,
+            event.data.contents.newValue,
+          );
+          const path = event.data.contents.path;
+          path.unshift("state");
+          submitPatches(store, store.universe, {
+            actionName: "updateState",
+            id: "updateState",
+            parentId: null,
+            args: {},
+            patches: [
+              {
+                op: "replace",
+                path,
+                value: event.data.contents.newValue,
+              },
+            ],
+            prevUniverse,
+            nextUniverse: store.universe,
+            nextActions: [],
+          });
+        }
+      } else {
+        // tslint:disable-next-line:no-console
+        console.log("Got message with unimplemented type", event.data);
+      }
+    }
+  });
 
   return {
     store,

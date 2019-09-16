@@ -10,14 +10,17 @@ export const StatePanel = () => {
     key,
     keyPath,
     newValue,
+    oldValue,
   }: {
     key: string;
     keyPath: string[];
     newValue: any;
     oldValue: any;
   }) => {
-    const updatePath = keyPath.concat([key]);
-    sendMessage({ type: "updateState", data: { updatePath, newValue } });
+    const path = keyPath.concat([key]);
+    if (oldValue !== newValue) {
+      sendMessage({ type: "updateState", contents: { path, newValue } });
+    }
   };
 
   return (
@@ -26,7 +29,7 @@ export const StatePanel = () => {
       jsonFile={stateJsonFile}
       onDeltaUpdate={onDeltaStateUpdate}
       onFullUpdate={({ newValue }: { newValue: any }) =>
-        sendMessage({ type: "setState", data: { newValue } })
+        sendMessage({ type: "setState", contents: { newValue } })
       }
       liveUpdate
       disabled={false}

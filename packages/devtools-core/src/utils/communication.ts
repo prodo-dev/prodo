@@ -18,11 +18,11 @@ export const eventListener = (dispatch: any) => (event: MessageEvent) => {
     }
     if (event.data.type === "completedEvent") {
       dispatch(recordAction)(event.data.contents);
-      dispatch(recordState)(event.data.contents.nextUniverse);
+      dispatch(recordState)(event.data.contents.nextUniverse.state);
     }
   }
 };
 
-export const sendMessage = (message: { type: string; data: any }) => {
+export const sendMessage = (message: { type: string; contents: any }) => {
   window.postMessage({ destination: "app", ...message }, "*");
 };
