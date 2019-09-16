@@ -1,4 +1,12 @@
-import { Comp, ProdoPlugin } from "@prodo/core";
+import {
+  Comp,
+  ProdoPlugin,
+  createPlugin,
+  PluginViewCtxFn,
+  PluginInitFn,
+  PluginViewCtx,
+  PluginActionCtxFn,
+} from "@prodo/core";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 import * as _ from "lodash";
@@ -24,7 +32,10 @@ export { Collection };
 
 let firestore: firebase.firestore.Firestore;
 
-const init = <T>(config: Config<T>, universe: Universe) => {
+const initFn = <T>(): PluginInitFn<Config<T>, Universe> => (
+  config,
+  universe,
+) => {
   if (!config.firestoreMock) {
     firebase.initializeApp(config.firebaseConfig);
     firestore = firebase.firestore();
@@ -192,7 +203,7 @@ const subscribeComponent = <DB>({
   dbQuery,
 }: {
   queryRefs: QueryRefs;
-  ctx: ViewCtx<DB>;
+  ctx: ViewCtx<DB> & PluginViewCtx<ActionCtx<DB>, Universe>;
   collectionName: string;
   queryName: string;
   comp: Comp;
@@ -263,7 +274,7 @@ const getDocsFromUniverse = <T>({
 
 const createViewCollection = <DB, T extends { id: string }>(
   queryRefs: QueryRefs,
-  ctx: ViewCtx<DB>,
+  ctx: ViewCtx<DB> & PluginViewCtx<ActionCtx<DB>, Universe>,
   collectionName: string,
   universe: Universe,
   comp: Comp,
@@ -472,14 +483,12 @@ const createViewCollection = <DB, T extends { id: string }>(
   };
 };
 
-const prepareViewCtx = <DB>(queryRefs: QueryRefs) => ({
+const prepareViewCtx = <DB>(
+  queryRefs: QueryRefs,
+): PluginViewCtxFn<Config<DB>, Universe, ActionCtx<DB>, ViewCtx<DB>> => ({
   ctx,
   universe,
   comp,
-}: {
-  ctx: ViewCtx<DB>;
-  universe: Universe;
-  comp: Comp;
 }) => {
   ctx.db = new Proxy(
     {},
@@ -497,13 +506,11 @@ const prepareViewCtx = <DB>(queryRefs: QueryRefs) => ({
   ) as DB;
 };
 
-const prepareActionCtx = <DB>({
-  ctx,
-  universe,
-}: {
-  ctx: ActionCtx<DB>;
-  universe: Universe;
-}) => {
+const prepareActionCtx = <DB>(): PluginActionCtxFn<
+  Config<DB>,
+  Universe,
+  ActionCtx<DB>
+> => ({ ctx, universe }) => {
   ctx.db_cache = universe.db_cache;
 
   ctx.db = new Proxy(
@@ -521,11 +528,18 @@ const firestorePlugin = <DB>(): ProdoPlugin<
   Universe,
   ActionCtx<DB>,
   ViewCtx<DB>
-> => ({
-  name: "firestore",
-  init,
-  prepareActionCtx,
-  prepareViewCtx: prepareViewCtx({}),
-});
+> => {
+  const plugin = createPlugin<Config<DB>, Universe, ActionCtx<DB>, ViewCtx<DB>>(
+    "firestore",
+  );
+
+  const queryRefs: QueryRefs = {};
+
+  plugin.init(initFn<DB>());
+  plugin.prepareActionCtx(prepareActionCtx<DB>());
+  plugin.prepareViewCtx(prepareViewCtx<DB>(queryRefs));
+
+  return plugin;
+};
 
 export default firestorePlugin;

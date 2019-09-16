@@ -1,4 +1,4 @@
-import { Comp, PluginActionCtx, PluginViewCtx } from "@prodo/core";
+import { Comp } from "@prodo/core";
 import * as firebase from "firebase/app";
 
 export interface FirebaseConfig {
@@ -64,15 +64,11 @@ export interface Ctx<T> {
   db: T;
 }
 
-export interface ActionCtx<T>
-  extends Ctx<T>,
-    PluginActionCtx<ActionCtx<T>, Universe> {
+export interface ActionCtx<T> extends Ctx<T> {
   db_cache: DBCache;
 }
 
-export interface ViewCtx<T>
-  extends Ctx<T>,
-    PluginViewCtx<ActionCtx<T>, Universe> {}
+export interface ViewCtx<T> extends Ctx<T> {}
 
 export interface Universe {
   db_cache: DBCache;
