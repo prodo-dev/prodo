@@ -1,4 +1,4 @@
-import DevTools from "@prodo/devtools-core";
+import { DevTools } from "@prodo/devtools-plugin";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
