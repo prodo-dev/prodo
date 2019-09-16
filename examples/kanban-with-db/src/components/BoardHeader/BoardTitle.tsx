@@ -14,7 +14,7 @@ type Props = {
 };
 
 const changeBoardTitle = (boardId: string, title: string) => {
-  db.boardsById.set(boardId, { title });
+  db.boardsById.update(boardId, { title });
 };
 
 function BoardTitle({ match }: Props) {

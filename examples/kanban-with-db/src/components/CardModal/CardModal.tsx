@@ -19,13 +19,13 @@ type Props = {
 };
 
 const changeCardText = (id: string, text: string) => {
-  db.cardsById.set(id, { text });
+  db.cardsById.update(id, { text });
 };
 
 const deleteCard = async (id: string, listId: string) => {
   db.cardsById.delete(id);
   const list = await db.listsById.get(listId);
-  db.listsById.set(listId, { cards: list.cards.filter(x => x !== id) });
+  db.listsById.update(listId, { cards: list.cards.filter(x => x !== id) });
 };
 
 function CardModal({

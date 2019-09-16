@@ -16,13 +16,13 @@ type Props = {
 };
 
 function changeListTitle(listId: string, newTitle: string) {
-  db.listsById.set(listId, { title: newTitle });
+  db.listsById.update(listId, { title: newTitle });
 }
 
 const deleteList = async (cards: string[], listId: string, boardId: string) => {
   db.listsById.delete(listId);
   const board = await db.boardsById.get(boardId);
-  db.boardsById.set(boardId, {
+  db.boardsById.update(boardId, {
     lists: board.lists.filter(id => id !== listId),
   });
   cards.forEach(id => {

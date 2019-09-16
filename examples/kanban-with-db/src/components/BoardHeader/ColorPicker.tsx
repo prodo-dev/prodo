@@ -16,7 +16,7 @@ type Props = {
 };
 
 function changeBoardColor(boardId: string, color: string) {
-  db.boardsById.set(boardId, { color });
+  db.boardsById.update(boardId, { color });
 }
 
 function ColorPicker({ match }: Props) {

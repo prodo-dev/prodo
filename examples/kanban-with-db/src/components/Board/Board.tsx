@@ -30,7 +30,7 @@ const moveList = async (
   const newLists = board.lists;
   const [removedList] = newLists.splice(oldListIndex, 1);
   newLists.splice(newListIndex, 0, removedList);
-  db.boardsById.set(boardId, { ...board, lists: newLists });
+  db.boardsById.update(boardId, { lists: newLists });
 };
 
 const moveCard = async (

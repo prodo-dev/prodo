@@ -13,7 +13,9 @@ const addList = async (boardId: string, listTitle: string) => {
     cards: [],
   });
   const board = await db.boardsById.get(boardId);
-  db.boardsById.set(boardId, { lists: board.lists.concat([listId]) });
+  await db.boardsById.update(boardId, {
+    lists: board.lists.concat([listId]),
+  });
 };
 
 function ListAdder({ boardId }: Props) {

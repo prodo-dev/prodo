@@ -10,7 +10,7 @@ type Props = {
 };
 
 function changeCardDate(date: Date, cardId: string) {
-  db.cardsById.set(cardId, { date });
+  db.cardsById.update(cardId, { date });
 }
 
 function Calendar({ cardId, date, toggleCalendar }: Props) {

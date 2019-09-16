@@ -17,7 +17,7 @@ const addBoard = async (title: string, historyPush: any) => {
     color: "blue",
   });
   user.boards.push(boardId);
-  await db.users.set(state.userId, { boards: user.boards });
+  await db.users.update(state.userId, { boards: user.boards });
   state.currentBoardId = boardId;
   dispatch(redirectToBoard)(boardId, title, historyPush);
 };

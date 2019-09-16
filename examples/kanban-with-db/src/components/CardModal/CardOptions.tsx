@@ -22,7 +22,7 @@ type Props = {
 };
 
 function changeCardColor(id: string, color: string) {
-  db.cardsById.set(id, { color });
+  db.cardsById.update(id, { color });
 }
 
 function deleteCard(id: string) {
