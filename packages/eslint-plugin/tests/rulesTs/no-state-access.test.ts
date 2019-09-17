@@ -33,6 +33,17 @@ ruleTester.run("no-state-access", rule, {
       filename: defaultTsFile,
     },
     {
+      code: `import { state } from "./model";
+      const { state: myState } = foo;`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import { state } from "./model";
+      const myState = foo.state;`,
+      filename: defaultTsFile,
+    },
+
+    {
       code: `import * as model from './model';
       const state = 1;
       state;`,
