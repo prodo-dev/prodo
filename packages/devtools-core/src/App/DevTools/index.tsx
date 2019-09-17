@@ -1,10 +1,10 @@
 import * as React from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import styled from "styled-components";
-import { dispatch } from "../model";
-import { HeaderHeight, paddings, PanelWidth } from "../styles";
-import { Panel } from "../types";
-import { eventListener } from "../utils/communication";
+import { dispatch } from "../../model";
+import { HeaderHeight, paddings, PanelWidth } from "../../styles";
+import { Panel } from "../../types";
+import { eventListener } from "../../utils/communication";
 import { ActionLogPanel } from "./ActionLogPanel";
 import { StatePanel } from "./StatePanel";
 

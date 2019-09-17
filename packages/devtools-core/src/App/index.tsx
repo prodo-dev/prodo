@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled, { ThemeProvider } from "styled-components";
+import darkTheme from "../styles/theme";
 import { DevTools } from "./DevTools";
-import darkTheme from "./styles/theme";
 import UserAppContainer from "./UserAppContainer";
 
 const Layout = styled.div`

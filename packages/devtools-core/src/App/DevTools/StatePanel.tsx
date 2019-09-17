@@ -1,6 +1,6 @@
 import * as React from "react";
-import { state, watch } from "../model";
-import { sendMessage } from "../utils/communication";
+import { state, watch } from "../../model";
+import { sendMessage } from "../../utils/communication";
 import JsonTree from "./components/JsonTree";
 
 export const StatePanel = () => {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
-import { paddings } from "../../styles";
-import { Action } from "../../types";
+import { paddings } from "../../../styles";
+import { Action } from "../../../types";
 import JsonTree from "../components/JsonTree";
 
 const StyledActionLogRow = styled.div`

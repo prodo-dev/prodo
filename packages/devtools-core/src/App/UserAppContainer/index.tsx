@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
-import { dispatch } from "../model";
-import { eventListener } from "../utils/communication";
+import { dispatch } from "../../model";
+import { eventListener } from "../../utils/communication";
 
 const StyledIFrame = styled.iframe`
   flex-grow: 1;
@@ -24,9 +24,8 @@ const UserAppContainer = (props: Props) => {
   const iFrameRef = React.useRef<HTMLIFrameElement>(null);
   const [updateValue, forceUpdate] = React.useState(true);
 
-  // Forces a re-render (forceUpdate replacement) (TODO verify)
+  // Forces a re-render (forceUpdate replacement)
   const handleLoad = () => {
-    console.log("handleLoad");
     forceUpdate(!updateValue);
   };
 

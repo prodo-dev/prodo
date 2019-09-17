@@ -1,6 +1,6 @@
 import * as React from "react";
-import { state, watch } from "../../model";
-import { Action } from "../../types";
+import { state, watch } from "../../../model";
+import { Action } from "../../../types";
 import { ActionLogRow } from "./ActionLogRow";
 
 export const ActionLogPanel = () => {
