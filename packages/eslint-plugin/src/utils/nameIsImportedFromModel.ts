@@ -4,7 +4,7 @@ import {
 } from "@typescript-eslint/experimental-utils";
 import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
 
-const matchModel = (name: string) =>
+export const matchModel = (name: string) =>
   name.startsWith(".") && /model(\.ctx)?(\.(j|t)sx?)?$/.test(name);
 
 export const nameImportedFromModel = (

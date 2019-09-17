@@ -14,6 +14,7 @@ interface TSRuleListener {
     | ((node: TSESTree.FunctionDeclaration) => void)
     | ((node: TSESTree.FunctionExpression) => void)
     | ((node: TSESTree.ArrowFunctionExpression) => void)
+    | ((node: TSESTree.ReturnStatement) => void)
     | undefined;
 }
 
