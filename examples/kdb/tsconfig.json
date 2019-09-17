@@ -4,7 +4,8 @@
     "rootDir": "src",
     "outDir": "lib",
     "jsx": "react",
-    "target": "es2017",
+    "lib": ["esnext", "dom"],
+    "target": "esnext",
     "module": "esnext"
   },
   "include": ["src"],
