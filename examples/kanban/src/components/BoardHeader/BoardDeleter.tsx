@@ -1,4 +1,4 @@
-import { matchRoute, push } from "@prodo/route";
+import { matchRoute } from "@prodo/route";
 import * as React from "react";
 import { Button, Menu, MenuItem, Wrapper } from "react-aria-menubutton";
 // @ts-ignore
@@ -8,7 +8,6 @@ import "./BoardDeleter.scss";
 
 function deleteBoard(boardId) {
   delete state.boardsById[boardId];
-  dispatch(push)("/");
 }
 
 function BoardDeleter() {

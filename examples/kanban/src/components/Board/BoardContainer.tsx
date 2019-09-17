@@ -1,5 +1,6 @@
 import { Redirect } from "@prodo/route";
 import * as React from "react";
+import { state, watch } from "../../model";
 import Board from "./Board";
 
 // This components only purpose is to redirect requests for board pages that don't exist
@@ -9,7 +10,8 @@ interface Props {
 }
 
 function BoardContainer({ boardId }: Props) {
-  return boardId ? <Board boardId={boardId} /> : <Redirect to="/" />;
+  const board = watch(state.boardsById[boardId]);
+  return board ? <Board boardId={boardId} /> : <Redirect to="/" />;
 }
 
 export default BoardContainer;
