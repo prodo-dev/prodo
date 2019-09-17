@@ -7,6 +7,7 @@ import { initState } from "./store";
 import "./styles/index.css";
 
 export * from "./DevTools";
+export * from "./types";
 
 const store = model.createStore({ initState, logger: true });
 const { Provider } = store;

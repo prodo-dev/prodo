@@ -21,6 +21,7 @@
     "@prodo/logger": "^0.0.5",
     "color": "^3.1.2",
     "fast-stable-stringify": "^1.0.0",
+    "immer": "^3.2.0",
     "lodash": "^4.17.15",
     "path-browserify": "^1.0.0",
     "prettier": "^1.18.2",

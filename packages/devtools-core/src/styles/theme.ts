@@ -1,4 +1,4 @@
-import { Theme } from "../typings/styles";
+import { Theme } from "../../typings/styles";
 
 export const darkTheme: Theme = {
   colors: {

@@ -1,28 +1,32 @@
+import { Dispatch } from "@prodo/core/lib/types";
 import { state } from "../model";
+import { Action, AppMessage, DevMessage } from "../types";
 
 const recordState = (newState: any) => {
   state.app.state = newState;
 };
 
-const recordAction = (action: any) => {
+const recordAction = (action: Action) => {
   state.app.actionLog.push(action);
 };
 
-// TODO: types
-export const eventListener = (dispatch: any) => (event: MessageEvent) => {
+export const eventListener = (dispatch: Dispatch) => (event: MessageEvent) => {
   if (event.data.destination === "devtools") {
-    // tslint:disable-next-line:no-console
-    console.log("Devtools got message", event.data);
-    if (event.data.type === "state") {
-      dispatch(recordState)(event.data.contents);
-    }
-    if (event.data.type === "completedEvent") {
-      dispatch(recordAction)(event.data.contents);
-      dispatch(recordState)(event.data.contents.nextUniverse.state);
+    const message: DevMessage = event.data;
+    if (message.type === "state") {
+      dispatch(recordState)(message.contents.state);
+    } else if (message.type === "completedEvent") {
+      dispatch(recordAction)(message.contents.event);
+      if (message.contents.event.nextUniverse) {
+        dispatch(recordState)(message.contents.event.nextUniverse.state);
+      }
     }
   }
 };
 
-export const sendMessage = (message: { type: string; contents: any }) => {
-  window.postMessage({ destination: "app", ...message }, "*");
+export const sendMessage = (
+  message: Partial<AppMessage> & Pick<AppMessage, "type">,
+) => {
+  const appMessage: AppMessage = { destination: "app", ...message };
+  window.postMessage(appMessage, "*");
 };

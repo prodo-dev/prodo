@@ -171,26 +171,7 @@ export const createStore = <State>(
   // TODO: is this the right place...
   window.addEventListener("message", event => {
     if (event.data.destination === "app") {
-      if (event.data.type === "setState") {
-        const prevUniverse = store.universe;
-        store.universe.state = event.data.contents.newState;
-        submitPatches(store, store.universe, {
-          actionName: "updateState",
-          id: "updateState",
-          parentId: null,
-          args: {},
-          patches: [
-            {
-              op: "replace",
-              path: ["state"],
-              value: event.data.contents.newState,
-            },
-          ],
-          prevUniverse,
-          nextUniverse: store.universe,
-          nextActions: [],
-        });
-      } else if (event.data.type === "updateState") {
+      if (event.data.type === "updateState") {
         const prevUniverse = store.universe;
         if (
           _.get(store.universe.state, event.data.contents.path) !== undefined
