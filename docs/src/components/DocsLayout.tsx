@@ -1,12 +1,12 @@
 import { Location } from "@reach/router";
 import * as React from "react";
 import styled from "styled-components";
+import { ExperimentalBanner, WipBanner } from "../components/Banner";
 import Container from "../components/Container";
 import Hamburger from "../components/Hamburger";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
 import Sidebar from "../components/Sidebar";
-import { ExperimentalBanner, WipBanner } from "../components/Banner";
 import { forNarrowScreen, forWideScreen, SidebarWidth } from "../styles";
 
 export interface Props {

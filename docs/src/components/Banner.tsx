@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
-import Container from "./Container";
 import { forWideScreen } from "../styles";
+import Container from "./Container";
 
 const Banner = styled.div<{ background: string }>`
   display: flex;
