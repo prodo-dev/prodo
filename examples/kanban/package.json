@@ -51,6 +51,7 @@
     "@types/react-textarea-autosize": "^4.3.4",
     "@types/shortid": "^0.0.29",
     "@types/testing-library__react": "^9.1.1",
+    "@types/webpack-env": "^1.14.0",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.0",
     "file-loader": "^4.2.0",
