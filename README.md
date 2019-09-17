@@ -13,7 +13,7 @@ apps with as little boilerplate as possible.
 ## Key benefits
 
 - Drastically simplified state management
-- Absolute minimal boilerplate, especially compared to Redux
+- Absolutely minimal boilerplate, especially compared to Redux
 - Blazingly fast re-rendering, similar to MobX
 - First class support for TypeScript
 - Easily testable out of the box
