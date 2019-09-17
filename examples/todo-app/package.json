@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
-    "start": "webpack-dev-server --config webpack.config.js --progress --colors --open --mode=development --history-api-fallback",
+    "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },

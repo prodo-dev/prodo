@@ -9,13 +9,23 @@ import "./styles.scss";
 // @ts-ignore
 window.store = store; // for debugging
 
-ReactDOM.render(
-  <ErrorBoundary>
-    <BrowserRouter>
-      <Provider>
-        <App />
-      </Provider>
-    </BrowserRouter>
-  </ErrorBoundary>,
-  document.getElementById("root"),
-);
+const render = () => {
+  ReactDOM.render(
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Provider>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    </ErrorBoundary>,
+    document.getElementById("root"),
+  );
+};
+
+if (module.hot) {
+  module.hot.accept("./App", () => {
+    render();
+  });
+}
+
+render();

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
-    "start": "webpack-dev-server --config webpack.config.js --progress --colors --open --mode=development --history-api-fallback",
+    "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "@types/react": "^16.8.25",
     "@types/react-dom": "^16.8.5",
     "@types/testing-library__react": "^9.1.1",
+    "@types/webpack-env": "^1.14.0",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.0",
     "fork-ts-checker-webpack-plugin": "^1.5.0",
