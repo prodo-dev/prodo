@@ -6,22 +6,26 @@ import Hamburger from "../components/Hamburger";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
 import Sidebar from "../components/Sidebar";
+import { ExperimentalBanner, WipBanner } from "../components/Banner";
 import { forNarrowScreen, forWideScreen, SidebarWidth } from "../styles";
 
 export interface Props {
-  data: {
-    mdx: {
-      frontmatter: {
-        title: string;
-      };
-      body: string;
-    };
-  };
+  experimental?: boolean;
+  wip?: boolean;
 }
 
 const ContentWrapper = styled.div`
-  padding-top: 2rem;
+  position: relative;
   transition: margin-left: 250ms ease-out;
+
+  ${forWideScreen`width: calc(100vw - ${SidebarWidth + 16}px);`};
+  ${forWideScreen`margin-left: ${SidebarWidth}px;`};
+`;
+
+const DocsContainer = styled(Container)`
+  padding-top: 1rem;
+
+  ${forWideScreen`padding-top: 4rem`};
 
   .gatsby-highlight {
     margin-bottom: 1.5rem;
@@ -34,10 +38,6 @@ const ContentWrapper = styled.div`
   .gatsby-highlight + h2 {
     margin-top: 3rem;
   }
-
-  ${forWideScreen`width: calc(100vw - ${SidebarWidth + 16}px);`};
-  ${forWideScreen`margin-left: ${SidebarWidth}px;`};
-  ${forWideScreen`padding-top: 4rem`};
 `;
 
 const Overlay = styled.div<{ isOpen: boolean }>`
@@ -72,7 +72,7 @@ const SidebarButton: React.FC<{ onClick: () => void }> = props => (
   </StyledSidebarButton>
 );
 
-const DocsLayout: React.FC = props => {
+const DocsLayout: React.FC<Props> = props => {
   const [isSidebarOpen, setSidebarOpen] = React.useState(false);
 
   return (
@@ -86,7 +86,9 @@ const DocsLayout: React.FC = props => {
             <SidebarButton onClick={() => setSidebarOpen(true)} />
 
             <ContentWrapper>
-              <Container>{props.children}</Container>
+              {props.experimental && <ExperimentalBanner />}
+              {props.wip && <WipBanner />}
+              <DocsContainer>{props.children}</DocsContainer>
             </ContentWrapper>
 
             <Overlay

@@ -1,6 +1,7 @@
 ---
 title: "Creating Plugins"
 order: 1
+experimental: true
 ---
 
 Prodo plugins are an essential part of the framework and can add a lot of
