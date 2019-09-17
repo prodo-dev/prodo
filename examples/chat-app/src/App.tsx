@@ -4,7 +4,7 @@ import { db, dispatch, Message as MessageModel, state, watch } from "./model";
 
 const saveMessage = async (text: string) => {
   db.messages.insert({
-    text: text.toUpperCase(),
+    text,
     date: Date.now(),
   });
 };
