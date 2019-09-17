@@ -1,6 +1,6 @@
-# @prodo/eslint-plugin
+# Prodo ESLint Plugin
 
-prodo plugin for eslint
+[Prodo](https://prodo.dev) plugin for [ESLint](https://eslint.org/).
 
 ## Installation
 
