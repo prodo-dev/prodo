@@ -1,5 +1,5 @@
 import { model } from "./model";
-export default model.createStore({
+export const { store, Provider } = model.createStore({
   logger: true,
   initState: {
     user: {
