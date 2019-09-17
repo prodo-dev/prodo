@@ -39,6 +39,7 @@
     "parcel-bundler": "^1.12.3",
     "sass": "^1.22.9",
     "sass-loader": "^8.0.0",
+    "source-map-loader": "^0.2.4",
     "style-loader": "^1.0.0",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9",

@@ -16,11 +16,13 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".json"],
   },
 
+  devtool: "source-map",
+
   module: {
     rules: [
       {
         test: /\.(ts|js)x?$/,
-        loader: "babel-loader",
+        use: ["babel-loader", "source-map-loader"],
         exclude: /node_modules/,
       },
       {
