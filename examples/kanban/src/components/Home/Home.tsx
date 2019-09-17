@@ -1,12 +1,12 @@
+import { Link } from "@prodo/route";
+import classnames from "classnames";
 import * as React from "react";
-import { Link } from "react-router-dom";
 import { Title } from "react-head";
 import slugify from "slugify";
-import classnames from "classnames";
+import { state, watch } from "../../model";
 import Header from "../Header/Header";
 import BoardAdder from "./BoardAdder";
 import "./Home.scss";
-import { state, watch } from "../../model";
 
 function Home() {
   const boardsById = watch(state.boardsById);
@@ -25,7 +25,7 @@ function Home() {
                 key={board._id}
                 className={classnames("board-link", board.color)}
                 to={`/b/${board._id}/${slugify(board.title, {
-                  lower: true
+                  lower: true,
                 })}`}
               >
                 <div className="board-link-title">{board.title}</div>
@@ -37,8 +37,8 @@ function Home() {
                       style={{
                         height: `${Math.min(
                           (listsById[listId].cards.length + 1) * 18,
-                          100
-                        )}%`
+                          100,
+                        )}%`,
                       }}
                     />
                   ))}

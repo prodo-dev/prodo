@@ -1,13 +1,9 @@
+import { push } from "@prodo/route";
 import * as React from "react";
-import slugify from "slugify";
 import shortid from "shortid";
+import slugify from "slugify";
+import { dispatch, state, watch } from "../../model";
 import ClickOutside from "../ClickOutside/ClickOutside";
-import { state, dispatch, watch } from "../../model";
-import { withRouter } from "react-router-dom";
-
-type Props = {
-  history: any;
-};
 
 function addBoard(boardId: string, userId: string, title: string) {
   state.boardsById[boardId] = {
@@ -15,17 +11,20 @@ function addBoard(boardId: string, userId: string, title: string) {
     title,
     lists: [],
     users: [userId],
-    color: "blue"
+    color: "blue",
   };
   state.currentBoardId = boardId;
+
+  const urlSlug = slugify(title, { lower: true });
+  dispatch(push)(`/b/${boardId}/${urlSlug}`);
 }
 
-function BoardAdder({ history }: Props) {
+function BoardAdder() {
   const user = watch(state.user);
   const userId = user ? user._id : "guest";
   const [localState, setLocalState] = React.useState({
     isOpen: false,
-    title: ""
+    title: "",
   });
   const { isOpen, title } = localState;
 
@@ -45,8 +44,6 @@ function BoardAdder({ history }: Props) {
     }
     const boardId = shortid.generate();
     dispatch(addBoard)(boardId, userId, title);
-    const urlSlug = slugify(title, { lower: true });
-    history.push(`/b/${boardId}/${urlSlug}`);
     setLocalState({ isOpen: false, title: "" });
   };
 
@@ -83,4 +80,4 @@ function BoardAdder({ history }: Props) {
   );
 }
 
-export default withRouter(BoardAdder);
+export default BoardAdder;

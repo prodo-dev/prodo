@@ -1,29 +1,21 @@
+import { matchRoute, push } from "@prodo/route";
 import * as React from "react";
-import { withRouter } from "react-router-dom";
-import { Button, Wrapper, Menu, MenuItem } from "react-aria-menubutton";
+import { Button, Menu, MenuItem, Wrapper } from "react-aria-menubutton";
 // @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
+import { dispatch, route, state, watch } from "../../model";
 import "./BoardDeleter.scss";
-import { state, dispatch } from "../../model";
-
-type Props = {
-  match: {
-    params: {
-      boardId: string;
-    };
-  };
-  history: { push: Function };
-};
 
 function deleteBoard(boardId) {
   delete state.boardsById[boardId];
+  dispatch(push)("/");
 }
 
-function BoardDeleter({ match, history }: Props) {
+function BoardDeleter() {
   const handleSelection = () => {
-    const { boardId } = match.params;
+    const path = watch(route.path);
+    const { boardId } = matchRoute(path, "/b/:boardId");
     dispatch(deleteBoard)(boardId);
-    history.push("/");
   };
   return (
     <Wrapper className="board-deleter-wrapper" onSelection={handleSelection}>
@@ -41,4 +33,4 @@ function BoardDeleter({ match, history }: Props) {
   );
 }
 
-export default withRouter(BoardDeleter);
+export default BoardDeleter;

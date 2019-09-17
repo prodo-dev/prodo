@@ -10,11 +10,13 @@
     "lint": "set -ex; tsc --build;"
   },
   "dependencies": {
-    "@prodo/core": "^0.0.1",
-    "@prodo/effect": "^0.0.1",
+    "@prodo/core": "^0.0.5",
+    "@prodo/effect": "^0.0.5",
     "@prodo/logger": "^0.0.5",
+    "@prodo/route": "^0.0.5",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
+    "history": "^4.10.1",
     "marked": "^0.3.19",
     "react": "^16.8.6",
     "react-aria-menubutton": "^6.1.0",
@@ -26,7 +28,6 @@
     "react-icons": "^2.2.7",
     "react-modal": "^3.4.4",
     "react-onclickoutside": "^6.7.1",
-    "react-router-dom": "^5.0.1",
     "react-textarea-autosize": "^6.1.0",
     "shortid": "^2.2.8",
     "slugify": "^1.3.0"
@@ -46,7 +47,6 @@
     "@types/react-beautiful-dnd": "^11.0.3",
     "@types/react-dom": "^16.8.5",
     "@types/react-icons": "^2.2.7",
-    "@types/react-router-dom": "^4.3.5",
     "@types/react-textarea-autosize": "^4.3.4",
     "@types/shortid": "^0.0.29",
     "@types/testing-library__react": "^9.1.1",

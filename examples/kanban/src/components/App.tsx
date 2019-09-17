@@ -1,10 +1,10 @@
+import { Redirect, Route, Switch } from "@prodo/route";
 import * as React from "react";
-import { Route, Redirect, Switch, withRouter } from "react-router-dom";
-import Home from "./Home/Home";
-import BoardContainer from "./Board/BoardContainer";
-import LandingPage from "./LandingPage/LandingPage";
+import { state, watch } from "../model";
 import "./App.scss";
-import { watch, state } from "../model";
+import BoardContainer from "./Board/BoardContainer";
+import Home from "./Home/Home";
+import LandingPage from "./LandingPage/LandingPage";
 
 const App = ({}) => {
   const user = watch(state.user);
@@ -30,4 +30,4 @@ const App = ({}) => {
 
 // Use withRouter to prevent strange glitch where other components
 // lower down in the component tree wouldn't update from URL changes
-export default withRouter(App);
+export default App;
