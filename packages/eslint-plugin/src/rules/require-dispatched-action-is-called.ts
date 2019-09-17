@@ -1,11 +1,11 @@
 import * as ts from "@typescript-eslint/eslint-plugin";
-import * as tsPluginUtil from "@typescript-eslint/eslint-plugin/dist/util";
 import {
   ParserServices,
   TSESTree,
 } from "@typescript-eslint/experimental-utils";
 import { TSNode } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
+import { getParserServices } from "../utils/getParserServices";
 import { identifierIsImported } from "../utils/matchIdentifierToImport";
 import { nameImportedFromModel } from "../utils/nameIsImportedFromModel";
 
@@ -26,9 +26,7 @@ const rule: TSRuleModule = {
     let importsDispatchFromModel: boolean = false;
     let dispatchImportNode: ts.ImportSpecifier;
     let modelImportNode: ts.ImportNamespaceSpecifier;
-    const parserServices: ParserServices = tsPluginUtil.getParserServices(
-      context,
-    );
+    const parserServices: ParserServices = getParserServices(context);
 
     return {
       ImportDeclaration: (node: TSESTree.ImportDeclaration): void => {

@@ -1,10 +1,10 @@
-import * as tsPluginUtil from "@typescript-eslint/eslint-plugin/dist/util";
 import {
   ParserServices,
   TSESTree,
 } from "@typescript-eslint/experimental-utils";
 import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
+import { getParserServices } from "../utils/getParserServices";
 import { identifierIsImported } from "../utils/matchIdentifierToImport";
 import { nameImportedFromModel } from "../utils/nameIsImportedFromModel";
 
@@ -24,13 +24,7 @@ const rule: TSRuleModule = {
     type: "problem",
   },
   create(context: TSRuleContext) {
-    const parserServices: ParserServices = tsPluginUtil.getParserServices(
-      context,
-    );
-    if (!parserServices.program) {
-      const filePath = context.parserOptions.filePath;
-      throw Error(`Couldn't parse ${filePath}.`);
-    }
+    const parserServices: ParserServices = getParserServices(context);
     let importsStateFromModel: boolean = false;
     let stateImportNode: TSESTree.ImportSpecifier | undefined;
     let modelImportNode: TSESTree.ImportNamespaceSpecifier | undefined;
