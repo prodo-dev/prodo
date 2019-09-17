@@ -1,13 +1,22 @@
 import * as React from "react";
-import Layout from "../components/Layout";
+import DocsLayout from "../components/DocsLayout";
 import SEO from "../components/SEO";
+import Link from "../components/Link";
 
 const NotFoundPage = () => (
-  <Layout>
-    <SEO title="404: Not Found" />
-    <h1>Not Found</h1>
-    <p>You just hit a route that doesn&#39;t exist... the sadness.</p>
-  </Layout>
+  <DocsLayout>
+    <SEO title="404 - Page not found" />
+    <h1>Page not found</h1>
+    <p>Maybe you were looking for one of these pages?</p>
+    <ul>
+      <li>
+        <Link to="/introduction/getting-started">Getting started</Link>{" "}
+      </li>
+      <li>
+        <Link to="/api-reference">API reference</Link>{" "}
+      </li>
+    </ul>
+  </DocsLayout>
 );
 
 export default NotFoundPage;
