@@ -10,9 +10,8 @@
     "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
     "build:babel:watch": "yarn build:babel --watch",
-    "build:monaco": "./build-monaco.sh",
     "css": "cp src/*.css lib/ && cp src/*.css transpiled/",
-    "build": "set -ex; yarn build:monaco; yarn build:code; yarn build:babel"
+    "build": "set -ex; yarn build:code; yarn build:babel"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
@@ -23,11 +22,6 @@
     "color": "^3.1.2",
     "fast-stable-stringify": "^1.0.0",
     "lodash": "^4.17.15",
-    "monaco": "^1.201704190613.0",
-    "monaco-editor": "^0.17.0",
-    "monaco-editor-textmate": "^2.1.1",
-    "monaco-textmate": "^3.0.0",
-    "onigasm": "^2.2.2",
     "path-browserify": "^1.0.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",

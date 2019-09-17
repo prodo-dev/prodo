@@ -11,15 +11,9 @@ import {
   value as valueStyle,
 } from "react-editable-json-tree/dist/utils/styles";
 import styled from "styled-components";
+import { jsonColors } from "../../styles";
 
 export const StateTreeIndentWidth = "15.6px";
-
-export const jsonColors = {
-  jsonName: "#98c379",
-  jsonString: "#ba79c3",
-  jsonNumber: "#d19a66",
-  jsonBoolean: "#56b6c2",
-};
 
 export interface Props {
   value: any;

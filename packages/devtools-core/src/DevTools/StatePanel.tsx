@@ -1,11 +1,9 @@
 import * as React from "react";
 import { state, watch } from "../model";
 import { sendMessage } from "../utils/communication";
-import EditorSection from "./components/EditorSection";
+import JsonTree from "./components/JsonTree";
 
 export const StatePanel = () => {
-  const stateJsonFile = "/state.json";
-
   const onDeltaStateUpdate = ({
     key,
     keyPath,
@@ -24,15 +22,10 @@ export const StatePanel = () => {
   };
 
   return (
-    <EditorSection
-      data={watch(state.app.state)}
-      jsonFile={stateJsonFile}
+    <JsonTree
+      value={watch(state.app.state)}
       onDeltaUpdate={onDeltaStateUpdate}
-      onFullUpdate={({ newValue }: { newValue: any }) =>
-        sendMessage({ type: "setState", contents: { newValue } })
-      }
-      liveUpdate
-      disabled={false}
+      readOnly={false}
     />
   );
 };
