@@ -40,7 +40,7 @@ function CardModal({
   const [isTextareaFocused, setTextareaFocused] = React.useState(true);
 
   if (typeof document !== "undefined") {
-    Modal.setAppElement("#app");
+    Modal.setAppElement("#modal");
   }
 
   const handleKeyDown = (event: any) => {

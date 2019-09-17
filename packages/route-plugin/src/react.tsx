@@ -88,7 +88,7 @@ const Anchor = ({ onClick, navigate, ...rest }: any) => (
       if (
         !e.defaultPrevented &&
         e.button === 0 &&
-        (rest.target || rest.target === "_self") &&
+        (!rest.target || rest.target === "_self") &&
         !e.metaKey &&
         !e.altKey &&
         !e.ctrlKey &&

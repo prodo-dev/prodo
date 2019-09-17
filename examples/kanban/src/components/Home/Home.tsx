@@ -24,6 +24,7 @@ function Home() {
               <Link
                 key={board._id}
                 className={classnames("board-link", board.color)}
+                data-testid={`button-${board.title}`}
                 to={`/b/${board._id}/${slugify(board.title, {
                   lower: true,
                 })}`}

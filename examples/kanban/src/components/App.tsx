@@ -6,7 +6,7 @@ import BoardContainer from "./Board/BoardContainer";
 import Home from "./Home/Home";
 import LandingPage from "./LandingPage/LandingPage";
 
-const App = ({}) => {
+const AppInner = ({}) => {
   const user = watch(state.user);
   const isGuest = watch(state.isGuest);
   // Serve different pages depending on if user is logged in or not
@@ -30,4 +30,9 @@ const App = ({}) => {
 
 // Use withRouter to prevent strange glitch where other components
 // lower down in the component tree wouldn't update from URL changes
-export default App;
+export default () => (
+  <>
+    <AppInner />
+    <div id="modal" />
+  </>
+);
