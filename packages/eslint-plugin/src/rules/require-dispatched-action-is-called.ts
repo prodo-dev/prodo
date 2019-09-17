@@ -4,9 +4,10 @@ import {
   ParserServices,
   TSESTree,
 } from "@typescript-eslint/experimental-utils";
-import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
+import { TSNode } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
-import { matchModel } from "../utils/matchModel";
+import { identifierIsImported } from "../utils/matchIdentifierToImport";
+import { nameImportedFromModel } from "../utils/nameIsImportedFromModel";
 
 const rule: TSRuleModule = {
   meta: {
@@ -23,50 +24,60 @@ const rule: TSRuleModule = {
 
   create(context: TSRuleContext) {
     let importsDispatchFromModel: boolean = false;
-    let dispatchImportSymbol: ts.Symbol;
+    let dispatchImportNode: ts.ImportSpecifier;
+    let modelImportNode: ts.ImportNamespaceSpecifier;
     const parserServices: ParserServices = tsPluginUtil.getParserServices(
       context,
     );
 
-    const checker = parserServices.program!.getTypeChecker();
     return {
       ImportDeclaration: (node: TSESTree.ImportDeclaration): void => {
-        const specifiers = node.specifiers;
-        if (node.source.type === AST_NODE_TYPES.Literal) {
-          if (matchModel(node.source.value as string)) {
-            specifiers.forEach(specifier => {
-              if (specifier.type === AST_NODE_TYPES.ImportSpecifier) {
-                const specifierTsNode = parserServices.esTreeNodeToTSNodeMap!.get<
-                  TSNode
-                >(specifier);
-                if (specifierTsNode.getFullText() === "dispatch") {
-                  importsDispatchFromModel = true;
-                  dispatchImportSymbol = (specifierTsNode as any).symbol;
-                }
-              }
-            });
-          }
-        }
+        const result = nameImportedFromModel(node, parserServices, "dispatch");
+        dispatchImportNode = result.namedImportNode;
+        modelImportNode = result.modelImportNode;
+        importsDispatchFromModel =
+          dispatchImportNode != null || modelImportNode != null;
       },
       CallExpression: (node: TSESTree.CallExpression): void => {
         if (
-          importsDispatchFromModel &&
-          node &&
-          node.callee.type === "Identifier" &&
-          node.callee.name === "dispatch" &&
-          node.parent &&
-          node.parent.type !== "CallExpression"
+          !(
+            importsDispatchFromModel &&
+            node &&
+            node.parent &&
+            node.parent.type !== "CallExpression"
+          )
         ) {
-          const calleeNode = parserServices.esTreeNodeToTSNodeMap!.get<TSNode>(
-            node.callee,
-          );
+          return;
+        }
+        if (
+          node.callee.type === "Identifier" &&
+          node.callee.name === "dispatch"
+        ) {
           if (
-            checker.getSymbolAtLocation(calleeNode) === dispatchImportSymbol
+            dispatchImportNode &&
+            identifierIsImported(
+              node.callee,
+              dispatchImportNode,
+              parserServices,
+            )
           ) {
             context.report({
               node,
               messageId: "mustBeCalled",
               data: { name: (node.callee as TSESTree.Identifier).name },
+            });
+          }
+        } else if (node.callee.type === "MemberExpression") {
+          const propertyTSNode = parserServices.esTreeNodeToTSNodeMap!.get<
+            TSNode
+          >(node.callee.property);
+          if (propertyTSNode.getFullText() === "dispatch") {
+            context.report({
+              node,
+              messageId: "mustBeCalled",
+              data: {
+                name: (node.callee.property as TSESTree.Identifier).name,
+              },
             });
           }
         }

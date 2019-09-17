@@ -1,4 +1,3 @@
-import * as ts from "@typescript-eslint/eslint-plugin";
 import * as tsPluginUtil from "@typescript-eslint/eslint-plugin/dist/util";
 import {
   ParserServices,
@@ -6,7 +5,8 @@ import {
 } from "@typescript-eslint/experimental-utils";
 import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
-import { matchModel } from "../utils/matchModel";
+import { identifierIsImported } from "../utils/matchIdentifierToImport";
+import { nameImportedFromModel } from "../utils/nameIsImportedFromModel";
 
 const rule: TSRuleModule = {
   meta: {
@@ -27,59 +27,43 @@ const rule: TSRuleModule = {
     const parserServices: ParserServices = tsPluginUtil.getParserServices(
       context,
     );
-    const checker = parserServices.program!.getTypeChecker();
+    if (!parserServices.program) {
+      const filePath = context.parserOptions.filePath;
+      throw Error(`Couldn't parse ${filePath}.`);
+    }
     let importsStateFromModel: boolean = false;
-    let stateImportSymbol: ts.Symbol;
-    const insideFunction: number[] = [];
+    let stateImportNode: TSESTree.ImportSpecifier | undefined;
+    let modelImportNode: TSESTree.ImportNamespaceSpecifier | undefined;
+    let insideFunctionStackDepth = 0;
     let insideImportDeclaration: boolean = false;
 
     return {
-      FunctionDeclaration(node: TSESTree.FunctionDeclaration) {
-        const functionTsNode = parserServices.esTreeNodeToTSNodeMap!.get<
-          TSNode
-        >(node);
-        insideFunction.push(functionTsNode.pos);
+      FunctionDeclaration() {
+        insideFunctionStackDepth++;
       },
-      FunctionExpression(node: TSESTree.FunctionExpression) {
-        const functionTsNode = parserServices.esTreeNodeToTSNodeMap!.get<
-          TSNode
-        >(node);
-        insideFunction.push(functionTsNode.pos);
+      FunctionExpression() {
+        insideFunctionStackDepth++;
       },
-      ArrowFunctionExpression(node: TSESTree.ArrowFunctionExpression) {
-        const functionTsNode = parserServices.esTreeNodeToTSNodeMap!.get<
-          TSNode
-        >(node);
-        insideFunction.push(functionTsNode.pos);
+      ArrowFunctionExpression() {
+        insideFunctionStackDepth++;
       },
       "FunctionDeclaration:exit"() {
-        insideFunction.pop();
+        insideFunctionStackDepth--;
       },
       "FunctionExpression:exit"() {
-        insideFunction.pop();
+        insideFunctionStackDepth--;
       },
       "ArrowFunctionExpression:exit"() {
-        insideFunction.pop();
+        insideFunctionStackDepth--;
       },
 
       ImportDeclaration(node: TSESTree.ImportDeclaration): void {
         insideImportDeclaration = true;
-        const specifiers = node.specifiers;
-        if (node.source.type === AST_NODE_TYPES.Literal) {
-          if (matchModel(node.source.value as string)) {
-            specifiers.forEach(specifier => {
-              if (specifier.type === AST_NODE_TYPES.ImportSpecifier) {
-                const specifierTsNode = parserServices.esTreeNodeToTSNodeMap!.get<
-                  TSNode
-                >(specifier);
-                if (specifierTsNode.getFullText() === "state") {
-                  importsStateFromModel = true;
-                  stateImportSymbol = (specifierTsNode as any).symbol;
-                }
-              }
-            });
-          }
-        }
+        const result = nameImportedFromModel(node, parserServices, "state");
+        stateImportNode = result.namedImportNode;
+        modelImportNode = result.modelImportNode;
+        importsStateFromModel =
+          stateImportNode != null || modelImportNode != null;
       },
       "ImportDeclaration:exit"() {
         insideImportDeclaration = false;
@@ -88,21 +72,42 @@ const rule: TSRuleModule = {
       Identifier(node: TSESTree.Identifier): void {
         if (
           !importsStateFromModel ||
-          insideFunction.length !== 0 ||
+          insideFunctionStackDepth !== 0 ||
           insideImportDeclaration
         ) {
           return;
         }
-        const identifierTsNode = parserServices.esTreeNodeToTSNodeMap!.get<
-          TSNode
-        >(node);
-        const symbol = checker.getSymbolAtLocation(identifierTsNode);
-        if (symbol && symbol === stateImportSymbol) {
+        if (
+          stateImportNode &&
+          identifierIsImported(node, stateImportNode, parserServices)
+        ) {
           context.report({
             node,
             messageId: "accessingState",
             data: { name: node.name },
           });
+        } else if (
+          modelImportNode &&
+          identifierIsImported(node, modelImportNode, parserServices)
+        ) {
+          const parentNode = node.parent;
+          if (
+            parentNode &&
+            parentNode.type === AST_NODE_TYPES.MemberExpression
+          ) {
+            const propertyTSNode = parserServices.esTreeNodeToTSNodeMap!.get<
+              TSNode
+            >(parentNode.property);
+            if (propertyTSNode.getText() === "state" && propertyTSNode) {
+              context.report({
+                node: parentNode.property,
+                messageId: "accessingState",
+                data: {
+                  name: (parentNode.property as TSESTree.Identifier).name,
+                },
+              });
+            }
+          }
         }
       },
     };

@@ -22,6 +22,28 @@ ruleTester.run("no-state-access", rule, {
       filename: defaultTsFile,
     },
     {
+      code: `import {state} from './model';
+      const foo = (state)=>{return state}`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import {state} from './model';
+      const state = 1;
+      state;`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import * as model from './model';
+      const state = 1;
+      state;`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import * as model from './model';
+      model.dispatch(foo)();`,
+      filename: defaultTsFile,
+    },
+    {
       code: `import {state, foo} from './model'; 
         const x = 1;
         foo(x); 
@@ -33,10 +55,7 @@ ruleTester.run("no-state-access", rule, {
             catch (e){
                 return param;
             }
-            const foo = ()=>{return state}
-            return foo()
             }; 
-
         function foo(state){return state}`,
       filename: defaultTsFile,
     },
@@ -44,14 +63,36 @@ ruleTester.run("no-state-access", rule, {
   invalid: [
     {
       code: `import {state, foo} from './model'; 
-      const a = state;
+      const a = state;`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
+    {
+      code: `import {state, foo} from './model'; 
       state.a = a;`,
-      errors: [{ messageId }, { messageId }],
+      errors: [{ messageId }],
       filename: defaultTsFile,
     },
     {
       code: `import {state, foo} from './model';
       console.log(state)`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
+    {
+      code: `import * as model from './model';
+      model.state;`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
+    {
+      code: `import {state, foo} from './model';
+      try{
+        foo(state)
+      }
+      catch (e){
+        console.log(e)
+      }`,
       errors: [{ messageId }],
       filename: defaultTsFile,
     },

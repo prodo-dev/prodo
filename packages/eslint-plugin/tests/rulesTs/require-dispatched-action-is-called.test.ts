@@ -21,6 +21,17 @@ ruleTester.run("require-dispatched-action-is-called", rule, {
       filename: defaultTsFile,
     },
     {
+      code: `import * as model from "./model";
+      dispatch(foo);`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import { dispatch } from "./model";
+      const dispatch = ()=>{};
+      dispatch(foo);`,
+      filename: defaultTsFile,
+    },
+    {
       code: `import { dispatch } from "./model";
       const myDispatchToProps = (dispatch) => ({
         foo: () => dispatch(foo),
@@ -49,6 +60,12 @@ ruleTester.run("require-dispatched-action-is-called", rule, {
     },
     {
       code: `import {dispatch} from './model.ctx.js'; dispatch(foo)[bar];`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
+    {
+      code: `import * as model from "./model";
+      model.dispatch(foo);`,
       errors: [{ messageId }],
       filename: defaultTsFile,
     },
