@@ -11,9 +11,7 @@ import {
   value as valueStyle,
 } from "react-editable-json-tree/dist/utils/styles";
 import styled from "styled-components";
-import { jsonColors } from "../../styles";
-
-export const StateTreeIndentWidth = "15.6px";
+import { jsonColors, StateTreeIndentWidth } from "../../styles";
 
 export interface Props {
   value: any;

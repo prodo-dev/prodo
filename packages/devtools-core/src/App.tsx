@@ -1,6 +1,7 @@
 import * as React from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { DevTools } from "./DevTools";
+import darkTheme from "./styles/theme";
 import UserAppContainer from "./UserAppContainer";
 
 const Layout = styled.div`
@@ -15,10 +16,12 @@ interface Props {
 }
 
 export default (props: Props) => (
-  <Layout>
-    {!props.skipUserApp && (
-      <UserAppContainer url={props.url}>{props.children}</UserAppContainer>
-    )}
-    <DevTools />
-  </Layout>
+  <ThemeProvider theme={darkTheme}>
+    <Layout>
+      {!props.skipUserApp && (
+        <UserAppContainer url={props.url}>{props.children}</UserAppContainer>
+      )}
+      <DevTools />
+    </Layout>
+  </ThemeProvider>
 );

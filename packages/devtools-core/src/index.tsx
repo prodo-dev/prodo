@@ -4,7 +4,7 @@ import App from "./App";
 import { model } from "./model";
 import { initState } from "./store";
 
-import "./styles.css";
+import "./styles/index.css";
 
 export * from "./DevTools";
 

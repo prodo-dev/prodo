@@ -2,6 +2,7 @@ import * as React from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import styled from "styled-components";
 import { dispatch } from "../model";
+import { HeaderHeight, paddings, PanelWidth } from "../styles";
 import { Panel } from "../types";
 import { eventListener } from "../utils/communication";
 import { ActionLogPanel } from "./ActionLogPanel";
@@ -14,16 +15,14 @@ const panels: { [key in Panel]: React.ReactElement } = {
 
 const StyledDevtools = styled.div`
   min-height: 100vh;
-  width: 500px;
+  width: ${PanelWidth};
 
   display: flex;
   flex-direction: column;
 
-  background-color: #282c34;
-  color: white;
+  background-color: ${props => props.theme.colors.bg};
+  color: ${props => props.theme.colors.fg};
 `;
-
-const HeaderHeight = "35px";
 
 const Tabs = styled.div`
   height: ${HeaderHeight};
@@ -31,16 +30,16 @@ const Tabs = styled.div`
   display: flex;
   justify-content: space-around;
 
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid ${props => props.theme.colors.fg};
 `;
 
 const Tab = styled.div<{ isSelected: boolean }>`
-  padding: 0.5rem;
+  padding: ${paddings.small};
   ${props => props.isSelected && `font-weight: bold`};
 `;
 
 const StyledPanel = styled.div`
-  padding: 1rem;
+  padding: ${paddings.medium};
 `;
 
 const StyledScroll = styled(ScrollToBottom)`

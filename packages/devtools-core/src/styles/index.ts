@@ -1,4 +1,6 @@
-export const HeaderSize = "45px";
+export const PanelWidth = "500px";
+export const HeaderHeight = "35px";
+export const StateTreeIndentWidth = "15.6px";
 
 export const paddings = {
   none: "0",

@@ -7,7 +7,7 @@ import { eventListener } from "../utils/communication";
 const StyledIFrame = styled.iframe`
   flex-grow: 1;
 
-  min-height: calc(100vh - 2rem);
+  min-height: 100vh;
   height: 100%;
 
   min-width: 50%;
