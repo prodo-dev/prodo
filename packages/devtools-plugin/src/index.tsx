@@ -1,7 +1,7 @@
 import { ProdoPlugin } from "@prodo/core";
 import { original } from "immer";
 
-export { default as DevTools } from "@prodo/devtools-core";
+import DevTools from "@prodo/devtools-core";
 
 type Destination = "devtools" | "app";
 type MessageType = "completedEvent" | "state";
@@ -28,6 +28,7 @@ const init = (_config: DevToolsConfig, universe: any) => {
 const devtoolsPlugin: ProdoPlugin<DevToolsConfig, {}, {}, {}> = {
   name: "devtools",
   init,
+  Provider: DevTools,
   onCompletedEvent: e => {
     const message: Message = {
       destination: "devtools",

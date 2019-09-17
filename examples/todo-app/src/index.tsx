@@ -1,4 +1,3 @@
-import { DevTools } from "@prodo/devtools-plugin";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
@@ -11,10 +10,8 @@ import "@babel/polyfill";
 
 const { Provider } = model.createStore({ initState });
 ReactDOM.render(
-  <DevTools>
-    <Provider>
-      <App />
-    </Provider>
-  </DevTools>,
+  <Provider>
+    <App />
+  </Provider>,
   document.getElementById("root"),
 );
