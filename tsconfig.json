@@ -22,8 +22,6 @@
     { "path": "packages/route-plugin" },
     { "path": "packages/stream-plugin" },
     { "path": "packages/devtools-core" },
-    { "path": "packages/devtools-plugin" },
-    { "path": "packages/devtools-server" },
-    { "path": "packages/devtools-extension" }
+    { "path": "packages/devtools-plugin" }
   ]
 }
