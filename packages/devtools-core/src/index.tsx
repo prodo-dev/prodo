@@ -9,7 +9,7 @@ import "./styles/index.css";
 export * from "./App/DevTools";
 export * from "./types";
 
-const store = model.createStore({ initState, logger: true });
+const store = model.createStore({ initState });
 const { Provider } = store;
 
 interface Props {
@@ -21,6 +21,7 @@ const DevToolsApp = (props: Props) => (
   <Provider>
     <App
       skipUserApp={props.skipUserApp}
+      // The below is used when devtools are not used as a wrapper component
       url={!props.children ? "http://localhost:1234" : undefined}
     >
       {props.children}

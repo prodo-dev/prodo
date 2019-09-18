@@ -2,6 +2,7 @@ import { Action } from ".";
 
 export type Destination = "devtools" | "app";
 
+// The API isn't fully finalized yet, so there are generic App- and DevMessageType options
 export type DevMessageType = "completedEvent" | "state";
 export type DevMessage =
   | {
@@ -17,6 +18,11 @@ export type DevMessage =
       contents: {
         state: any;
       };
+    }
+  | {
+      destination: "devtools";
+      type: DevMessageType;
+      contents?: any;
     };
 
 export type AppMessageType = "updateState";

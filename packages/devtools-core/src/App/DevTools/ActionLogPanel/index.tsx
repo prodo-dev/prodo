@@ -4,7 +4,7 @@ import { Action } from "../../../types";
 import { ActionLogRow } from "./ActionLogRow";
 
 export const ActionLogPanel = () => {
-  const actions = state ? watch(state.app.actionLog) : [];
+  const actions = watch(state.app.actionLog);
 
   return (
     <div>

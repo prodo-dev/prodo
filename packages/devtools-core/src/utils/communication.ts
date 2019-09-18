@@ -2,11 +2,11 @@ import { Dispatch } from "@prodo/core/lib/types";
 import { state } from "../model";
 import { Action, AppMessage, DevMessage } from "../types";
 
-const recordState = (newState: any) => {
+export const recordState = (newState: any) => {
   state.app.state = newState;
 };
 
-const recordAction = (action: Action) => {
+export const recordAction = (action: Action) => {
   state.app.actionLog.push(action);
 };
 

@@ -10,9 +10,11 @@
     "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
     "css": "cp src/styles/*.css transpiled/styles/",
-    "build": "set -ex; yarn build:code; yarn build:babel; yarn css"
+    "build": "set -ex; yarn build:code; yarn build:babel; yarn css",
+    "test": "jest"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
@@ -31,9 +33,11 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.6.0",
     "@prodo/babel-plugin": "^0.0.3",
+    "@testing-library/react": "^9.1.3",
     "@types/node": "^12.7.2",
     "@types/react": "^16.8.25",
     "@types/react-dom": "^16.8.5",
+    "@types/testing-library__react": "^9.1.1",
     "parcel-bundler": "^1.12.3",
     "typescript": "^3.6.3"
   }
