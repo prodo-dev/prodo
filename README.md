@@ -1,28 +1,27 @@
-<img src="https://user-images.githubusercontent.com/3044853/65060781-6d032d00-d970-11e9-9bb2-44c1811f80b5.png" height="100px" align="left"/>
+<img src="https://user-images.githubusercontent.com/3044853/65060781-6d032d00-d970-11e9-9bb2-44c1811f80b5.png" height="90px" align="left"/>
 
 # Prodo
 
-[![CircleCI](https://circleci.com/gh/prodo-ai/prodo.svg?style=svg)](https://circleci.com/gh/prodo-ai/prodo) 
-[![npm version](https://badge.fury.io/js/%40prodo%2Fcore.svg)](https://badge.fury.io/js/%40prodo%2Fcore)
-
 Prodo is a React framework to write performant and scalable web
-apps with as little boilerplate as possible.
+apps with as little boilerplate as possible. View the [Documentation](https://prodo-docs.web.app).
 
-[Documentation](https://prodo-docs.web.app)
+[![CircleCI](https://circleci.com/gh/prodo-ai/prodo.svg?style=svg)](https://circleci.com/gh/prodo-ai/prodo)
+[![npm version](https://img.shields.io/npm/v/%40prodo%2Fcore.svg?style=flat-square&color=brightgreen)](https://www.npmjs.com/package/@prodo/core)
 
 ## Key benefits
 
-- Drastically simplified state management
-- Absolutely minimal boilerplate, especially compared to Redux
-- Blazingly fast re-rendering, similar to MobX
-- First class support for TypeScript
-- Easily testable out of the box
-- Less to learn and shorter ramp up time
-- Powerful plugins for routing, local storage, authentication, database, and more...
+- 🎉 Drastically simplified state management
+- ✨ Absolutely minimal boilerplate, especially compared to Redux
+- ⚡️ Blazingly fast re-rendering, similar to MobX
+- 👯‍♀️ Handles async actions out of the box
+- 🔎 First class support for TypeScript
+- ✅ Easily testable
+- 🚀 Less to learn and shorter ramp up time
+- 💪 Powerful plugins for routing, local storage, authentication, database, and more...
 
 ## Show me the code
 
-Define your model with types:
+Define your model:
 
 ```tsx
 // src/model.ts
@@ -68,35 +67,40 @@ ReactDOM.render(
 );
 ```
 
+As you can see in the above example, the state type was used once and
+everything else is automatically inferred.
+
 ## Examples
 
-There are many example apps that use prodo in `examples/`. You can run them by
-navigating to the repo and running:
+There are many example apps that use Prodo in `examples/`. We recommend looking at
 
-``` shell
-yarn && yarn start
+- Small to-do app example: [`examples/todo-app`](/examples/todo-app)
+- Larger kanban app example: [`examples/kanban`](/examples/kanban)
+
+### Running an example
+
+Navigate to the example directory. For example:
+
+```shell
+cd examples/todo-app
 ```
 
-Open [localhost:1234](http://localhost:1234).
+Install dependencies
 
-To typecheck and lint the example run `yarn lint`. Some of the examples also
-have tests that can be run with `yarn test`.
+```shell
+yarn
+```
 
-## Architecture
+Run development server
 
-This is a [monorepo](https://en.wikipedia.org/wiki/Monorepo). Published packages
-are in `packages/`. Example apps that use the framework are in `examples/`.
+```shell
+yarn start
+```
 
-## Developing
+Navigate to [localhost:1234](http://localhost:1234).
 
-- Checkout this repo.
-- Run `yarn` at the root.
-- Run `yarn build:watch` to build all the TypeScript. Check this console for
-  type errors.
-- Fix linting errors with `yarn lint --fix`.
-- To run a sanity check over everything, run `yarn verify`.
+Some examples have tests. You can run the tests with
 
-## Publishing
-
-[lerna](https://github.com/lerna/lerna) is used to publish all packages at the
-same time. To publish just run `lerna publish`.
+```shell
+yarn test
+```
