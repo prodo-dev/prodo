@@ -4,9 +4,12 @@ import styled from "styled-components";
 import { dispatch } from "../model";
 import { eventListener } from "../utils/communication";
 
-const StyledIFrame = styled.iframe`
+const StyledUserAppContainer = styled.div`
   flex-grow: 1;
+  text-align: center;
+`;
 
+const StyledIFrame = styled.iframe`
   min-height: 100vh;
   height: 100%;
   min-width: 50%;
@@ -44,16 +47,15 @@ const UserAppContainer = (props: Props) => {
 
   const renderFrameContents = () => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
-      const cssLink = document.createElement("link");
-      cssLink.href = "style.css";
-      document.head.childNodes.forEach((link: any) => {
-        if (link.tagName === "LINK" && link.rel === "stylesheet") {
-          cssLink.href = link.href;
+      document.head.childNodes.forEach((link: ChildNode) => {
+        if (
+          (link as any).tagName === "STYLE" &&
+          !(link as any).innerHTML.includes("prodoDevtoolsStyles")
+        ) {
+          const copy = link.cloneNode(true);
+          iFrameRef.current!.contentDocument!.head.appendChild(copy);
         }
       });
-      cssLink.rel = "stylesheet";
-      cssLink.type = "text/css";
-      iFrameRef.current.contentDocument.head.appendChild(cssLink);
 
       return [
         ReactDOM.createPortal(
@@ -66,20 +68,24 @@ const UserAppContainer = (props: Props) => {
   };
 
   return (
-    <div className="userAppContainer" data-testid="userAppContainer">
+    <StyledUserAppContainer
+      className="userAppContainer"
+      data-testid="userAppContainer"
+    >
       {props.url ? (
         <StyledIFrame
           ref={iFrameRef}
           src={props.url}
           className="iframe"
           data-testid="iframe"
+          onLoad={handleLoad}
         />
       ) : (
         <StyledIFrame ref={iFrameRef} className="iframe" data-testid="iframe">
           {renderFrameContents()}
         </StyledIFrame>
       )}
-    </div>
+    </StyledUserAppContainer>
   );
 };
 
