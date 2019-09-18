@@ -139,7 +139,7 @@ import { replace } from "@prodo/route";
 
 dispatch(replace)("/a/b/c");
 // or
-dispatch(replcae)({
+dispatch(replace)({
   path: "/a/b/c",
 });
 ```
