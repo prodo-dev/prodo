@@ -7,7 +7,8 @@ order: 3
 interface Model<InitOptions, Universe, ActionCtx, ViewCtx>;
 ```
 
-Stores all types and plugins use in your app. Created with [`createModel`](./createModel).
+Stores all types and plugins used in your app. Created with
+[`createModel`](./createModel).
 
 **Example**
 
