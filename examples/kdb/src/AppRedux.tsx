@@ -15,12 +15,12 @@ interface State {
 
 interface UpdateQuotes {
   type: "UPDATE_QUOTES";
-  quotes: {[key: string]: Quote};
+  quotes: { [key: string]: Quote };
 }
 
 interface UpdateTrades {
   type: "UPDATE_TRADES";
-  trades: {[key: string]: Trade};
+  trades: { [key: string]: Trade };
 }
 
 type Action = UpdateQuotes | UpdateTrades;
@@ -41,46 +41,64 @@ const reducer = (
       return {
         ...state,
         quotes: action.quotes,
-        quoteHistory: pushValues(historySize)(state.quoteHistory, action.quotes),
+        quoteHistory: pushValues<Quote>(historySize)(
+          state.quoteHistory,
+          action.quotes,
+        ),
       };
     case "UPDATE_TRADES":
       return {
         ...state,
         trades: action.trades,
-        tradeHistory: pushValues(historySize)(state.tradeHistory, action.trades),
+        tradeHistory: pushValues<Trade>(historySize)(
+          state.tradeHistory,
+          action.trades,
+        ),
       };
   }
   return state;
 };
 
-const updateQuote = (quotes: Quote) => ({
+const updateQuotes = (quotes: {[key: string]: Quote}) => ({
   type: "UPDATE_QUOTES",
   quotes,
 });
 
-const updateTrade = (trades: Trade) => ({
+const updateTrades = (trades: {[key: string]: Trade}) => ({
   type: "UPDATE_TRADES",
   trades,
 });
 
-const ConnectedGraph = connect(({ quoteHistory, tradeHistory }, {idx}) => ({
-  quoteHistory: quoteHistory[idx] || [],
-  tradeHistory: tradeHistory[idx] || [],
-}))(Graph);
+const ConnectedGraph = connect(
+  ({ quoteHistory, tradeHistory }: State, { idx }: { idx: string }) => ({
+    quoteHistory: quoteHistory[idx] || [],
+    tradeHistory: tradeHistory[idx] || [],
+  }),
+)(Graph);
 
-const Trades = connect(({ trades }) => ({
-   title: "Trades", data: trades, props: ["sym", "price", "size"]
-}))(Table);
+const Trades = connect(({ trades }: State) => ({
+  title: "Trades",
+  data: trades,
+  props: ["sym", "price", "size"] as (keyof Trade)[],
+}))(Table as any);
 
-const Quotes = connect(({ quotes }) => ({
-   title: "Quotes", data: quotes, props: ["sym", "bid", "ask"]
-}))(Table);
+const Quotes = connect(({ quotes }: State) => ({
+  title: "Quotes",
+  data: quotes,
+  props: ["sym", "bid", "ask"] as (keyof Quote)[],
+}))(Table as any);
 
-const App = ({ updateQuote, updateTrade }) => {
+const App = ({
+  updateQuotes,
+  updateTrades,
+}: {
+  updateQuotes: (quotes: {[key: string]: Quote}) => void;
+  updateTrades: (trades: {[key: string]: Trade}) => void;
+}) => {
   React.useEffect(() => {
     const { quotes, trades } = kdbSocket();
-    quotes.forEach(quote => updateQuote(quote));
-    trades.forEach(trade => updateTrade(trade));
+    quotes.forEach(quotes => updateQuotes(quotes));
+    trades.forEach(trades => updateTrades(trades));
   }, []);
 
   const syms = ["BA.N", "GS.N", "IBM.N", "MSFT.O", "VOD.L"];
@@ -97,12 +115,12 @@ const App = ({ updateQuote, updateTrade }) => {
 
 const ConnectedApp = connect(
   () => ({}),
-  dispatch => ({
-    updateQuote: quote => {
-      dispatch(updateQuote(quote));
+  dispatch  => ({
+    updateQuotes: (quotes: {[key: string]: Quote}) => {
+      dispatch(updateQuotes(quotes));
     },
-    updateTrade: trade => {
-      dispatch(updateTrade(trade));
+    updateTrades: (trades: {[key: string]: Trade}) => {
+      dispatch(updateTrades(trades));
     },
   }),
 )(App);

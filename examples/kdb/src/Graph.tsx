@@ -11,13 +11,7 @@ interface Axes {
   y: Axis;
 }
 
-const QuoteSpots = ({
-  quotes,
-  axes,
-}: {
-  quotes: Quote[];
-  axes: Axes;
-}) => (
+const QuoteSpots = ({ quotes, axes }: { quotes: Quote[]; axes: Axes }) => (
   <>
     {quotes.map(({ time, ask, bid }) => {
       const x = time.getTime() - axes.x.min;
@@ -42,13 +36,7 @@ const QuoteSpots = ({
   </>
 );
 
-const TradeLine = ({
-  trades,
-  axes,
-}: {
-  trades: Trade[];
-  axes: Axes;
-}) => {
+const TradeLine = ({ trades, axes }: { trades: Trade[]; axes: Axes }) => {
   const xs = trades.map(({ time }) => time.getTime() - axes.x.min);
   const ys = trades.map(({ price }) => price - axes.y.min);
 
@@ -76,11 +64,19 @@ const TradeLine = ({
   return <>{lines}</>;
 };
 
-export default ({ quoteHistory, tradeHistory }) => {
+export default ({
+  quoteHistory,
+  tradeHistory,
+}: {
+  quoteHistory: Quote[];
+  tradeHistory: Trade[];
+}) => {
   const yMin = Math.min(...quoteHistory.map(({ bid }) => bid));
   const yMax = Math.max(...quoteHistory.map(({ ask }) => ask));
 
-  const xMin = Math.min(...quoteHistory.map(({ time }) => time.getTime()));
+  const xMin = Math.min(
+    ...quoteHistory.map(({ time }) => time.getTime()),
+  );
   const axes = {
     x: { min: xMin, scale: 0.05 },
     y: { min: yMin, scale: 100 / (yMax - yMin) },

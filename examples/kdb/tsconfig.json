@@ -6,7 +6,8 @@
     "jsx": "react",
     "lib": ["esnext", "dom"],
     "target": "esnext",
-    "module": "esnext"
+    "module": "esnext",
+    "noImplicitAny": true
   },
   "include": ["src"],
   "references": [

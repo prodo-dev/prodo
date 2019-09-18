@@ -72,10 +72,10 @@ export const kdbSocket = (url: string = "ws://localhost:5001") => {
   return { quotes, trades };
 };
 
-export const pushValues = <T extends {}>(size: number) => (
-  acc: { [K in keyof T]: T[K][] },
-  value: T,
-) =>
+export const pushValues = <T>(size: number) => (
+  acc: { [key: string]: T[] },
+  value: { [key: string]: T},
+): { [key: string]: T[] } =>
   Object.fromEntries(
     Object.entries(value).map(([k, v]) => [
       k,
