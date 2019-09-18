@@ -39,9 +39,11 @@ function CardModal({
   const [isColorPickerOpen, setColorPickerOpen] = React.useState(false);
   const [isTextareaFocused, setTextareaFocused] = React.useState(true);
 
-  if (typeof document !== "undefined") {
-    Modal.setAppElement("#modal");
-  }
+  React.useEffect(() => {
+    if (typeof document !== "undefined") {
+      Modal.setAppElement("#modal");
+    }
+  }, []);
 
   const handleKeyDown = (event: any) => {
     if (event.keyCode === 13 && event.shiftKey === false) {
