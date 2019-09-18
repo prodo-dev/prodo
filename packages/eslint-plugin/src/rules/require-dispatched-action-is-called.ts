@@ -60,7 +60,7 @@ const rule: TSRuleModule = {
       }
     };
     return {
-      "CallExpression[parent.type!='CallExpression']": (
+      ":not(CallExpression[callee]) > CallExpression": (
         node: TSESTree.CallExpression,
       ): void => {
         if (
