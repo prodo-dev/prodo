@@ -76,7 +76,7 @@ test("create a new todo", async () => {
 });
 ```
 
-The problem with this is that we do not know what the new todos id will be,
+The problem with this is that we do not know what the new todo's id will be,
 which makes it hard to write a deterministic test. This is where the effect
 plugin comes in.
 
