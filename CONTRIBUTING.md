@@ -53,7 +53,7 @@ To apply suggested linting fixes:
 yarn lint --fix
 ```
 
-Only run tests
+Only run tests:
 
 ```
 yarn test
