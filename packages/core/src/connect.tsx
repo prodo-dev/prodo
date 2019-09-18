@@ -171,7 +171,7 @@ export const connect: Connect<any> = <P extends {}>(
         );
 
       this._createPluginDispatch = createDispatch;
-      this._dispatch = createDispatch(this.name);
+      this._dispatch = createDispatch();
 
       this._renderFunc = (props: any): any => {
         return (func as ((args: any) => (props: any) => any))(this._viewCtx)(
