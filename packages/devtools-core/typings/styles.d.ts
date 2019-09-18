@@ -6,5 +6,6 @@ export interface Theme {
   colors: {
     bg: Color;
     fg: Color;
+    accent: Color;
   };
 }

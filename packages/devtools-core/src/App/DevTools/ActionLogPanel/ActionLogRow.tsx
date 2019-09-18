@@ -8,6 +8,13 @@ const StyledActionLogRow = styled.div`
   padding-bottom: ${paddings.medium};
 `;
 
+const ActionLogRowHeader = styled.span`
+  cursor: pointer;
+  &:hover {
+    color: ${props => props.theme.colors.accent};
+  }
+`;
+
 export const ActionLogRow = ({ action }: { action: Action }) => {
   return (
     <StyledActionLogRow className="actionLogRow" data-testid="actionLogRow">
@@ -16,7 +23,7 @@ export const ActionLogRow = ({ action }: { action: Action }) => {
           className="actionLogRowHeader"
           data-testid="actionLogRowHeader"
         >
-          {action.actionName}
+          <ActionLogRowHeader>{action.actionName}</ActionLogRowHeader>
         </summary>
         <div
           className="actionLogRowContents"

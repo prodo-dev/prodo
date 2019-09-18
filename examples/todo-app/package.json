@@ -14,8 +14,7 @@
     "@prodo/devtools-plugin": "^0.0.6",
     "@prodo/effect": "^0.0.6",
     "react": "^16.8.6",
-    "react-dom": "^16.9.0",
-    "@babel/polyfill": "^7.4.0"
+    "react-dom": "^16.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",

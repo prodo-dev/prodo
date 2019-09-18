@@ -36,11 +36,17 @@ const Tabs = styled.div`
   justify-content: space-around;
 
   border-bottom: 1px solid ${props => props.theme.colors.fg};
+
+  cursor: pointer;
 `;
 
 const Tab = styled.div<{ isSelected: boolean }>`
   padding: ${paddings.small};
   ${props => props.isSelected && `font-weight: bold`};
+
+  &:hover {
+    color: ${props => props.theme.colors.accent};
+  }
 `;
 
 const StyledPanel = styled.div`
