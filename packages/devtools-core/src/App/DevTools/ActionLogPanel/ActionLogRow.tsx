@@ -18,7 +18,12 @@ export const ActionLogRow = ({ action }: { action: Action }) => {
         >
           {action.actionName}
         </summary>
-        <JsonTree value={action} readOnly={true} />
+        <div
+          className="actionLogRowContents"
+          data-testid="actionLogRowContents"
+        >
+          <JsonTree value={action} readOnly={true} />
+        </div>
       </details>
     </StyledActionLogRow>
   );
