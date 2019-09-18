@@ -104,3 +104,13 @@ Some examples have tests. You can run the tests with
 ```shell
 yarn test
 ```
+
+## Contributing
+
+See [CONTRIBUTING](./CONTRIBUTING.md) for information on how to contribute to
+the project.
+
+## Where to go next?
+
+- [Join the private beta!](https://prodo.dev)
+- [Documentation](https://prodo-docs.web.app)
