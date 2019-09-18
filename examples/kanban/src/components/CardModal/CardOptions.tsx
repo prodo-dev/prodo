@@ -1,10 +1,7 @@
 import * as React from "react";
-// @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
-// @ts-ignore
 import MdAlarm from "react-icons/lib/md/access-alarm";
 import Modal from "react-modal";
-// @ts-ignore
 import colorIcon from "../../assets/images/color-icon.png";
 import { dispatch, state } from "../../model";
 import { Card } from "../../types";

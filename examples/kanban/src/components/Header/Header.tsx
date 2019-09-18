@@ -1,12 +1,8 @@
 import { Link } from "@prodo/route";
 import * as React from "react";
-// @ts-ignore
 import FaSignIn from "react-icons/lib/fa/sign-in";
-// @ts-ignore
 import FaSignOut from "react-icons/lib/fa/sign-out";
-// @ts-ignore
 import FaUserSecret from "react-icons/lib/fa/user-secret";
-// @ts-ignore
 import kanbanLogo from "../../assets/images/kanban-logo.svg";
 import { state, watch } from "../../model";
 import "./Header.scss";

@@ -2,9 +2,7 @@ import { matchRoute } from "@prodo/route";
 import classnames from "classnames";
 import * as React from "react";
 import { Button, Menu, MenuItem, Wrapper } from "react-aria-menubutton";
-// @ts-ignore
 import FaCheck from "react-icons/lib/fa/check";
-// @ts-ignore
 import colorIcon from "../../assets/images/color-icon.png";
 import { dispatch, route, state, watch } from "../../model";
 import "./ColorPicker.scss";

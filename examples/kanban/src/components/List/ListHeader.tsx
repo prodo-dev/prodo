@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Button, Menu, MenuItem, Wrapper } from "react-aria-menubutton";
-// @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
 import Textarea from "react-textarea-autosize";
 import "./ListHeader.scss";

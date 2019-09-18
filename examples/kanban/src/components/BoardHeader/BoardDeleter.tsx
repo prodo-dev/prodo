@@ -1,7 +1,6 @@
 import { matchRoute } from "@prodo/route";
 import * as React from "react";
 import { Button, Menu, MenuItem, Wrapper } from "react-aria-menubutton";
-// @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
 import { dispatch, route, state, watch } from "../../model";
 import "./BoardDeleter.scss";

@@ -5,8 +5,7 @@ import App from "./components/App";
 import { Provider, store } from "./store";
 import "./styles.scss";
 
-// @ts-ignore
-window.store = store; // for debugging
+(window as any).store = store; // for debugging
 
 ReactDOM.render(
   <ErrorBoundary>

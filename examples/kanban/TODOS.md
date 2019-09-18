@@ -1,12 +1,3 @@
-Find ways to make typescript happy when importing subfolders or images:
-
-```
-// @ts-ignore
-import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
-// @ts-ignore
-import MdAlarm from "react-icons/lib/md/access-alarm";
-```
-
 Find correct/elegant way to handle refs in functional components:
 
 ```
