@@ -4,5 +4,6 @@
     "@babel/preset-react",
     "@babel/preset-env"
   ],
-  "plugins": ["@prodo/babel-plugin"]
+  "plugins": ["@babel/proposal-class-properties", "@prodo/babel-plugin"],
+  "sourceMaps": true
 }
