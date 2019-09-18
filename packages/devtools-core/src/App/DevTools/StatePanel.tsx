@@ -22,10 +22,12 @@ export const StatePanel = () => {
   };
 
   return (
-    <JsonTree
-      value={watch(state.app.state)}
-      onDeltaUpdate={onDeltaStateUpdate}
-      readOnly={false}
-    />
+    <div className="statePanel" data-testid="statePanel">
+      <JsonTree
+        value={watch(state.app.state)}
+        onDeltaUpdate={onDeltaStateUpdate}
+        readOnly={false}
+      />
+    </div>
   );
 };

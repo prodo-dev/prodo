@@ -58,17 +58,21 @@ export const DevTools = () => {
   const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
 
   return (
-    <StyledDevtools>
-      <Tabs>
+    <StyledDevtools className="devTools" data-testid="devTools">
+      <Tabs className="headerTabs" data-testid="headerTabs">
         <Tab
           isSelected={selectedPanel === "state"}
           onClick={() => setSelectedPanel("state")}
+          className="headerTabState"
+          data-testid="headerTabState"
         >
           State
         </Tab>
         <Tab
           isSelected={selectedPanel === "actionLog"}
           onClick={() => setSelectedPanel("actionLog")}
+          className="headerTabActionLog"
+          data-testid="headerTabActionLog"
         >
           Action Log
         </Tab>

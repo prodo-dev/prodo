@@ -101,19 +101,19 @@ const getStyle: EditableJsonTreeProps["getStyle"] = (
 };
 
 const CancelButton = ({ onClick }: { onClick?: () => any }) => (
-  <ButtonContainer onClick={onClick}>
+  <ButtonContainer onClick={onClick} className="jsonTreeCancelButton">
     <FontAwesomeIcon icon={faBan} size="sm" />
   </ButtonContainer>
 );
 
 const EditButton = ({ onClick }: { onClick?: () => any }) => (
-  <ButtonContainer onClick={onClick}>
+  <ButtonContainer onClick={onClick} className="jsonTreeEditButton">
     <FontAwesomeIcon icon={faSave} size="sm" />
   </ButtonContainer>
 );
 
 const JsonTree = (props: Props) => (
-  <StyledJsonTree>
+  <StyledJsonTree className="jsonTree" data-testid="jsonTree">
     <EditableJsonTree
       data={props.value}
       cancelButtonElement={<CancelButton />}

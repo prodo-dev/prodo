@@ -10,9 +10,14 @@ const StyledActionLogRow = styled.div`
 
 export const ActionLogRow = ({ action }: { action: Action }) => {
   return (
-    <StyledActionLogRow>
+    <StyledActionLogRow className="actionLogRow" data-testid="actionLogRow">
       <details>
-        <summary>{action.actionName}</summary>
+        <summary
+          className="actionLogRowHeader"
+          data-testid="actionLogRowHeader"
+        >
+          {action.actionName}
+        </summary>
         <JsonTree value={action} readOnly={true} />
       </details>
     </StyledActionLogRow>

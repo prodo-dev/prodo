@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
-import { dispatch } from "../../model";
-import { eventListener } from "../../utils/communication";
+import { dispatch } from "../model";
+import { eventListener } from "../utils/communication";
 
 const StyledIFrame = styled.iframe`
   flex-grow: 1;
@@ -66,13 +66,20 @@ const UserAppContainer = (props: Props) => {
   };
 
   return (
-    <>
+    <div className="userAppContainer" data-testid="userAppContainer">
       {props.url ? (
-        <StyledIFrame ref={iFrameRef} src={props.url} />
+        <StyledIFrame
+          ref={iFrameRef}
+          src={props.url}
+          className="iframe"
+          data-testid="iframe"
+        />
       ) : (
-        <StyledIFrame ref={iFrameRef}>{renderFrameContents()}</StyledIFrame>
+        <StyledIFrame ref={iFrameRef} className="iframe" data-testid="iframe">
+          {renderFrameContents()}
+        </StyledIFrame>
       )}
-    </>
+    </div>
   );
 };
 
