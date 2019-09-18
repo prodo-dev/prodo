@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
-    "start": "parcel index.html",
+    "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
     "css": "cp src/styles/*.css transpiled/styles/",
@@ -38,7 +38,18 @@
     "@types/react": "^16.8.25",
     "@types/react-dom": "^16.8.5",
     "@types/testing-library__react": "^9.1.1",
-    "parcel-bundler": "^1.12.3",
-    "typescript": "^3.6.3"
+    "@types/webpack-env": "^1.14.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "fork-ts-checker-webpack-plugin": "^1.5.0",
+    "html-webpack-plugin": "^3.2.0",
+    "sass-loader": "^8.0.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.0.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.6.3",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1"
   }
 }

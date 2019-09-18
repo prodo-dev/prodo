@@ -6,8 +6,6 @@ import { initState } from "./store";
 
 import "./index.scss";
 
-import "@babel/polyfill";
-
 const { Provider } = model.createStore({ initState });
 
 const render = () => {

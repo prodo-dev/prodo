@@ -29,6 +29,14 @@ const DevToolsApp = (props: Props) => (
   </Provider>
 );
 
-ReactDOM.render(<DevToolsApp />, document.getElementById("root"));
+const render = () => {
+  ReactDOM.render(<DevToolsApp />, document.getElementById("root"));
+};
+
+if (module.hot) {
+  module.hot.accept("./App", () => {
+    render();
+  });
+}
 
 export default DevToolsApp;
