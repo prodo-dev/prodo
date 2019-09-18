@@ -1,15 +1,11 @@
+import { Link } from "@prodo/route";
 import * as React from "react";
-import { Link } from "react-router-dom";
-// @ts-ignore
-import FaUserSecret from "react-icons/lib/fa/user-secret";
-// @ts-ignore
-import FaSignOut from "react-icons/lib/fa/sign-out";
-// @ts-ignore
 import FaSignIn from "react-icons/lib/fa/sign-in";
-// @ts-ignore
+import FaSignOut from "react-icons/lib/fa/sign-out";
+import FaUserSecret from "react-icons/lib/fa/user-secret";
 import kanbanLogo from "../../assets/images/kanban-logo.svg";
-import "./Header.scss";
 import { state, watch } from "../../model";
+import "./Header.scss";
 
 function Header() {
   const user = watch(state.user);

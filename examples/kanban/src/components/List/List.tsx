@@ -1,17 +1,17 @@
+import classnames from "classnames";
 import * as React from "react";
 import { Draggable } from "react-beautiful-dnd";
-import classnames from "classnames";
-import ListHeader from "./ListHeader";
-import Cards from "./Cards";
-import CardAdder from "../CardAdder/CardAdder";
-import "./List.scss";
 import { List as _List } from "../../types";
+import CardAdder from "../CardAdder/CardAdder";
+import Cards from "./Cards";
+import "./List.scss";
+import ListHeader from "./ListHeader";
 
-type Props = {
+interface Props {
   boardId: string;
   index: number;
   list: _List;
-};
+}
 
 function List({ boardId, index, list }: Props) {
   return (
@@ -29,7 +29,7 @@ function List({ boardId, index, list }: Props) {
           >
             <div
               className={classnames("list", {
-                "list--drag": snapshot.isDragging
+                "list--drag": snapshot.isDragging,
               })}
             >
               <ListHeader

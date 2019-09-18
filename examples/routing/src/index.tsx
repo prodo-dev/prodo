@@ -14,11 +14,21 @@ const { store, Provider } = model.createStore({
   route: { history },
 });
 
-ReactDOM.render(
-  <Provider>
-    <App />
-  </Provider>,
-  document.getElementById("root"),
-);
+const render = () => {
+  ReactDOM.render(
+    <Provider>
+      <App />
+    </Provider>,
+    document.getElementById("root"),
+  );
+};
+
+if (module.hot) {
+  module.hot.accept("./App", () => {
+    render();
+  });
+}
+
+render();
 
 (window as any).store = store;

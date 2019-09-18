@@ -40,8 +40,9 @@ export type PluginViewCtxFn<InitOptions, Universe, ActionCtx, ViewCtx> = (
   config: InitOptions,
 ) => void;
 
-export type PluginOnCompleteEventFn<CustomEvent> = (
+export type PluginOnCompleteEventFn<InitOptions, CustomEvent> = (
   event: Event & CustomEvent,
+  config: InitOptions,
 ) => void;
 
 export interface ProdoInternals<
@@ -55,7 +56,7 @@ export interface ProdoInternals<
   init?: PluginInitFn<InitOptions, Universe>;
   actionCtx?: PluginActionCtxFn<InitOptions, Universe, ActionCtx, CustomEvent>;
   viewCtx?: PluginViewCtxFn<InitOptions, Universe, ActionCtx, ViewCtx>;
-  onCompleteEvent?: PluginOnCompleteEventFn<CustomEvent>;
+  onCompleteEvent?: PluginOnCompleteEventFn<InitOptions, CustomEvent>;
 }
 
 export type PluginActionCreator<ActionCtx> = <A extends any[]>(
@@ -84,7 +85,7 @@ export interface ProdoPlugin<
     viewCtxFn: PluginViewCtxFn<InitOptions, Universe, ActionCtx, ViewCtx>,
   ) => void;
   onCompleteEvent: (
-    completeEventFn: PluginOnCompleteEventFn<CustomEvent>,
+    completeEventFn: PluginOnCompleteEventFn<InitOptions, CustomEvent>,
   ) => void;
   action: PluginActionCreator<ActionCtx>;
   _internals: ProdoInternals<

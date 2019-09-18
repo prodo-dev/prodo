@@ -1,21 +1,17 @@
-import * as React from "react";
-// @ts-ignore
-import format from "date-fns/format";
-// @ts-ignore
 import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
-// @ts-ignore
-import MdAlarm from "react-icons/lib/md/access-alarm";
-// @ts-ignore
+import format from "date-fns/format";
+import * as React from "react";
 import MdDoneAll from "react-icons/lib/fa/check-square-o";
+import MdAlarm from "react-icons/lib/md/access-alarm";
 import "./CardBadges.scss";
 
-type Props = {
+interface Props {
   date: Date;
   checkboxes: {
     total: number;
     checked: number;
   };
-};
+}
 
 function DueDate({ date }: Partial<Props>) {
   if (!date) {

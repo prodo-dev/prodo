@@ -123,7 +123,7 @@ export const createStore = <State>(
     completeEvent(event, store);
     plugins.forEach(p => {
       if (p._internals.onCompleteEvent) {
-        p._internals.onCompleteEvent(event);
+        p._internals.onCompleteEvent(event, config);
       }
     });
   };

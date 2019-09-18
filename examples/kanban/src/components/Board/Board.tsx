@@ -1,18 +1,18 @@
-import * as React from "react";
-import { Title } from "react-head";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import classnames from "classnames";
+import * as React from "react";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { Title } from "react-head";
+import { dispatch, state, watch } from "../../model";
+import { Board as _Board } from "../../types";
+import BoardHeader from "../BoardHeader/BoardHeader";
+import Header from "../Header/Header";
 import List from "../List/List";
 import ListAdder from "../ListAdder/ListAdder";
-import Header from "../Header/Header";
-import BoardHeader from "../BoardHeader/BoardHeader";
 import "./Board.scss";
-import { Board as _Board } from "../../types";
-import { watch, state, dispatch } from "../../model";
 
-type Props = {
+interface Props {
   boardId: string;
-};
+}
 
 function setCurrentBoard(boardId) {
   state.currentBoardId = boardId;

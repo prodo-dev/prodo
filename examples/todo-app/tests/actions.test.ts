@@ -1,8 +1,6 @@
 import { deleteAll, deleteItem, newTodo, toggle } from "../src/actions";
 import { model } from "../src/model";
 
-import "@babel/polyfill";
-
 describe("actions", () => {
   it("adds a todo", async () => {
     const { store } = model.createStore({
