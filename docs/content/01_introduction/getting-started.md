@@ -20,6 +20,7 @@ You can get started with Prodo by cloning the [template
 project](https://github.com/prodo-ai/prodo-template). This template uses the
 [Parcel](https://parceljs.org/) module bundler.
 
+
 # Basic Example
 
 This section will walk you through the main concepts of Prodo by creating a
@@ -43,7 +44,7 @@ in a file called `src/model.ts`.
 import { createModel } from "@prodo/core";
 
 export interface State {
-  count: number;
+  count: number
 }
 
 export const model = createModel<State>();
@@ -67,7 +68,7 @@ import { state, dispatch } from "./model";
 
 const changeCount = (amount: number) => {
   state.count += amount;
-};
+} 
 ```
 
 This action just changes the count in our state by an amount. This action can
@@ -120,7 +121,7 @@ import { state, dispatch, watch } from "./model";
 
 const changeCount = (amount: number) => {
   state.count += amount;
-};
+} 
 
 const App = () => (
   <div>

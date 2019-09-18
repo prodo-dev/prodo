@@ -21,7 +21,7 @@ You can also extend the model with [plugins](./plugins). You add plugins to
 the model using the `.with` function.
 
 ```ts
-import logger from "@prodo/logger";
+import logger from "@prodo/logger"
 
 // ...
 

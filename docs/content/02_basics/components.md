@@ -8,7 +8,7 @@ properties of a model. A component can be created from a React component
 manually with the `connect` method of a model, or automatically through
 [transpilation](#transpilation).
 
-Additional variables can be provided by [plugins](./plugins).
+Additional variables can be provided by [plugins](./plugins). 
 
 # State
 

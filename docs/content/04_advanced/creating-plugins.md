@@ -51,10 +51,10 @@ A plugin provides the following attributes (only `name` is required):
 - `name`: The name of the plugin
 - `init`: Any setup code that must be run. It typically prepares the [universe](#universe).
 - `prepareActionCtx` and `prepareViewCtx`: Functions to prepare the context
-  passed in to the component or action.
+passed in to the component or action.
 - `onCompletedEvent`: Function that is called with the details of the event when
   it has completed.
-
+  
 ## Universe
 
 An important concept for plugins is the universe. The universe is an object on
@@ -82,18 +82,16 @@ export default myPlugin = <T>(): ProdoPlugin<
   Config,
   Universe<T>,
   ViewCtx<T>,
-  ActionCtx<T>
+  ActionCtx<T>,
 > => {
-  const state = {
-    /* ... */
-  };
+  const state = { /* ... */ };
   return {
     name: "myPlugin",
     init: init(state),
     prepareViewCtx: prepareViewCtx(state),
     prepareActionCtx: prepareActionCtx(state),
   };
-};
+}
 ```
 
 This function is responsible for setting up private state (if required), and
@@ -109,7 +107,7 @@ can be modified directly.
 const init = <T>(config: Config<T>, universe: Universe<T>) => {
   // ...
   universe.local = {};
-};
+}
 ```
 
 ## Prepare Action Context
@@ -123,22 +121,14 @@ For example, the [local plugin](/plugins/local) exposes the `local` property
 which is a proxy into local storage.
 
 ```ts
-const prepareActionCtx = <T>({
-  ctx,
-  universe,
-}: {
-  ctx: ActionCtx<T>;
-  universe: Universe<T>;
-}) => {
+const prepareActionCtx = <T>(
+  {ctx, universe}: {ctx: ActionCtx<T>; universe: Universe<T>}
+) => {
   ctx.local = new Proxy(
     {},
     {
-      get(target, key) {
-        /* ... */
-      },
-      set(target, key, value) {
-        /* ... */
-      },
+      get(target, key) { /* ... */ },
+      set(target, key, value) { /* ... */},
     },
   ) as Partial<T>;
 };
@@ -181,7 +171,7 @@ If a user then in their component has
 ```
 
 their component will be subscribed to path `["local", "a", "b", "c"]` of the
-universe and will automatically update whenever the data at that path changes.
+universe and will automatically update whenever the data at that path changes. 
 
 ### Subscribe
 
@@ -205,7 +195,7 @@ plugin uses `onCompletedEvent` to log the action.
 ```ts
 const onCompletedEvent = event => {
   console.log(event);
-};
+}
 ```
 
 ## Provider
@@ -219,3 +209,4 @@ Components call create and dispatch actions similar to how a user action is
 created and dispatched.
 
 _To Do_
+
