@@ -1,13 +1,11 @@
-import * as ts from "@typescript-eslint/eslint-plugin";
 import {
   ParserServices,
   TSESTree,
 } from "@typescript-eslint/experimental-utils";
-import { TSNode } from "@typescript-eslint/typescript-estree";
+import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
 import { getParserServices } from "../utils/getParserServices";
-import { identifierIsImported } from "../utils/matchIdentifierToImport";
-import { nameImportedFromModel } from "../utils/nameIsImportedFromModel";
+import { identifierIsImportedFromModel } from "../utils/identifierIsImportedFromModel";
 
 const rule: TSRuleModule = {
   meta: {
@@ -23,61 +21,55 @@ const rule: TSRuleModule = {
   },
 
   create(context: TSRuleContext) {
-    let importsDispatchFromModel: boolean = false;
-    let dispatchImportNode: ts.ImportSpecifier;
-    let modelImportNode: ts.ImportNamespaceSpecifier;
     const parserServices: ParserServices = getParserServices(context);
 
-    return {
-      ImportDeclaration: (node: TSESTree.ImportDeclaration): void => {
-        const result = nameImportedFromModel(node, parserServices, "dispatch");
-        dispatchImportNode = result.namedImportNode;
-        modelImportNode = result.modelImportNode;
-        importsDispatchFromModel =
-          dispatchImportNode != null || modelImportNode != null;
-      },
-      CallExpression: (node: TSESTree.CallExpression): void => {
-        if (
-          !(
-            importsDispatchFromModel &&
-            node &&
-            node.parent &&
-            node.parent.type !== "CallExpression"
-          )
-        ) {
-          return;
+    const handleSpecifierImport = (node: TSESTree.Identifier) => {
+      if (node.type === "Identifier") {
+        const importDeclaration = identifierIsImportedFromModel(
+          node,
+          parserServices,
+        );
+        if (importDeclaration != null) {
+          context.report({
+            node,
+            messageId: "mustBeCalled",
+            data: { name: node.name },
+          });
         }
+      }
+    };
+
+    const handleNamespaceImport = (node: TSESTree.MemberExpression) => {
+      const propertyTSNode = parserServices.esTreeNodeToTSNodeMap!.get<TSNode>(
+        node.property,
+      );
+      if (node.object.type === AST_NODE_TYPES.Identifier) {
+        const importDeclaration = identifierIsImportedFromModel(
+          node.object,
+          parserServices,
+        );
+        if (importDeclaration && propertyTSNode.getText() === "dispatch") {
+          context.report({
+            node: node.property,
+            messageId: "mustBeCalled",
+            data: {
+              name: (node.property as TSESTree.Identifier).name,
+            },
+          });
+        }
+      }
+    };
+    return {
+      "CallExpression[parent.type!='CallExpression']": (
+        node: TSESTree.CallExpression,
+      ): void => {
         if (
           node.callee.type === "Identifier" &&
           node.callee.name === "dispatch"
         ) {
-          if (
-            dispatchImportNode &&
-            identifierIsImported(
-              node.callee,
-              dispatchImportNode,
-              parserServices,
-            )
-          ) {
-            context.report({
-              node,
-              messageId: "mustBeCalled",
-              data: { name: (node.callee as TSESTree.Identifier).name },
-            });
-          }
+          handleSpecifierImport(node.callee);
         } else if (node.callee.type === "MemberExpression") {
-          const propertyTSNode = parserServices.esTreeNodeToTSNodeMap!.get<
-            TSNode
-          >(node.callee.property);
-          if (propertyTSNode.getFullText() === "dispatch") {
-            context.report({
-              node,
-              messageId: "mustBeCalled",
-              data: {
-                name: (node.callee.property as TSESTree.Identifier).name,
-              },
-            });
-          }
+          handleNamespaceImport(node.callee);
         }
       },
     };

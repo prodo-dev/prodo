@@ -5,8 +5,7 @@ import {
 import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
 import { getParserServices } from "../utils/getParserServices";
-import { identifierIsImported } from "../utils/matchIdentifierToImport";
-import { nameImportedFromModel } from "../utils/nameIsImportedFromModel";
+import { identifierIsImportedFromModel } from "../utils/identifierIsImportedFromModel";
 
 const rule: TSRuleModule = {
   meta: {
@@ -25,55 +24,16 @@ const rule: TSRuleModule = {
   },
   create(context: TSRuleContext) {
     const parserServices: ParserServices = getParserServices(context);
-    let importsStateFromModel: boolean = false;
-    let stateImportNode: TSESTree.ImportSpecifier | undefined;
-    let modelImportNode: TSESTree.ImportNamespaceSpecifier | undefined;
-    let insideFunctionStackDepth = 0;
-    let insideImportDeclaration: boolean = false;
 
     return {
-      FunctionDeclaration() {
-        insideFunctionStackDepth++;
-      },
-      FunctionExpression() {
-        insideFunctionStackDepth++;
-      },
-      ArrowFunctionExpression() {
-        insideFunctionStackDepth++;
-      },
-      "FunctionDeclaration:exit"() {
-        insideFunctionStackDepth--;
-      },
-      "FunctionExpression:exit"() {
-        insideFunctionStackDepth--;
-      },
-      "ArrowFunctionExpression:exit"() {
-        insideFunctionStackDepth--;
-      },
-
-      ImportDeclaration(node: TSESTree.ImportDeclaration): void {
-        insideImportDeclaration = true;
-        const result = nameImportedFromModel(node, parserServices, "state");
-        stateImportNode = result.namedImportNode;
-        modelImportNode = result.modelImportNode;
-        importsStateFromModel =
-          stateImportNode != null || modelImportNode != null;
-      },
-      "ImportDeclaration:exit"() {
-        insideImportDeclaration = false;
-      },
-
-      Identifier(node: TSESTree.Identifier): void {
+      "Identifier:not(:function Identifier, ImportDeclaration Identifier)"(
+        node: TSESTree.Identifier,
+      ): void {
+        const importNode = identifierIsImportedFromModel(node, parserServices);
         if (
-          !importsStateFromModel ||
-          insideFunctionStackDepth !== 0 ||
-          insideImportDeclaration
-        ) {
-          return;
-        }
-        if (
-          stateImportNode &&
-          identifierIsImported(node, stateImportNode, parserServices)
+          importNode &&
+          importNode.type === AST_NODE_TYPES.ImportSpecifier &&
+          node.name === "state"
         ) {
           context.report({
             node,
@@ -81,8 +41,8 @@ const rule: TSRuleModule = {
             data: { name: node.name },
           });
         } else if (
-          modelImportNode &&
-          identifierIsImported(node, modelImportNode, parserServices)
+          importNode &&
+          importNode.type === AST_NODE_TYPES.ImportNamespaceSpecifier
         ) {
           const parentNode = node.parent;
           if (
