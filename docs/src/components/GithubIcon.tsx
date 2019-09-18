@@ -2,8 +2,9 @@ import * as React from "react";
 import styled from "styled-components";
 
 const StyledGithubIcon = styled.div`
-  max-height: 2.2rem;
+  width: 2.2rem;
   max-width: 2.2rem;
+  max-height: 2.2rem;
 
   fill: white;
 `;
