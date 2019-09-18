@@ -1,62 +1,8 @@
 import { connect } from "@prodo/core";
-import * as pathToRegexp from "path-to-regexp";
 import * as React from "react";
 import * as actions from "./actions";
 import { RouteParams } from "./types";
-import { createParamString } from "./utils";
-
-const cache = {};
-const cacheLimit = 1000;
-let cacheCount = 0;
-
-const compilePattern = (
-  pattern: string,
-  options: pathToRegexp.RegExpOptions,
-) => {
-  const optionKey = `${options.end}.${options.strict}.${options.sensitive}`;
-  const optionCache = cache[optionKey] || (cache[optionKey] = {});
-
-  if (optionCache[pattern]) {
-    return optionCache[pattern];
-  }
-
-  const keys = [];
-  const regex = pathToRegexp(pattern, keys, options);
-  const result = { keys, regex };
-
-  if (cacheCount < cacheLimit) {
-    optionCache[pattern] = result;
-    cacheCount++;
-  }
-
-  return result;
-};
-
-const routeMatches = (
-  path: string,
-  pattern: string,
-  exact: boolean = false,
-) => {
-  const options = { end: exact, strict: false, sensitive: false };
-  const { regex, keys } = compilePattern(pattern, options);
-
-  const match = regex.exec(path);
-  if (match == null) {
-    return null;
-  }
-
-  const [url, ...values] = match;
-  const isExact = url === path;
-
-  if (exact && !isExact) {
-    return null;
-  }
-
-  return keys.reduce(
-    (acc, key, index) => ({ ...acc, [key.name]: values[index] }),
-    {},
-  );
-};
+import { createParamString, matchRoute } from "./utils";
 
 export interface RouteProps {
   path?: string;
@@ -73,7 +19,7 @@ export const Route = connect(
     component,
   }: RouteProps): React.ReactElement | null => {
     const match =
-      path == null ? {} : routeMatches(watch(route.path), path, exact);
+      path == null ? {} : matchRoute(watch(route.path), path, exact);
     if (match != null) {
       if (children && React.Children.count(children) > 0) {
         return <>{children}</>;
@@ -92,7 +38,7 @@ export const Switch = connect(
       if (element == null && React.isValidElement(child)) {
         const path = child.props.path;
         if (path != null) {
-          if (routeMatches(watch(route.path), path, child.props.exact)) {
+          if (matchRoute(watch(route.path), path, child.props.exact)) {
             element = child;
           }
         } else {
@@ -142,7 +88,7 @@ const Anchor = ({ onClick, navigate, ...rest }: any) => (
       if (
         !e.defaultPrevented &&
         e.button === 0 &&
-        (rest.target || rest.target === "_self") &&
+        (!rest.target || rest.target === "_self") &&
         !e.metaKey &&
         !e.altKey &&
         !e.ctrlKey &&

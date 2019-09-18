@@ -136,7 +136,7 @@ export const createStore = <State>(
     completeEvent(event, store);
     plugins.forEach(p => {
       if (p.onCompletedEvent) {
-        p.onCompletedEvent(event);
+        p.onCompletedEvent(event, config);
       }
     });
   };

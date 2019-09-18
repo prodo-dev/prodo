@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import { Store } from "@prodo/core";
 import { Provider } from "@prodo/core/src";
 import { fireEvent, render } from "@testing-library/react";

@@ -1,22 +1,22 @@
 import * as React from "react";
-import Textarea from "react-textarea-autosize";
 import Modal from "react-modal";
+import Textarea from "react-textarea-autosize";
+import { dispatch, state } from "../../model";
+import { Card } from "../../types";
 import CardBadges from "../CardBadges/CardBadges";
-import CardOptions from "./CardOptions";
 import { findCheckboxes } from "../utils";
 import "./CardModal.scss";
-import { Card } from "../../types";
-import { state, dispatch } from "../../model";
+import CardOptions from "./CardOptions";
 
-type Props = {
+interface Props {
   card: Card;
   cardElement: {
-    getBoundingClientRect: Function;
+    getBoundingClientRect: (...args: any[]) => any;
   };
   isOpen: boolean;
-  toggleCardEditor: Function;
+  toggleCardEditor: (...args: any[]) => any;
   listId: string;
-};
+}
 
 function changeCardText(_id: string, text: string) {
   state.cardsById[_id].text = text;
@@ -33,15 +33,17 @@ function CardModal({
   listId,
   cardElement,
   isOpen,
-  toggleCardEditor
+  toggleCardEditor,
 }: Props) {
   const [newText, setNewText] = React.useState(card.text);
   const [isColorPickerOpen, setColorPickerOpen] = React.useState(false);
   const [isTextareaFocused, setTextareaFocused] = React.useState(true);
 
-  if (typeof document !== "undefined") {
-    Modal.setAppElement("#app");
-  }
+  React.useEffect(() => {
+    if (typeof document !== "undefined") {
+      Modal.setAppElement("#modal");
+    }
+  }, []);
 
   const handleKeyDown = (event: any) => {
     if (event.keyCode === 13 && event.shiftKey === false) {
@@ -100,14 +102,14 @@ function CardModal({
     content: {
       top: Math.min(
         boundingRect.top,
-        window.innerHeight - boundingRect.height - 18
+        window.innerHeight - boundingRect.height - 18,
       ),
       left: isCardNearRightBorder ? null : boundingRect.left,
       right: isCardNearRightBorder
         ? window.innerWidth - boundingRect.right
         : null,
-      flexDirection: isCardNearRightBorder ? "row-reverse" : "row"
-    }
+      flexDirection: isCardNearRightBorder ? "row-reverse" : "row",
+    },
   };
 
   // For layouts that are less wide than 550px, let the modal take up the entire width at the top of the screen
@@ -116,8 +118,8 @@ function CardModal({
       flexDirection: "column",
       top: 3,
       left: 3,
-      right: 3
-    }
+      right: 3,
+    },
   };
 
   return (
@@ -140,7 +142,7 @@ function CardModal({
           boxShadow: isTextareaFocused
             ? "0px 0px 3px 2px rgb(0, 180, 255)"
             : null,
-          background: card.color
+          background: card.color,
         }}
       >
         <Textarea
