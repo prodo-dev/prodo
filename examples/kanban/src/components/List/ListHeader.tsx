@@ -1,19 +1,19 @@
 import * as React from "react";
-import Textarea from "react-textarea-autosize";
-import { Button, Wrapper, Menu, MenuItem } from "react-aria-menubutton";
+import { Button, Menu, MenuItem, Wrapper } from "react-aria-menubutton";
 // @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
+import Textarea from "react-textarea-autosize";
 import "./ListHeader.scss";
 
 import { dispatch, state } from "../../model";
 
-type Props = {
+interface Props {
   listTitle: string;
   listId: string;
   boardId: string;
   cards: string[];
   dragHandleProps: any;
-};
+}
 
 function changeListTitle(listId: string, newTitle: string) {
   state.listsById[listId].title = newTitle;
@@ -33,11 +33,11 @@ function ListTitle({
   listId,
   boardId,
   cards,
-  dragHandleProps
+  dragHandleProps,
 }: Props) {
   const [localState, setLocalState] = React.useState({
     isOpen: false,
-    newTitle: listTitle
+    newTitle: listTitle,
   });
   const { isOpen, newTitle } = localState;
 
@@ -55,9 +55,11 @@ function ListTitle({
   };
 
   const handleSubmit = () => {
-    if (newTitle === "") return;
+    if (newTitle === "") {
+      return;
+    }
     if (newTitle !== listTitle) {
-      dispatch(changeListTitle)(listId, newTitle), {};
+      dispatch(changeListTitle)(listId, newTitle);
     }
     setLocalState({ isOpen: false, newTitle });
   };

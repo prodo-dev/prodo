@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Droppable } from "react-beautiful-dnd";
+import { state, watch } from "../../model";
 import Card from "../Card/Card";
-import { watch, state } from "../../model";
 
-type Props = {
+interface Props {
   listId: string;
-};
+}
 
 function Cards({ listId }: Props) {
   const cards = watch(state.listsById[listId].cards);

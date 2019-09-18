@@ -1,11 +1,14 @@
+import { createBrowserHistory } from "history";
 import { model } from "./model";
+
+const history = createBrowserHistory();
 export const { store, Provider } = model.createStore({
   logger: true,
   initState: {
     user: {
       _id: "ted",
       name: "ted",
-      imageUrl: "https://profiles.utdallas.edu/img/default.png",
+      imageUrl: "https://profiles.utdallas.edu/img/default.png"
     },
     currentBoardId: "B1",
     boardsById: {
@@ -14,17 +17,20 @@ export const { store, Provider } = model.createStore({
         title: "todos",
         color: "blue",
         lists: ["L1", "L2"],
-        users: ["ted"],
-      },
+        users: ["ted"]
+      }
     },
     listsById: {
       L1: { _id: "L1", title: "doing", cards: ["C1", "C2"] },
-      L2: { _id: "L2", title: "done-ish", cards: ["C3"] },
+      L2: { _id: "L2", title: "done-ish", cards: ["C3"] }
     },
     cardsById: {
       C1: { _id: "C1", text: "Hello", date: new Date(), color: "white" },
       C2: { _id: "C2", text: "World", date: new Date(), color: "green" },
-      C3: { _id: "C3", text: "everything", date: new Date(), color: "blue" },
-    },
+      C3: { _id: "C3", text: "everything", date: new Date(), color: "blue" }
+    }
   },
+  route: {
+    history
+  }
 });

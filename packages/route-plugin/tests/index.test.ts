@@ -4,7 +4,7 @@ import routePlugin, { push, replace } from "../src";
 
 const model = createModel<{}>().with(routePlugin);
 
-describe("random plugin", () => {
+describe("route plugin", () => {
   it("", async () => {
     const history = createMemoryHistory();
 
