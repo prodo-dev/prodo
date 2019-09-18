@@ -69,3 +69,4 @@ export default routingPlugin;
 export { push, replace } from "./actions";
 export { Config, RouteParams } from "./types";
 export { Route, Switch, Link, Redirect } from "./react";
+export { matchRoute } from "./utils";

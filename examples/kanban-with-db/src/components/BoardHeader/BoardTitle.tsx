@@ -1,23 +1,19 @@
 import * as React from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import "./BoardTitle.scss";
 import { dispatch, db } from "../../model";
 import Spinner from "../Spinner/Spinner";
 import NotFound from "../NotFound/NotFound";
 
-type Props = {
-  match: {
-    params: {
-      boardId: string;
-    };
-  };
-};
+interface Params {
+  boardId: string;
+}
 
 const changeBoardTitle = (boardId: string, title: string) => {
   db.boardsById.update(boardId, { title });
 };
 
-function BoardTitle({ match }: Props) {
+function BoardTitle({ match }: RouteComponentProps<Params>) {
   const { boardId } = match.params;
   const board = db.boardsById.watch(boardId);
   if (board._fetching) return <Spinner />;

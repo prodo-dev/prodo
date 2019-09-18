@@ -1,25 +1,24 @@
 import * as React from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import { Button, Wrapper, Menu, MenuItem } from "react-aria-menubutton";
 // @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
 import "./BoardDeleter.scss";
 import { dispatch, db } from "../../model";
 
-type Props = {
-  match: {
-    params: {
-      boardId: string;
-    };
-  };
+interface Props {
   history: { push: Function };
-};
+}
 
-function deleteBoard(boardId) {
+interface Params {
+  boardId: string;
+}
+
+function deleteBoard(boardId: string) {
   db.boardsById.delete(boardId);
 }
 
-function BoardDeleter({ match, history }: Props) {
+function BoardDeleter({ match, history }: Props & RouteComponentProps<Params>) {
   const handleSelection = () => {
     const { boardId } = match.params;
     dispatch(deleteBoard)(boardId);

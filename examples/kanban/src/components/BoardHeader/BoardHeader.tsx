@@ -1,8 +1,8 @@
 import * as React from "react";
-import BoardTitle from "./BoardTitle";
-import ColorPicker from "./ColorPicker";
 import BoardDeleter from "./BoardDeleter";
 import "./BoardHeader.scss";
+import BoardTitle from "./BoardTitle";
+import ColorPicker from "./ColorPicker";
 
 const BoardHeader = () => (
   <div className="board-header">

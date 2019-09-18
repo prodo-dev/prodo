@@ -1,22 +1,15 @@
+import { matchRoute } from "@prodo/route";
 import * as React from "react";
-import { withRouter } from "react-router-dom";
+import { dispatch, route, state, watch } from "../../model";
 import "./BoardTitle.scss";
-import { dispatch, state, watch } from "../../model";
-
-type Props = {
-  match: {
-    params: {
-      boardId: string;
-    };
-  };
-};
 
 function changeBoardTitle(boardId: string, newTitle: string) {
   state.boardsById[boardId].title = newTitle;
 }
 
-function BoardTitle({ match }: Props) {
-  const { boardId } = match.params;
+function BoardTitle() {
+  const path = watch(route.path);
+  const { boardId } = matchRoute(path, "/b/:boardId");
   const boardTitle = watch(state.boardsById[boardId].title);
   const [isOpen, setOpen] = React.useState(false);
   const [newTitle, setNewTitle] = React.useState(boardTitle);
@@ -26,7 +19,9 @@ function BoardTitle({ match }: Props) {
   const handleChange = (event: any) => setNewTitle(event.target.value);
 
   const submitTitle = () => {
-    if (newTitle === "") return;
+    if (newTitle === "") {
+      return;
+    }
     if (boardTitle !== newTitle) {
       dispatch(changeBoardTitle)(boardId, newTitle);
     }
@@ -69,4 +64,4 @@ function BoardTitle({ match }: Props) {
   );
 }
 
-export default withRouter(BoardTitle);
+export default BoardTitle;

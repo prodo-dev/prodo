@@ -1,5 +1,5 @@
 import * as React from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import { Button, Wrapper, Menu, MenuItem } from "react-aria-menubutton";
 import classnames from "classnames";
 // @ts-ignore
@@ -11,15 +11,15 @@ import { dispatch, db } from "../../model";
 import NotFound from "../NotFound/NotFound";
 import Spinner from "../Spinner/Spinner";
 
-type Props = {
-  match: { params: { boardId: string } };
-};
+interface Params {
+  boardId: string;
+}
 
 function changeBoardColor(boardId: string, color: string) {
   db.boardsById.update(boardId, { color });
 }
 
-function ColorPicker({ match }: Props) {
+function ColorPicker({ match }: RouteComponentProps<Params>) {
   const { boardId } = match.params;
   const board = db.boardsById.watch(boardId);
   if (board._fetching) return <Spinner />;
