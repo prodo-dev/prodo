@@ -10,5 +10,13 @@ export const getParserServices = (context: TSRuleContext): ParserServices => {
     const filePath = context.parserOptions.filePath;
     throw Error(`Couldn't parse ${filePath}.`);
   }
+  if (
+    parserServices.esTreeNodeToTSNodeMap == null ||
+    parserServices.tsNodeToESTreeNodeMap == null
+  ) {
+    throw Error(
+      `Startup failed, please make sure you are using @typescript-eslint/parser.`,
+    );
+  }
   return parserServices;
 };

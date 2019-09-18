@@ -27,7 +27,7 @@ ruleTester.run("require-dispatched-action-is-called", rule, {
     },
     {
       code: `import { dispatch } from "./model";
-      const dispatch = ()=>{};
+      const dispatch = () => {return;};
       dispatch(foo);`,
       filename: defaultTsFile,
     },
