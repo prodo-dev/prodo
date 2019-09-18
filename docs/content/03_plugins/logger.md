@@ -27,8 +27,15 @@ export const { /* ... */ } = model.ctx;
 
 Items added to the `createStore` config.
 
-- `logger`: boolean that indicates whether or not logging is enabled. Defaults.
-  to `false`.
+```ts
+export interface LoggerConfig {
+  logger?: boolean;
+}
+```
+
+`logger`
+
+boolean that indicates whether or not logging is enabled. Defaults. to `false`.
 
 ```ts
 const { Provider } = model.createStore({

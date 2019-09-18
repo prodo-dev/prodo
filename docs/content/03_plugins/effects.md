@@ -27,18 +27,19 @@ export const { effect, /* ... */ } = model.ctx;
 
 Items added to the `createStore` config.
 
-- `mockEffects`: _optional_ object with keys as effect function name and values as array of
-  results returned from calling the effect. You will typically only provide this
-  option in your tests.
-
 ```ts
-const { Provider } = model.createStore({
-  logger: true,
-  mockEffects: {
-    effectName: ["result1", "result2"]
+interface EffectConfig {
+  mockEffects?: {
+    [name: string]: any[]
   }
-});
+}
 ```
+
+`mockEffects`
+
+_optional_ object with keys as effect function name and values as array of
+results returned from calling the effect. You will typically only provide this
+option in your tests.
 
 ## Usage
 

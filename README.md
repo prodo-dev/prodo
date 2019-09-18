@@ -97,7 +97,7 @@ Run development server
 yarn start
 ```
 
-Navigate to [localhost:1234](http://localhost:1234).
+Navigate to [localhost:8080](http://localhost:8080).
 
 Some examples have tests. You can run the tests with
 
