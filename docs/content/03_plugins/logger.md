@@ -15,12 +15,11 @@ npm install --save @prodo/logger
 
 ```ts
 // src/model.ts
-import logger from "@prodo/logger";
+import loggerPlugin from "@prodo/logger";
 
 // ...
 
-export const model = createModel<State>().with(logger);
-export const { /* ... */ } = model.ctx;
+export const model = createModel<State>().with(loggerPlugin);
 ```
 
 ## Config
@@ -40,6 +39,8 @@ boolean that indicates whether or not logging is enabled. Defaults. to `false`.
 ```ts
 const { Provider } = model.createStore({
   logger: true,
-  initState: { /* ... */ }
+  initState: {
+    /* ... */
+  },
 });
 ```

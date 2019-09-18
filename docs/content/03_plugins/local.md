@@ -17,7 +17,7 @@ The local plugin is parameterised by the type of data you will have in local sto
 
 ```ts
 // src/model.ts
-import local from "@prodo/local";
+import localPlugin from "@prodo/local";
 
 // ...
 
@@ -25,8 +25,8 @@ export interface Local {
   count: number;
 }
 
-export const model = createModel<State>().with(local<Local>());
-export const { local, /* ... */ } = model.ctx;
+export const model = createModel<State>().with(localPlugin<Local>());
+export const { local /* ... */ } = model.ctx;
 ```
 
 ## Config
@@ -60,7 +60,7 @@ import { local } from "./model";
 
 const changeCount = (amount: number) => {
   local.count = local.count + amount;
-}
+};
 ```
 
 ### Components
@@ -70,9 +70,7 @@ You can `watch` any part of the local state in your components.
 ```tsx
 import { local, watch } from "./model";
 
-const MyComponent = () => (
-  <h1>Count {watch(local.count)}</h1>
-);
+const MyComponent = () => <h1>Count {watch(local.count)}</h1>;
 ```
 
 _Note: changes to local storage are only picked up when modified from a
@@ -86,14 +84,13 @@ Use the `localFixture` config option to mock local storage in your tests.
 it("can increase the count", () => {
   const { store } = model.createStore({
     initState: { todos: {} },
-	localFixture: {
-	  count: 0
-	}
+    localFixture: {
+      count: 0,
+    },
   });
-  
 
   expect(store.universe.local.count).toBe(10);
   const { local } = await store.dispatch(changeCount)(10);
   expect(local.count).toBe(10);
-})
+});
 ```
