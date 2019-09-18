@@ -35,7 +35,6 @@
     "fork-ts-checker-webpack-plugin": "^1.5.0",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
-    "parcel-bundler": "^1.12.3",
     "sass": "^1.22.9",
     "sass-loader": "^8.0.0",
     "source-map-loader": "^0.2.4",
