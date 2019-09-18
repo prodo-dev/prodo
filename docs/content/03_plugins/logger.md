@@ -34,7 +34,7 @@ export interface LoggerConfig {
 
 `logger`
 
-boolean that indicates whether or not logging is enabled. Defaults. to `false`.
+boolean that indicates whether or not logging is enabled. Defaults to `false`.
 
 ```ts
 const { Provider } = model.createStore({
