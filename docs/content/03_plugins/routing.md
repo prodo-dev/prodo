@@ -146,7 +146,7 @@ dispatch(replace)({
 
 ### Declarative API
 
-To allow for more declarative routing, the plugin also provides a few React components that can be used to declarative determine what to render, and add elements such as links to your page. These are designed to be as close as possible to the counterparts defined in the popular [`react-router`](https://www.npmjs.com/package/react-router) library:
+To allow for more declarative routing, the plugin also provides a few React components that can be used to declaratively determine what to render, and add elements such as links to your page. These are designed to be as close as possible to the counterparts defined in the popular [`react-router`](https://www.npmjs.com/package/react-router) library:
 
 #### `Route`
 
