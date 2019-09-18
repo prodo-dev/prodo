@@ -32,9 +32,6 @@ module.exports = {
       {
         test: /\.(png|jpe?g|svg|ico)$/,
         loader: "file-loader",
-        options: {
-          publicPath: "/",
-        },
       },
     ],
   },
