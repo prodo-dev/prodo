@@ -13,9 +13,11 @@ logger.init(config => {
   }
 });
 
-logger.onCompleteEvent(event => {
-  // tslint:disable-next-line
-  console.log(event);
+logger.onCompleteEvent((event, config) => {
+  if (config.logger) {
+    // tslint:disable-next-line:no-console
+    console.log(event);
+  }
 });
 
 export default logger;

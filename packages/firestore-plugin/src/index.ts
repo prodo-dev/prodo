@@ -146,11 +146,20 @@ const firestorePlugin = <DB>(): ProdoPlugin<
 
         return data;
       },
-      set: async (id: string, value: Partial<T>): Promise<void> => {
+      set: async (id: string, value: Omit<T, "id">): Promise<void> => {
         await firestore
           .collection(collectionName)
           .doc(id)
           .set(value);
+      },
+      update: async (
+        id: string,
+        value: Partial<Omit<T, "id">>,
+      ): Promise<void> => {
+        await firestore
+          .collection(collectionName)
+          .doc(id)
+          .set(value, { merge: true });
       },
       delete: async (id: string): Promise<void> => {
         await firestore
@@ -284,6 +293,9 @@ const firestorePlugin = <DB>(): ProdoPlugin<
         throw new Error(cannotUseInComponent);
       },
       set: () => {
+        throw new Error(cannotUseInComponent);
+      },
+      update: () => {
         throw new Error(cannotUseInComponent);
       },
       delete: () => {

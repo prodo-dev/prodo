@@ -98,7 +98,8 @@ export interface Collection<T extends { id: string }> {
   // methods for actions
   get: (id: string) => Promise<T>;
   getAll: () => Promise<T[]>;
-  set: (id: string, value: Partial<T>) => Promise<void>;
+  set: (id: string, value: Omit<T, "id">) => Promise<void>;
+  update: (id: string, value: Partial<Omit<T, "id">>) => Promise<void>;
   delete: (id: string) => Promise<void>;
   insert: (value: Omit<T, "id">) => Promise<string>;
   query: (query: Query<T>) => Promise<T[]>;
