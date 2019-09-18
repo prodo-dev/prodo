@@ -18,10 +18,3 @@ componentDidUpdate = prevProps => {
    }
 };
 ```
-
-Refactor the router instead of using react-router-dom...
-
-```
-// see BoardHeader/BoardDeleter
-export default withRouter(BoardDeleter);
-```
