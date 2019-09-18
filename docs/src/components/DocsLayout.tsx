@@ -3,17 +3,17 @@ import * as React from "react";
 import styled from "styled-components";
 import { ExperimentalBanner, WipBanner } from "../components/Banner";
 import Container from "../components/Container";
+import Footer from "../components/Footer";
 import Hamburger from "../components/Hamburger";
 import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Layout from "../components/Layout";
 import Sidebar from "../components/Sidebar";
 import {
   FooterHeight,
-  HeaderHeight,
-  SidebarWidth,
   forNarrowScreen,
   forWideScreen,
+  HeaderHeight,
+  SidebarWidth,
 } from "../styles";
 
 export interface Props {

@@ -150,9 +150,6 @@ const Sidebar: React.FC<Props> = props => {
   const currentPath = props.location.pathname;
   const sections = getSections(data);
 
-  console.log("current", currentPath);
-  console.log("sections", sections);
-
   return (
     <StyledSidebar className="sidebar" isOpen={props.isOpen}>
       {sections.map(section => (
