@@ -15,7 +15,7 @@ const render = () => {
         <App />
       </Provider>
     </ErrorBoundary>,
-    document.getElementById("root")
+    document.getElementById("root"),
   );
 };
 
