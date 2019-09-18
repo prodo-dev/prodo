@@ -127,7 +127,7 @@ variables or methods available to the user in their component. The `universe`
 There are two options available to subscribe the calling component to a
 particular path of the [universe](./universe). These are
 
-- Using `createUniverseWatcher`.
+- Using `createUniverseWatcher`
 - Calling `ctx.subscribe`
 
 ### Create Universe Watcher
