@@ -22,6 +22,8 @@ function Cards({ listId }: Props) {
   React.useEffect(() => {
     if (
       prevCards != null &&
+      prevCards.length > 0 &&
+      cards.length > 1 &&
       prevCards[prevCards.length - 1] === cards[cards.length - 2]
     ) {
       scrollToBottom();
