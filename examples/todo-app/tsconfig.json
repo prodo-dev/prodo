@@ -12,7 +12,6 @@
     { "path": "../../packages/core" },
     { "path": "../../packages/effect-plugin" },
     { "path": "../../packages/babel-plugin" },
-    { "path": "../../packages/devtools-core" },
     { "path": "../../packages/devtools-plugin" }
   ]
 }
