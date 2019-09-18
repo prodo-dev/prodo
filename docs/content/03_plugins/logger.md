@@ -20,13 +20,14 @@ import logger from "@prodo/logger";
 // ...
 
 export const model = createModel<State>().with(logger);
+export const { /* ... */ } = model.ctx;
 ```
 
 ## Config
 
-Adds a single item to the `createStore` config.
+Items added to the `createStore` config.
 
-- `logger` boolean that indicates whether or not logging is enabled. Defaults.
+- `logger`: boolean that indicates whether or not logging is enabled. Defaults.
   to `false`.
 
 ```ts
