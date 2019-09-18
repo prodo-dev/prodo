@@ -49,7 +49,7 @@ interface ProdoPluginSpec<InitOptions, Universe, ActionCtx, ViewCtx> {
     },
     config: InitOptions,
   ) => void;
-  onCompletedEvent?: (event: Event) => void;
+  onCompletedEvent?: (event: Event, config: InitOptions) => void;
   Provider?: Provider;
 }
 

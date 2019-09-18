@@ -6,7 +6,7 @@ export interface LoggerConfig {
 
 const init = (config: LoggerConfig) => {
   if (config.logger) {
-    // tslint:disable-next-line
+    // tslint:disable-next-line:no-console
     console.log("@prodo/logger is on");
   }
 };
@@ -14,9 +14,11 @@ const init = (config: LoggerConfig) => {
 const loggerPlugin: ProdoPlugin<LoggerConfig, {}, {}, {}> = {
   name: "logger",
   init,
-  onCompletedEvent: e => {
-    // tslint:disable-next-line
-    console.log(e);
+  onCompletedEvent: (e, config) => {
+    if (config.logger) {
+      // tslint:disable-next-line:no-console
+      console.log(e);
+    }
   },
 };
 

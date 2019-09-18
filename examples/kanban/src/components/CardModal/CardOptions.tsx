@@ -1,25 +1,25 @@
 import * as React from "react";
-import Modal from "react-modal";
-//@ts-ignore
+// @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
-//@ts-ignore
+// @ts-ignore
 import MdAlarm from "react-icons/lib/md/access-alarm";
-import Calendar from "./Calendar";
-import ClickOutside from "../ClickOutside/ClickOutside";
-//@ts-ignore
+import Modal from "react-modal";
+// @ts-ignore
 import colorIcon from "../../assets/images/color-icon.png";
-import "./CardOptions.scss";
+import { dispatch, state } from "../../model";
 import { Card } from "../../types";
-import { state, dispatch } from "../../model";
+import ClickOutside from "../ClickOutside/ClickOutside";
+import Calendar from "./Calendar";
+import "./CardOptions.scss";
 
-type Props = {
+interface Props {
   isColorPickerOpen: boolean;
   card: Card;
   isCardNearRightBorder: boolean;
   isThinDisplay: boolean;
   boundingRect: { bottom: any; left: any };
-  toggleColorPicker: Function;
-};
+  toggleColorPicker: (...args: any[]) => any;
+}
 
 function changeCardColor(_id: string, color: string) {
   state.cardsById[_id].color = color;
@@ -35,7 +35,7 @@ function CardOptions({
   isCardNearRightBorder,
   isThinDisplay,
   boundingRect,
-  toggleColorPicker
+  toggleColorPicker,
 }: Props) {
   const [isCalendarOpen, setCalendarOpen] = React.useState(false);
   let colorPickerButton: any;
@@ -67,22 +67,22 @@ function CardOptions({
   const calendarStyle = {
     content: {
       top: Math.min(boundingRect.bottom + 10, window.innerHeight - 300),
-      left: boundingRect.left
-    }
+      left: boundingRect.left,
+    },
   };
 
   const calendarMobileStyle = {
     content: {
       top: 110,
       left: "50%",
-      transform: "translateX(-50%)"
-    }
+      transform: "translateX(-50%)",
+    },
   };
   return (
     <div
       className="options-list"
       style={{
-        alignItems: isCardNearRightBorder ? "flex-end" : "flex-start"
+        alignItems: isCardNearRightBorder ? "flex-end" : "flex-start",
       }}
     >
       <div>
