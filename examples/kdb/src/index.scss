@@ -16,3 +16,19 @@ svg {
     display: block;
     padding: 1em;
 }
+
+svg line {
+    stroke: black;
+}
+
+svg line.vertical {
+    stroke-dasharray: 1 2;
+}
+
+svg circle.ask {
+    fill: red;
+}
+
+svg circle.bid {
+    fill: green;
+}

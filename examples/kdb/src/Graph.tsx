@@ -23,14 +23,14 @@ export const QuoteSpot = ({
   return (
     <>
       <circle
-        fill="red"
-        r="1"
+        className="bid"
+        r={3}
         cx={x * axes.x.scale}
         cy={(bid - axes.y.min) * axes.y.scale}
       />
       <circle
-        fill="green"
-        r="2"
+        className="ask"
+        r={3}
         cx={x * axes.x.scale}
         cy={(ask - axes.y.min) * axes.y.scale}
       />
@@ -53,15 +53,13 @@ export const TradeLine = ({
     lines.push(
       <g key={trades[i].time.getTime()}>
         <line
-          stroke="black"
           x1={xs[i - 1] * axes.x.scale}
           x2={xs[i] * axes.x.scale}
           y1={ys[i - 1] * axes.y.scale}
           y2={ys[i - 1] * axes.y.scale}
         />
         <line
-          stroke="black"
-          strokeDasharray="1 2"
+          className="vertical"
           x1={xs[i] * axes.x.scale}
           x2={xs[i] * axes.x.scale}
           y1={ys[i - 1] * axes.y.scale}
@@ -89,7 +87,7 @@ export const Graph = model.connect(
     };
 
     return (
-      <svg height="100" width="500" viewBox="0 0 500 100">
+      <svg height="100" width="500" viewBox="0 -5 500 110">
         <TradeLine trades={tradeHistory} axes={axes} />
         {quoteHistory.map(quote => {
           return (
