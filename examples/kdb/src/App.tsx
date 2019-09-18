@@ -1,8 +1,8 @@
 import * as React from "react";
 import { model, Streams, Quote, Trade } from "./model";
+import { QuoteSpots, TradeLine } from "./Graph";
 import { kdbSocket } from "./libKx";
 import { UnStreams } from "@prodo/stream-plugin";
-import { Graph } from "./Graph";
 import * as op from "rxjs/operators";
 
 export const setupStreams = model.action(
@@ -81,6 +81,30 @@ const Table = <
 
 const Trades = Table("trades", ["sym", "price", "size"]);
 const Quotes = Table("quotes", ["sym", "bid", "ask"]);
+
+export const Graph = model.connect(
+  ({ streams, watch }) => ({ idx }: { idx: string }) => {
+    const quoteHistory = (watch(streams.quoteHistory) || {})[idx] || [];
+    const tradeHistory = (watch(streams.tradeHistory) || {})[idx] || [];
+
+    const yMin = Math.min(...quoteHistory.map(({ bid }) => bid));
+    const yMax = Math.max(...quoteHistory.map(({ ask }) => ask));
+
+    const xMin = Math.min(...quoteHistory.map(({ time }) => time.getTime()));
+    const axes = {
+      x: { min: xMin, scale: 0.05 },
+      y: { min: yMin, scale: 100 / (yMax - yMin) },
+    };
+
+    return (
+      <svg height="100" width="500" viewBox="0 -5 500 110">
+        <TradeLine trades={tradeHistory} axes={axes} />
+        <QuoteSpots quotes={quoteHistory} axes={axes} />
+      </svg>
+    );
+  },
+  "Graph",
+);
 
 export default model.connect(
   ({ dispatch }) => () => {

@@ -1,4 +1,4 @@
-import { model, Quote, Trade } from "./model";
+import { Quote, Trade } from "./model";
 import * as React from "react";
 
 interface Axis {
@@ -11,32 +11,36 @@ interface Axes {
   y: Axis;
 }
 
-export const QuoteSpot = ({
-  quote: { time, bid, ask },
+export const QuoteSpots = ({
+  quotes,
   axes,
 }: {
-  quote: Quote;
+  quotes: Quote[];
   axes: Axes;
-}) => {
-  const x = time.getTime() - axes.x.min;
+}) => (
+  <>
+    {quotes.map(({ time, ask, bid }) => {
+      const x = time.getTime() - axes.x.min;
 
-  return (
-    <>
-      <circle
-        className="bid"
-        r={3}
-        cx={x * axes.x.scale}
-        cy={(bid - axes.y.min) * axes.y.scale}
-      />
-      <circle
-        className="ask"
-        r={3}
-        cx={x * axes.x.scale}
-        cy={(ask - axes.y.min) * axes.y.scale}
-      />
-    </>
-  );
-};
+      return (
+        <>
+          <circle
+            className="bid"
+            r={3}
+            cx={x * axes.x.scale}
+            cy={(bid - axes.y.min) * axes.y.scale}
+          />
+          <circle
+            className="ask"
+            r={3}
+            cx={x * axes.x.scale}
+            cy={(ask - axes.y.min) * axes.y.scale}
+          />
+        </>
+      );
+    })}
+  </>
+);
 
 export const TradeLine = ({
   trades,
@@ -71,31 +75,3 @@ export const TradeLine = ({
 
   return <>{lines}</>;
 };
-
-export const Graph = model.connect(
-  ({ streams, watch }) => ({ idx }: { idx: string }) => {
-    const quoteHistory = (watch(streams.quoteHistory) || {})[idx] || [];
-    const tradeHistory = (watch(streams.tradeHistory) || {})[idx] || [];
-
-    const yMin = Math.min(...quoteHistory.map(({ bid }) => bid));
-    const yMax = Math.max(...quoteHistory.map(({ ask }) => ask));
-
-    const xMin = Math.min(...quoteHistory.map(({ time }) => time.getTime()));
-    const axes = {
-      x: { min: xMin, scale: 0.05 },
-      y: { min: yMin, scale: 100 / (yMax - yMin) },
-    };
-
-    return (
-      <svg height="100" width="500" viewBox="0 -5 500 110">
-        <TradeLine trades={tradeHistory} axes={axes} />
-        {quoteHistory.map(quote => {
-          return (
-            <QuoteSpot quote={quote} axes={axes} key={quote.time.getTime()} />
-          );
-        })}
-      </svg>
-    );
-  },
-  "Graph",
-);
