@@ -1,4 +1,4 @@
-import rule from "../../src/rules/no-action-return";
+import rule from "../../src/rules/actions";
 import { defaultTsFile, RuleTester } from "../ruleTester";
 
 const ruleTester = new RuleTester({
