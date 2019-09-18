@@ -1,128 +1,86 @@
 import * as React from "react";
-import { model, Streams, Quote, Trade } from "./model";
-import { QuoteSpots, TradeLine } from "./Graph";
-import { kdbSocket } from "./libKx";
-import { UnStreams } from "@prodo/stream-plugin";
+import { Quote, Trade } from "./types";
+import Graph from "./Graph";
+import Table from "./Table";
+import { kdbSocket, pushValues } from "./libKx";
+import { createModel } from "@prodo/core";
+import streamPlugin, { Stream } from "@prodo/stream-plugin";
 import * as op from "rxjs/operators";
 
-export const setupStreams = model.action(
-  ({ streams }) => (historySize: number) => {
-    const { quotes, trades } = kdbSocket();
-    streams.quotes = quotes;
-    streams.trades = trades;
+interface Streams {
+  quotes: Stream<{ [key: string]: Quote }>;
+  trades: Stream<{ [key: string]: Trade }>;
+  quoteHistory: Stream<{ [key: string]: Quote[] }>;
+  tradeHistory: Stream<{ [key: string]: Trade[] }>;
+}
 
-    streams.quoteHistory = quotes.pipe(
-      op.scan(
-        (acc, quotes) =>
-          Object.fromEntries(
-            Object.entries(quotes).map(
-              ([sym, value]): [string, Quote[]] => [
-                sym,
-                [...(acc[sym] || []).slice(-historySize), value],
-              ],
-            ),
-          ),
-        {} as { [key: string]: Quote[] },
-      ),
-    );
+const model = createModel<{}>().with(streamPlugin<Streams>());
 
-    streams.tradeHistory = trades.pipe(
-      op.scan(
-        (acc, trades) =>
-          Object.fromEntries(
-            Object.entries(trades).map(
-              ([sym, value]): [string, Trade[]] => [
-                sym,
-                [...(acc[sym] || []).slice(-historySize), value],
-              ],
-            ),
-          ),
-        {} as { [key: string]: Trade[] },
-      ),
-    );
-  },
-);
+const setupStreams = model.action(({ streams }) => (historySize: number) => {
+  const { quotes, trades } = kdbSocket();
+  streams.quotes = quotes;
+  streams.trades = trades;
 
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-const Table = <
-  K extends "quotes" | "trades",
-  J extends keyof UnStreams<Streams>[K][0] & string
->(
-  data: K,
-  props: J[],
-) =>
-  model.connect(
-    ({ streams, watch }) => () => {
-      const values: UnStreams<Streams>[K] = (watch(streams[data]) as any) || {};
-
-      return (
-        <table>
-          <caption>{capitalize(data)}</caption>
-          <tbody>
-            <tr>
-              {props.map(prop => (
-                <th key={prop}>{capitalize(prop)}</th>
-              ))}
-            </tr>
-            {Object.values(values).map(value => (
-              <tr key={value.sym}>
-                {props.map(prop => (
-                  <td key={prop}>{value[prop]}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
-    },
-    capitalize(data),
+  streams.quoteHistory = quotes.pipe(
+    op.scan(pushValues(historySize), {} as { [key: string]: Quote[] }),
   );
 
-const Trades = Table("trades", ["sym", "price", "size"]);
-const Quotes = Table("quotes", ["sym", "bid", "ask"]);
+  streams.tradeHistory = trades.pipe(
+    op.scan(pushValues(historySize), {} as { [key: string]: Trade[] }),
+  );
+});
 
-export const Graph = model.connect(
-  ({ streams, watch }) => ({ idx }: { idx: string }) => {
-    const quoteHistory = (watch(streams.quoteHistory) || {})[idx] || [];
-    const tradeHistory = (watch(streams.tradeHistory) || {})[idx] || [];
-
-    const yMin = Math.min(...quoteHistory.map(({ bid }) => bid));
-    const yMax = Math.max(...quoteHistory.map(({ ask }) => ask));
-
-    const xMin = Math.min(...quoteHistory.map(({ time }) => time.getTime()));
-    const axes = {
-      x: { min: xMin, scale: 0.05 },
-      y: { min: yMin, scale: 100 / (yMax - yMin) },
-    };
-
+const Trades = model.connect(
+  ({ streams, watch }) => () => {
+    const values = watch(streams.trades) || {};
     return (
-      <svg height="100" width="500" viewBox="0 -5 500 110">
-        <TradeLine trades={tradeHistory} axes={axes} />
-        <QuoteSpots quotes={quoteHistory} axes={axes} />
-      </svg>
+      <Table title="trades" data={values} props={["sym", "price", "size"]} />
     );
+  },
+  "Trades",
+);
+
+const Quotes = model.connect(
+  ({ streams, watch }) => () => {
+    const values = watch(streams.quotes) || {};
+    return <Table title="quotes" data={values} props={["sym", "bid", "ask"]} />;
+  },
+  "Quotes",
+);
+
+const ConnectedGraph = model.connect(
+  ({ streams, watch }) => ({ idx }: { idx: string }) => {
+    const quoteHistory = watch(streams.quoteHistory![idx]) || [];
+    const tradeHistory = watch(streams.tradeHistory![idx]) || [];
+    return <Graph quoteHistory={quoteHistory} tradeHistory={tradeHistory} />;
   },
   "Graph",
 );
 
-export default model.connect(
+const App = model.connect(
   ({ dispatch }) => () => {
     React.useEffect(() => {
       dispatch(setupStreams)(10);
     }, []);
 
+    const syms = ["BA.N", "GS.N", "IBM.N", "MSFT.O", "VOD.L"];
     return (
       <>
         <Trades />
         <Quotes />
-        <Graph idx={"BA.N"} />
-        <Graph idx={"GS.N"} />
-        <Graph idx={"IBM.N"} />
-        <Graph idx={"MSFT.O"} />
-        <Graph idx={"VOD.L"} />
+        {syms.map(idx => (
+          <ConnectedGraph idx={idx} key={idx} />
+        ))}
       </>
     );
   },
   "App",
+);
+
+const { Provider } = model.createStore({ initState: {} });
+
+export default () => (
+  <Provider>
+    <App />
+  </Provider>
 );

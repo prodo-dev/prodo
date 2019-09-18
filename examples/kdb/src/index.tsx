@@ -1,15 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
-import { model } from "./model";
+import AppRedux from "./AppRedux";
 
 import "./index.scss";
 
-const { Provider } = model.createStore({ initState: {} });
-
-ReactDOM.render(
-  <Provider>
-    <App />
-  </Provider>,
-  document.getElementById("root"),
-);
+ReactDOM.render(<><App /><AppRedux /></>, document.getElementById("root"));

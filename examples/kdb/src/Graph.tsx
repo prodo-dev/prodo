@@ -1,4 +1,4 @@
-import { Quote, Trade } from "./model";
+import { Quote, Trade } from "./types";
 import * as React from "react";
 
 interface Axis {
@@ -11,7 +11,7 @@ interface Axes {
   y: Axis;
 }
 
-export const QuoteSpots = ({
+const QuoteSpots = ({
   quotes,
   axes,
 }: {
@@ -23,7 +23,7 @@ export const QuoteSpots = ({
       const x = time.getTime() - axes.x.min;
 
       return (
-        <>
+        <g key={time.getTime()}>
           <circle
             className="bid"
             r={3}
@@ -36,13 +36,13 @@ export const QuoteSpots = ({
             cx={x * axes.x.scale}
             cy={(ask - axes.y.min) * axes.y.scale}
           />
-        </>
+        </g>
       );
     })}
   </>
 );
 
-export const TradeLine = ({
+const TradeLine = ({
   trades,
   axes,
 }: {
@@ -74,4 +74,22 @@ export const TradeLine = ({
   }
 
   return <>{lines}</>;
+};
+
+export default ({ quoteHistory, tradeHistory }) => {
+  const yMin = Math.min(...quoteHistory.map(({ bid }) => bid));
+  const yMax = Math.max(...quoteHistory.map(({ ask }) => ask));
+
+  const xMin = Math.min(...quoteHistory.map(({ time }) => time.getTime()));
+  const axes = {
+    x: { min: xMin, scale: 0.05 },
+    y: { min: yMin, scale: 100 / (yMax - yMin) },
+  };
+
+  return (
+    <svg height="100" width="500" viewBox="0 -5 500 110">
+      <TradeLine trades={tradeHistory} axes={axes} />
+      <QuoteSpots quotes={quoteHistory} axes={axes} />
+    </svg>
+  );
 };

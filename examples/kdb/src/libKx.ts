@@ -1,4 +1,4 @@
-import { KxEvent, KxQuote, KxTrade, Quote, Trade } from "./model";
+import { KxEvent, KxQuote, KxTrade, Quote, Trade } from "./types";
 import { webSocket } from "rxjs/webSocket";
 import * as op from "rxjs/operators";
 
@@ -71,3 +71,14 @@ export const kdbSocket = (url: string = "ws://localhost:5001") => {
 
   return { quotes, trades };
 };
+
+export const pushValues = <T extends {}>(size: number) => (
+  acc: { [K in keyof T]: T[K][] },
+  value: T,
+) =>
+  Object.fromEntries(
+    Object.entries(value).map(([k, v]) => [
+      k,
+      [...(acc[k] || []).slice(-size), v],
+    ]),
+  );
