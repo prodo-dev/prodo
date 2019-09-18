@@ -12,11 +12,21 @@ export const initLocal: Partial<Local> = {
 
 const { Provider, store } = model.createStore({ initState: {}, initLocal });
 
-ReactDOM.render(
-  <Provider>
-    <App />
-  </Provider>,
-  document.getElementById("root"),
-);
+const render = () => {
+  ReactDOM.render(
+    <Provider>
+      <App />
+    </Provider>,
+    document.getElementById("root"),
+  );
+};
+
+if (module.hot) {
+  module.hot.accept("./App", () => {
+    render();
+  });
+}
+
+render();
 
 (window as any).store = store;
