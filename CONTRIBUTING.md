@@ -71,7 +71,7 @@ The contribution workflow looks like
   tracker](https://github.com/prodo-ai/prodo/issues/new)
 - Fork the repo
 - Create a new feature branch based off the `master` branch
-- Make sure all tests pass and there are not linting errors
+- Make sure all tests pass and there are no linting errors
 - Submit a pull request, referencing any issues it addresses
 
 Thanks for contributing!
