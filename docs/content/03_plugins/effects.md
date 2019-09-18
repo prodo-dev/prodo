@@ -108,7 +108,7 @@ test("create a new todo", async () => {
   const { state } = await store.dispatch(newTodo)("buy milk");
   expect(state).toEqual({
     T1: {
-      text: "foo",
+      text: "buy milk",
       done: false,
     },
   });
