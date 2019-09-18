@@ -14,6 +14,7 @@ const StyledHeader = styled.header`
   padding: 0.5rem 0;
   background-color: #20232a;
   color: white;
+  z-index: 9999;
 `;
 
 const LogoText = styled.div`
