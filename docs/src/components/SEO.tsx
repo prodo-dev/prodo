@@ -70,6 +70,7 @@ const query = graphql`
         siteShortTitle
         description
         url
+        image
       }
     }
   }

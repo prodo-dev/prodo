@@ -1,9 +1,11 @@
 const config = {
-  siteTitle: "Prodo",
+  siteTitle: "Prodo Documentation",
   siteShortTitle: "Prodo",
   logo: "/assets/icon.svg",
   url: "https://prodo-docs.web.app",
-  description: "",
+  image: "/opengraph.png",
+  description:
+    "Prodo is a React framework to write performant and scalable web apps with as little boilerplate as possible.",
   dateFromFormat: "YYYY-MM-DD",
   dateFormat: "DD/MM/YYYY",
 };
