@@ -71,7 +71,7 @@ module.exports = {
         short_name: metadata.siteShortTitle,
         start_url: `/`,
         display: `minimal-ui`,
-        icon: `assets/icon.png`,
+        icon: `assets/logo.svg`,
       },
     },
     `gatsby-plugin-remove-serviceworker`,
