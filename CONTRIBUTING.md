@@ -27,7 +27,7 @@ yarn build
 ```
 
 This typechecks all TypeScript and converts it to JavaScript. When developing we
-recommend building the project in watch mode
+recommend building the project in watch mode:
 
 ```
 yarn build:watch
