@@ -20,7 +20,7 @@ git clone https://github.com/your-username/prodo.git
 
 #### Building
 
-Build all packages and examples with.
+Build all packages and examples with:
 
 ```
 yarn build
