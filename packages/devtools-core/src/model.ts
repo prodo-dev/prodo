@@ -1,5 +1,4 @@
 import { createModel } from "@prodo/core";
-import loggerPlugin from "@prodo/logger";
 import { Action } from "./types";
 
 export interface State {
@@ -12,5 +11,5 @@ export interface State {
   };
 }
 
-export const model = createModel<State>().with(loggerPlugin);
+export const model = createModel<State>();
 export const { state, watch, dispatch } = model.ctx;

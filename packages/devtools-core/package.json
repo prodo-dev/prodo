@@ -1,6 +1,6 @@
 {
   "name": "@prodo/devtools-core",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "transpiled/index.js",
   "license": "MIT",
   "private": true,
@@ -17,8 +17,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
-    "@prodo/core": "^0.0.5",
-    "@prodo/logger": "^0.0.5",
+    "@prodo/core": "^0.0.6",
     "color": "^3.1.2",
     "fast-stable-stringify": "^1.0.0",
     "immer": "^3.2.0",
