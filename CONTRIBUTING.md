@@ -47,7 +47,7 @@ Only run typechecking and linting:
 yarn lint
 ```
 
-To apply suggested linting fixes
+To apply suggested linting fixes:
 
 ```
 yarn lint --fix
