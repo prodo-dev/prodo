@@ -127,14 +127,19 @@ variables or methods available to the user in their component. The `universe`
 There are two options available to subscribe the calling component to a
 particular path of the [universe](./universe). These are
 
-- using `createUniverseWatcher`
-- calling `ctx.subscribe`
+- Using `createUniverseWatcher`.
+- Calling `ctx.subscribe`
 
 ### Create Universe Watcher
 
 ```ts
 createUniverseWatcher(universeKey: string);
 ```
+
+This should be used when the user will access something on the universe
+directly. For example, if when the user accesses `yourPlugin.a.b.c` in a
+component and you want to subscribe them to `universe.yourPlugin.a.b.c`, then
+you should use `createUniverseWatcher`.
 
 `createUniverseWatcher` takes a single string argument which is a top level key
 on the universe. The return value can be passed in into `watch`, which will
@@ -157,6 +162,10 @@ their component will be subscribed to path `["local", "a", "b", "c"]` of the
 universe and will automatically update whenever the data at that path changes. 
 
 ### Subscribe
+
+This should be used when you want to subscribe the user to part of the universe
+indirectly. For example, if the user can call a function in their component that
+subscribes them to part of the universe, then you should use `ctx.subscribe`.
 
 A component can subscribe a component to a path on the universe manually using `ctx.subscribe`.
 
