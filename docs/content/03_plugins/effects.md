@@ -15,12 +15,12 @@ npm install --save @prodo/effect
 
 ```ts
 // src/model.ts
-import effect from "@prodo/effect";
+import effectPlugin from "@prodo/effect";
 
 // ...
 
-export const model = createModel<State>().with(effect);
-export const { effect, /* ... */ } = model.ctx;
+export const model = createModel<State>().with(effectPlugin);
+export const { effect /* ... */ } = model.ctx;
 ```
 
 ## Config
@@ -30,8 +30,8 @@ Items added to the `createStore` config.
 ```ts
 interface EffectConfig {
   mockEffects?: {
-    [name: string]: any[]
-  }
+    [name: string]: any[];
+  };
 }
 ```
 
@@ -65,7 +65,7 @@ test("create a new todo", async () => {
   const { store } = model.createStore({
     initState: { todos: {} },
   });
-  
+
   const { state } = await store.dispatch(newTodo)("buy milk");
   expect(state).toEqual({
     T1: {
@@ -73,7 +73,7 @@ test("create a new todo", async () => {
       done: false,
     },
   });
-})
+});
 ```
 
 The problem with this is that we do not know what the new todos id will be,
@@ -100,11 +100,11 @@ In your test provide a `mockEffects` config.
 test("create a new todo", async () => {
   const { store } = model.createStore({
     initState: { todos: {} },
-	mockEffects: {
-	  randomId: ["T1"]
-	}
+    mockEffects: {
+      randomId: ["T1"],
+    },
   });
-  
+
   const { state } = await store.dispatch(newTodo)("buy milk");
   expect(state).toEqual({
     T1: {
@@ -112,7 +112,7 @@ test("create a new todo", async () => {
       done: false,
     },
   });
-})
+});
 ```
 
 The first call to `randomId` will return `"T1"`, which we can use in the
