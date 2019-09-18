@@ -1,7 +1,7 @@
 import { createModel } from "@prodo/core";
 import streamPlugin, { Stream } from "@prodo/stream-plugin";
 
-interface KxEvent {
+export interface KxEvent {
   time: string;
   sym: string;
 }
@@ -33,10 +33,10 @@ export interface Trade extends AppEvent {
 
 
 export interface Streams {
-  quotes: Stream<Quote[]>;
-  trades: Stream<Trade[]>;
-  quoteHistory: Stream<Quote[][]>;
-  tradeHistory: Stream<[Trade, Trade][][]>;
+  quotes: Stream<{[key: string]: Quote}>;
+  trades: Stream<{[key: string]: Trade}>;
+  quoteHistory: Stream<{[key: string]: Quote[]}>;
+  tradeHistory: Stream<{[key: string]: Trade[]}>;
 }
 
 export const model = createModel<{}>().with(streamPlugin<Streams>());

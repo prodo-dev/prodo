@@ -42,34 +42,42 @@ export const TradeLine = ({
   trades,
   axes,
 }: {
-  trades: [Trade, Trade];
+  trades: Trade[];
   axes: Axes;
 }) => {
-  const x = trades.map(({ time }) => time.getTime() - axes.x.min);
-  const y = trades.map(({ price }) => price - axes.y.min);
+  const xs = trades.map(({ time }) => time.getTime() - axes.x.min);
+  const ys = trades.map(({ price }) => price - axes.y.min);
 
-  return (
-    <>
-      <line
-        stroke="black"
-        x1={x[0] * axes.x.scale}
-        x2={x[1] * axes.x.scale}
-        y1={y[0] * axes.y.scale}
-        y2={y[0] * axes.y.scale}
-        key={`trade ${trades[0].sym} ${trades[0].time.getTime()}`}
-      />
-    </>
-  );
+  const lines: JSX.Element[] = [];
+  for (let i = 2; i < trades.length; i++) {
+    lines.push(
+      <g key={trades[i].time.getTime()}>
+        <line
+          stroke="black"
+          x1={xs[i - 1] * axes.x.scale}
+          x2={xs[i] * axes.x.scale}
+          y1={ys[i - 1] * axes.y.scale}
+          y2={ys[i - 1] * axes.y.scale}
+        />
+        <line
+          stroke="black"
+          strokeDasharray="1 2"
+          x1={xs[i] * axes.x.scale}
+          x2={xs[i] * axes.x.scale}
+          y1={ys[i - 1] * axes.y.scale}
+          y2={ys[i] * axes.y.scale}
+        />
+      </g>,
+    );
+  }
+
+  return <>{lines}</>;
 };
 
 export const Graph = model.connect(
-  ({ streams, watch }) => ({ idx }: { idx: number }) => {
-    const quoteHistory = (watch(streams.quoteHistory) || []).map(
-      quotes => quotes[idx],
-    );
-    const tradeHistory = (watch(streams.tradeHistory) || []).map(
-      trades => trades[idx],
-    );
+  ({ streams, watch }) => ({ idx }: { idx: string }) => {
+    const quoteHistory = (watch(streams.quoteHistory) || {})[idx] || [];
+    const tradeHistory = (watch(streams.tradeHistory) || {})[idx] || [];
 
     const yMin = Math.min(...quoteHistory.map(({ bid }) => bid));
     const yMax = Math.max(...quoteHistory.map(({ ask }) => ask));
@@ -82,20 +90,10 @@ export const Graph = model.connect(
 
     return (
       <svg height="100" width="500" viewBox="0 0 500 100">
-        {tradeHistory.map(trades => (
-          <TradeLine
-            trades={trades}
-            axes={axes}
-            key={`${trades[0].sym} ${trades[0].time.getTime()}`}
-          />
-        ))}
+        <TradeLine trades={tradeHistory} axes={axes} />
         {quoteHistory.map(quote => {
           return (
-            <QuoteSpot
-              quote={quote}
-              axes={axes}
-              key={`${quote.sym} ${quote.time.getTime()}`}
-            />
+            <QuoteSpot quote={quote} axes={axes} key={quote.time.getTime()} />
           );
         })}
       </svg>

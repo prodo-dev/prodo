@@ -1,5 +1,13 @@
 import * as React from "react";
-import { model, Streams, KxQuote, KxTrade, Quote, Trade } from "./model";
+import {
+  model,
+  Streams,
+  KxEvent,
+  KxQuote,
+  KxTrade,
+  Quote,
+  Trade,
+} from "./model";
 import { webSocket } from "rxjs/webSocket";
 import { UnStreams } from "@prodo/stream-plugin";
 import { Graph } from "./Graph";
@@ -43,6 +51,19 @@ const parseKxTime = (date: string): Date => {
   return out;
 };
 
+function parseEvents<I extends KxEvent>(
+  event: I[],
+): { [key: string]: Omit<I, "time"> & { time: Date } } {
+  return Object.fromEntries(
+    event.map(
+      (e): [string, Omit<I, "time"> & { time: Date }] => [
+        e.sym,
+        { ...e, time: parseKxTime(e.time) },
+      ],
+    ),
+  );
+}
+
 const kdbSocket = (url: string = "ws://localhost:5001") => {
   const ws = webSocket<Msg | string>({
     url,
@@ -52,15 +73,11 @@ const kdbSocket = (url: string = "ws://localhost:5001") => {
 
   const quotes = ws.pipe(
     op.filter(filterQuotes),
-    op.map(({ result }) => 
-      result.map(quote => ({ ...quote, time: parseKxTime(quote.time) }))
-    ),
+    op.map(({ result }): {[key: string]: Quote} => parseEvents(result)),
   );
   const trades = ws.pipe(
     op.filter(filterTrades),
-    op.map(({ result }) =>
-      result.map(trade => ({ ...trade, time: parseKxTime(trade.time) })),
-    ),
+    op.map(({ result }): {[key: string]: Trade} => parseEvents(result)),
   );
 
   return { quotes, trades };
@@ -74,23 +91,27 @@ export const setupStreams = model.action(
 
     streams.quoteHistory = quotes.pipe(
       op.scan(
-        (acc, quotes) => {
-          return [...acc.slice(-(historySize - quotes.length)), quotes];
-        },
-        [] as Quote[][],
+        (acc, quotes) =>
+          Object.fromEntries(
+            Object.entries(quotes).map(([sym, value]): [string, Quote[]] => [
+              sym,
+              [...(acc[sym] || []).slice(-historySize), value],
+            ]),
+          ),
+        {} as {[key: string]: Quote[]},
       ),
     );
 
     streams.tradeHistory = trades.pipe(
-      op.pairwise(),
-      op.map(tradess =>
-        tradess[0].map((trade, i) => [trade, tradess[1][i]] as [Trade, Trade]),
-      ),
       op.scan(
-        (acc, trades) => {
-          return [...acc.slice(-historySize), trades];
-        },
-        [] as [Trade, Trade][][],
+        (acc, trades) =>
+          Object.fromEntries(
+            Object.entries(trades).map(([sym, value]): [string, Trade[]] => [
+              sym,
+              [...(acc[sym] || []).slice(-historySize), value],
+            ]),
+          ),
+        {} as {[key: string]: Trade[]},
       ),
     );
   },
@@ -107,6 +128,8 @@ const Table = <
 ) =>
   model.connect(
     ({ streams, watch }) => () => {
+      const values: UnStreams<Streams>[K] = watch(streams[data]) as any || {};
+
       return (
         <table>
           <caption>{capitalize(data)}</caption>
@@ -116,7 +139,7 @@ const Table = <
                 <th key={prop}>{capitalize(prop)}</th>
               ))}
             </tr>
-            {((watch(streams[data]) as any[]) || []).map(value => (
+            {Object.values(values).map(value => (
               <tr key={value.sym}>
                 {props.map(prop => (
                   <td key={prop}>{value[prop]}</td>
@@ -143,11 +166,11 @@ export default model.connect(
       <>
         <Trades />
         <Quotes />
-        <Graph idx={0} />
-        <Graph idx={1} />
-        <Graph idx={2} />
-        <Graph idx={3} />
-        <Graph idx={4} />
+        <Graph idx={"BA.N"} />
+        <Graph idx={"GS.N"} />
+        <Graph idx={"IBM.N"} />
+        <Graph idx={"MSFT.O"} />
+        <Graph idx={"VOD.L"} />
       </>
     );
   },
