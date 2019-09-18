@@ -2,6 +2,7 @@ import * as React from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { state, watch } from "../../model";
 import Card from "../Card/Card";
+import { usePrevValue } from "../utils";
 
 interface Props {
   listId: string;
@@ -9,21 +10,24 @@ interface Props {
 
 function Cards({ listId }: Props) {
   const cards = watch(state.listsById[listId].cards);
+  const listEnd = React.useRef<HTMLDivElement>();
+
+  const scrollToBottom = React.useCallback(() => {
+    if (listEnd.current) {
+      listEnd.current.scrollIntoView();
+    }
+  }, [listEnd]);
+
+  const prevCards = usePrevValue(cards);
   React.useEffect(() => {
-    // TODO: find a nice way to implement the below with hooks...
-    // componentDidUpdate = prevProps => {
-    //   // Scroll to bottom of list if a new card has been added
-    //   if (
-    //     this.props.cards[this.props.cards.length - 2] ===
-    //     prevProps.cards[prevProps.cards.length - 1]
-    //   ) {
-    //     this.scrollToBottom();
-    //   }
-    // };
-    // scrollToBottom = () => {
-    //   this.listEnd.scrollIntoView();
-    // };
-  }, [cards]);
+    if (
+      prevCards != null &&
+      prevCards[prevCards.length - 1] === cards[cards.length - 2]
+    ) {
+      scrollToBottom();
+    }
+  }, [prevCards, cards]);
+
   return (
     <Droppable droppableId={listId}>
       {(provided, { isDraggingOver }) => (
@@ -39,13 +43,7 @@ function Cards({ listId }: Props) {
               />
             ))}
             {provided.placeholder}
-            <div
-              style={{ float: "left", clear: "both" }}
-              ref={() => {
-                // TODO: handle refs...
-                // this.listEnd = el;
-              }}
-            />
+            <div style={{ float: "left", clear: "both" }} ref={listEnd} />
           </div>
         </>
       )}

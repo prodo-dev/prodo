@@ -4,10 +4,10 @@ import FaTwitter from "react-icons/lib/fa/twitter";
 import FaUserSecret from "react-icons/lib/fa/user-secret";
 import googleLogo from "../../assets/images/google-logo.svg";
 import kanbanLogo from "../../assets/images/kanban-logo.svg";
-import background1920 from "../../assets/images/postits-1920.jpg";
 import background1366 from "../../assets/images/postits-1366.jpg";
-import "./LandingPage.scss";
+import background1920 from "../../assets/images/postits-1920.jpg";
 import { dispatch, state } from "../../model";
+import "./LandingPage.scss";
 
 function enterAsGuest() {
   state.isGuest = true;
