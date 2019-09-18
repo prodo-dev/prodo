@@ -160,7 +160,7 @@ export const connect: Connect<any> = <P extends {}>(
 
       this._watch = x => x;
 
-      const createDispatch = (name: string) => func => (...args) =>
+      const createDispatch = () => func => (...args) =>
         this.store.exec(
           {
             id: `${this.comp.name}/event.${this.eventIdCnt++}`,
