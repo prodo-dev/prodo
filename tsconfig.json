@@ -5,6 +5,7 @@
     { "path": "examples/chat-app" },
     { "path": "examples/clock" },
     { "path": "examples/kanban" },
+    { "path": "examples/kanban-with-db" },
     { "path": "examples/local-map" },
     { "path": "examples/random" },
     { "path": "examples/routing" },

@@ -1,0 +1,173 @@
+import * as React from "react";
+import Textarea from "react-textarea-autosize";
+import Modal from "react-modal";
+import CardBadges from "../CardBadges/CardBadges";
+import CardOptions from "./CardOptions";
+import { findCheckboxes } from "../utils";
+import "./CardModal.scss";
+import { Card } from "../../types";
+import { db, dispatch } from "../../model";
+
+type Props = {
+  card: Card;
+  cardElement: {
+    getBoundingClientRect: Function;
+  };
+  isOpen: boolean;
+  toggleCardEditor: Function;
+  listId: string;
+};
+
+const changeCardText = (id: string, text: string) => {
+  db.cardsById.update(id, { text });
+};
+
+const deleteCard = async (id: string, listId: string) => {
+  db.cardsById.delete(id);
+  const list = await db.listsById.get(listId);
+  db.listsById.update(listId, { cards: list.cards.filter(x => x !== id) });
+};
+
+function CardModal({
+  card,
+  listId,
+  cardElement,
+  isOpen,
+  toggleCardEditor,
+}: Props) {
+  const [newText, setNewText] = React.useState(card.text);
+  const [isColorPickerOpen, setColorPickerOpen] = React.useState(false);
+  const [isTextareaFocused, setTextareaFocused] = React.useState(true);
+
+  if (typeof document !== "undefined") {
+    Modal.setAppElement("#app");
+  }
+
+  const handleKeyDown = (event: any) => {
+    if (event.keyCode === 13 && event.shiftKey === false) {
+      event.preventDefault();
+      submitCard();
+    }
+  };
+
+  const submitCard = () => {
+    if (newText === "") {
+      dispatch(deleteCard)(card.id, listId);
+    } else if (newText !== card.text) {
+      dispatch(changeCardText)(card.id, newText);
+    }
+    toggleCardEditor();
+  };
+
+  const handleChange = event => {
+    setNewText(event.target.value);
+  };
+
+  const toggleColorPicker = () => {
+    setColorPickerOpen(!isColorPickerOpen);
+  };
+
+  const handleRequestClose = () => {
+    if (!isColorPickerOpen) {
+      toggleCardEditor();
+    }
+  };
+
+  if (!cardElement) {
+    return null;
+  }
+
+  // Get number of checked and total checkboxes
+  const checkboxes = findCheckboxes(newText);
+
+  /*
+    Create style of modal in order to not clip outside the edges no matter what device.
+    */
+
+  // Get dimensions of the card to calculate dimensions of cardModal.
+  const boundingRect = cardElement.getBoundingClientRect();
+
+  // Returns true if card is closer to right border than to the left
+  const isCardNearRightBorder =
+    window.innerWidth - boundingRect.right < boundingRect.left;
+
+  // Check if the display is so thin that we need to trigger a centered, vertical layout
+  // DO NOT CHANGE the number 550 without also changing related media-query in CardOptions.scss
+  const isThinDisplay = window.innerWidth < 550;
+
+  // Position textarea at the same place as the card and position everything else away from closest edge
+  const style = {
+    content: {
+      top: Math.min(
+        boundingRect.top,
+        window.innerHeight - boundingRect.height - 18,
+      ),
+      left: isCardNearRightBorder ? null : boundingRect.left,
+      right: isCardNearRightBorder
+        ? window.innerWidth - boundingRect.right
+        : null,
+      flexDirection: isCardNearRightBorder ? "row-reverse" : "row",
+    },
+  };
+
+  // For layouts that are less wide than 550px, let the modal take up the entire width at the top of the screen
+  const mobileStyle = {
+    content: {
+      flexDirection: "column",
+      top: 3,
+      left: 3,
+      right: 3,
+    },
+  };
+
+  return (
+    <Modal
+      closeTimeoutMS={150}
+      isOpen={isOpen}
+      onRequestClose={handleRequestClose}
+      contentLabel="Card editor"
+      overlayClassName="modal-underlay"
+      className="modal"
+      style={isThinDisplay ? mobileStyle : style}
+      includeDefaultStyles={false}
+      onClick={handleRequestClose}
+    >
+      <div
+        className="modal-textarea-wrapper"
+        style={{
+          minHeight: isThinDisplay ? "none" : boundingRect.height,
+          width: isThinDisplay ? "100%" : boundingRect.width,
+          boxShadow: isTextareaFocused
+            ? "0px 0px 3px 2px rgb(0, 180, 255)"
+            : null,
+          background: card.color,
+        }}
+      >
+        <Textarea
+          autoFocus
+          useCacheForDOMMeasurements
+          value={newText}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          className="modal-textarea"
+          spellCheck={false}
+          onFocus={() => setTextareaFocused(true)}
+          onBlur={() => setTextareaFocused(false)}
+        />
+        {(card.date || checkboxes.total > 0) && (
+          <CardBadges date={card.date} checkboxes={checkboxes} />
+        )}
+      </div>
+      <CardOptions
+        isColorPickerOpen={isColorPickerOpen}
+        card={card}
+        boundingRect={boundingRect}
+        isCardNearRightBorder={isCardNearRightBorder}
+        isThinDisplay={isThinDisplay}
+        toggleColorPicker={toggleColorPicker}
+      />
+    </Modal>
+  );
+}
+
+export default CardModal;
