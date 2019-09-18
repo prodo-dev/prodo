@@ -47,7 +47,7 @@ const getSections = (data: QueryResult): SectionModel[] => {
   const sections: SectionModel[] = Object.entries(keyedSubSections)
     .map(([sectionName, subsections]) => {
       const order = parseInt(sectionName, 10);
-      const normalizedName = sectionName.replace(/^\d+\_/, "");
+      const normalizedName = sectionName.replace(/^\d+\_/, "").toLowerCase();
       const title = normalize(normalizedName);
 
       return {
@@ -149,6 +149,9 @@ const Sidebar: React.FC<Props> = props => {
   const data: QueryResult = useStaticQuery(query);
   const currentPath = props.location.pathname;
   const sections = getSections(data);
+
+  console.log("current", currentPath);
+  console.log("sections", sections);
 
   return (
     <StyledSidebar className="sidebar" isOpen={props.isOpen}>
