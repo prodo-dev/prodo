@@ -26,18 +26,4 @@ Soon we will add an option to run the developer tools as a standalone applicatio
 
 ### Wrapper Component
 
-In the main index file of your app, wrap your App and the Provider with the DevTools component:
-
-````
-import { DevTools } from "@prodo/devtools-core";
-
-ReactDOM.render(
-    <DevTools>
-        <Provider>
-            <App />
-        </Provider>
-    </DevTools>,
-  document.getElementById("root"),
-);
-```
-````
+All you have to do is install the plugin as described above.

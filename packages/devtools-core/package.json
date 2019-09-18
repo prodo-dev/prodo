@@ -10,8 +10,8 @@
     "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
     "build:babel:watch": "yarn build:babel --watch",
-    "css": "cp src/*.css lib/ && cp src/*.css transpiled/",
-    "build": "set -ex; yarn build:code; yarn build:babel"
+    "css": "cp src/styles/*.css transpiled/styles/",
+    "build": "set -ex; yarn build:code; yarn build:babel; yarn css"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.22",

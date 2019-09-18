@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "set -ex; tsc --build",
+    "build": "set -ex; yarn workspace @prodo/devtools-core build; tsc --build",
     "build:watch": "yarn build --watch",
     "clean": "wsrun clean",
     "test": "wsrun --serial --exclude-missing test",

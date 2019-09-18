@@ -9,7 +9,6 @@ const StyledIFrame = styled.iframe`
 
   min-height: 100vh;
   height: 100%;
-
   min-width: 50%;
 
   border: none;
