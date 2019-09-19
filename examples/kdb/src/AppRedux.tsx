@@ -66,7 +66,10 @@ const reducer = (
     case "TOGGLE_SYMBOL":
       return {
         ...state,
-        symbols: { ...state.symbols, [action.symbol]: !state.symbols[action.symbol] },
+        symbols: {
+          ...state.symbols,
+          [action.symbol]: !state.symbols[action.symbol],
+        },
       };
   }
   return state;

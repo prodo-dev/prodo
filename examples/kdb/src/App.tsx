@@ -30,7 +30,6 @@ const setupStreams = model.action(
     streams.quoteHistory = quotes.pipe(
       op.scan(pushValues(historySize), {} as { [key: string]: Quote[] }),
     );
-
     streams.tradeHistory = trades.pipe(
       op.scan(pushValues(historySize), {} as { [key: string]: Trade[] }),
     );
@@ -104,11 +103,7 @@ const App = model.connect(
   "App",
 );
 
-const { Provider } = model.createStore({
-  initState: {
-    symbols: allSymbols,
-  },
-});
+const { Provider } = model.createStore({ initState: { symbols: allSymbols } });
 
 export default () => (
   <Provider>
