@@ -1,25 +1,23 @@
-import { ProdoPlugin } from "@prodo/core";
+import { createPlugin } from "@prodo/core";
 
 export interface LoggerConfig {
   logger?: boolean;
 }
 
-const init = (config: LoggerConfig) => {
+const logger = createPlugin<LoggerConfig, {}, {}, {}>("logger");
+
+logger.init(config => {
   if (config.logger) {
-    // tslint:disable-next-line:no-console
+    // tslint:disable-next-line
     console.log("@prodo/logger is on");
   }
-};
+});
 
-const loggerPlugin: ProdoPlugin<LoggerConfig, {}, {}, {}> = {
-  name: "logger",
-  init,
-  onCompletedEvent: (e, config) => {
-    if (config.logger) {
-      prettyPrint(e);
-    }
-  },
-};
+logger.onCompleteEvent((event, config) => {
+  if (config.logger) {
+    prettyPrint(event);
+  }
+});
 
 function prettyPrint(e: any) {
   // tslint:disable:no-console
@@ -52,4 +50,4 @@ function prettyPrint(e: any) {
   console.groupEnd();
 }
 
-export default loggerPlugin;
+export default logger;

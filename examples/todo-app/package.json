@@ -12,6 +12,7 @@
   "dependencies": {
     "@prodo/core": "^0.0.6",
     "@prodo/effect": "^0.0.6",
+    "@prodo/logger": "^0.0.6",
     "react": "^16.8.6",
     "react-dom": "^16.9.0"
   },

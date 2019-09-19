@@ -1,4 +1,11 @@
-import { createUniverseWatcher, ProdoPlugin } from "@prodo/core";
+import {
+  createPlugin,
+  createUniverseWatcher,
+  PluginActionCtxFn,
+  PluginInitFn,
+  PluginViewCtxFn,
+  ProdoPlugin,
+} from "@prodo/core";
 
 export interface Local<T> {
   local: Partial<T>;
@@ -56,7 +63,10 @@ const keyExists = <T>(config: Config<T>, key: string): boolean => {
   return Object.keys(localStorage).includes(serializeKey(key));
 };
 
-const init = <T>(config: Config<T>, universe: Universe<T>) => {
+const initFn = <T>(): PluginInitFn<Config<T>, Universe<T>> => (
+  config,
+  universe,
+) => {
   universe.local = {};
 
   // init universe with values from localStorage or fixtures
@@ -87,23 +97,18 @@ const init = <T>(config: Config<T>, universe: Universe<T>) => {
   // use initLocal for any values that have not yet been loaded
   if (config.initLocal != null) {
     Object.keys(config.initLocal).forEach(key => {
-      if (!universe.local[key]) {
+      if (universe.local[key] === undefined) {
         universe.local[key] = config.initLocal![key];
       }
     });
   }
 };
 
-const prepareActionCtx = <T>(
-  {
-    ctx,
-    universe,
-  }: {
-    ctx: ActionCtx<T>;
-    universe: Universe<T>;
-  },
-  config: Config<T>,
-) => {
+const prepareActionCtx = <T>(): PluginActionCtxFn<
+  Config<T>,
+  Universe<T>,
+  ActionCtx<T>
+> => ({ ctx, universe }, config) => {
   ctx.local = new Proxy(
     {},
     {
@@ -136,7 +141,12 @@ const prepareActionCtx = <T>(
   ) as Partial<T>;
 };
 
-const prepareViewCtx = <T>({ ctx }: { ctx: ViewCtx<T> }) => {
+const prepareViewCtx = <T>(): PluginViewCtxFn<
+  Config<T>,
+  Universe<T>,
+  ActionCtx<T>,
+  ViewCtx<T>
+> => ({ ctx }) => {
   ctx.local = createUniverseWatcher("local");
 };
 
@@ -145,11 +155,16 @@ const localPlugin = <T>(): ProdoPlugin<
   Universe<T>,
   ActionCtx<T>,
   ViewCtx<T>
-> => ({
-  name: "local",
-  init,
-  prepareActionCtx,
-  prepareViewCtx,
-});
+> => {
+  const plugin = createPlugin<Config<T>, Universe<T>, ActionCtx<T>, ViewCtx<T>>(
+    "local",
+  );
+
+  plugin.init(initFn<T>());
+  plugin.prepareActionCtx(prepareActionCtx<T>());
+  plugin.prepareViewCtx(prepareViewCtx<T>());
+
+  return plugin;
+};
 
 export default localPlugin;

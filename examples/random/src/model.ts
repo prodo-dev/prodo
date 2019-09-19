@@ -9,6 +9,6 @@ export const initState: State = {
   count: 0,
 };
 
-export const model = createModel<State>().with(randomPlugin());
+export const model = createModel<State>().with(randomPlugin);
 export const { action, connect } = model;
 export const { state, random } = model.ctx;

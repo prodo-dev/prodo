@@ -1,4 +1,4 @@
-import { PluginViewCtx, ProdoPlugin } from "@prodo/core";
+import { createPlugin } from "@prodo/core";
 
 export interface RandomConfig {
   possibilities: unknown[];
@@ -17,40 +17,32 @@ export interface RandomViewCtx {
   random: (key: string) => any;
 }
 
-const init = (_config: any, universe: RandomUniverse) => {
-  universe.random = {};
-};
-
-const prepareActionCtx = ({
-  ctx,
-  universe,
-}: {
-  ctx: RandomActionCtx;
-  universe: RandomUniverse;
-}) => {
-  ctx.random = universe.random;
-};
-
 const randomValue = (possibilities: unknown[]): unknown =>
   possibilities[Math.floor(Math.random() * possibilities.length)];
 
-const updateRandomAction = ({ random }: RandomActionCtx) => (
-  key: string,
-  possibilities: unknown[],
-) => {
-  random[key] = randomValue(possibilities);
-};
+const plugin = createPlugin<
+  RandomConfig,
+  RandomUniverse,
+  RandomActionCtx,
+  RandomViewCtx
+>("random");
 
-const prepareViewCtx = (
-  {
-    ctx,
-    universe,
-  }: {
-    ctx: PluginViewCtx<RandomActionCtx, RandomUniverse> & RandomViewCtx;
-    universe: RandomUniverse;
+const updateRandomAction = plugin.action(
+  ({ random }) => (key: string, possibilities: unknown[]) => {
+    random[key] = randomValue(possibilities);
   },
-  config: RandomConfig,
-) => {
+  "updateRandom",
+);
+
+plugin.init((_config, universe) => {
+  universe.random = {};
+});
+
+plugin.prepareActionCtx(({ ctx, universe }) => {
+  ctx.random = universe.random;
+});
+
+plugin.prepareViewCtx(({ ctx, universe }, config) => {
   ctx.random = (key: string) => {
     if (!universe.random[key]) {
       universe.random[key] = randomValue(config.possibilities);
@@ -64,18 +56,6 @@ const prepareViewCtx = (
 
     return universe.random[key];
   };
-};
-
-const randomPlugin = (): ProdoPlugin<
-  RandomConfig,
-  RandomUniverse,
-  RandomActionCtx,
-  RandomViewCtx
-> => ({
-  name: "random",
-  init,
-  prepareActionCtx,
-  prepareViewCtx,
 });
 
-export default randomPlugin;
+export default plugin;
