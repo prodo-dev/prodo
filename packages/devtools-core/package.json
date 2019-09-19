@@ -9,8 +9,7 @@
     "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
-    "css": "cp src/styles/*.css transpiled/styles/",
-    "build": "set -ex; yarn build:code; yarn build:babel; yarn css",
+    "build": "set -ex; yarn build:code; yarn build:babel",
     "test": "jest"
   },
   "dependencies": {
