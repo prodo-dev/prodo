@@ -1,5 +1,11 @@
 import { PluginAction } from "@prodo/core";
-import { historySymbol, RouteParams, Routing, universeSymbol } from "./types";
+import {
+  historySymbol,
+  persistentSymbol,
+  RouteParams,
+  Routing,
+  universeSymbol,
+} from "./types";
 import { createParamString } from "./utils";
 
 export const pushAction: PluginAction<
@@ -9,6 +15,11 @@ export const pushAction: PluginAction<
   if (typeof routeParams === "string") {
     routeParams = { path: routeParams };
   }
+  ctx[persistentSymbol].isTimeTravelling = true;
+  ctx[universeSymbol].route = {
+    path: routeParams.path,
+    params: routeParams.params || {},
+  };
   ctx[historySymbol].push(
     routeParams.path + createParamString(routeParams.params),
   );
@@ -21,6 +32,15 @@ export const replaceAction: PluginAction<
   if (typeof routeParams === "string") {
     routeParams = { path: routeParams };
   }
+  ctx[universeSymbol].route = {
+    path: routeParams.path,
+    params: routeParams.params || {},
+  };
+  ctx[persistentSymbol].isTimeTravelling = true;
+  ctx[universeSymbol].route = {
+    path: routeParams.path,
+    params: routeParams.params || {},
+  };
   ctx[historySymbol].replace(
     routeParams.path + createParamString(routeParams.params),
   );
@@ -29,8 +49,12 @@ export const replaceAction: PluginAction<
 export const setRouteAction: PluginAction<Routing, [RouteParams]> = ctx => (
   routeParams: RouteParams,
 ) => {
-  ctx[universeSymbol].route = {
-    path: routeParams.path,
-    params: routeParams.params || {},
-  };
+  if (!ctx[persistentSymbol].isTimeTravelling) {
+    ctx[universeSymbol].route = {
+      path: routeParams.path,
+      params: routeParams.params || {},
+    };
+  } else {
+    ctx[persistentSymbol].isTimeTravelling = false;
+  }
 };

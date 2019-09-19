@@ -4,14 +4,18 @@ import { pushAction, replaceAction, setRouteAction } from "./actions";
 import {
   Config,
   historySymbol,
+  persistentSymbol,
   Routing,
   Universe,
   universeSymbol,
 } from "./types";
 
+const persistentContext = { isTimeTravelling: false };
+
 const prepareContext = (ctx: Routing, history: History, universe: Universe) => {
   ctx[historySymbol] = history;
   ctx[universeSymbol] = universe;
+  ctx[persistentSymbol] = persistentContext;
 
   ctx.route = createUniverseWatcher("route");
 };
