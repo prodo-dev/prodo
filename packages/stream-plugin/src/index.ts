@@ -26,7 +26,7 @@ export interface Universe<T extends { [K in keyof T]: Stream<any> }> {
 }
 
 interface State<T extends { [K in keyof T]: Stream<any> }> {
-  streams: T;
+  streams: Partial<T>;
   states: { [K in keyof T]?: StreamState };
 }
 
@@ -95,7 +95,7 @@ const streamPlugin = <T extends { [K in keyof T]: Stream<any> }>(): ProdoPlugin<
   ViewCtx<T>
 > => {
   const state: State<T> = {
-    streams: {} as any,
+    streams: {},
     states: {},
   };
 
