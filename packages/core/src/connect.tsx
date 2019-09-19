@@ -1,14 +1,6 @@
 import * as React from "react";
 import logger from "./logger";
-import {
-  Comp,
-  Connect,
-  Dispatch,
-  Node,
-  PluginDispatch,
-  Store,
-  Watch,
-} from "./types";
+import { Comp, Connect, Dispatch, Node, Store, Watch } from "./types";
 import { joinPath, splitPath } from "./utils";
 import { subscribe, unsubscribe } from "./watch";
 
@@ -107,7 +99,6 @@ export const connect: Connect<any> = <P extends {}>(
     private _renderFunc: any;
     private _watch: Watch;
     private _dispatch: Dispatch;
-    private _createPluginDispatch: (name: string) => PluginDispatch<any>;
     private _state: any;
 
     private _viewCtx: any;
@@ -160,7 +151,7 @@ export const connect: Connect<any> = <P extends {}>(
 
       this._watch = x => x;
 
-      const createDispatch = () => func => (...args) =>
+      this._dispatch = func => (...args) =>
         this.store.exec(
           {
             id: `${this.comp.name}/event.${this.eventIdCnt++}`,
@@ -169,9 +160,6 @@ export const connect: Connect<any> = <P extends {}>(
           func,
           ...args,
         );
-
-      this._createPluginDispatch = createDispatch;
-      this._dispatch = createDispatch();
 
       this._renderFunc = (props: any): any => {
         return (func as ((args: any) => (props: any) => any))(this._viewCtx)(
@@ -270,10 +258,10 @@ export const connect: Connect<any> = <P extends {}>(
       };
 
       this.store.plugins.forEach(p => {
-        if (p.prepareViewCtx) {
-          (ctx as any).dispatch = this._createPluginDispatch(p.name);
+        if (p._internals.viewCtx) {
+          (ctx as any).dispatch = this._dispatch;
 
-          p.prepareViewCtx(
+          p._internals.viewCtx(
             {
               ctx,
               universe: this.store.universe,

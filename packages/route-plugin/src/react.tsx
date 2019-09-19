@@ -1,6 +1,6 @@
 import { connect } from "@prodo/core";
 import * as React from "react";
-import * as actions from "./actions";
+import { push, replace } from "./plugin";
 import { RouteParams } from "./types";
 import { createParamString, matchRoute } from "./utils";
 
@@ -29,6 +29,7 @@ export const Route = connect(
     }
     return null;
   },
+  "Route",
 );
 
 export const Switch = connect(
@@ -49,6 +50,7 @@ export const Switch = connect(
 
     return element && React.cloneElement(element, {});
   },
+  "Switch",
 );
 
 export const Redirect = connect(
@@ -65,12 +67,13 @@ export const Redirect = connect(
     if (to.params == null) {
       to.params = {};
     }
-    const action = push ? actions.push : actions.replace;
+    const action = push ? push : replace;
     React.useEffect(() => {
       dispatch(action)(to);
     }, [to.path, to.params]);
     return null;
   },
+  "Redirect",
 );
 
 const Anchor = ({ onClick, navigate, ...rest }: any) => (
@@ -124,9 +127,10 @@ export const Link = connect(
         Object.keys(to.params).length > 0 ? createParamString(to.params) : ""
       }`,
       navigate: () => {
-        const action = replace ? actions.replace : actions.push;
+        const action = replace ? replace : push;
         dispatch(action)(to);
       },
     } as any);
   },
+  "Link",
 );
