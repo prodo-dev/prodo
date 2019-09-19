@@ -12,10 +12,6 @@ export const pushAction: PluginAction<
   ctx[historySymbol].push(
     routeParams.path + createParamString(routeParams.params),
   );
-  ctx[universeSymbol].route = {
-    path: routeParams.path,
-    params: routeParams.params || {},
-  };
 };
 
 export const replaceAction: PluginAction<
@@ -28,10 +24,6 @@ export const replaceAction: PluginAction<
   ctx[historySymbol].replace(
     routeParams.path + createParamString(routeParams.params),
   );
-  ctx[universeSymbol].route = {
-    path: routeParams.path,
-    params: routeParams.params || {},
-  };
 };
 
 export const setRouteAction: PluginAction<Routing, [RouteParams]> = ctx => (
