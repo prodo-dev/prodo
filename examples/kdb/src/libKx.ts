@@ -32,11 +32,11 @@ const filterTrades = (
 
 const parseKxTime = (date: string): Date => {
   const out = new Date();
-  const [hour, min, sec] = date
-    .slice(2)
-    .split(":")
-    .map(parseFloat);
-  out.setHours(hour, min, sec);
+  const [hour, min, sec, ms] = date
+    .slice(2, 14)
+    .split(/:|\./)
+    .map(i => parseInt(i, 10));
+  out.setHours(hour, min, sec, ms);
   return out;
 };
 
@@ -67,18 +67,20 @@ export const kdbSocket = (url: string = "ws://localhost:5001") => {
   const trades = ws.pipe(
     op.filter(filterTrades),
     op.map(({ result }): { [key: string]: Trade } => parseEvents(result)),
+    op.distinct(trades => Object.values(trades)[0].time.getTime() || NaN),
   );
 
   return { quotes, trades };
 };
 
-export const pushValues = <T>(size: number) => (
+export const pushValues = <T>(test: (ref: T, value: T) => boolean) => (
   acc: { [key: string]: T[] },
-  value: { [key: string]: T},
+  value: { [key: string]: T },
 ): { [key: string]: T[] } =>
   Object.fromEntries(
-    Object.entries(value).map(([k, v]) => [
-      k,
-      [...(acc[k] || []).slice(-size), v],
-    ]),
+    Object.entries(value).map(([k, v]) => {
+      const old = acc[k] || [];
+      const idx = old.findIndex(o => test(v, o));
+      return [k, [...old.slice(idx), v]];
+    }),
   );

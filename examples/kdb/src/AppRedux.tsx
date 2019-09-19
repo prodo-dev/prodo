@@ -32,7 +32,9 @@ interface UpdateTrades {
 
 type Action = UpdateQuotes | UpdateTrades | ToggleSymbol;
 
-const historySize = 10;
+const historySize = 10000;
+const historyFilter = <T extends Quote | Trade>(ref: T, value: T) =>
+  value.time.getTime() > ref.time.getTime() - historySize;
 
 const reducer = (
   state: State = {
@@ -49,7 +51,7 @@ const reducer = (
       return {
         ...state,
         quotes: action.quotes,
-        quoteHistory: pushValues<Quote>(historySize)(
+        quoteHistory: pushValues<Quote>(historyFilter)(
           state.quoteHistory,
           action.quotes,
         ),
@@ -58,7 +60,7 @@ const reducer = (
       return {
         ...state,
         trades: action.trades,
-        tradeHistory: pushValues<Trade>(historySize)(
+        tradeHistory: pushValues<Trade>(historyFilter)(
           state.tradeHistory,
           action.trades,
         ),
@@ -94,6 +96,7 @@ const ConnectedGraph = connect(
   ({ quoteHistory, tradeHistory }: State, { idx }: { idx: string }) => ({
     quoteHistory: quoteHistory[idx] || [],
     tradeHistory: tradeHistory[idx] || [],
+    historySize,
   }),
 )(Graph);
 

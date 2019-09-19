@@ -67,23 +67,25 @@ const TradeLine = ({ trades, axes }: { trades: Trade[]; axes: Axes }) => {
 export default ({
   quoteHistory,
   tradeHistory,
+  historySize
 }: {
   quoteHistory: Quote[];
   tradeHistory: Trade[];
+  historySize: number;
 }) => {
   const yMin = Math.min(...quoteHistory.map(({ bid }) => bid));
   const yMax = Math.max(...quoteHistory.map(({ ask }) => ask));
+  const yRange = yMax - yMin;
 
-  const xMin = Math.min(
-    ...quoteHistory.map(({ time }) => time.getTime()),
-  );
+  const xMin = Math.min(...quoteHistory.map(({ time }) => time.getTime()));
+
   const axes = {
-    x: { min: xMin, scale: 0.05 },
-    y: { min: yMin, scale: 100 / (yMax - yMin) },
+    x: { min: xMin, scale: 500 / (historySize) },
+    y: { min: yMin, scale: yRange ? 100 / yRange : 1 },
   };
 
   return (
-    <svg height="100" width="500" viewBox="0 -5 500 110">
+    <svg height="200" width="500" viewBox={`0 -5 500 110`} >
       <TradeLine trades={tradeHistory} axes={axes} />
       <QuoteSpots quotes={quoteHistory} axes={axes} />
     </svg>

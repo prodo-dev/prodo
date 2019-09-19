@@ -21,17 +21,21 @@ interface Streams {
 
 const model = createModel<State>().with(streamPlugin<Streams>());
 
+const historySize = 10000;
+const historyFilter = <T extends Quote | Trade>(ref: T, value: T) =>
+  value.time.getTime() > ref.time.getTime() - historySize;
+
 const setupStreams = model.action(
-  ({ streams }) => (historySize: number) => {
+  ({ streams }) => () => {
     const { quotes, trades } = kdbSocket();
     streams.quotes = quotes;
     streams.trades = trades;
 
     streams.quoteHistory = quotes.pipe(
-      op.scan(pushValues(historySize), {} as { [key: string]: Quote[] }),
+      op.scan(pushValues(historyFilter), {} as { [key: string]: Quote[] }),
     );
     streams.tradeHistory = trades.pipe(
-      op.scan(pushValues(historySize), {} as { [key: string]: Trade[] }),
+      op.scan(pushValues(historyFilter), {} as { [key: string]: Trade[] }),
     );
   },
   "setupStreams",
@@ -72,7 +76,7 @@ const ConnectedGraph = model.connect(
   ({ streams, watch }) => ({ idx }: { idx: string }) => {
     const quoteHistory = watch(streams.quoteHistory![idx]) || [];
     const tradeHistory = watch(streams.tradeHistory![idx]) || [];
-    return <Graph quoteHistory={quoteHistory} tradeHistory={tradeHistory} />;
+    return <Graph {...{ quoteHistory, tradeHistory, historySize }} />;
   },
   "Graph",
 );
@@ -80,7 +84,7 @@ const ConnectedGraph = model.connect(
 const App = model.connect(
   ({ state, dispatch, watch }) => () => {
     React.useEffect(() => {
-      dispatch(setupStreams)(10);
+      dispatch(setupStreams)();
     }, []);
     const symbols = watch(state.symbols);
 
