@@ -87,7 +87,7 @@ const init = <T>(config: Config<T>, universe: Universe<T>) => {
   // use initLocal for any values that have not yet been loaded
   if (config.initLocal != null) {
     Object.keys(config.initLocal).forEach(key => {
-      if (!universe.local[key]) {
+      if (universe.local[key] === undefined) {
         universe.local[key] = config.initLocal![key];
       }
     });
