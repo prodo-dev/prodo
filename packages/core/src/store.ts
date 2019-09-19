@@ -28,15 +28,27 @@ const initPlugins = (
     });
   });
 
-const createProvider = <State>(store: BaseStore<State>): Provider => ({
-  children,
-}: {
-  children: React.ReactNode;
-}) =>
-  React.createElement(ProdoProvider, {
-    value: store,
-    children,
-  });
+const createProvider = <State>(
+  store: BaseStore<State>,
+  plugins: Array<ProdoPlugin<any, any, any, any>>,
+): Provider =>
+  plugins.reduce(
+    (
+      next: React.ComponentType<{ children: React.ReactNode }>,
+      plugin: ProdoPlugin<any, any, any, any>,
+    ) =>
+      plugin._internals.Provider
+        ? ({ children }: { children: React.ReactNode }) =>
+            React.createElement(plugin._internals.Provider!, {
+              children: React.createElement(next, { children }),
+            })
+        : next,
+    (({ children }: { children: React.ReactNode }) =>
+      React.createElement(ProdoProvider, {
+        value: store,
+        children,
+      })) as Provider,
+  );
 
 export const createStore = <State>(
   config: { initState: State },
@@ -171,7 +183,7 @@ export const createStore = <State>(
 
   initStore.createDispatch = createRootDispatch;
 
-  const Provider = createProvider(store);
+  const Provider = createProvider(store, plugins);
 
   return {
     store,
