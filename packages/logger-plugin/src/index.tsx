@@ -23,24 +23,31 @@ const loggerPlugin: ProdoPlugin<LoggerConfig, {}, {}, {}> = {
 
 function prettyPrint(e: any) {
   // tslint:disable:no-console
-  console.groupCollapsed(
+  console.group(
     "%c%s",
     "background: #20e3a0; font-size: 12px; font-weight: bold; padding: 4px; border-radius: 3px;",
     e.actionName,
+    ...e.args,
   );
-  console.log("%c%s", "background: lightgrey; padding: 3px;", "origin", {
+  console.log(
+    "%c%s",
+    "background: lightblue; padding: 3px;",
+    "prev",
+    e.prevUniverse,
+  );
+  console.log(
+    "%c%s",
+    "background: #f7b1b1; padding: 3px;",
+    "next",
+    e.nextUniverse,
+  );
+  console.log("%c%s", "background: lightgrey; padding: 3px;", "meta", {
     id: e.id,
-    parent: e.parentId,
-    args: e.args,
-  });
-  console.log("%c%s", "background: lightblue; padding: 3px;", "data", {
-    prev: e.prevUniverse,
-    next: e.nextUniverse,
+    parentId: e.parentId,
     patches: e.patches,
-  });
-  console.log("%c%s", "background: #f7b1b1; padding: 3px;", "effects", {
-    records: e.recordedEffects,
+    nextActions: e.nextActions,
     rerender: e.rerender,
+    recordedEffects: e.recordedEffects,
   });
   console.groupEnd();
 }
