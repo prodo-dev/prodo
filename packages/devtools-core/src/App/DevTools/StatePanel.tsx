@@ -5,7 +5,6 @@ import { sendMessage } from "../../utils/communication";
 import JsonTree from "./components/JsonTree";
 
 const StyledStatePanel = styled.div`
-  font-family: ${props => props.theme.fonts.code};
   font-size: ${props => props.theme.fontSizes.code};
 `;
 

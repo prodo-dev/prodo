@@ -22,7 +22,7 @@ const DevToolsApp = (props: Props) => (
     <App
       skipUserApp={props.skipUserApp}
       // The below is used when devtools are not used as a wrapper component
-      url={!props.children ? "http://localhost:1234" : undefined}
+      url={!props.children ? "http://localhost:8080" : undefined}
     >
       {props.children}
     </App>

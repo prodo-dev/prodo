@@ -19,6 +19,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@prodo/core": "^0.0.6",
+    "lodash": "^4.17.15",
     "path-browserify": "^1.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.9.0",

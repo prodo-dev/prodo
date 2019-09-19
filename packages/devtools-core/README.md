@@ -22,8 +22,6 @@ export const model = createModel<State>()
 
 Currently, you can use these devtools as a wrapper component around your Prodo application.
 
-Soon we will add an option to run the developer tools as a standalone application. We are also planning to add a browser extension shortly.
-
 ### Wrapper Component
 
 All you have to do is install the plugin as described above.

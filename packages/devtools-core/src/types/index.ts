@@ -2,7 +2,7 @@ import { Event } from "@prodo/core/lib/types";
 
 export * from "./communication";
 
-export type Panel = "state" | "actionLog";
+export type Panel = "state" | "actionLog" | "renderLog";
 
 interface Universe {
   state: any;

@@ -39,7 +39,7 @@ export const ActionLogRow = ({ action }: { action: Action }) => {
           className="actionLogRowHeader"
           data-testid="actionLogRowHeader"
         >
-          {action.actionName} (origin: {action.id}
+          {action.actionName} (dispatched by {action.id}
           {action.parentId && `, parent: ${action.parentId}`})
         </StyledSummary>
         <ActionLogRowContents
@@ -59,7 +59,7 @@ export const ActionLogRow = ({ action }: { action: Action }) => {
             <div>Next actions: {JSON.stringify(action.nextActions)}</div>
           )}
           {rerenders.length > 0 && (
-            <div>Re-render: {JSON.stringify(rerenders)}</div>
+            <div>Components to re-render: {JSON.stringify(rerenders)}</div>
           )}
         </ActionLogRowContents>
       </details>

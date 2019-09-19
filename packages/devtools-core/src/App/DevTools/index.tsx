@@ -6,11 +6,13 @@ import { HeaderHeight, paddings, PanelWidth } from "../../styles";
 import { Panel } from "../../types";
 import { eventListener } from "../../utils/communication";
 import { ActionLogPanel } from "./ActionLogPanel";
+import { RenderLogPanel } from "./RenderLogPanel";
 import { StatePanel } from "./StatePanel";
 
 const panels: { [key in Panel]: React.ReactElement } = {
   state: <StatePanel />,
   actionLog: <ActionLogPanel />,
+  renderLog: <RenderLogPanel />,
 };
 
 const StyledDevtools = styled.div`
@@ -71,22 +73,17 @@ export const DevTools = () => {
   return (
     <StyledDevtools className="devTools" data-testid="devTools">
       <Tabs className="headerTabs" data-testid="headerTabs">
-        <Tab
-          isSelected={selectedPanel === "state"}
-          onClick={() => setSelectedPanel("state")}
-          className="headerTabState"
-          data-testid="headerTabState"
-        >
-          State
-        </Tab>
-        <Tab
-          isSelected={selectedPanel === "actionLog"}
-          onClick={() => setSelectedPanel("actionLog")}
-          className="headerTabActionLog"
-          data-testid="headerTabActionLog"
-        >
-          Action Log
-        </Tab>
+        {Object.keys(panels).map(panel => (
+          <Tab
+            isSelected={selectedPanel === panel}
+            onClick={() => setSelectedPanel(panel as Panel)}
+            className={`${panel}headerTab`}
+            data-testid={`${panel}headerTab`}
+            key={panel}
+          >
+            {getPanelTitle(panel)}
+          </Tab>
+        ))}
       </Tabs>
       <StyledScroll
         scrollViewClassName="scroll-to-bottom-view"
@@ -95,5 +92,16 @@ export const DevTools = () => {
         <StyledPanel>{panels[selectedPanel]}</StyledPanel>
       </StyledScroll>
     </StyledDevtools>
+  );
+};
+
+// Title-cases and spaces panel name, eg. actionLog => Action Log
+const getPanelTitle = (data: string) => {
+  return (
+    data.charAt(0).toUpperCase() +
+    data
+      .slice(1)
+      .split("Log")
+      .join(" Log")
   );
 };
