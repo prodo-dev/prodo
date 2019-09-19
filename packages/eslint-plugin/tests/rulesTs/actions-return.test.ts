@@ -115,16 +115,6 @@ ruleTester.run("no-action-return", rule, {
     },
     {
       code: `import * as model from './model';
-        model = {};
-        function foo(){
-            model.state;
-            return 1;
-        };`,
-      errors: [{ messageId }],
-      filename: defaultTsFile,
-    },
-    {
-      code: `import * as model from './model';
         function bar(){
             const model = {};
         }

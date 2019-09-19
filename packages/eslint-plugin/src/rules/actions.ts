@@ -45,7 +45,7 @@ const rule: TSRuleModule = {
       | TSESTree.ArrowFunctionExpression
       | undefined;
     let currentTopLevelFunctionReturns: boolean = false;
-    let currentTopLevelFunctionAwaitsDispatchedFucntion: boolean = false;
+    let currentTopLevelFunctionAwaitsDispatchedFunction: boolean = false;
     let currentTopLevelFunctionIsAction: boolean = false;
 
     let insideFunctionStackDepth = 0;
@@ -68,7 +68,7 @@ const rule: TSRuleModule = {
         checkAndRaiseIssue();
         currentTopLevelFunctionNode = undefined;
         currentTopLevelFunctionReturns = false;
-        currentTopLevelFunctionAwaitsDispatchedFucntion = false;
+        currentTopLevelFunctionAwaitsDispatchedFunction = false;
         currentTopLevelFunctionIsAction = false;
       }
     };
@@ -76,13 +76,21 @@ const rule: TSRuleModule = {
     const checkAndRaiseIssue = () => {
       if (
         currentTopLevelFunctionNode != null &&
-        currentTopLevelFunctionReturns &&
+        insideFunctionStackDepth === 1 &&
         currentTopLevelFunctionIsAction
       ) {
-        context.report({
-          node: currentTopLevelFunctionNode,
-          messageId: "returningValue",
-        });
+        if (currentTopLevelFunctionReturns) {
+          context.report({
+            node: currentTopLevelFunctionNode,
+            messageId: "returningValue",
+          });
+        }
+        if (currentTopLevelFunctionAwaitsDispatchedFunction) {
+          context.report({
+            node: currentTopLevelFunctionNode,
+            messageId: "awaitingAction",
+          });
+        }
       }
     };
 
@@ -96,6 +104,7 @@ const rule: TSRuleModule = {
         enterFunction(node);
       },
       ":function:exit"() {
+        checkAndRaiseIssue();
         exitFunction();
       },
       ":function Identifier"(node: TSESTree.Identifier): void {
@@ -103,18 +112,43 @@ const rule: TSRuleModule = {
           node,
           parserServices,
         );
-        if (
-          modelImportNode &&
-          modelImportNode.type === AST_NODE_TYPES.ImportSpecifier
-        ) {
+        if (modelImportNode) {
           currentTopLevelFunctionIsAction = true;
-          checkAndRaiseIssue();
           return;
         }
       },
       ReturnStatement(): void {
-        currentTopLevelFunctionReturns = true;
-        checkAndRaiseIssue();
+        if (insideFunctionStackDepth === 1) {
+          currentTopLevelFunctionReturns = true;
+        }
+      },
+      ":function AwaitExpression[argument] CallExpression[callee] CallExpression"(
+        node: TSESTree.CallExpression,
+      ): void {
+        const callee = node.callee;
+        if (
+          callee.type === AST_NODE_TYPES.MemberExpression &&
+          callee.object.type === AST_NODE_TYPES.Identifier &&
+          callee.property.type === AST_NODE_TYPES.Identifier &&
+          callee.property.name === "dispatch"
+        ) {
+          const modelImport = identifierIsImportedFromModel(
+            callee.object,
+            parserServices,
+          );
+          if (
+            modelImport &&
+            modelImport.type === AST_NODE_TYPES.ImportNamespaceSpecifier
+          ) {
+            currentTopLevelFunctionAwaitsDispatchedFunction = true;
+          }
+        } else if (
+          callee.type === AST_NODE_TYPES.Identifier &&
+          callee.name === "dispatch" &&
+          identifierIsImportedFromModel(callee, parserServices) != null
+        ) {
+          currentTopLevelFunctionAwaitsDispatchedFunction = true;
+        }
       },
     };
   },
