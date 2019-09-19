@@ -16,11 +16,12 @@ const initPlugins = (
   universe: any,
   config: any,
   plugins: Array<ProdoPlugin<any, any, any, any>>,
+  store: { dispatch: PluginDispatch<any> },
 ): any =>
   produce(universe, u => {
     plugins.forEach(p => {
       if (p._internals.init != null) {
-        p._internals.init(config, u);
+        p._internals.init(config, u, store);
       }
     });
   });
@@ -42,7 +43,19 @@ export const createStore = <State>(
   store: BaseStore<State>;
   Provider: React.ComponentType<{ children: React.ReactNode }>;
 } => {
-  const universe = initPlugins({ state: config.initState }, config, plugins);
+  const initStore: { dispatch: PluginDispatch<any> } = {
+    dispatch: () => {
+      throw new Error(
+        "Cannot use the store until all plugins have finished initialising.",
+      );
+    },
+  };
+  const universe = initPlugins(
+    { state: config.initState },
+    config,
+    plugins,
+    initStore,
+  );
 
   const watchTree: WatchTree = {
     subs: new Set(),
@@ -153,6 +166,8 @@ export const createStore = <State>(
 
     return store.universe;
   };
+
+  initStore.dispatch = store.dispatch as PluginDispatch<any>;
 
   const Provider = createProvider(store);
 
