@@ -116,5 +116,5 @@ test("create a new todo", async () => {
 ```
 
 The first call to `randomId` will return `"T1"`, which we can use in the
-`expect` of our test. If `randomId` is going to be called more than once, just
+`expect` of our test. If `randomId` is going to be called more than once,
 add more items to the `mockEffects` array.

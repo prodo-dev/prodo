@@ -6,61 +6,62 @@ order: 1
 Prodo is a web framework that enables you to write performant and scalable web
 apps with as little boilerplate as possible. It was designed with TypeScript in
 mind and even includes a babel plugin to further reduce the amount of
-boilerplate you write.
+boilerplate.
 
-# Try Prodo
+# Installation
 
-## Code Sandbox
+You can either get started with Prodo by cloning the template:
 
-_ToDo_
+```shell
+git clone https://github.com/prodo-ai/prodo-template
+```
 
-# Prodo Template
+or start from a clearn repo and do:
 
-You can get started with Prodo by cloning the [template
-project](https://github.com/prodo-ai/prodo-template). This template uses the
-[Parcel](https://parceljs.org/) module bundler.
-
+```shell
+npm install --save @prodo/core
+npm install --save-dev @prodo/babel-plugin
+```
 
 # Basic Example
 
-This section will walk you through the main concepts of Prodo by creating a
-simple "Counter" app. It assumes yo have basic knowledge of
+This section walks you through the main concepts of Prodo. We are creating a
+simple "Counter" app, assuming basic knowledge of
 [ES6](https://www.w3schools.com/js/js_es6.asp) and [React](https://reactjs.org).
 The following example assumes you have cloned the starting template. All code
 snippets use the babel plugin.
 
 The typical workflow in developing a Prodo app is to
 
-1. Create a model
-2. Create actions that mutate the model
-3. Create components that render the model
+1. Specify a model, specifying the types (if you want to use TypeScript)
+2. Define your actions as simple functions mutating the state of your model
+3. Use functional React components to render the model in its current state
 
-## Creating a Model
+## Specifying the Model
 
-A [model](/basics/model) holds all of the types used in your actions and components. Create one
+The [model](/basics/model) holds all of the types used in your actions and components
 in a file called `src/model.ts`.
 
 ```ts
 import { createModel } from "@prodo/core";
 
 export interface State {
-  count: number
+  count: number;
 }
 
 export const model = createModel<State>();
 export const { state, watch, dispatch } = model.ctx;
 ```
 
-Here we defined the type of our state in our app will be. In our case, it will just
-contain a single `count` value. We then create our model with this state type
+Here, the state contain a single `count` value. We then create our model with this state type
 and export any variables from our model that are used elsewhere in our app.
 These variables that are exported from our model are correctly typed with our
 state.
 
-## Creating an Action
+## Defining Actions
 
-[Actions](/basics/actions) are async functions that access the state or use a plugin. They can
-take arguments, trigger side effects, and trigger other actions. We can create
+[Actions](/basics/actions) are simple functions that can read from the state and write to the state. write to the state, and possible trigger side effects. They can
+take arguments, trigger side effects (see [effect plugin](/plugins/effects)), and dispatch other actions (see [dispatch](/basics/actions#dispatch)). We can create
 an action in the `src/App.tsx` file.
 
 ```tsx
@@ -68,23 +69,19 @@ import { state, dispatch } from "./model";
 
 const changeCount = (amount: number) => {
   state.count += amount;
-} 
+};
 ```
 
-This action just changes the count in our state by an amount. This action can
+This action changes the count in our state by a specified amount. This action can
 be triggered in a component or another action with the `dispatch` function.
 
 ```ts
 dispatch(changeCount)(1);
 ```
 
-## Creating a component
+## React Components
 
-[Components](/basics/components) take the state of your application and render it as JSX. Prodo
-components are defined in the same way to React components. However, the
-component can "subscribe" to part of the apps state. Whenever this state
-changes, the component will re-render. Prodo performs optimizations behind the
-scenes to ensure your component is only re-rendered when necessary.
+[Components](/basics/components) take the state of your application and render it as JSX. Those components are writen with React and let you automatically "watch" for changes to the state. Under the hood, the component will start a subscription to the corresponding state path and trigger a re-render whenever the value changes.
 
 ```tsx
 import { state, watch } from "./model";
@@ -121,7 +118,7 @@ import { state, dispatch, watch } from "./model";
 
 const changeCount = (amount: number) => {
   state.count += amount;
-} 
+};
 
 const App = () => (
   <div>
@@ -137,21 +134,10 @@ export default App;
 ## Creating the Store
 
 When starting your app, you need to create a [store](/basics/store) with your
-app's initial state. This is done in `src/index.tsx`.
+app's initial state. We then wrap the application into a [Provider](/api-reference/provider) to makes
+this store accessible in all of the components.
 
-```tsx
-import { model } from "./model";
-
-const store = model.createStore({
-  initState: {
-    count: 0,
-  },
-});
-```
-
-The [Provider](/api-reference) returned from
-[`createStore`](/api-reference/createStore) is used to wrap your app which makes
-the store accessible in all of your components.
+This is done in `src/index.tsx`.
 
 ```tsx
 import * as React from "react";
