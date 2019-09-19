@@ -1,8 +1,8 @@
 import { connect } from "@prodo/core";
 import * as React from "react";
+import { push, replace } from "./plugin";
 import { RouteParams } from "./types";
 import { createParamString, matchRoute } from "./utils";
-import { push, replace } from "./plugin";
 
 export interface RouteProps {
   path?: string;

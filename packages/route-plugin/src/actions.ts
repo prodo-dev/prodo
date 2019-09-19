@@ -1,11 +1,11 @@
 import { ProdoPlugin } from "@prodo/core";
 import {
+  Config,
   historySymbol,
   RouteParams,
   Routing,
   Universe,
   universeSymbol,
-  Config,
 } from "./types";
 import { createParamString } from "./utils";
 

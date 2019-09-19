@@ -19,4 +19,5 @@ export {
   PluginActionCtxFn,
   PluginOnCompleteEventFn,
   PluginAction,
+  mkUserAction,
 } from "./plugins";

@@ -1,12 +1,8 @@
-import { RouteParams } from "./types";
+import { mkUserAction } from "@prodo/core";
 import plugin, { push as pushAction, replace as replaceAction } from "./plugin";
 
-export const push = (pushAction as any) as (
-  routeParams: RouteParams | string,
-) => void;
-export const replace = (replaceAction as any) as (
-  routeParams: RouteParams | string,
-) => void;
+export const push = mkUserAction(pushAction);
+export const replace = mkUserAction(replaceAction);
 
 export default plugin;
 

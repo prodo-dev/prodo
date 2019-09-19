@@ -1,9 +1,9 @@
 import {
   createPlugin,
   createUniverseWatcher,
+  PluginAction,
   PluginActionCtx,
   ProdoPlugin,
-  PluginAction,
 } from "@prodo/core";
 
 const valueSymbol = Symbol("streamValues");

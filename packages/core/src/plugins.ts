@@ -63,6 +63,12 @@ export type PluginAction<ActionCtx, A extends any[]> = (
   ctx: ActionCtx,
 ) => (...args: A) => void;
 
+export const mkUserAction = <ActionCtx, A extends any[]>(
+  action: PluginAction<ActionCtx, A>,
+): ((...args: A) => void) => {
+  return action as any;
+};
+
 export type PluginActionCreator<ActionCtx> = <A extends any[]>(
   func: (ctx: ActionCtx) => (...args: A) => void,
   actionName: string,
