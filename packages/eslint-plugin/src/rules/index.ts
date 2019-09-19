@@ -1,4 +1,4 @@
-import noActionReturn from "./no-action-return";
+import noActionReturn from "./actions";
 import noStateAccess from "./no-state-access";
 import requireDispatchedActionIsCalled from "./require-dispatched-action-is-called";
 
