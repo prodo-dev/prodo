@@ -63,6 +63,7 @@ export const kdbSocket = (url: string = "ws://localhost:5001") => {
   const quotes = ws.pipe(
     op.filter(filterQuotes),
     op.map(({ result }): { [key: string]: Quote } => parseEvents(result)),
+    op.distinct(trades => Object.values(trades)[0].time.getTime() || NaN),
   );
   const trades = ws.pipe(
     op.filter(filterTrades),
