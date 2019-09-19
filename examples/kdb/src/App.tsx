@@ -2,7 +2,7 @@ import * as React from "react";
 import { Quote, Trade } from "./types";
 import Graph from "./Graph";
 import Table from "./Table";
-import { kdbSocket, pushValues } from "./libKx";
+import { kdbSocket, scanHistory } from "./libKx";
 import { createModel } from "@prodo/core";
 import SymbolSelector, { allSymbols } from "./Select";
 import streamPlugin, { Stream } from "@prodo/stream-plugin";
@@ -19,11 +19,8 @@ interface Streams {
   tradeHistory: Stream<{ [key: string]: Trade[] }>;
 }
 
+export const historySize = 10000;
 const model = createModel<State>().with(streamPlugin<Streams>());
-
-const historySize = 10000;
-const historyFilter = <T extends Quote | Trade>(ref: T, value: T) =>
-  value.time.getTime() > ref.time.getTime() - historySize;
 
 const setupStreams = model.action(
   ({ streams }) => () => {
@@ -32,10 +29,10 @@ const setupStreams = model.action(
     streams.trades = trades;
 
     streams.quoteHistory = quotes.pipe(
-      op.scan(pushValues(historyFilter), {} as { [key: string]: Quote[] }),
+      op.scan(scanHistory(historySize), {} as { [key: string]: Quote[] }),
     );
     streams.tradeHistory = trades.pipe(
-      op.scan(pushValues(historyFilter), {} as { [key: string]: Trade[] }),
+      op.scan(scanHistory(historySize), {} as { [key: string]: Trade[] }),
     );
   },
   "setupStreams",
@@ -84,6 +81,7 @@ const ConnectedGraph = model.connect(
 const App = model.connect(
   ({ state, dispatch, watch }) => () => {
     React.useEffect(() => {
+      console.log("using Prodo");
       dispatch(setupStreams)();
     }, []);
     const symbols = watch(state.symbols);

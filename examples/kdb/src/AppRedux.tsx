@@ -5,7 +5,7 @@ import { Quote, Trade } from "./types";
 import Graph from "./Graph";
 import Table from "./Table";
 import SymbolSelector, { allSymbols } from "./Select";
-import { kdbSocket, pushValues } from "./libKx";
+import { kdbSocket, scanHistory } from "./libKx";
 
 interface State {
   symbols: { [key: string]: boolean };
@@ -33,9 +33,6 @@ interface UpdateTrades {
 type Action = UpdateQuotes | UpdateTrades | ToggleSymbol;
 
 const historySize = 10000;
-const historyFilter = <T extends Quote | Trade>(ref: T, value: T) =>
-  value.time.getTime() > ref.time.getTime() - historySize;
-
 const reducer = (
   state: State = {
     symbols: allSymbols,
@@ -51,7 +48,7 @@ const reducer = (
       return {
         ...state,
         quotes: action.quotes,
-        quoteHistory: pushValues<Quote>(historyFilter)(
+        quoteHistory: scanHistory<Quote>(historySize)(
           state.quoteHistory,
           action.quotes,
         ),
@@ -60,7 +57,7 @@ const reducer = (
       return {
         ...state,
         trades: action.trades,
-        tradeHistory: pushValues<Trade>(historyFilter)(
+        tradeHistory: scanHistory<Trade>(historySize)(
           state.tradeHistory,
           action.trades,
         ),
@@ -126,6 +123,7 @@ const App = ({
   symbols: { [key: string]: boolean };
 }) => {
   React.useEffect(() => {
+    console.log("using Redux");
     const { quotes, trades } = kdbSocket();
     quotes.forEach(quotes => updateQuotes(quotes));
     trades.forEach(trades => updateTrades(trades));

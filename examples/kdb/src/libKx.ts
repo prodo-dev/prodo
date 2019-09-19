@@ -73,14 +73,20 @@ export const kdbSocket = (url: string = "ws://localhost:5001") => {
   return { quotes, trades };
 };
 
-export const pushValues = <T>(test: (ref: T, value: T) => boolean) => (
+const historyFilter = <T extends Quote | Trade>(
+  size: number,
+  ref: T,
+  value: T,
+) => value.time.getTime() > ref.time.getTime() - size;
+
+export const scanHistory = <T extends Quote | Trade>(historySize: number) => (
   acc: { [key: string]: T[] },
   value: { [key: string]: T },
 ): { [key: string]: T[] } =>
   Object.fromEntries(
     Object.entries(value).map(([k, v]) => {
       const old = acc[k] || [];
-      const idx = old.findIndex(o => test(v, o));
+      const idx = old.findIndex(o => historyFilter(historySize, v, o));
       return [k, [...old.slice(idx), v]];
     }),
   );

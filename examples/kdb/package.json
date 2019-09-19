@@ -7,7 +7,8 @@
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
     "start": "parcel index.html",
     "lint": "set -ex; tsc --build; tslint --project .",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "bundle": "parcel build ./index.html"
   },
   "dependencies": {
     "@prodo/core": "^0.0.5",
