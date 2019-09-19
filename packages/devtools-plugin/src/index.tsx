@@ -20,7 +20,7 @@ const plugin = createPlugin<
 
 // Wrap user app in devtools, unless we're in test mode
 if (!process.env.JEST_WORKER_ID) {
-  (plugin as any).Provider = DevTools;
+  plugin.setProvider(DevTools);
 
   const onCompleteEventFn = (e: Event) => {
     const message: DevMessage = {
@@ -37,9 +37,10 @@ if (!process.env.JEST_WORKER_ID) {
     "updateState",
   );
 
-  const initFn = () => (
+  const initFn = (
     _config: DevToolsConfig,
     universe: DevToolsUniverse,
+    store,
   ) => {
     // Send initial state to devtools
     const message: DevMessage = {
@@ -53,8 +54,7 @@ if (!process.env.JEST_WORKER_ID) {
     window.addEventListener("message", event => {
       if (event.data.destination === "app") {
         if (event.data.type === "updateState") {
-          console.log("TODO", updateStateAction);
-          // dispatch(updateStateAction)(event.data.contents); // TODO
+          store.dispatch(updateStateAction)(event.data.contents);
         } else {
           // tslint:disable-next-line:no-console
           console.log(
@@ -65,7 +65,7 @@ if (!process.env.JEST_WORKER_ID) {
       }
     });
   };
-  plugin.init(initFn());
+  plugin.init(initFn);
 }
 
 export default plugin;
