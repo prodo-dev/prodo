@@ -3,11 +3,11 @@ import * as _ from "lodash";
 import * as React from "react";
 import { ProdoProvider } from ".";
 import { completeEvent, startEvent } from "./events";
+import { ProdoPlugin } from "./plugins";
 import {
   BaseStore,
   Origin,
   PluginDispatch,
-  ProdoPlugin,
   Provider,
   WatchTree,
 } from "./types";
@@ -20,33 +20,21 @@ const initPlugins = (
 ): any =>
   produce(universe, u => {
     plugins.forEach(p => {
-      if (p.init != null) {
-        p.init(config, u);
+      if (p._internals.init != null) {
+        p._internals.init(config, u);
       }
     });
   });
 
-const createProvider = <State>(
-  store: BaseStore<State>,
-  plugins: Array<ProdoPlugin<any, any, any, any>>,
-): Provider =>
-  plugins.reduce(
-    (
-      next: React.ComponentType<{ children: React.ReactNode }>,
-      plugin: ProdoPlugin<any, any, any, any>,
-    ) =>
-      plugin.Provider
-        ? ({ children }: { children: React.ReactNode }) =>
-            React.createElement(plugin.Provider!, {
-              children: React.createElement(next, { children }),
-            })
-        : next,
-    (({ children }: { children: React.ReactNode }) =>
-      React.createElement(ProdoProvider, {
-        value: store,
-        children,
-      })) as Provider,
-  );
+const createProvider = <State>(store: BaseStore<State>): Provider => ({
+  children,
+}: {
+  children: React.ReactNode;
+}) =>
+  React.createElement(ProdoProvider, {
+    value: store,
+    children,
+  });
 
 export const createStore = <State>(
   config: { initState: State },
@@ -82,6 +70,7 @@ export const createStore = <State>(
     const event = startEvent(
       store,
       (func as any).__name || "(unnamed)",
+      (func as any).__pluginName || "(user)",
       args,
       origin,
     );
@@ -113,9 +102,9 @@ export const createStore = <State>(
           store.exec({ id: name, parentId: null }, func as any, ...args);
 
         plugins.forEach(p => {
-          if (p.prepareActionCtx) {
+          if (p._internals.actionCtx) {
             (ctx as any).rootDispatch = createRootDispatch(p.name);
-            p.prepareActionCtx(
+            p._internals.actionCtx(
               {
                 ctx,
                 universe: u,
@@ -135,8 +124,8 @@ export const createStore = <State>(
 
     completeEvent(event, store);
     plugins.forEach(p => {
-      if (p.onCompletedEvent) {
-        p.onCompletedEvent(event, config);
+      if (p._internals.onCompleteEvent) {
+        p._internals.onCompleteEvent(event, config);
       }
     });
   };
@@ -166,7 +155,7 @@ export const createStore = <State>(
     return store.universe;
   };
 
-  const Provider = createProvider(store, plugins);
+  const Provider = createProvider(store);
 
   // TODO: is this the right place...
   window.addEventListener("message", event => {
