@@ -1,16 +1,13 @@
 import { TSESTree } from "@typescript-eslint/experimental-utils";
 import { AST, Linter, Rule, Scope, SourceCode } from "eslint";
-type CodePath = Rule.CodePath;
-type CodePathSegment = Rule.CodePathSegment;
 
 interface TSRuleListener {
   [key: string]:
     | (() => void)
+    | ((node: TSESTree.Node) => void)
     | ((node: TSESTree.Identifier) => void)
     | ((node: TSESTree.ImportDeclaration) => void)
     | ((node: TSESTree.CallExpression) => void)
-    | ((codePath: CodePath, node: TSESTree.Node) => void)
-    | ((segment: CodePathSegment, node: TSESTree.Node) => void)
     | ((node: TSESTree.FunctionDeclaration) => void)
     | ((node: TSESTree.FunctionExpression) => void)
     | ((node: TSESTree.ArrowFunctionExpression) => void)
