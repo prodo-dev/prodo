@@ -59,6 +59,10 @@ export interface ProdoInternals<
   onCompleteEvent?: PluginOnCompleteEventFn<InitOptions, CustomEvent>;
 }
 
+export type PluginAction<ActionCtx, A extends any[]> = (
+  ctx: ActionCtx,
+) => (...args: A) => void;
+
 export type PluginActionCreator<ActionCtx> = <A extends any[]>(
   func: (ctx: ActionCtx) => (...args: A) => void,
   actionName: string,

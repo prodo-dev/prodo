@@ -3,6 +3,7 @@ import {
   createUniverseWatcher,
   PluginActionCtx,
   ProdoPlugin,
+  PluginAction,
 } from "@prodo/core";
 
 const valueSymbol = Symbol("streamValues");
@@ -20,13 +21,11 @@ type UnStreams<T extends { [K in keyof T]?: Stream<any> }> = {
 };
 
 // Stores the latest values
-export interface Universe<
-  T extends { [K in keyof T]: Stream<any> | undefined }
-> {
+export interface Universe<T extends { [K in keyof T]?: Stream<any> }> {
   streams: UnStreams<T>;
 }
 
-interface State<T extends { [K in keyof T]: Stream<any> | undefined }> {
+interface State<T extends { [K in keyof T]?: Stream<any> }> {
   streams: T;
   states: { [K in keyof T]?: StreamState };
 }
@@ -48,14 +47,9 @@ const init = <T extends { [K in keyof T]?: Stream<any> }>(
   universe.streams = {};
 };
 
-const streamUpdate = <T extends { [K in keyof T]?: Stream<any> }>(
-  ctx: ActionCtx<T>,
-) => (key: keyof T, value: any) => {
-  ctx[valueSymbol][key] = value;
-};
-
 const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
   state: State<T>,
+  streamUpdate: PluginAction<ActionCtx<T>, [keyof T, any]>,
 ) => ({
   ctx,
   universe,
@@ -97,8 +91,8 @@ const prepareViewCtx = <T extends { [K in keyof T]?: Stream<any> }>({
 const streamPlugin = <
   T extends { [K in keyof T]?: Stream<any> }
 >(): ProdoPlugin<{}, Universe<T>, ActionCtx<T>, ViewCtx<T>> => {
-  const state = {
-    streams: {},
+  const state: State<T> = {
+    streams: {} as any,
     states: {},
   };
 
@@ -106,8 +100,15 @@ const streamPlugin = <
     "stream",
   );
 
+  const streamUpdate = plugin.action(
+    ctx => (key: keyof T, value: any) => {
+      ctx[valueSymbol][key] = value;
+    },
+    "streamUpdate",
+  );
+
   plugin.init(init);
-  plugin.prepareActionCtx(prepareActionCtx(state));
+  plugin.prepareActionCtx(prepareActionCtx<T>(state, streamUpdate));
   plugin.prepareViewCtx(prepareViewCtx);
 
   return plugin;

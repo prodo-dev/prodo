@@ -1,8 +1,8 @@
 import { connect } from "@prodo/core";
 import * as React from "react";
-import * as actions from "./actions";
 import { RouteParams } from "./types";
 import { createParamString, matchRoute } from "./utils";
+import { push, replace } from "./plugin";
 
 export interface RouteProps {
   path?: string;
@@ -65,7 +65,7 @@ export const Redirect = connect(
     if (to.params == null) {
       to.params = {};
     }
-    const action = push ? actions.push : actions.replace;
+    const action = push ? push : replace;
     React.useEffect(() => {
       dispatch(action)(to);
     }, [to.path, to.params]);
@@ -124,7 +124,7 @@ export const Link = connect(
         Object.keys(to.params).length > 0 ? createParamString(to.params) : ""
       }`,
       navigate: () => {
-        const action = replace ? actions.replace : actions.push;
+        const action = replace ? replace : push;
         dispatch(action)(to);
       },
     } as any);
