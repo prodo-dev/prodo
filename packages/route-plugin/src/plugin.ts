@@ -27,7 +27,7 @@ const parseParams = (search: string) => {
   return params;
 };
 
-plugin.init((config, universe) => {
+plugin.init((config, universe, store) => {
   const history = config.route.history;
   const currentPath = history.location.pathname;
   const params = parseParams(history.location.search);
@@ -35,24 +35,19 @@ plugin.init((config, universe) => {
     path: currentPath,
     params,
   };
+  config.route.history.listen(location =>
+    store.dispatch(setRoute)({
+      path: location.pathname,
+      params: parseParams(location.search),
+    }),
+  );
 });
 
 plugin.prepareActionCtx(({ ctx, universe }, config: Config) =>
   prepareContext(ctx, config.route.history, universe),
 );
 
-let isSubscribedToHistory = false;
-
 plugin.prepareViewCtx(({ ctx, universe }, config: Config) => {
-  if (!isSubscribedToHistory) {
-    isSubscribedToHistory = true;
-    config.route.history.listen(location =>
-      ctx.dispatch(setRoute)({
-        path: location.pathname,
-        params: parseParams(location.search),
-      }),
-    );
-  }
   return prepareContext(ctx, config.route.history, universe);
 });
 
