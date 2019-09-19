@@ -7,10 +7,12 @@ export default <T extends Quote | Trade>({
   title,
   data,
   props,
+  symbols,
 }: {
   title: string;
   data: { [key: string]: T };
-  props: (keyof T & string)[],
+  props: (keyof T & string)[];
+  symbols: {[key: string]: boolean};
 }) => (
   <table>
     <caption>{capitalize(title)}</caption>
@@ -20,13 +22,15 @@ export default <T extends Quote | Trade>({
           <th key={prop}>{capitalize(prop)}</th>
         ))}
       </tr>
-      {Object.values(data).map(value => (
-        <tr key={value.sym}>
-          {props.map(prop => (
-            <td key={prop}>{value[prop]}</td>
-          ))}
-        </tr>
-      ))}
+      {Object.entries(data)
+        .filter(([sym]) => symbols[sym])
+        .map(([sym, value]) => (
+          <tr key={sym}>
+            {props.map(prop => (
+              <td key={prop}>{value[prop]}</td>
+            ))}
+          </tr>
+        ))}
     </tbody>
   </table>
 );

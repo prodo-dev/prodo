@@ -4,13 +4,20 @@ import * as React from "react";
 import { Quote, Trade } from "./types";
 import Graph from "./Graph";
 import Table from "./Table";
+import SymbolSelector, { allSymbols } from "./Select";
 import { kdbSocket, pushValues } from "./libKx";
 
 interface State {
+  symbols: { [key: string]: boolean };
   quotes: { [key: string]: Quote };
   trades: { [key: string]: Trade };
   quoteHistory: { [key: string]: Quote[] };
   tradeHistory: { [key: string]: Trade[] };
+}
+
+interface ToggleSymbol {
+  type: "TOGGLE_SYMBOL";
+  symbol: string;
 }
 
 interface UpdateQuotes {
@@ -23,12 +30,13 @@ interface UpdateTrades {
   trades: { [key: string]: Trade };
 }
 
-type Action = UpdateQuotes | UpdateTrades;
+type Action = UpdateQuotes | UpdateTrades | ToggleSymbol;
 
 const historySize = 10;
 
 const reducer = (
   state: State = {
+    symbols: allSymbols,
     quotes: {},
     trades: {},
     tradeHistory: {},
@@ -55,18 +63,28 @@ const reducer = (
           action.trades,
         ),
       };
+    case "TOGGLE_SYMBOL":
+      return {
+        ...state,
+        symbols: { ...state.symbols, [action.symbol]: !state.symbols[action.symbol] },
+      };
   }
   return state;
 };
 
-const updateQuotes = (quotes: {[key: string]: Quote}) => ({
+const updateQuotes = (quotes: { [key: string]: Quote }) => ({
   type: "UPDATE_QUOTES",
   quotes,
 });
 
-const updateTrades = (trades: {[key: string]: Trade}) => ({
+const updateTrades = (trades: { [key: string]: Trade }) => ({
   type: "UPDATE_TRADES",
   trades,
+});
+
+const toggleSymbol = (symbol: string) => ({
+  type: "TOGGLE_SYMBOL",
+  symbol,
 });
 
 const ConnectedGraph = connect(
@@ -76,24 +94,30 @@ const ConnectedGraph = connect(
   }),
 )(Graph);
 
-const Trades = connect(({ trades }: State) => ({
+const Trades = connect(({ trades, symbols }: State) => ({
   title: "Trades",
   data: trades,
   props: ["sym", "price", "size"] as (keyof Trade)[],
+  symbols,
 }))(Table as any);
 
-const Quotes = connect(({ quotes }: State) => ({
+const Quotes = connect(({ quotes, symbols }: State) => ({
   title: "Quotes",
   data: quotes,
   props: ["sym", "bid", "ask"] as (keyof Quote)[],
+  symbols,
 }))(Table as any);
 
 const App = ({
   updateQuotes,
   updateTrades,
+  toggleSymbol,
+  symbols,
 }: {
-  updateQuotes: (quotes: {[key: string]: Quote}) => void;
-  updateTrades: (trades: {[key: string]: Trade}) => void;
+  updateQuotes: (quotes: { [key: string]: Quote }) => void;
+  updateTrades: (trades: { [key: string]: Trade }) => void;
+  toggleSymbol: (name: string) => void;
+  symbols: { [key: string]: boolean };
 }) => {
   React.useEffect(() => {
     const { quotes, trades } = kdbSocket();
@@ -101,26 +125,31 @@ const App = ({
     trades.forEach(trades => updateTrades(trades));
   }, []);
 
-  const syms = ["BA.N", "GS.N", "IBM.N", "MSFT.O", "VOD.L"];
   return (
     <>
+      <SymbolSelector symbols={symbols} toggleSymbol={toggleSymbol} />
       <Trades />
       <Quotes />
-      {syms.map(idx => (
-        <ConnectedGraph idx={idx} key={idx} />
-      ))}
+      {Object.entries(symbols)
+        .filter(([_, value]) => value)
+        .map(([sym, _]) => (
+          <ConnectedGraph idx={sym} key={sym} />
+        ))}
     </>
   );
 };
 
 const ConnectedApp = connect(
-  () => ({}),
-  dispatch  => ({
-    updateQuotes: (quotes: {[key: string]: Quote}) => {
+  ({ symbols }: State) => ({ symbols }),
+  dispatch => ({
+    updateQuotes: (quotes: { [key: string]: Quote }) => {
       dispatch(updateQuotes(quotes));
     },
-    updateTrades: (trades: {[key: string]: Trade}) => {
+    updateTrades: (trades: { [key: string]: Trade }) => {
       dispatch(updateTrades(trades));
+    },
+    toggleSymbol: (name: string) => {
+      dispatch(toggleSymbol(name));
     },
   }),
 )(App);

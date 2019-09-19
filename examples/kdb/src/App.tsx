@@ -4,8 +4,13 @@ import Graph from "./Graph";
 import Table from "./Table";
 import { kdbSocket, pushValues } from "./libKx";
 import { createModel } from "@prodo/core";
+import SymbolSelector, { allSymbols } from "./Select";
 import streamPlugin, { Stream } from "@prodo/stream-plugin";
 import * as op from "rxjs/operators";
+
+interface State {
+  symbols: { [key: string]: boolean };
+}
 
 interface Streams {
   quotes: Stream<{ [key: string]: Quote }>;
@@ -14,37 +19,53 @@ interface Streams {
   tradeHistory: Stream<{ [key: string]: Trade[] }>;
 }
 
-const model = createModel<{}>().with(streamPlugin<Streams>());
+const model = createModel<State>().with(streamPlugin<Streams>());
 
-const setupStreams = model.action(({ streams }) => (historySize: number) => {
-  const { quotes, trades } = kdbSocket();
-  streams.quotes = quotes;
-  streams.trades = trades;
+const setupStreams = model.action(
+  ({ streams }) => (historySize: number) => {
+    const { quotes, trades } = kdbSocket();
+    streams.quotes = quotes;
+    streams.trades = trades;
 
-  streams.quoteHistory = quotes.pipe(
-    op.scan(pushValues(historySize), {} as { [key: string]: Quote[] }),
-  );
+    streams.quoteHistory = quotes.pipe(
+      op.scan(pushValues(historySize), {} as { [key: string]: Quote[] }),
+    );
 
-  streams.tradeHistory = trades.pipe(
-    op.scan(pushValues(historySize), {} as { [key: string]: Trade[] }),
-  );
-});
-
-const Trades = model.connect(
-  ({ streams, watch }) => () => {
-    const values = watch(streams.trades) || {};
-    return (
-      <Table title="trades" data={values} props={["sym", "price", "size"]} />
+    streams.tradeHistory = trades.pipe(
+      op.scan(pushValues(historySize), {} as { [key: string]: Trade[] }),
     );
   },
+  "setupStreams",
+);
+
+const toggleSymbol = model.action(
+  ({ state }) => (name: string) => {
+    state.symbols[name] = !state.symbols[name];
+  },
+  "toggleSymbol",
+);
+
+const Trades = model.connect(
+  ({ state, streams, watch }) => () => (
+    <Table
+      title="trades"
+      data={watch(streams.trades) || {}}
+      symbols={watch(state.symbols)}
+      props={["sym", "price", "size"]}
+    />
+  ),
   "Trades",
 );
 
 const Quotes = model.connect(
-  ({ streams, watch }) => () => {
-    const values = watch(streams.quotes) || {};
-    return <Table title="quotes" data={values} props={["sym", "bid", "ask"]} />;
-  },
+  ({ state, streams, watch }) => () => (
+    <Table
+      title="quotes"
+      data={watch(streams.quotes) || {}}
+      symbols={watch(state.symbols)}
+      props={["sym", "bid", "ask"]}
+    />
+  ),
   "Quotes",
 );
 
@@ -58,26 +79,36 @@ const ConnectedGraph = model.connect(
 );
 
 const App = model.connect(
-  ({ dispatch }) => () => {
+  ({ state, dispatch, watch }) => () => {
     React.useEffect(() => {
       dispatch(setupStreams)(10);
     }, []);
+    const symbols = watch(state.symbols);
 
-    const syms = ["BA.N", "GS.N", "IBM.N", "MSFT.O", "VOD.L"];
     return (
       <>
+        <SymbolSelector
+          symbols={symbols}
+          toggleSymbol={name => dispatch(toggleSymbol)(name)}
+        />
         <Trades />
         <Quotes />
-        {syms.map(idx => (
-          <ConnectedGraph idx={idx} key={idx} />
-        ))}
+        {Object.entries(symbols)
+          .filter(([_, value]) => value)
+          .map(([sym, _]) => (
+            <ConnectedGraph idx={sym} key={sym} />
+          ))}
       </>
     );
   },
   "App",
 );
 
-const { Provider } = model.createStore({ initState: {} });
+const { Provider } = model.createStore({
+  initState: {
+    symbols: allSymbols,
+  },
+});
 
 export default () => (
   <Provider>

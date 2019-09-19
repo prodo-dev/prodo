@@ -5,4 +5,7 @@ import AppRedux from "./AppRedux";
 
 import "./index.scss";
 
-ReactDOM.render(<><App /><AppRedux /></>, document.getElementById("root"));
+ReactDOM.render(<>
+  <App />
+  <AppRedux />
+</>, document.getElementById("root"));
