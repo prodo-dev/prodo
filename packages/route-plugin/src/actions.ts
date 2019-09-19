@@ -1,48 +1,35 @@
-import { ProdoPlugin } from "@prodo/core";
-import {
-  Config,
-  historySymbol,
-  RouteParams,
-  Routing,
-  Universe,
-  universeSymbol,
-} from "./types";
+import { PluginAction } from "@prodo/core";
+import { historySymbol, RouteParams, Routing, universeSymbol } from "./types";
 import { createParamString } from "./utils";
 
-export const createPush = (
-  plugin: ProdoPlugin<Config, Universe, Routing, Routing>,
-) =>
-  plugin.action(
-    ctx => (routeParams: RouteParams | string) => {
-      if (typeof routeParams === "string") {
-        routeParams = { path: routeParams };
-      }
-      ctx[historySymbol].push(
-        routeParams.path + createParamString(routeParams.params),
-      );
-      ctx[universeSymbol].route = {
-        path: routeParams.path,
-        params: routeParams.params || {},
-      };
-    },
-    "push",
+export const pushAction: PluginAction<
+  Routing,
+  [RouteParams | string]
+> = ctx => (routeParams: RouteParams | string) => {
+  if (typeof routeParams === "string") {
+    routeParams = { path: routeParams };
+  }
+  ctx[historySymbol].push(
+    routeParams.path + createParamString(routeParams.params),
   );
+  ctx[universeSymbol].route = {
+    path: routeParams.path,
+    params: routeParams.params || {},
+  };
+};
 
-export const createReplace = (
-  plugin: ProdoPlugin<Config, Universe, Routing, Routing>,
-) =>
-  plugin.action(
-    ctx => (routeParams: RouteParams | string) => {
-      if (typeof routeParams === "string") {
-        routeParams = { path: routeParams };
-      }
-      ctx[historySymbol].replace(
-        routeParams.path + createParamString(routeParams.params),
-      );
-      ctx[universeSymbol].route = {
-        path: routeParams.path,
-        params: routeParams.params || {},
-      };
-    },
-    "repalce",
+export const replaceAction: PluginAction<
+  Routing,
+  [RouteParams | string]
+> = ctx => (routeParams: RouteParams | string) => {
+  if (typeof routeParams === "string") {
+    routeParams = { path: routeParams };
+  }
+  ctx[historySymbol].replace(
+    routeParams.path + createParamString(routeParams.params),
   );
+  ctx[universeSymbol].route = {
+    path: routeParams.path,
+    params: routeParams.params || {},
+  };
+};

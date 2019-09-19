@@ -29,6 +29,7 @@ export const Route = connect(
     }
     return null;
   },
+  "Route",
 );
 
 export const Switch = connect(
@@ -49,6 +50,7 @@ export const Switch = connect(
 
     return element && React.cloneElement(element, {});
   },
+  "Switch",
 );
 
 export const Redirect = connect(
@@ -71,6 +73,7 @@ export const Redirect = connect(
     }, [to.path, to.params]);
     return null;
   },
+  "Redirect",
 );
 
 const Anchor = ({ onClick, navigate, ...rest }: any) => (
@@ -129,4 +132,5 @@ export const Link = connect(
       },
     } as any);
   },
+  "Link",
 );

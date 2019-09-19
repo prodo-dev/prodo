@@ -1,6 +1,6 @@
 import { createPlugin, createUniverseWatcher } from "@prodo/core";
 import { History } from "history";
-import { createPush, createReplace } from "./actions";
+import { pushAction, replaceAction } from "./actions";
 import {
   Config,
   historySymbol,
@@ -42,5 +42,5 @@ plugin.prepareViewCtx(({ ctx, universe }, config: Config) =>
 
 export default plugin;
 
-export const push = createPush(plugin);
-export const replace = createReplace(plugin);
+export const push = plugin.action(pushAction, "push");
+export const replace = plugin.action(replaceAction, "replace");
