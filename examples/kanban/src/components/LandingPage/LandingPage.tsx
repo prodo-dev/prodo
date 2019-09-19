@@ -1,19 +1,13 @@
 import * as React from "react";
 import { Title } from "react-head";
-// @ts-ignore
 import FaTwitter from "react-icons/lib/fa/twitter";
-// @ts-ignore
 import FaUserSecret from "react-icons/lib/fa/user-secret";
-// @ts-ignore
 import googleLogo from "../../assets/images/google-logo.svg";
-// @ts-ignore
 import kanbanLogo from "../../assets/images/kanban-logo.svg";
-// @ts-ignore
-import background1920 from "../../assets/images/postits-1920.jpg";
-// @ts-ignore
 import background1366 from "../../assets/images/postits-1366.jpg";
-import "./LandingPage.scss";
+import background1920 from "../../assets/images/postits-1920.jpg";
 import { dispatch, state } from "../../model";
+import "./LandingPage.scss";
 
 function enterAsGuest() {
   state.isGuest = true;

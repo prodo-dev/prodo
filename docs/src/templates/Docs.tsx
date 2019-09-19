@@ -14,6 +14,7 @@ export interface Props {
         wip?: boolean;
       };
       body: string;
+      excerpt: string;
     };
   };
 }
@@ -24,7 +25,7 @@ const Docs = ({ data }: Props) => {
       experimental={data.mdx.frontmatter.experimental}
       wip={data.mdx.frontmatter.wip}
     >
-      <SEO title={data.mdx.frontmatter.title} />
+      <SEO title={data.mdx.frontmatter.title} description={data.mdx.excerpt} />
       <Title>{data.mdx.frontmatter.title}</Title>
       <MDXRenderer>{data.mdx.body}</MDXRenderer>
     </DocsLayout>
@@ -42,6 +43,7 @@ export const pageQuery = graphql`
         wip
       }
       body
+      excerpt
     }
   }
 `;

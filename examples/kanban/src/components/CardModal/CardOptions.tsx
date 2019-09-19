@@ -1,10 +1,7 @@
 import * as React from "react";
-// @ts-ignore
 import FaTrash from "react-icons/lib/fa/trash";
-// @ts-ignore
 import MdAlarm from "react-icons/lib/md/access-alarm";
 import Modal from "react-modal";
-// @ts-ignore
 import colorIcon from "../../assets/images/color-icon.png";
 import { dispatch, state } from "../../model";
 import { Card } from "../../types";
@@ -38,26 +35,32 @@ function CardOptions({
   toggleColorPicker,
 }: Props) {
   const [isCalendarOpen, setCalendarOpen] = React.useState(false);
-  let colorPickerButton: any;
+  const colorPickerButton = React.useRef<HTMLButtonElement>();
 
   const changeColor = color => {
     if (card.color !== color) {
       dispatch(changeCardColor)(card._id, color);
     }
     toggleColorPicker();
-    colorPickerButton.focus(); // WAT???
+    if (colorPickerButton.current != null) {
+      colorPickerButton.current.focus(); // WAT???
+    }
   };
 
   const handleKeyDown = event => {
     if (event.keyCode === 27) {
       toggleColorPicker();
-      colorPickerButton.focus();
+      if (colorPickerButton.current != null) {
+        colorPickerButton.current.focus();
+      }
     }
   };
 
   const handleClickOutside = () => {
     toggleColorPicker();
-    colorPickerButton.focus();
+    if (colorPickerButton.current != null) {
+      colorPickerButton.current.focus();
+    }
   };
 
   const toggleCalendar = () => {
@@ -101,9 +104,7 @@ function CardOptions({
           className="options-list-button"
           onClick={() => toggleColorPicker()}
           onKeyDown={handleKeyDown}
-          ref={ref => {
-            colorPickerButton = ref;
-          }}
+          ref={colorPickerButton}
           aria-haspopup
           aria-expanded={isColorPickerOpen}
         >

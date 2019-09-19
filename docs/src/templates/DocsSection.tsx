@@ -8,8 +8,7 @@ import { normalize } from "../utils";
 
 export interface Props {
   pageContext: {
-    section: string;
-    normalizedName: string;
+    name: string;
   };
   data: {
     allMdx: {
@@ -40,7 +39,7 @@ const DocsSection = (props: Props) => {
 
   return (
     <DocsLayout>
-      <Title>{normalize(props.pageContext.normalizedName)}</Title>
+      <Title>{normalize(props.pageContext.name)}</Title>
       {subSections.map(subSection => (
         <SubSectionLink
           key={subSection.fields.slug}

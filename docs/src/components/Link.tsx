@@ -68,6 +68,7 @@ const Link: React.FC<Props> = props => {
       <StyledLink
         as="a"
         href={href}
+        target="_blank"
         {...{ ...props, empty: props.empty ? 1 : 0 }}
       >
         {props.children}
