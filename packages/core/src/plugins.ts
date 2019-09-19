@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Comp, Event, PluginDispatch } from "./types";
 
 export interface PluginActionCtx<ActionCtx, Universe> {
@@ -57,6 +58,7 @@ export interface ProdoInternals<
   actionCtx?: PluginActionCtxFn<InitOptions, Universe, ActionCtx, CustomEvent>;
   viewCtx?: PluginViewCtxFn<InitOptions, Universe, ActionCtx, ViewCtx>;
   onCompleteEvent?: PluginOnCompleteEventFn<InitOptions, CustomEvent>;
+  Provider?: React.ComponentType<{ children: React.ReactNode }>;
 }
 
 export type PluginAction<ActionCtx, A extends any[]> = (
@@ -92,6 +94,9 @@ export interface ProdoPlugin<
     completeEventFn: PluginOnCompleteEventFn<InitOptions, CustomEvent>,
   ) => void;
   action: PluginActionCreator<ActionCtx>;
+  setProvider: (
+    provider: React.ComponentType<{ children: React.ReactNode }>,
+  ) => void;
   _internals: ProdoInternals<
     InitOptions,
     Universe,
@@ -144,6 +149,9 @@ export const createPlugin = <
       (func as any).__name = actionName;
       (func as any).__pluginName = name;
       return func as any;
+    },
+    setProvider: provider => {
+      prodoInternals.Provider = provider;
     },
     _internals: prodoInternals,
   };
