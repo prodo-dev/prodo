@@ -3,16 +3,27 @@ import * as React from "react";
 import styled from "styled-components";
 import { ExperimentalBanner, WipBanner } from "../components/Banner";
 import Container from "../components/Container";
+import Footer from "../components/Footer";
 import Hamburger from "../components/Hamburger";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
 import Sidebar from "../components/Sidebar";
-import { forNarrowScreen, forWideScreen, SidebarWidth } from "../styles";
+import {
+  FooterHeight,
+  forNarrowScreen,
+  forWideScreen,
+  HeaderHeight,
+  SidebarWidth,
+} from "../styles";
 
 export interface Props {
   experimental?: boolean;
   wip?: boolean;
 }
+
+const FullPage = styled.div`
+  min-height: calc(100vh - ${HeaderHeight}px - ${FooterHeight}px);
+`;
 
 const ContentWrapper = styled.div`
   position: relative;
@@ -24,6 +35,7 @@ const ContentWrapper = styled.div`
 
 const DocsContainer = styled(Container)`
   padding-top: 1rem;
+  padding-bottom: 2rem;
 
   ${forWideScreen`padding-top: 4rem`};
 
@@ -86,9 +98,13 @@ const DocsLayout: React.FC<Props> = props => {
             <SidebarButton onClick={() => setSidebarOpen(true)} />
 
             <ContentWrapper>
-              {props.experimental && <ExperimentalBanner />}
-              {props.wip && <WipBanner />}
-              <DocsContainer>{props.children}</DocsContainer>
+              <FullPage>
+                {props.experimental && <ExperimentalBanner />}
+                {props.wip && <WipBanner />}
+                <DocsContainer>{props.children}</DocsContainer>
+              </FullPage>
+
+              <Footer />
             </ContentWrapper>
 
             <Overlay

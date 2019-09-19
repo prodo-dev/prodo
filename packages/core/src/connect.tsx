@@ -87,6 +87,7 @@ export const connect: Connect<any> = <P extends {}>(
     private compId: number;
     private comp: Comp;
     private name: string;
+    private eventIdCnt: number;
     private subscribe: (
       path: string[],
       unsubscribe?: (comp: Comp) => void,
@@ -95,7 +96,6 @@ export const connect: Connect<any> = <P extends {}>(
     private firstTime: boolean;
     private status: { unmounted: boolean };
     private store: Store<any, any>;
-
     private _renderFunc: any;
     private _watch: Watch;
     private _dispatch: Dispatch;
@@ -122,6 +122,8 @@ export const connect: Connect<any> = <P extends {}>(
         name: this.name,
         compId: this.compId,
       };
+
+      this.eventIdCnt = 0;
 
       this.subscribe = (path: string[], unsubscribe?: (comp: Comp) => void) => {
         const pathKey = joinPath(path);
@@ -152,8 +154,8 @@ export const connect: Connect<any> = <P extends {}>(
       this._dispatch = func => (...args) =>
         this.store.exec(
           {
-            id: name,
-            parentId: null,
+            id: `${this.comp.name}/event.${this.eventIdCnt++}`,
+            parentId: this.comp.name,
           },
           func,
           ...args,
