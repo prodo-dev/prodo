@@ -42,6 +42,10 @@ const StyledJsonTree = styled.div`
   .rejt-tree > .rejt-object-node > span:first-child {
     display: none;
   }
+
+  .rejt-value-node {
+    max-height: 22px;
+  }
 `;
 
 const ButtonContainer = styled.span`

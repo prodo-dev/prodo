@@ -1,7 +1,13 @@
 import * as React from "react";
+import styled from "styled-components";
 import { state, watch } from "../../model";
 import { sendMessage } from "../../utils/communication";
 import JsonTree from "./components/JsonTree";
+
+const StyledStatePanel = styled.div`
+  font-family: ${props => props.theme.fonts.code};
+  font-size: ${props => props.theme.fontSizes.code};
+`;
 
 export const StatePanel = () => {
   const onDeltaStateUpdate = ({
@@ -22,12 +28,12 @@ export const StatePanel = () => {
   };
 
   return (
-    <div className="statePanel" data-testid="statePanel">
+    <StyledStatePanel className="statePanel" data-testid="statePanel">
       <JsonTree
         value={watch(state.app.state)}
         onDeltaUpdate={onDeltaStateUpdate}
         readOnly={false}
       />
-    </div>
+    </StyledStatePanel>
   );
 };

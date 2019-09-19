@@ -13,4 +13,5 @@ interface Universe {
 export interface Action extends Event {
   prevUniverse: Universe;
   nextUniverse?: Universe;
+  recordedEffects?: any[];
 }
