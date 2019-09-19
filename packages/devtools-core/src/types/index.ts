@@ -15,3 +15,8 @@ export interface Action extends Event {
   nextUniverse?: Universe;
   recordedEffects?: any[];
 }
+
+export interface Render {
+  componentId: string;
+  actionName: string;
+}

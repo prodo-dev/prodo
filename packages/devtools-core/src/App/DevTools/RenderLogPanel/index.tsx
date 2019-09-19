@@ -1,25 +1,19 @@
 import * as _ from "lodash";
 import * as React from "react";
 import { state, watch } from "../../../model";
+import { Render } from "../../../types";
 import { RenderLogRow } from "./RenderLogRow";
 
 export const emptyRenderLogMessage = "Render log is empty.";
 
 export const RenderLogPanel = () => {
-  const actions = watch(state.app.actionLog);
-  const rerenders = _.flatMap(
-    actions.map(action =>
-      action.rerender
-        ? Object.keys(action.rerender!).filter(comp => action.rerender![comp])
-        : [],
-    ),
-  ).filter(rerender => rerender);
+  const renderLog = watch(state.app.renderLog);
 
   return (
     <div className="renderLogPanel" data-testid="renderLogPanel">
-      {rerenders.length === 0
+      {renderLog.length === 0
         ? emptyRenderLogMessage
-        : rerenders.map((render: string, index: number) => (
+        : renderLog.map((render: Render, index: number) => (
             <RenderLogRow render={render} key={index} />
           ))}
     </div>

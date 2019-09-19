@@ -8,6 +8,15 @@ export const recordState = (newState: any) => {
 
 export const recordAction = (action: Action) => {
   state.app.actionLog.push(action);
+  if (action.rerender && Object.keys(action.rerender).length > 0) {
+    Object.keys(action.rerender).forEach(rerender => {
+      const renderLogEntry = {
+        componentId: rerender,
+        actionName: action.actionName,
+      };
+      state.app.renderLog.push(renderLogEntry);
+    });
+  }
 };
 
 export const eventListener = (dispatch: Dispatch) => (event: MessageEvent) => {
