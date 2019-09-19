@@ -33,3 +33,12 @@ export const replaceAction: PluginAction<
     params: routeParams.params || {},
   };
 };
+
+export const setRouteAction: PluginAction<Routing, [RouteParams]> = ctx => (
+  routeParams: RouteParams,
+) => {
+  ctx[universeSymbol].route = {
+    path: routeParams.path,
+    params: routeParams.params || {},
+  };
+};
