@@ -22,7 +22,6 @@ describe("route plugin", () => {
     expect(route.path).toBe("/test-1");
     expect(route.params).toEqual({});
     expect(history.length).toBe(2);
-
     route = (await store.dispatch(push)({
       path: "/test-2",
       params: { foo: "bar" },

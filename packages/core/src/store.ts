@@ -15,12 +15,14 @@ const initPlugins = (
   universe: any,
   config: any,
   plugins: Array<ProdoPlugin<any, any, any, any>>,
-  store: { dispatch: PluginDispatch<any> },
+  store: { createDispatch: (name: string) => PluginDispatch<any> },
 ): any =>
   produce(universe, u => {
     plugins.forEach(p => {
       if (p._internals.init != null) {
-        p._internals.init(config, u, store);
+        p._internals.init(config, u, {
+          dispatch: (...args) => store.createDispatch(p.name)(...args),
+        });
       }
     });
   });
@@ -42,8 +44,8 @@ export const createStore = <State>(
   store: BaseStore<State>;
   Provider: React.ComponentType<{ children: React.ReactNode }>;
 } => {
-  const initStore: { dispatch: PluginDispatch<any> } = {
-    dispatch: () => {
+  const initStore: { createDispatch: (name: string) => PluginDispatch<any> } = {
+    createDispatch: () => () => {
       throw new Error(
         "Cannot use the store until all plugins have finished initialising.",
       );
@@ -72,6 +74,13 @@ export const createStore = <State>(
     exec: null as any,
     dispatch: null as any,
   };
+
+  const createRootDispatch = (name: string): PluginDispatch<any> => <
+    A extends any[]
+  >(
+    func: (ctx: any) => (...args: A) => void,
+  ) => (...args) =>
+    store.exec({ id: name, parentId: null }, func as any, ...args);
 
   store.exec = async <A extends any[]>(
     origin: Origin,
@@ -104,13 +113,6 @@ export const createStore = <State>(
             });
           },
         };
-
-        const createRootDispatch = (name: string): PluginDispatch<any> => <
-          A extends any[]
-        >(
-          func: (ctx: any) => (...args: A) => void,
-        ) => (...args) =>
-          store.exec({ id: name, parentId: null }, func as any, ...args);
 
         plugins.forEach(p => {
           if (p._internals.actionCtx) {
@@ -166,7 +168,7 @@ export const createStore = <State>(
     return store.universe;
   };
 
-  initStore.dispatch = store.dispatch as PluginDispatch<any>;
+  initStore.createDispatch = createRootDispatch;
 
   const Provider = createProvider(store);
 
