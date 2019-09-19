@@ -77,8 +77,8 @@ export const DevTools = () => {
           <Tab
             isSelected={selectedPanel === panel}
             onClick={() => setSelectedPanel(panel as Panel)}
-            className={`${panel}headerTab`}
-            data-testid={`${panel}headerTab`}
+            className={`${panel}HeaderTab`}
+            data-testid={`${panel}HeaderTab`}
             key={panel}
           >
             {getPanelTitle(panel)}

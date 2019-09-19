@@ -13,8 +13,9 @@ describe("DevTools", () => {
       model.createStore({ initState }),
     );
 
-    expect(getByTestId("headerTabState").textContent).toBe("State");
-    expect(getByTestId("headerTabActionLog").textContent).toBe("Action Log");
+    expect(getByTestId("stateHeaderTab").textContent).toBe("State");
+    expect(getByTestId("actionLogHeaderTab").textContent).toBe("Action Log");
+    expect(getByTestId("renderLogHeaderTab").textContent).toBe("Render Log");
   });
 
   it("shows state panel by default", async () => {
@@ -44,5 +45,15 @@ describe("DevTools", () => {
 
     fireEvent.click(getByText("Action Log"));
     expect(getByTestId("actionLogPanel")).toBeTruthy;
+  });
+
+  it("shows render log panel when Action Log clicked in header", async () => {
+    const { getByText, getByTestId } = renderWithProdo(
+      <DevTools />,
+      model.createStore({ initState }),
+    );
+
+    fireEvent.click(getByText("Render Log"));
+    expect(getByTestId("renderLogPanel")).toBeTruthy;
   });
 });

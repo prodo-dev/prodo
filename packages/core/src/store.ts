@@ -1,5 +1,4 @@
 import produce from "immer";
-import * as _ from "lodash";
 import * as React from "react";
 import { ProdoProvider } from ".";
 import { completeEvent, startEvent } from "./events";

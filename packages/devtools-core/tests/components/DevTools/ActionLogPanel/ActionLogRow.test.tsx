@@ -13,22 +13,23 @@ describe("ActionLogRow", () => {
       model.createStore({ initState: populatedState }),
     );
 
-    expect(getByTestId("actionLogRowHeader").textContent).toBe(
-      action.actionName,
-    );
+    expect(
+      getByTestId("actionLogRowHeader").textContent.includes(action.actionName),
+    ).toBeTruthy;
   });
 
   it("toggles the action contents when action name clicked", async () => {
     const action = populatedState.app.actionLog[0];
-    const { getByText, getByTestId } = renderWithProdo(
+    const { getByTestId } = renderWithProdo(
       <ActionLogRow action={action} />,
       model.createStore({ initState: populatedState }),
     );
 
+    const title = action.actionName;
     expect(getByTestId("actionLogRowContents")).toThrowError;
-    fireEvent.click(getByText(action.actionName));
+    fireEvent.click(getByTestId("actionLogRowHeader"));
     expect(getByTestId("actionLogRowContents")).toBeTruthy;
-    fireEvent.click(getByText(action.actionName));
+    fireEvent.click(getByTestId("actionLogRowHeader"));
     expect(getByTestId("actionLogRowContents")).toThrowError;
   });
 });
