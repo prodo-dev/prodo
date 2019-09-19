@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { forNarrowScreen, HeaderHeight, SidebarWidth } from "../styles";
 import { normalize, removeTrailingSlash } from "../utils";
 import Caret from "./Caret";
+import Search from "./Search";
 import { EmptyLink } from "./Link";
 
 interface HeadingProps {
@@ -13,6 +14,8 @@ interface HeadingProps {
 }
 
 interface SubSectionModel {
+  id: string;
+  section: string;
   title: string;
   slug: string;
   order: number;
@@ -25,22 +28,30 @@ interface SectionModel {
   subsections: SubSectionModel[];
 }
 
-const getSections = (data: QueryResult): SectionModel[] => {
+const getSections = (data: QueryResult, filter: string[]): SectionModel[] => {
   const nodes = data.allMdx.nodes;
 
+  console.log("FILTER", filter);
   const keyedSubSections: { [name: string]: SubSectionModel[] } = nodes.reduce(
-    (sections: { [name: string]: SubSectionModel[] }, node) => ({
-      ...sections,
-      [node.fields.section]: [
-        ...(sections[node.fields.section] || []),
-        {
-          slug: node.fields.slug,
-          section: node.fields.section,
-          title: node.frontmatter.title,
-          order: node.frontmatter.order,
-        },
-      ],
-    }),
+    (sections: { [name: string]: SubSectionModel[] }, node) => {
+      if (filter.length !== 0 && !filter.includes(node.id)) {
+        return sections;
+      }
+
+      return {
+        ...sections,
+        [node.fields.section]: [
+          ...(sections[node.fields.section] || []),
+          {
+            id: node.id,
+            slug: node.fields.slug,
+            section: node.fields.section,
+            title: node.frontmatter.title,
+            order: node.frontmatter.order,
+          },
+        ],
+      };
+    },
     {},
   );
 
@@ -91,10 +102,15 @@ const StyledSection = styled.div`
 
 const Section: React.FC<{
   active: boolean;
+  searching: boolean;
   section: SectionModel;
   currentPath: string;
-}> = ({ active, section, currentPath }) => {
+}> = ({ active, searching, section, currentPath }) => {
   const [expanded, setExpanded] = React.useState(active);
+
+  React.useEffect(() => {
+    setExpanded(searching || active);
+  }, [active, searching]);
 
   return (
     <StyledSection>
@@ -147,15 +163,26 @@ export interface Props {
 
 const Sidebar: React.FC<Props> = props => {
   const data: QueryResult = useStaticQuery(query);
+
+  const [isSearching, setIsSearching] = React.useState(false);
+  const [filter, setFilter] = React.useState<string[]>([]);
+
   const currentPath = props.location.pathname;
-  const sections = getSections(data);
+  const sections = getSections(data, filter);
 
   return (
     <StyledSidebar className="sidebar" isOpen={props.isOpen}>
+      <Search
+        onSearchResults={results => {
+          setFilter(results);
+          setIsSearching(results.length > 0);
+        }}
+      />
       {sections.map(section => (
         <Section
           key={section.slug}
           section={section}
+          searching={isSearching}
           active={currentPath.startsWith(section.slug)}
           currentPath={currentPath}
         />
@@ -169,6 +196,7 @@ export default Sidebar;
 interface QueryResult {
   allMdx: {
     nodes: Array<{
+      id: string;
       fields: {
         slug: string;
         section: string;
@@ -185,6 +213,7 @@ const query = graphql`
   query SidebarQuery {
     allMdx(sort: { fields: [frontmatter___order], order: ASC }) {
       nodes {
+        id
         fields {
           slug
           section
