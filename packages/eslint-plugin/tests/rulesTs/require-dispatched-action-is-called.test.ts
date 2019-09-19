@@ -69,5 +69,17 @@ ruleTester.run("require-dispatched-action-is-called", rule, {
       errors: [{ messageId }],
       filename: defaultTsFile,
     },
+    {
+      code: `import * as model from "./model";
+      foo(model.dispatch(foo));`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
+    {
+      code: `import {dispatch} from "./model";
+      dispatch(dispatch(foo))();`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
   ],
 });

@@ -60,9 +60,14 @@ const rule: TSRuleModule = {
       }
     };
     return {
-      ":not(CallExpression[callee]) > CallExpression": (
-        node: TSESTree.CallExpression,
-      ): void => {
+      CallExpression: (node: TSESTree.CallExpression): void => {
+        if (
+          node.parent &&
+          node.parent.type === AST_NODE_TYPES.CallExpression &&
+          node === node.parent.callee
+        ) {
+          return;
+        }
         if (
           node.callee.type === "Identifier" &&
           node.callee.name === "dispatch"
