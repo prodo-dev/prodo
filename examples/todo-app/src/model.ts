@@ -9,7 +9,7 @@ export interface State {
 
 export const model = createModel<State>()
   .with(effectPlugin)
-  .with(devToolsPlugin)
-  .with(loggerPlugin);
+  .with(loggerPlugin)
+  .with(devToolsPlugin);
 
 export const { state, watch, effect, dispatch } = model.ctx;

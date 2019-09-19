@@ -11,7 +11,6 @@ import {
   Provider,
   WatchTree,
 } from "./types";
-import { submitPatches } from "./watch";
 
 const initPlugins = (
   universe: any,
@@ -156,46 +155,6 @@ export const createStore = <State>(
   };
 
   const Provider = createProvider(store);
-
-  // TODO: is this the right place...
-  window.addEventListener("message", event => {
-    if (event.data.destination === "app") {
-      if (event.data.type === "updateState") {
-        const prevUniverse = store.universe;
-        if (
-          _.get(store.universe.state, event.data.contents.path) !== undefined
-        ) {
-          _.set(
-            store.universe.state as any,
-            event.data.contents.path,
-            event.data.contents.newValue,
-          );
-          const path = event.data.contents.path;
-          path.unshift("state");
-          submitPatches(store, store.universe, {
-            actionName: "updateState",
-            id: "updateState",
-            parentId: null,
-            args: {},
-            patches: [
-              {
-                op: "replace",
-                path,
-                value: event.data.contents.newValue,
-              },
-            ],
-            prevUniverse,
-            nextUniverse: store.universe,
-            nextActions: [],
-          });
-          console.log("Updated?", store.universe.state, event.data.contents);
-        }
-      } else {
-        // tslint:disable-next-line:no-console
-        console.log("Got message with unimplemented type", event.data);
-      }
-    }
-  });
 
   return {
     store,
