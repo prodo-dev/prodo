@@ -1,10 +1,5 @@
-import {
-  ParserServices,
-  TSESTree,
-} from "@typescript-eslint/experimental-utils";
-import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
-import { getParserServices } from "../utils/getParserServices";
 import { identifierIsImportedFromModel } from "../utils/identifierIsImportedFromModel";
 
 const rule: TSRuleModule = {
@@ -23,17 +18,18 @@ const rule: TSRuleModule = {
     type: "problem",
   },
   create(context: TSRuleContext) {
-    const parserServices: ParserServices = getParserServices(context);
-
     return {
       "Identifier:not(:function Identifier, ImportDeclaration Identifier)"(
-        node: TSESTree.Identifier,
+        node: TSESTree.Node,
       ): void {
-        const importNode = identifierIsImportedFromModel(node, parserServices);
+        if (node.type !== "Identifier") {
+          return;
+        }
+        const importNode = identifierIsImportedFromModel(node, context);
         if (
           importNode &&
-          importNode.type === AST_NODE_TYPES.ImportSpecifier &&
-          node.name === "state"
+          importNode.type === "ImportSpecifier" &&
+          importNode.imported.name === "state"
         ) {
           context.report({
             node,
@@ -42,17 +38,15 @@ const rule: TSRuleModule = {
           });
         } else if (
           importNode &&
-          importNode.type === AST_NODE_TYPES.ImportNamespaceSpecifier
+          importNode.type === "ImportNamespaceSpecifier"
         ) {
           const parentNode = node.parent;
           if (
             parentNode &&
-            parentNode.type === AST_NODE_TYPES.MemberExpression
+            parentNode.type === "MemberExpression" &&
+            parentNode.property.type === "Identifier"
           ) {
-            const propertyTSNode = parserServices.esTreeNodeToTSNodeMap!.get<
-              TSNode
-            >(parentNode.property);
-            if (propertyTSNode.getText() === "state" && propertyTSNode) {
+            if (parentNode.property.name === "state") {
               context.report({
                 node: parentNode.property,
                 messageId: "accessingState",

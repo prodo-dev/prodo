@@ -1,8 +1,5 @@
-import {
-  ParserServices,
-  TSESTree,
-} from "@typescript-eslint/experimental-utils";
-import { AST_NODE_TYPES } from "@typescript-eslint/typescript-estree";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
+import { TSRuleContext } from "../types/rules";
 import { findDefinition } from "./findDefinition";
 
 const matchModel = (name: string) =>
@@ -10,21 +7,16 @@ const matchModel = (name: string) =>
 
 export const identifierIsImportedFromModel = (
   identifierNode: TSESTree.Identifier,
-  parserServices: ParserServices,
+  context: TSRuleContext,
 ): TSESTree.ImportNamespaceSpecifier | TSESTree.ImportSpecifier | undefined => {
-  const declarationIdentifierNode = findDefinition(
-    identifierNode,
-    parserServices,
-  );
+  const declarationIdentifierNode = findDefinition(identifierNode, context);
   if (
     declarationIdentifierNode &&
-    (declarationIdentifierNode.type ===
-      AST_NODE_TYPES.ImportNamespaceSpecifier ||
-      declarationIdentifierNode.type === AST_NODE_TYPES.ImportSpecifier) &&
+    (declarationIdentifierNode.type === "ImportNamespaceSpecifier" ||
+      declarationIdentifierNode.type === "ImportSpecifier") &&
     declarationIdentifierNode.parent &&
-    declarationIdentifierNode.parent.type ===
-      AST_NODE_TYPES.ImportDeclaration &&
-    declarationIdentifierNode.parent.source.type === AST_NODE_TYPES.Literal &&
+    declarationIdentifierNode.parent.type === "ImportDeclaration" &&
+    declarationIdentifierNode.parent.source.type === "Literal" &&
     matchModel(declarationIdentifierNode.parent.source.value as string)
   ) {
     return declarationIdentifierNode;

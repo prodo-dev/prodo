@@ -1,31 +1,20 @@
-import {
-  ParserServices,
-  TSESTree,
-} from "@typescript-eslint/experimental-utils";
-import { TSNode } from "@typescript-eslint/typescript-estree";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
+import { TSRuleContext } from "../types/rules";
 
 export const findDefinition = (
   identifierNode: TSESTree.Identifier,
-  parserServices: ParserServices,
+  context: TSRuleContext,
 ): TSESTree.Node | undefined => {
-  const identifierTsNode = parserServices.esTreeNodeToTSNodeMap!.get<TSNode>(
-    identifierNode,
+  const scope = context.getScope();
+  const references = scope.references;
+  const reference = references.find(
+    ref => ref.identifier.name === identifierNode.name,
   );
-  const checker = parserServices.program!.getTypeChecker();
-  let identifierSymbol = checker.getSymbolAtLocation(identifierTsNode);
-  if (!identifierSymbol) {
-    identifierSymbol = (identifierNode as any).symbol;
+  if (reference) {
+    const resolved = reference.resolved;
+    if (resolved) {
+      return resolved.defs[resolved.defs.length - 1].node;
+    }
   }
-  if (!identifierSymbol) {
-    return;
-  }
-  const declarations = identifierSymbol.getDeclarations();
-  let result: TSESTree.Node;
-  if (declarations) {
-    const lastDeclaration = declarations[declarations.length - 1];
-    result = parserServices.tsNodeToESTreeNodeMap!.get(
-      lastDeclaration as TSNode,
-    );
-    return result;
-  }
+  return undefined;
 };
