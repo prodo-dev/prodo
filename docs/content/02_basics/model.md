@@ -4,7 +4,7 @@ order: 1
 ---
 
 A model contains all types and plugins used in your application. To create a
-model you just have to call `createModel` with your state type.
+model, call `createModel` with `State` as a type parameter.
 
 ```ts
 import { createModel } from "@prodo/core";
@@ -21,7 +21,7 @@ You can also extend the model with [plugins](./plugins). You add plugins to
 the model using the `.with` function.
 
 ```ts
-import logger from "@prodo/logger"
+import logger from "@prodo/logger";
 
 // ...
 

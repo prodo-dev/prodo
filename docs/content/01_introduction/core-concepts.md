@@ -12,10 +12,10 @@ At a high level, the main concepts of Prodo are
   convert the code you write to JavaScript that will run in the browser.
 - **Type safe**. Prodo is written in TypeScript which means that you have the option
   of easily typechecking your entire app.
-- **Testable**. You shouldn't have to jump through extra hoops just to test your
+- **Testable**. You shouldn't have to jump through extra hoops to test your
   application. Prodo makes it easy to test all components and actions using the
   tools you already know. Mocking data is also easy using the plugin architecture.
-  
+
 The types for your app state and any plugin state are contained in your
 **model**. You then use variables from this model to watch parts of the state,
 dispatch actions, or interact with plugins. The benefit of using variables from
@@ -45,7 +45,7 @@ functions that get transpiled into Prodo actions.
 ```ts
 const myAction = (arg: string) => {
   state.foo = arg;
-}
+};
 ```
 
 Components are React components that watch part of the store and will re-render
@@ -53,8 +53,6 @@ when any watched part of the store changes. Components can also trigger actions.
 
 ```tsx
 export const MyComponent = () => (
-  <div onClick={() => dispatch(myAction)("value")}>
-    {watch(state.foo)}
-  </div>
+  <div onClick={() => dispatch(myAction)("value")}>{watch(state.foo)}</div>
 );
 ```

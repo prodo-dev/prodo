@@ -3,7 +3,7 @@ title: "Testing"
 order: 5
 ---
 
-One of the goals of the Prodo framework is to ensure testing your app is just as
+One of the goals of the Prodo framework is to ensure testing your app is as
 easy as writing it. You can use any testing framework you are familiar with,
 such as [Jest](https://jestjs.io/), which will be used in this example.
 
@@ -22,12 +22,12 @@ import { changeCount } from "../src/App";
 test("increases the count", async () => {
   const { dispatch } = model.createStore({
     initState: {
-	  count: 0
-	},
+      count: 0,
+    },
   });
 
   const { state } = await dispatch(changeCount)(1);
-  expect(state.count).toBeEqual(1)
+  expect(state.count).toBeEqual(1);
 });
 ```
 
@@ -58,7 +58,7 @@ const renderWithProdo = (ui: React.ReactElement, store: Store<any, any>) => {
 You can test your component with different store configs.
 
 ```tsx
-import { initState } from "./model"
+import { initState } from "./model";
 
 test("can render with initial state", async () => {
   const { container } = renderWithProdo(
@@ -72,14 +72,15 @@ test("can render with initial state", async () => {
 test("can render with count set to 100", async () => {
   const { container } = renderWithProdo(
     <App />,
-    model.createStore({ initState: {
-	  count: 100
-	}}),
+    model.createStore({
+      initState: {
+        count: 100,
+      },
+    }),
   );
 
   expect(container.textContent).toBe("100");
 });
-
 ```
 
 Interact with DOM elements with `fireEvent`.
@@ -100,5 +101,4 @@ test("increases the count when the button is clicked", async () => {
   await waitForDomChange({ container });
   expect(container.textContent).toBe("1");
 });
-
 ```
