@@ -167,16 +167,16 @@ const Sidebar: React.FC<Props> = props => {
   const data: QueryResult = useStaticQuery(query);
 
   const [isSearching, setIsSearching] = React.useState(false);
-  const [filter, setFilter] = React.useState<string[] | null>(null);
+  const [results, setResults] = React.useState<string[] | null>(null);
 
   const currentPath = props.location.pathname;
-  const sections = getSections(data, filter);
+  const sections = getSections(data, results);
 
   return (
     <StyledSidebar className="sidebar" isOpen={props.isOpen}>
       <Search
         onSearchResults={results => {
-          setFilter(results);
+          setResults(results);
           setIsSearching(results !== null);
         }}
       />
@@ -190,7 +190,7 @@ const Sidebar: React.FC<Props> = props => {
         />
       ))}
 
-      {filter != null && filter.length === 0 && <p>{"No Results :("}</p>}
+      {results != null && results.length === 0 && <p>{"No Results :("}</p>}
     </StyledSidebar>
   );
 };
