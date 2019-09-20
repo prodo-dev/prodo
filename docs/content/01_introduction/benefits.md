@@ -41,7 +41,7 @@ Details of the algorithm are yet to be documented, but you can look at [core/src
 
 ## Handles async actions out of the box 👯‍♀️
 
-Prodo let's you write this:
+Prodo lets you write this:
 
 ```ts
 const updateUserImage = async uid => {
