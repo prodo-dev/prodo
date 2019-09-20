@@ -22,8 +22,7 @@ const rule: TSRuleModule = {
       ) {
         if (
           node.type !== "CallExpression" ||
-          (node.type === "CallExpression" &&
-            node.callee.type !== "MemberExpression" &&
+          (node.callee.type !== "MemberExpression" &&
             node.callee.type !== "Identifier")
         ) {
           return;
