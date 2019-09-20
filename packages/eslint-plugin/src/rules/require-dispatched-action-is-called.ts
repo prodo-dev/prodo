@@ -31,33 +31,33 @@ const rule: TSRuleModule = {
         const callee = node.callee;
         if (callee.type === "Identifier") {
           const declaration = findDefinition(callee, context);
-          if (declaration && identifierIsImportedFromModel(declaration)) {
-            if (declaration.type === "ImportSpecifier") {
-              if (declaration.imported.name === "dispatch") {
-                context.report({
-                  node: callee,
-                  messageId: "mustBeCalled",
-                });
-              }
-            }
+          if (
+            declaration &&
+            identifierIsImportedFromModel(declaration) &&
+            declaration.type === "ImportSpecifier" &&
+            declaration.imported.name === "dispatch"
+          ) {
+            context.report({
+              node: callee,
+              messageId: "mustBeCalled",
+            });
           }
         } else if (
           callee.type === "MemberExpression" &&
           callee.object.type === "Identifier"
         ) {
           const declaration = findDefinition(callee.object, context);
-          if (declaration && identifierIsImportedFromModel(declaration)) {
-            if (declaration.type === "ImportNamespaceSpecifier") {
-              if (
-                callee.property.type === "Identifier" &&
-                callee.property.name === "dispatch"
-              ) {
-                context.report({
-                  node: callee,
-                  messageId: "mustBeCalled",
-                });
-              }
-            }
+          if (
+            declaration &&
+            identifierIsImportedFromModel(declaration) &&
+            declaration.type === "ImportNamespaceSpecifier" &&
+            callee.property.type === "Identifier" &&
+            callee.property.name === "dispatch"
+          ) {
+            context.report({
+              node: callee,
+              messageId: "mustBeCalled",
+            });
           }
         }
       },
