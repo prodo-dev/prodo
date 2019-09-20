@@ -17,7 +17,6 @@ A plugin is parameterised by five type parameters. These are:
 
 - `InitOptions`: Type for config that should be provided by user when they
   create the store.
-  when they create the store.
 - `Universe`: Type of the data that the plugin is extending the
   [universe](./universe) with.
 - `ActionCtx`: Type that the plugin is extending the [action context](#prepare-action-context) with.
