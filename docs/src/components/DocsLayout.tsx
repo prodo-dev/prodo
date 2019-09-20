@@ -43,10 +43,7 @@ const DocsContainer = styled(Container)`
     margin-bottom: 1.5rem;
   }
 
-  .gatsby-highlight + h1 {
-    margin-top: 3rem;
-  }
-
+  .gatsby-highlight + h1,
   .gatsby-highlight + h2 {
     margin-top: 3rem;
   }
