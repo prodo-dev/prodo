@@ -8,7 +8,8 @@
     "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
     "build": "set -ex; yarn build:code; yarn build:babel",
-    "test": "jest"
+    "test": "jest",
+    "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.0",
