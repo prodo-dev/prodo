@@ -16,7 +16,7 @@ You can either get started with Prodo by cloning the template:
 git clone https://github.com/prodo-ai/prodo-template
 ```
 
-or start from a clearn repo and do:
+or start from a clean repo and do:
 
 ```shell
 npm install --save @prodo/core
