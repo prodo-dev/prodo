@@ -16,6 +16,7 @@ export interface PluginViewCtx<ActionCtx, Universe> {
 export type PluginInitFn<InitOptions, Universe> = (
   config: InitOptions,
   universe: Universe,
+  store: { dispatch: PluginDispatch<any> },
 ) => void;
 
 export type PluginActionCtxFn<
