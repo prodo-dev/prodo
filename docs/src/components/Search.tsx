@@ -1,7 +1,7 @@
-import * as React from "react";
-import styled from "styled-components";
 import { graphql, useStaticQuery } from "gatsby";
+import * as React from "react";
 import { useFlexSearch } from "react-use-flexsearch";
+import styled from "styled-components";
 
 export interface Props {
   onSearchResults: (results: string[] | null) => void;

@@ -5,8 +5,8 @@ import styled from "styled-components";
 import { forNarrowScreen, HeaderHeight, SidebarWidth } from "../styles";
 import { normalize, removeTrailingSlash } from "../utils";
 import Caret from "./Caret";
-import Search from "./Search";
 import { EmptyLink } from "./Link";
+import Search from "./Search";
 
 interface HeadingProps {
   to: string;
@@ -148,7 +148,7 @@ const StyledSidebar = styled.div<{ isOpen: boolean }>`
   width: ${SidebarWidth}px;
   max-width: ${SidebarWidth}px;
   padding: 1rem;
-  padding-top: 4rem;
+  padding-top: 1rem;
   background-color: #eaeaea;
   overflow-y: auto;
   z-index: 9999;
