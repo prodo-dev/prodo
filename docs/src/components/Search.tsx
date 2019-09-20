@@ -1,10 +1,10 @@
 import * as React from "react";
 import styled from "styled-components";
 import { graphql, useStaticQuery } from "gatsby";
-import * as useFlexSearch from "react-use-flexsearch";
+import { useFlexSearch } from "react-use-flexsearch";
 
 export interface Props {
-  onSearchResults: (results: string[]) => void;
+  onSearchResults: (results: string[] | null) => void;
 }
 
 const StyledSearch = styled.div``;
@@ -24,9 +24,9 @@ const Search: React.FC<{ store: any; index: any } & Props> = ({
 }) => {
   const [query, setQuery] = React.useState<string>("");
 
-  const results = useFlexSearch.useFlexSearch(query, index, store);
+  const results = useFlexSearch(query, index, store);
   React.useEffect(() => {
-    onSearchResults(results != null ? results.map(r => r.id) : null);
+    onSearchResults(query === "" ? null : results.map(r => r.id));
   }, [query]);
 
   return (
@@ -34,7 +34,12 @@ const Search: React.FC<{ store: any; index: any } & Props> = ({
       <Input
         placeholder="Search"
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={e => {
+          setQuery(e.target.value);
+          if (e.target.value === "") {
+            onSearchResults(null);
+          }
+        }}
       />
     </StyledSearch>
   );

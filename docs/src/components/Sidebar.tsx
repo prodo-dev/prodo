@@ -28,13 +28,15 @@ interface SectionModel {
   subsections: SubSectionModel[];
 }
 
-const getSections = (data: QueryResult, filter: string[]): SectionModel[] => {
+const getSections = (
+  data: QueryResult,
+  filter: string[] | null,
+): SectionModel[] => {
   const nodes = data.allMdx.nodes;
 
-  console.log("FILTER", filter);
   const keyedSubSections: { [name: string]: SubSectionModel[] } = nodes.reduce(
     (sections: { [name: string]: SubSectionModel[] }, node) => {
-      if (filter.length !== 0 && !filter.includes(node.id)) {
+      if (filter != null && !filter.includes(node.id)) {
         return sections;
       }
 
@@ -165,7 +167,7 @@ const Sidebar: React.FC<Props> = props => {
   const data: QueryResult = useStaticQuery(query);
 
   const [isSearching, setIsSearching] = React.useState(false);
-  const [filter, setFilter] = React.useState<string[]>([]);
+  const [filter, setFilter] = React.useState<string[] | null>(null);
 
   const currentPath = props.location.pathname;
   const sections = getSections(data, filter);
@@ -175,7 +177,7 @@ const Sidebar: React.FC<Props> = props => {
       <Search
         onSearchResults={results => {
           setFilter(results);
-          setIsSearching(results.length > 0);
+          setIsSearching(results !== null);
         }}
       />
       {sections.map(section => (
@@ -187,6 +189,8 @@ const Sidebar: React.FC<Props> = props => {
           currentPath={currentPath}
         />
       ))}
+
+      {filter != null && filter.length === 0 && <p>{"No Results :("}</p>}
     </StyledSidebar>
   );
 };
