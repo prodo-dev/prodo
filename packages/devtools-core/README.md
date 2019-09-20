@@ -7,7 +7,7 @@ The tools are implemented in Prodo.
 
 Add the devtools-plugin to your model so that your app and the devtools can communicate properly.
 
-```
+```ts
 import { createModel } from "@prodo/core";
 import devToolsPlugin from "@prodo/devtools-plugin";
 
