@@ -134,7 +134,7 @@ export default App;
 ## Creating the Store
 
 When starting your app, you need to create a [store](/basics/store) with your
-app's initial state. We then wrap the application into a [Provider](/api-reference/provider) to makes
+app's initial state. We then wrap the application into a [Provider](/api-reference/provider) to make
 this store accessible in all of the components.
 
 This is done in `src/index.tsx`.
