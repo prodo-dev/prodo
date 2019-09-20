@@ -6,7 +6,7 @@ import { initState } from "./store";
 
 import "./index.scss";
 
-const { Provider } = model.createStore({ initState });
+const { Provider } = model.createStore({ devtools: true, initState });
 
 const render = () => {
   ReactDOM.render(

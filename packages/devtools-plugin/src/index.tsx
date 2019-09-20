@@ -4,8 +4,9 @@ import DevTools, { DevMessage } from "@prodo/devtools-core";
 import { original } from "immer";
 import * as _ from "lodash";
 
-// tslint:disable-next-line:no-empty-interface
-export interface DevToolsConfig {}
+export interface DevToolsConfig {
+  devtools?: boolean;
+}
 
 export interface DevToolsUniverse {
   state: any;
@@ -20,8 +21,6 @@ const plugin = createPlugin<
 
 // Wrap user app in devtools, unless we're in test mode
 if (process.env.NODE_ENV !== "test") {
-  plugin.setProvider(DevTools);
-
   const onCompleteEventFn = (e: Event) => {
     const message: DevMessage = {
       destination: "devtools",
@@ -30,7 +29,6 @@ if (process.env.NODE_ENV !== "test") {
     };
     window.parent.postMessage(message, "*");
   };
-  plugin.onCompleteEvent(onCompleteEventFn);
 
   const updateStateAction = plugin.action(
     ctx => ({ path, newValue }) => _.set(ctx.state, path, newValue),
@@ -38,32 +36,37 @@ if (process.env.NODE_ENV !== "test") {
   );
 
   const initFn = (
-    _config: DevToolsConfig,
+    config: DevToolsConfig,
     universe: DevToolsUniverse,
-    store,
+    store: any,
   ) => {
-    // Send initial state to devtools
-    const message: DevMessage = {
-      destination: "devtools",
-      type: "state",
-      contents: { state: original(universe.state) },
-    };
-    window.parent.postMessage(message, "*");
+    if (config.devtools) {
+      plugin.setProvider(DevTools);
+      plugin.onCompleteEvent(onCompleteEventFn);
 
-    // Add listener for devtools events
-    window.addEventListener("message", event => {
-      if (event.data.destination === "app") {
-        if (event.data.type === "updateState") {
-          store.dispatch(updateStateAction)(event.data.contents);
-        } else {
-          // tslint:disable-next-line:no-console
-          console.warn(
-            "Devtools got message with unimplemented type",
-            event.data,
-          );
+      // Send initial state to devtools
+      const message: DevMessage = {
+        destination: "devtools",
+        type: "state",
+        contents: { state: original(universe.state) },
+      };
+      window.parent.postMessage(message, "*");
+
+      // Add listener for devtools events
+      window.addEventListener("message", event => {
+        if (event.data.destination === "app") {
+          if (event.data.type === "updateState") {
+            store.dispatch(updateStateAction)(event.data.contents);
+          } else {
+            // tslint:disable-next-line:no-console
+            console.warn(
+              "Devtools got message with unimplemented type",
+              event.data,
+            );
+          }
         }
-      }
-    });
+      });
+    }
   };
   plugin.init(initFn);
 }
