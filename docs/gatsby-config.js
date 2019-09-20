@@ -101,7 +101,9 @@ module.exports = {
                   frontmatter {
                     title
                   }
-                  rawBody
+                  headings {
+                    value
+                  }
                 }
               }
             }
@@ -120,6 +122,7 @@ module.exports = {
             id: node.id,
             slug: node.fields.slug,
             title: node.frontmatter.title,
+            headings: node.headings.map(h => h.value).join(" "),
           })),
       },
     },
