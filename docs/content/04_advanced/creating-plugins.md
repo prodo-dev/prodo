@@ -13,7 +13,7 @@ functionality to a user's app. Plugins have the power to:
   the component will re-render when that data changes.
 - Wrap the entire user app with React component.
 
-A plugin is parameratised by five type parameters. These are:
+A plugin is parameterised by five type parameters. These are:
 
 - `InitOptions`: Type for config that should be provided by user when they
   create the store.
