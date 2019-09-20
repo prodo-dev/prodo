@@ -11,7 +11,8 @@
   "references": [
     { "path": "../../packages/core" },
     { "path": "../../packages/effect-plugin" },
-    { "path": "../../packages/logger-plugin" },
-    { "path": "../../packages/babel-plugin" }
+    { "path": "../../packages/babel-plugin" },
+    { "path": "../../packages/devtools-plugin" },
+    { "path": "../../packages/logger-plugin" }
   ]
 }

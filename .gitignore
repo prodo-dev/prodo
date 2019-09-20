@@ -3,6 +3,7 @@ build
 dev
 dist
 lib
+transpiled
 
 # Development
 .envrc.local
