@@ -2,7 +2,7 @@ import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { AST, Linter, Rule, Scope, SourceCode } from "eslint";
 
 interface TSRuleListener {
-  [key: string]: (() => void) | ((node: TSESTree.Node) => void) | undefined;
+  [key: string]: (node: TSESTree.Node) => void;
 }
 
 export interface TSRuleModule {
