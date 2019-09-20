@@ -3,7 +3,6 @@
   "version": "0.0.6",
   "main": "transpiled/index.js",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
     "build:code": "tsc --build",
