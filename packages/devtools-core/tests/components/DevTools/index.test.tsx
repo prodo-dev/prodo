@@ -38,21 +38,23 @@ describe("DevTools", () => {
   });
 
   it("shows action log panel when Action Log clicked in header", async () => {
-    const { getByText, getByTestId } = renderWithProdo(
+    const { getByText, getByTestId, queryByTestId } = renderWithProdo(
       <DevTools />,
       model.createStore({ initState }),
     );
 
+    expect(queryByTestId("actionLogPanel")).toBeNull();
     fireEvent.click(getByText("Action Log"));
     expect(getByTestId("actionLogPanel")).toBeTruthy;
   });
 
-  it("shows render log panel when Action Log clicked in header", async () => {
-    const { getByText, getByTestId } = renderWithProdo(
+  it("shows render log panel when Render Log clicked in header", async () => {
+    const { getByText, getByTestId, queryByTestId } = renderWithProdo(
       <DevTools />,
       model.createStore({ initState }),
     );
 
+    expect(queryByTestId("renderLogPanel")).toBeNull();
     fireEvent.click(getByText("Render Log"));
     expect(getByTestId("renderLogPanel")).toBeTruthy;
   });

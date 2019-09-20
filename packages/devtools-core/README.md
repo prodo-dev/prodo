@@ -11,8 +11,7 @@ Add the devtools-plugin to your model so that your app and the devtools can comm
 import { createModel } from "@prodo/core";
 import devToolsPlugin from "@prodo/devtools-plugin";
 
-export interface State {
-}
+export interface State {}
 
 export const model = createModel<State>()
   .with(devToolsPlugin);

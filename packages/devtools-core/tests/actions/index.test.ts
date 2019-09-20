@@ -4,7 +4,7 @@ import { Action } from "../../src/types";
 import { recordAction, recordState } from "../../src/utils/communication";
 
 import "@babel/polyfill";
-import { testActionLog, testAppState } from "../utils";
+import { testActionLog, testAppState } from "../fixtures";
 
 describe("actions", () => {
   it("records state", async () => {
@@ -18,9 +18,7 @@ describe("actions", () => {
     );
 
     const recordedState = state.app.state;
-    expect(recordedState.foo).toBe("bar");
-    expect(recordedState.items[0]).toBe(1);
-    expect(recordedState.test.a).toBe("b");
+    expect(recordedState).toEqual(testAppState);
   });
 
   it("records an action", async () => {

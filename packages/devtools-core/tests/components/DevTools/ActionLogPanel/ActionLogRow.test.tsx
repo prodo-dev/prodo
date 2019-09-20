@@ -3,7 +3,8 @@ import { fireEvent } from "@testing-library/react";
 import * as React from "react";
 import { ActionLogRow } from "../../../../src/App/DevTools/ActionLogPanel/ActionLogRow";
 import { model } from "../../../../src/model";
-import { populatedState, renderWithProdo } from "../../../utils";
+import { populatedState } from "../../../fixtures";
+import { renderWithProdo } from "../../../utils";
 
 describe("ActionLogRow", () => {
   it("shows the action name in the header", async () => {

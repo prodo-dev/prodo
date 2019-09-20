@@ -3,7 +3,8 @@ import * as React from "react";
 import { StatePanel } from "../../../src/App/DevTools/StatePanel";
 import { model } from "../../../src/model";
 import { initState } from "../../../src/store";
-import { populatedState, renderWithProdo } from "../../utils";
+import { populatedState } from "../../fixtures";
+import { renderWithProdo } from "../../utils";
 
 describe("StatePanel", () => {
   it("renders empty object with an empty state", async () => {

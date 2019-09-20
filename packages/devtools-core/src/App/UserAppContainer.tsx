@@ -12,7 +12,7 @@ const StyledUserAppContainer = styled.div`
 const StyledIFrame = styled.iframe`
   min-height: 100vh;
   height: 100%;
-  min-width: 50%;
+  width: 100%;
 
   border: none;
 `;
@@ -26,21 +26,26 @@ const UserAppContainer = (props: Props) => {
   const iFrameRef = React.useRef<HTMLIFrameElement>(null);
   const [updateValue, forceUpdate] = React.useState(true);
 
-  // Forces a re-render (forceUpdate replacement)
+  // Forces a re-render
   const handleLoad = () => {
     forceUpdate(!updateValue);
   };
 
   React.useEffect(() => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentWindow) {
-      iFrameRef.current.addEventListener("load", handleLoad);
+      iFrameRef.current.contentWindow.addEventListener("load", handleLoad);
       iFrameRef.current.contentWindow.addEventListener(
         "message",
         eventListener(dispatch),
       );
       return () => {
-        window.removeEventListener("load", handleLoad);
-        window.removeEventListener("message", eventListener(dispatch));
+        if (iFrameRef && iFrameRef.current && iFrameRef.current.contentWindow) {
+          iFrameRef.current.removeEventListener("load", handleLoad);
+          iFrameRef.current.contentWindow.removeEventListener(
+            "message",
+            eventListener(dispatch),
+          );
+        }
       };
     }
   }, []);

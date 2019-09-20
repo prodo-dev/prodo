@@ -6,7 +6,8 @@ import {
 } from "../../../../src/App/DevTools/ActionLogPanel";
 import { model } from "../../../../src/model";
 import { initState } from "../../../../src/store";
-import { populatedState, renderWithProdo } from "../../../utils";
+import { populatedState } from "../../../fixtures";
+import { renderWithProdo } from "../../../utils";
 
 describe("ActionLogPanel", () => {
   it("is empty when there is no actions", async () => {

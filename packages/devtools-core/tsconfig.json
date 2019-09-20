@@ -6,6 +6,6 @@
     "target": "es2017",
     "module": "esnext"
   },
-  "include": ["src", "typings"],
-  "references": [{ "path": "../core" }, { "path": "../logger-plugin" }]
+  "include": ["src"],
+  "references": [{ "path": "../core" }]
 }

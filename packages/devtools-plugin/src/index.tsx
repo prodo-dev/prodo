@@ -19,7 +19,7 @@ const plugin = createPlugin<
 >("devtools");
 
 // Wrap user app in devtools, unless we're in test mode
-if (!process.env.JEST_WORKER_ID) {
+if (process.env.NODE_ENV !== "test") {
   plugin.setProvider(DevTools);
 
   const onCompleteEventFn = (e: Event) => {
@@ -57,7 +57,7 @@ if (!process.env.JEST_WORKER_ID) {
           store.dispatch(updateStateAction)(event.data.contents);
         } else {
           // tslint:disable-next-line:no-console
-          console.log(
+          console.warn(
             "Devtools got message with unimplemented type",
             event.data,
           );

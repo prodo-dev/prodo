@@ -6,7 +6,6 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
-    "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
     "build": "set -ex; yarn build:code; yarn build:babel",
