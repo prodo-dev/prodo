@@ -53,7 +53,7 @@ export const model = createModel<State>();
 export const { state, watch, dispatch } = model.ctx;
 ```
 
-Here, the state contain a single `count` value. We then create our model with this state type
+Here, the state contains a single `count` value. We then create our model with this state type
 and export any variables from our model that are used elsewhere in our app.
 These variables that are exported from our model are correctly typed with our
 state.
