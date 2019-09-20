@@ -1,12 +1,15 @@
 import { Component } from "react";
-// @ts-ignore
 import onClickOutside from "react-onclickoutside";
 
+interface Props {
+  handleClickOutside: () => any;
+  children?: React.ReactNode;
+}
+
 // Wrap component in this component to handle click outisde of that component
-class ClickOutsideWrapper extends Component {
-  // @ts-ignore
-  handleClickOutside = () => this.props.handleClickOutside();
-  render = () => this.props.children;
+class ClickOutsideWrapper extends Component<Props> {
+  public handleClickOutside = () => this.props.handleClickOutside();
+  public render = () => this.props.children;
 }
 
 export default onClickOutside(ClickOutsideWrapper);

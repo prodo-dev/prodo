@@ -10,16 +10,22 @@ export interface Props {
     mdx: {
       frontmatter: {
         title: string;
+        experimental?: boolean;
+        wip?: boolean;
       };
       body: string;
+      excerpt: string;
     };
   };
 }
 
 const Docs = ({ data }: Props) => {
   return (
-    <DocsLayout>
-      <SEO title={data.mdx.frontmatter.title} />
+    <DocsLayout
+      experimental={data.mdx.frontmatter.experimental}
+      wip={data.mdx.frontmatter.wip}
+    >
+      <SEO title={data.mdx.frontmatter.title} description={data.mdx.excerpt} />
       <Title>{data.mdx.frontmatter.title}</Title>
       <MDXRenderer>{data.mdx.body}</MDXRenderer>
     </DocsLayout>
@@ -33,8 +39,11 @@ export const pageQuery = graphql`
     mdx(fields: { slug: { eq: $slug } }) {
       frontmatter {
         title
+        experimental
+        wip
       }
       body
+      excerpt
     }
   }
 `;

@@ -5,6 +5,7 @@ import { submitPatches } from "./watch";
 export const startEvent = (
   store: Omit<Store<any, any>, "exec">,
   actionName: string,
+  pluginName: string,
   args: any,
   origin: Origin,
 ): Event => {
@@ -12,6 +13,7 @@ export const startEvent = (
     id: origin.id,
     parentId: origin.parentId,
     actionName,
+    pluginName,
     args,
     nextActions: [],
     patches: [],

@@ -1,62 +1,8 @@
 import { connect } from "@prodo/core";
-import * as pathToRegexp from "path-to-regexp";
 import * as React from "react";
-import * as actions from "./actions";
+import { push, replace } from "./plugin";
 import { RouteParams } from "./types";
-import { createParamString } from "./utils";
-
-const cache = {};
-const cacheLimit = 1000;
-let cacheCount = 0;
-
-const compilePattern = (
-  pattern: string,
-  options: pathToRegexp.RegExpOptions,
-) => {
-  const optionKey = `${options.end}.${options.strict}.${options.sensitive}`;
-  const optionCache = cache[optionKey] || (cache[optionKey] = {});
-
-  if (optionCache[pattern]) {
-    return optionCache[pattern];
-  }
-
-  const keys = [];
-  const regex = pathToRegexp(pattern, keys, options);
-  const result = { keys, regex };
-
-  if (cacheCount < cacheLimit) {
-    optionCache[pattern] = result;
-    cacheCount++;
-  }
-
-  return result;
-};
-
-const routeMatches = (
-  path: string,
-  pattern: string,
-  exact: boolean = false,
-) => {
-  const options = { end: exact, strict: false, sensitive: false };
-  const { regex, keys } = compilePattern(pattern, options);
-
-  const match = regex.exec(path);
-  if (match == null) {
-    return null;
-  }
-
-  const [url, ...values] = match;
-  const isExact = url === path;
-
-  if (exact && !isExact) {
-    return null;
-  }
-
-  return keys.reduce(
-    (acc, key, index) => ({ ...acc, [key.name]: values[index] }),
-    {},
-  );
-};
+import { createParamString, matchRoute } from "./utils";
 
 export interface RouteProps {
   path?: string;
@@ -73,7 +19,7 @@ export const Route = connect(
     component,
   }: RouteProps): React.ReactElement | null => {
     const match =
-      path == null ? {} : routeMatches(watch(route.path), path, exact);
+      path == null ? {} : matchRoute(watch(route.path), path, exact);
     if (match != null) {
       if (children && React.Children.count(children) > 0) {
         return <>{children}</>;
@@ -83,6 +29,7 @@ export const Route = connect(
     }
     return null;
   },
+  "Route",
 );
 
 export const Switch = connect(
@@ -92,7 +39,7 @@ export const Switch = connect(
       if (element == null && React.isValidElement(child)) {
         const path = child.props.path;
         if (path != null) {
-          if (routeMatches(watch(route.path), path, child.props.exact)) {
+          if (matchRoute(watch(route.path), path, child.props.exact)) {
             element = child;
           }
         } else {
@@ -103,6 +50,7 @@ export const Switch = connect(
 
     return element && React.cloneElement(element, {});
   },
+  "Switch",
 );
 
 export const Redirect = connect(
@@ -119,12 +67,13 @@ export const Redirect = connect(
     if (to.params == null) {
       to.params = {};
     }
-    const action = push ? actions.push : actions.replace;
+    const action = push ? push : replace;
     React.useEffect(() => {
       dispatch(action)(to);
     }, [to.path, to.params]);
     return null;
   },
+  "Redirect",
 );
 
 const Anchor = ({ onClick, navigate, ...rest }: any) => (
@@ -142,7 +91,7 @@ const Anchor = ({ onClick, navigate, ...rest }: any) => (
       if (
         !e.defaultPrevented &&
         e.button === 0 &&
-        (rest.target || rest.target === "_self") &&
+        (!rest.target || rest.target === "_self") &&
         !e.metaKey &&
         !e.altKey &&
         !e.ctrlKey &&
@@ -178,9 +127,10 @@ export const Link = connect(
         Object.keys(to.params).length > 0 ? createParamString(to.params) : ""
       }`,
       navigate: () => {
-        const action = replace ? actions.replace : actions.push;
+        const action = replace ? replace : push;
         dispatch(action)(to);
       },
     } as any);
   },
+  "Link",
 );

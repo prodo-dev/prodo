@@ -25,6 +25,7 @@ export const theme: Theme = {
 export const MaxPageWidth = 800;
 export const SidebarWidth = 260;
 export const HeaderHeight = 64;
+export const FooterHeight = 128;
 
 export const sizes = {
   phone: "480px",

@@ -1,25 +1,19 @@
-import * as React from "react";
-import { withRouter } from "react-router-dom";
-import { Button, Wrapper, Menu, MenuItem } from "react-aria-menubutton";
+import { matchRoute } from "@prodo/route";
 import classnames from "classnames";
-// @ts-ignore
+import * as React from "react";
+import { Button, Menu, MenuItem, Wrapper } from "react-aria-menubutton";
 import FaCheck from "react-icons/lib/fa/check";
-// @ts-ignore
 import colorIcon from "../../assets/images/color-icon.png";
+import { dispatch, route, state, watch } from "../../model";
 import "./ColorPicker.scss";
-import { state, watch, dispatch } from "../../model";
-
-type Props = {
-  match: { params: { boardId: string } };
-};
 
 function changeBoardColor(boardId, color) {
-  console.log("changeBoardColor", { boardId, color });
   state.boardsById[boardId].color = color;
 }
 
-function ColorPicker({ match }: Props) {
-  const { boardId } = match.params;
+function ColorPicker() {
+  const path = watch(route.path);
+  const { boardId } = matchRoute(path, "/b/:boardId");
   const boardColor = watch(state.boardsById[boardId].color);
 
   const colors = ["blue", "green", "red", "pink"];
@@ -49,4 +43,4 @@ function ColorPicker({ match }: Props) {
   );
 }
 
-export default withRouter(ColorPicker);
+export default ColorPicker;

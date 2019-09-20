@@ -1,13 +1,13 @@
+import classnames from "classnames";
 import * as React from "react";
 import { Draggable } from "react-beautiful-dnd";
-import classnames from "classnames";
-import CardModal from "../CardModal/CardModal";
-import CardBadges from "../CardBadges/CardBadges";
-import formatMarkdown from "./formatMarkdown";
-import { findCheckboxes } from "../utils";
 import { state, watch } from "../../model";
 import { Card as _Card } from "../../types";
+import CardBadges from "../CardBadges/CardBadges";
+import CardModal from "../CardModal/CardModal";
+import { findCheckboxes } from "../utils";
 import "./Card.scss";
+import formatMarkdown from "./formatMarkdown";
 
 const toggleCheckbox = (card: _Card, checked: boolean, i: number) => {
   // identify the clicked checkbox by its index and give it a new checked attribute
@@ -21,12 +21,12 @@ const toggleCheckbox = (card: _Card, checked: boolean, i: number) => {
   state.cardsById[_id].text = newText;
 };
 
-type Props = {
+interface Props {
   cardId: string;
   listId: string;
   isDraggingOver: boolean;
   index: number;
-};
+}
 
 export function Card({ cardId, listId, isDraggingOver, index }: Props) {
   const card = watch(state.cardsById[cardId]);

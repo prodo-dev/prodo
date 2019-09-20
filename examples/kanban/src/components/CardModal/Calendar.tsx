@@ -1,13 +1,13 @@
 import * as React from "react";
 import DayPicker from "react-day-picker";
-import "./ReactDayPicker.css";
 import { dispatch, state } from "../../model";
+import "./ReactDayPicker.css";
 
-type Props = {
+interface Props {
   cardId: string;
   date?: string | Date;
-  toggleCalendar: Function;
-};
+  toggleCalendar: (...args: any[]) => any;
+}
 
 function changeCardDate(date: Date, cardId: string) {
   state.cardsById[cardId].date = date;
@@ -15,13 +15,15 @@ function changeCardDate(date: Date, cardId: string) {
 
 function Calendar({ cardId, date, toggleCalendar }: Props) {
   const [selectedDay, selectDay] = React.useState(
-    date ? new Date(date) : undefined
+    date ? new Date(date) : undefined,
   );
   return (
     <div className="calendar">
       <DayPicker
         onDayClick={(day, { selected, disabled }) => {
-          if (disabled) return;
+          if (disabled) {
+            return;
+          }
           selectDay(selected ? undefined : day);
         }}
         selectedDays={selectedDay}

@@ -36,11 +36,12 @@ exports.createPages = ({ graphql, actions }) => {
     const posts = result.data.allMdx.edges;
 
     posts.forEach(post => {
+      const slug = post.node.fields.slug.toLowerCase();
       createPage({
-        path: post.node.fields.slug,
+        path: slug,
         component: docs,
         context: {
-          slug: post.node.fields.slug,
+          slug,
         },
       });
     });
@@ -48,18 +49,18 @@ exports.createPages = ({ graphql, actions }) => {
     const sections = new Set();
     posts.forEach(post => {
       sections.add({
-        normalizedName: post.node.fields.section.replace(/^\d+\_/, ""),
+        name: post.node.fields.section.replace(/^\d+\_/, ""),
         fullName: post.node.fields.section,
       });
     });
 
     sections.forEach(section => {
       createPage({
-        path: "/" + section.normalizedName,
+        path: "/" + section.name.toLowerCase(),
         component: docsSection,
         context: {
+          name: section.name,
           section: section.fullName,
-          normalizedName: section.normalizedName,
         },
       });
     });
@@ -70,7 +71,9 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions;
 
   if (node.internal.type === `Mdx`) {
-    const slug = createFilePath({ node, getNode }).replace(/^\/\d+\_/, "/");
+    const slug = createFilePath({ node, getNode })
+      .replace(/^\/\d+\_/, "/")
+      .toLowerCase();
 
     const section = path.dirname(
       path.relative(docsRoot, node.fileAbsolutePath),

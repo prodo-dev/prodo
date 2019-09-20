@@ -1,11 +1,13 @@
 {
   "name": "@prodo/eslint-plugin",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "description": "prodo plugin for eslint",
   "files": [
     "src",
     "lib"
   ],
+  "license": "MIT",
+  "private": true,
   "scripts": {
     "build": "tsc --build",
     "clean": "rm -rf lib tsconfig.tsbuildinfo",
@@ -14,7 +16,6 @@
   },
   "author": "Prodo",
   "main": "lib/index.js",
-  "dependencies": {},
   "devDependencies": {
     "@types/eslint": "^6.1.1",
     "@typescript-eslint/parser": "^2.1.0",
@@ -33,6 +34,5 @@
         "diagnostics": false
       }
     }
-  },
-  "license": "ISC"
+  }
 }

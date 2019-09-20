@@ -1,0 +1,3 @@
+// some silly boilerplate for jest...
+// see usage in package.json/jest.moduleNameMapper
+module.exports = "";

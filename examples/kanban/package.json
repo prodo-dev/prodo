@@ -1,20 +1,22 @@
 {
   "name": "@prodo-example/kanban",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
-    "start": "parcel src/index.html",
+    "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "test": "jest --passWithNoTests",
     "lint": "set -ex; tsc --build;"
   },
   "dependencies": {
-    "@prodo/core": "^0.0.1",
-    "@prodo/effect": "^0.0.1",
-    "@prodo/logger": "^0.0.5",
+    "@prodo/core": "^0.0.6",
+    "@prodo/effect": "^0.0.6",
+    "@prodo/logger": "^0.0.6",
+    "@prodo/route": "^0.0.6",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
+    "history": "^4.10.1",
     "marked": "^0.3.19",
     "react": "^16.8.6",
     "react-aria-menubutton": "^6.1.0",
@@ -26,17 +28,18 @@
     "react-icons": "^2.2.7",
     "react-modal": "^3.4.4",
     "react-onclickoutside": "^6.7.1",
-    "react-router-dom": "^5.0.1",
     "react-textarea-autosize": "^6.1.0",
     "shortid": "^2.2.8",
     "slugify": "^1.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/polyfill": "^7.6.0",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
-    "@prodo/babel-plugin": "^0.0.5",
+    "@prodo/babel-plugin": "^0.0.6",
     "@testing-library/react": "^9.1.3",
     "@types/classnames": "^2.2.9",
     "@types/jest": "^24.0.18",
@@ -46,19 +49,34 @@
     "@types/react-beautiful-dnd": "^11.0.3",
     "@types/react-dom": "^16.8.5",
     "@types/react-icons": "^2.2.7",
-    "@types/react-router-dom": "^4.3.5",
+    "@types/react-onclickoutside": "^6.7.3",
     "@types/react-textarea-autosize": "^4.3.4",
     "@types/shortid": "^0.0.29",
     "@types/testing-library__react": "^9.1.1",
+    "@types/webpack-env": "^1.14.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "file-loader": "^4.2.0",
+    "fork-ts-checker-webpack-plugin": "^1.5.0",
+    "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
-    "parcel-bundler": "^1.12.3",
+    "node-sass": "^4.12.0",
     "sass": "^1.22.9",
+    "sass-loader": "^8.0.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.0.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.6.2"
+    "typescript": "^3.6.2",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1"
   },
   "jest": {
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.tsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(svg|jpg|scss|css|png)$": "<rootDir>/tests/__mock.js"
     }
   }
 }

@@ -1,17 +1,16 @@
 {
   "name": "@prodo-example/timers",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
-    "start": "parcel src/index.html",
+    "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "^0.0.5",
-    "@prodo/core": "^0.0.5",
-    "@prodo/stream": "^0.0.5",
+    "@prodo/core": "^0.0.6",
+    "@prodo/stream": "^0.0.6",
     "react": "^16.8.6",
     "react-dom": "^16.9.0",
     "rxjs": "^6.5.2"
@@ -20,7 +19,18 @@
     "@types/node": "^12.7.2",
     "@types/react": "^16.8.25",
     "@types/react-dom": "^16.8.5",
-    "parcel-bundler": "^1.12.3",
-    "sass": "^1.22.9"
+    "@types/webpack-env": "^1.14.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "fork-ts-checker-webpack-plugin": "^1.5.0",
+    "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.12.0",
+    "sass": "^1.22.9",
+    "sass-loader": "^8.0.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1"
   }
 }
