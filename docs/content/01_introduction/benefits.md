@@ -14,7 +14,7 @@ Just to give a few examples:
 - You won't need to explicitly define the "observables" parts of you state, as you would with MobX. Instead, you can watch any part of the state.
 - No need to define a constant type string for each of your actions, as you would with Redux. Instead, Prodo directly uses your functions' names.
 - No need to choose a specific framework or middleware to handle asynchronous actions. You'll just write "async" in front of your function declaration.
-- No need to wrap all of your components inside a connect functions, nor to explicitely provide a type definition for every injected variable. Prodo's transpiler automatically connects your components in a way that lets TypeScript infer all the types.
+- No need to wrap all of your components inside connect functions, nor to explicitly provide a type definition for every injected variable. Prodo's transpiler automatically connects your components in a way that lets TypeScript infer all the types.
 - No need for reducers or any unnecessary abstraction. Instead you manipulate your state as if it was a simple JSON object, and [immer](https://github.com/immerjs/immer) takes care of tracking changes without performing any harmful mutations.
 
 ## Minimal boilerplate, especially compared to Redux ✨
