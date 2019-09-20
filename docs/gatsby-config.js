@@ -82,5 +82,49 @@ module.exports = {
         pathToConfigModule: `src/styles/typography`,
       },
     },
+    {
+      resolve: "gatsby-plugin-local-search",
+      options: {
+        name: "pages",
+        engine: "flexsearch",
+
+        // GraphQL query used to fetch all data for the search index.
+        query: `
+          {
+            allMdx {
+              edges {
+                node {
+                  id
+                  fields {
+                    slug
+                  }
+                  frontmatter {
+                    title
+                  }
+                  headings {
+                    value
+                  }
+                }
+              }
+            }
+          }
+        `,
+
+        // List of keys to store and make available in your UI. The values of
+        // the keys are taken from the normalizer function below.
+        store: ["id", "title", "slug"],
+
+        // Function used to map the result from the GraphQL query. This should
+        // return an array of items to index in the form of flat objects
+        // containing properties to index.
+        normalizer: ({ data }) =>
+          data.allMdx.edges.map(({ node }) => ({
+            id: node.id,
+            slug: node.fields.slug,
+            title: node.frontmatter.title,
+            headings: node.headings.map(h => h.value).join(" "),
+          })),
+      },
+    },
   ],
 };
