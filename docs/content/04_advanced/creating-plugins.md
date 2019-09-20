@@ -11,7 +11,7 @@ functionality to a user's app. Plugins have the power to:
   action or component.
 - Subscribe a component to a particular part of the [universe](./universe) so
   the component will re-render when that data changes.
-- Wrap the entire user app with React component.
+- Wrap the entire user app with a React component.
 
 A plugin is parameterised by five type parameters. These are:
 
