@@ -1,5 +1,6 @@
 import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
+import { findDefinition } from "../utils/findDefinition";
 import { identifierIsImportedFromModel } from "../utils/identifierIsImportedFromModel";
 
 const rule: TSRuleModule = {
@@ -25,35 +26,33 @@ const rule: TSRuleModule = {
         if (node.type !== "Identifier") {
           return;
         }
-        const importNode = identifierIsImportedFromModel(node, context);
-        if (
-          importNode &&
-          importNode.type === "ImportSpecifier" &&
-          importNode.imported.name === "state"
-        ) {
-          context.report({
-            node,
-            messageId: "accessingState",
-            data: { name: node.name },
-          });
-        } else if (
-          importNode &&
-          importNode.type === "ImportNamespaceSpecifier"
-        ) {
-          const parentNode = node.parent;
+        const importNode = findDefinition(node, context);
+        if (importNode && identifierIsImportedFromModel(importNode)) {
           if (
-            parentNode &&
-            parentNode.type === "MemberExpression" &&
-            parentNode.property.type === "Identifier"
+            importNode.type === "ImportSpecifier" &&
+            importNode.imported.name === "state"
           ) {
-            if (parentNode.property.name === "state") {
-              context.report({
-                node: parentNode.property,
-                messageId: "accessingState",
-                data: {
-                  name: (parentNode.property as TSESTree.Identifier).name,
-                },
-              });
+            context.report({
+              node,
+              messageId: "accessingState",
+              data: { name: node.name },
+            });
+          } else if (importNode.type === "ImportNamespaceSpecifier") {
+            const parentNode = node.parent;
+            if (
+              parentNode &&
+              parentNode.type === "MemberExpression" &&
+              parentNode.property.type === "Identifier"
+            ) {
+              if (parentNode.property.name === "state") {
+                context.report({
+                  node: parentNode.property,
+                  messageId: "accessingState",
+                  data: {
+                    name: (parentNode.property as TSESTree.Identifier).name,
+                  },
+                });
+              }
             }
           }
         }
