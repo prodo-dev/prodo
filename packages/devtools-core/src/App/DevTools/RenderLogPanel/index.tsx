@@ -7,7 +7,6 @@ export const emptyRenderLogMessage = "Render log is empty.";
 
 export const RenderLogPanel = () => {
   const renderLog = watch(state.app.renderLog);
-  console.log(renderLog);
 
   const components = {};
   renderLog.map(entry => {
@@ -23,7 +22,6 @@ export const RenderLogPanel = () => {
         : 1;
     }
   });
-  console.log(components);
 
   return (
     <div className="renderLogPanel" data-testid="renderLogPanel">
