@@ -2752,28 +2752,6 @@
     string-width "^2.0.0"
     strip-ansi "^3"
 
-"@prodo/babel-plugin@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@prodo/babel-plugin/-/babel-plugin-0.0.5.tgz#35fe823e2cf4799a6d3b758f2bb197a7f8ec1de4"
-  integrity sha512-x6b8XaAHyvkO3pAvgLiPE0H4NIvpXFPYzAr2E9hnwem7mQhaBb4ml4hFavtTk9GRnzwA8rELEJ0FGIBoWcY/8A==
-  dependencies:
-    "@babel/core" "^7.5.5"
-    "@babel/types" "^7.5.5"
-
-"@prodo/core@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@prodo/core/-/core-0.0.5.tgz#c4a344e4317654c6677f80ecfa140b9081ceb532"
-  integrity sha512-CciSzXgrA2eAXmazNUKoodCqNgvO83mPJerGwuvZA8xeYF7LgEAlXesWyyeOqSMnDji6aJOp8EzODFiFReZm7A==
-  dependencies:
-    immer "^3.2.0"
-    react "^16.9.0"
-    react-dom "^16.9.0"
-
-"@prodo/stream-plugin@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@prodo/stream-plugin/-/stream-plugin-0.0.5.tgz#b64f278a3132b962bd31fcf3b11764b21902e33b"
-  integrity sha512-JiMGFXUqTxk1FnvespUZ98oIvlzwOivJD3m/mc08WxMGGsxC43ueAQv+L/PfvVID84YSsZoaedpi99qKfHD0mA==
-
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"

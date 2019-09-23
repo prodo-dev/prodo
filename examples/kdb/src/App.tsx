@@ -5,7 +5,7 @@ import Table from "./Table";
 import { kdbSocket, scanHistory } from "./libKx";
 import { createModel } from "@prodo/core";
 import SymbolSelector, { allSymbols } from "./Select";
-import streamPlugin, { Stream } from "@prodo/stream-plugin";
+import streamPlugin, { Stream } from "@prodo/stream";
 import * as op from "rxjs/operators";
 
 interface State {
