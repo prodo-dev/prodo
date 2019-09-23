@@ -1,8 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
-import { dispatch } from "../model";
-import { eventListener } from "../utils/communication";
+import { dispatch } from "../../model";
+import { eventListener } from "../../utils/communication";
+import ErrorBoundary from "./ErrorBoundary";
 
 const StyledUserAppContainer = styled.div`
   flex-grow: 1;
@@ -77,19 +78,21 @@ const UserAppContainer = (props: Props) => {
       className="userAppContainer"
       data-testid="userAppContainer"
     >
-      {props.url ? (
-        <StyledIFrame
-          ref={iFrameRef}
-          src={props.url}
-          className="iframe"
-          data-testid="iframe"
-          onLoad={handleLoad}
-        />
-      ) : (
-        <StyledIFrame ref={iFrameRef} className="iframe" data-testid="iframe">
-          {renderFrameContents()}
-        </StyledIFrame>
-      )}
+      <ErrorBoundary>
+        {props.url ? (
+          <StyledIFrame
+            ref={iFrameRef}
+            src={props.url}
+            className="iframe"
+            data-testid="iframe"
+            onLoad={handleLoad}
+          />
+        ) : (
+          <StyledIFrame ref={iFrameRef} className="iframe" data-testid="iframe">
+            {renderFrameContents()}
+          </StyledIFrame>
+        )}
+      </ErrorBoundary>
     </StyledUserAppContainer>
   );
 };
