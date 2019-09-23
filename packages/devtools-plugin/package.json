@@ -1,6 +1,6 @@
 {
   "name": "@prodo/devtools-plugin",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "lib/index.js",
   "license": "MIT",
   "files": [
@@ -18,8 +18,8 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@prodo/core": "^0.0.6",
-    "@prodo/devtools-core": "^0.0.6",
+    "@prodo/core": "^0.0.7",
+    "@prodo/devtools-core": "^0.0.7",
     "@types/jest": "^24.0.18",
     "ts-jest": "^24.0.2"
   },
