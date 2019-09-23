@@ -34,19 +34,16 @@ const ContentWrapper = styled.div`
 `;
 
 const DocsContainer = styled(Container)`
-  padding-top: 1rem;
+  padding-top: 0rem;
   padding-bottom: 2rem;
 
-  ${forWideScreen`padding-top: 4rem`};
+  ${forWideScreen`padding-top: 1.5rem`};
 
   .gatsby-highlight {
     margin-bottom: 1.5rem;
   }
 
-  .gatsby-highlight + h1 {
-    margin-top: 3rem;
-  }
-
+  .gatsby-highlight + h1,
   .gatsby-highlight + h2 {
     margin-top: 3rem;
   }

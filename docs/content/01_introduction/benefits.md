@@ -37,7 +37,7 @@ const Counter = () => (
 
 ## Blazingly fast re-rendering ⚡️
 
-Details of the algorithm are yet to be documented, but you can look at [core/src/watch.ts](https://github.com/prodo-ai/prodo/blob/master/packages/core/src/watch.ts) to see how Prodo figures out which components need to be rerender when a sets of state patches are submitted to the store.
+Details of the algorithm are yet to be documented, but you can look at [core/src/watch.ts](https://github.com/prodo-ai/prodo/blob/master/packages/core/src/watch.ts) to see how Prodo figures out which components need to be rerendered when a sets of state patches are submitted to the store.
 
 ## Handles async actions out of the box 👯‍♀️
 

@@ -11,86 +11,79 @@ functionality to a user's app. Plugins have the power to:
   action or component.
 - Subscribe a component to a particular part of the [universe](./universe) so
   the component will re-render when that data changes.
-- Wrap the entire user app with a React context provider.
+- Wrap the entire user app with a React component.
 
-The plugin type is defined as follows:
+A plugin is parameterised by five type parameters. These are:
 
-```tsx
-export interface ProdoPlugin<Config, Universe, ActionCtx, ViewCtx> {
-  name: string;
-  init?: (config: Config, universe: Universe) => void;
-  prepareActionCtx?: (
-    env: {
-      ctx: PluginActionCtx<ActionCtx, Universe> & ActionCtx;
-      universe: Universe;
-      event: Event;
-    },
-    config: Config,
-  ) => void;
-  prepareViewCtx?: (
-    env: {
-      ctx: PluginViewCtx<ActionCtx, Universe> & ViewCtx;
-      universe: Universe;
-      comp: Comp;
-    },
-    config: Config,
-  ) => void;
-  onCompletedEvent?: (event: Event) => void;
-  Provider?: Provider;
-}
-```
+- `InitOptions`: Type for config that should be provided by user when they
+  create the store.
+- `Universe`: Type of the data that the plugin is extending the
+  [universe](./universe) with.
+- `ActionCtx`: Type that the plugin is extending the [action context](#prepare-action-context) with.
+- `ViewCtx`: Type that the plugin is extending the [view context](#prepare-view-context) with.
+- `CustomEvent`: _Optional_ type that the plugin is extending the event type with.
 
-The `ProdoPlugin` type takes four type parameters:
-
-1. The configuration type
-2. The Universe type
-3. The action context type
-4. The view context type
-
-A plugin provides the following attributes (only `name` is required):
-
-- `name`: The name of the plugin
-- `init`: Any setup code that must be run. It typically prepares the [universe](./universe).
-- `prepareActionCtx` and `prepareViewCtx`: Functions to prepare the context
-passed in to the component or action.
-- `onCompletedEvent`: Function that is called with the details of the event when
-  it has completed.
-  
-## Creation
-
-A plugin definition is usually a generic function that returns a `ProdoPlugin`.
+Plugins are created with the `createPlugin` function. The signature is:
 
 ```ts
-export default myPlugin = <T>(): ProdoPlugin<
-  Config,
-  Universe<T>,
-  ViewCtx<T>,
-  ActionCtx<T>,
-> => {
-  const state = { /* ... */ };
-  return {
-    name: "myPlugin",
-    init: init(state),
-    prepareViewCtx: prepareViewCtx(state),
-    prepareActionCtx: prepareActionCtx(state),
-  };
-}
+export const createPlugin = <
+  InitOptions,
+  Universe,
+  ActionCtx,
+  ViewCtx,
+  CustomEvent = {}
+>(
+  name: string,
+): ProdoPlugin<InitOptions, Universe, ActionCtx, ViewCtx, CustomEvent>;
 ```
 
-This function is responsible for setting up private state (if required), and
-allowing user-defined type parameters.
+The `name` is the name of the plugin.
+
+For example:
+
+```ts
+import { createPlugin } from "@prodo/core";
+import { Config, Universe, ActionCtx, ViewCtx } from "";
+
+const myPlugin = createPlugin<Config, Universe, ActionCtx, ViewCtx>(
+  "awesome-plugin",
+);
+
+export default myPlugin;
+```
+
+Functionality is added to plugins by calling functions on the plugin object that
+add _hooks_ into different parts of the framework. The available hooks are:
+
+- `init`: Called when the user creates the store. This is typically used to
+  prepare the universe.
+- `prepareActionCtx`: Called right before an action is executed.
+- `prepareViewCtx`: Called right before a connected component is rendered.
+- `onCompleteEvent`: Called after an action has completed.
+- `Provider`: React component that wraps the user app.
+
+A detailed description of each hook is below.
 
 ## Init
 
 `init` is called once when the [`Store`](/api-reference/store) is created. It
 can be used to setup the universe. The `universe` in init is an immer proxy and
-can be modified directly.
+can be modified directly. The signature of the `init` hook is:
 
 ```ts
-const init = <T>(config: Config<T>, universe: Universe<T>) => {
-  // ...
-  universe.local = {};
-}
+export type PluginInitFn<InitOptions, Universe> = (
+  config: InitOptions,
+  universe: Universe,
+  store: { dispatch: PluginDispatch<any> },
+) => void;
+```
+
+For example:
+
+```ts
+plugin.init((config, universe) => {
+  universe.foo = config.foo;
+});
 ```
 
 ## Prepare Action Context
@@ -98,23 +91,32 @@ const init = <T>(config: Config<T>, universe: Universe<T>) => {
 `prepareActionCtx` is called before each action is executed. In this function a
 plugin can setup any variables or methods available to the user in their
 actions. The `universe` in prepareActionCtx is an immer proxy and can be
-modified directly.
-
-For example, the [local plugin](/plugins/local) exposes the `local` property
-which is a proxy into local storage.
+modified directly. The signature of the `prepareActionCtx` hook is:
 
 ```ts
-const prepareActionCtx = <T>(
-  {ctx, universe}: {ctx: ActionCtx<T>; universe: Universe<T>}
-) => {
-  ctx.local = new Proxy(
-    {},
-    {
-      get(target, key) { /* ... */ },
-      set(target, key, value) { /* ... */},
-    },
-  ) as Partial<T>;
-};
+export type PluginActionCtxFn<
+  InitOptions,
+  Universe,
+  ActionCtx,
+  CustomEvent = {}
+> = (
+  env: {
+    ctx: PluginActionCtx<ActionCtx, Universe> & ActionCtx;
+    universe: Universe;
+    event: Event & CustomEvent;
+  },
+  config: InitOptions,
+) => void;
+```
+
+For example, the effect plugin adds an `effect` function to the action context:
+
+```ts
+plugin.prepareActionCtx(({ ctx }) => {
+  ctx.effect = func => (...args) => {
+    /* ... */
+  };
+});
 ```
 
 ## Prepare View Context
@@ -122,7 +124,19 @@ const prepareActionCtx = <T>(
 `prepareViewCtx` is called before each components render method is called. It
 should not do any heavy computation. In this function a plugin can setup any
 variables or methods available to the user in their component. The `universe`
-**is not** directly modifiable and you should [use actions](#plugin-actions) if you want to modify it.
+**is not** directly modifiable and you should [use actions](#plugin-actions) if
+you want to modify it. The signature of the `prepareViewCtx` hook is:
+
+```ts
+export type PluginViewCtxFn<InitOptions, Universe, ActionCtx, ViewCtx> = (
+  env: {
+    ctx: PluginViewCtx<ActionCtx, Universe> & ViewCtx;
+    universe: Universe;
+    comp: Comp;
+  },
+  config: InitOptions,
+) => void;
+```
 
 There are two options available to subscribe the calling component to a
 particular path of the [universe](./universe). These are
@@ -147,7 +161,7 @@ subscribe the component to that path of the universe. For example, in the local
 plugin,
 
 ```ts
-const prepareViewCtx = <T>({ ctx }: { ctx: ViewCtx<T> }) => {
+plugin.prepareViewCtx = ({ ctx }) => {
   ctx.local = createUniverseWatcher("local");
 };
 ```
@@ -159,7 +173,7 @@ If a user then in their component has
 ```
 
 their component will be subscribed to path `["local", "a", "b", "c"]` of the
-universe and will automatically update whenever the data at that path changes. 
+universe and will automatically update whenever the data at that path changes.
 
 ### Subscribe
 
@@ -181,24 +195,54 @@ the `unsubscribe` method to do any cleanup required.
 ## On Completed Event
 
 `onCompletedEvent` is called when an event (action) is completed. The entire
-event is passed as an argument. For example, the [logger](/plugins/logger)
-plugin uses `onCompletedEvent` to log the action.
+event is passed as an argument. The signature of the `onCompleteEvent` hook is:
 
 ```ts
-const onCompletedEvent = event => {
+export type PluginOnCompleteEventFn<InitOptions, CustomEvent> = (
+  event: Event & CustomEvent,
+  config: InitOptions,
+) => void;
+```
+
+For example, the [logger](/plugins/logger) plugin uses `onCompletedEvent` to log the action.
+
+```ts
+plugin.onCompleteEvent(event => {
   console.log(event);
-}
+});
 ```
 
 ## Provider
 
-Plugins can expose a `Provider` component that will be wrapped around the top
+Plugins can expose a React component that will be wrapped around the top
 level user app.
+
+For example:
+
+```tsx
+plugin.setProvider(({ children }) => <div>{children}</div>);
+```
 
 ## Plugin Actions
 
-Components call create and dispatch actions similar to how a user action is
-created and dispatched.
+Plugins can create and dispatch actions similar to how a user action is created
+and dispatched. Plugin actions are created with `plugin.action`. The signature
+of the action creator is:
 
-_To Do_
+```ts
+export type PluginActionCreator<ActionCtx> = <A extends any[]>(
+  func: (ctx: ActionCtx) => (...args: A) => void,
+  actionName: string,
+) => (ctx: ActionCtx) => (...args: A) => void;
+```
 
+For example:
+
+```ts
+const myPluginAction = plugin.action(
+  ctx => (amount: number) => {
+    ctx.myPluginContext.count += amount;
+  },
+  "myPluginAction",
+);
+```

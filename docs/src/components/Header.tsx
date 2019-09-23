@@ -38,6 +38,11 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 1rem;
+
+  h2 {
+    padding-bottom: 0;
+    margin: 0;
+  }
 `;
 
 const HeaderLinks = styled.div`
