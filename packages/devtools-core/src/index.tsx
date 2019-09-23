@@ -24,6 +24,8 @@ const DevToolsApp = (props: Props) => (
     >
       {props.children}
     </App>
+    {/* Temporary fix for react-modal (at least in kanban example) */}
+    <div id="modal" className="modal" />
   </Provider>
 );
 

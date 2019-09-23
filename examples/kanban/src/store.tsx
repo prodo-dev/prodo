@@ -4,6 +4,7 @@ import { model } from "./model";
 const history = createBrowserHistory();
 
 export const { store, Provider } = model.createStore({
+  devtools: false,
   logger: true,
   initState: {
     user: {

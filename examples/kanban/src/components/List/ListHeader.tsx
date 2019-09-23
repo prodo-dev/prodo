@@ -67,8 +67,10 @@ function ListTitle({
     setLocalState({ newTitle: listTitle, isOpen: false });
   };
 
-  const doDeleteList = () => {
-    dispatch(deleteList)(cards, listId, boardId);
+  /* Cards need to be passed as a value to the MenuItem
+  to force a re-render because of a bug in react-aria-menubutton */
+  const doDeleteList = (value: string[]) => {
+    dispatch(deleteList)(value, listId, boardId);
   };
 
   const openTitleEditor = () => {
@@ -112,13 +114,18 @@ function ListTitle({
           {listTitle}
         </div>
       )}
-      <Wrapper className="delete-list-wrapper" onSelection={doDeleteList}>
+      <Wrapper
+        className="delete-list-wrapper"
+        onSelection={value => doDeleteList(value)}
+      >
         <Button className="delete-list-button">
           <FaTrash />
         </Button>
         <Menu className="delete-list-menu">
           <div className="delete-list-header">Are you sure?</div>
-          <MenuItem className="delete-list-confirm">Delete</MenuItem>
+          <MenuItem className="delete-list-confirm" value={cards}>
+            Delete
+          </MenuItem>
         </Menu>
       </Wrapper>
     </div>
