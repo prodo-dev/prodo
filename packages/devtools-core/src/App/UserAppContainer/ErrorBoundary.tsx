@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
+import { margins, paddings } from "../../styles";
 
 interface Props {
   children?: React.ReactNode;
@@ -14,13 +15,13 @@ interface State {
 
 const CodeBlock = styled.pre`
   display: block;
-  padding: 0.5em;
-  margin: 0.5em;
+  padding: ${paddings.small};
+  margin: ${margins.small};
   overflow-x: auto;
   white-space: pre-wrap;
   border-radius: 0.25rem;
   background-color: rgba(206, 17, 38, 0.05);
-  font-size: 16px;
+  font-size: ${props => props.theme.fontSizes.code};
 `;
 
 const Header = styled.span`
@@ -30,17 +31,17 @@ const Header = styled.span`
 const ErrorMessage = styled.div`
   overflow-x: hidden;
   overflow-y: auto;
-  margin: 1rem;
-  padding: 1em 1.5em;
+  margin: ${margins.medium};
+  padding: ${paddings.medium};
   box-sizing: border-box;
   text-align: left;
-  font-family: Consolas, Menlo, monospace;
-  font-size: 16px
+  font-family: ${props => props.theme.fonts.code};
+  font-size: ${props => props.theme.fontSizes.code};
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.5;
-  background-color: #fff6f6;
-  color: #9f3a38;
+  background-color: ${props => props.theme.colors.errorBg};
+  color: ${props => props.theme.colors.error};
   box-shadow: 0 0 0 1px #e0b4b4 inset, 0 0 0 0 transparent;
   border-radius: 0.3rem;
 `;

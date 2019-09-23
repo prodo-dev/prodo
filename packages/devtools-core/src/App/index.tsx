@@ -32,12 +32,12 @@ interface Props {
 }
 
 export default (props: Props) => (
-  <Layout className="devToolsApp" data-testid="devToolsApp">
-    {!props.skipUserApp && (
-      <UserAppContainer url={props.url}>{props.children}</UserAppContainer>
-    )}
-    <ThemeProvider theme={darkTheme}>
+  <ThemeProvider theme={darkTheme}>
+    <Layout className="devToolsApp" data-testid="devToolsApp">
+      {!props.skipUserApp && (
+        <UserAppContainer url={props.url}>{props.children}</UserAppContainer>
+      )}
       <DevTools />
-    </ThemeProvider>
-  </Layout>
+    </Layout>
+  </ThemeProvider>
 );
