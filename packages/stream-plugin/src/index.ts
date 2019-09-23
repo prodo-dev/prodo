@@ -16,8 +16,12 @@ export interface Stream<T> {
   subscribe: (cb: (value: T) => void) => StreamState;
 }
 
+export type UnStream<T extends Stream<any>> = T extends Stream<infer V>
+  ? V
+  : never;
+
 export type UnStreams<T extends { [K in keyof T]: Stream<any> }> = {
-  [K in keyof T]: T[K] extends Stream<infer V> ? V : never
+  [K in keyof T]: UnStream<T[K]>;
 };
 
 // Stores the latest values
