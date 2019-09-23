@@ -14,6 +14,7 @@
     "@prodo/effect": "^0.0.6",
     "@prodo/logger": "^0.0.6",
     "@prodo/route": "^0.0.6",
+    "@prodo/devtools-plugin": "^0.0.6",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
     "history": "^4.10.1",
