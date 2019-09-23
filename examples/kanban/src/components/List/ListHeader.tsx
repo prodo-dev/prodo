@@ -67,6 +67,8 @@ function ListTitle({
     setLocalState({ newTitle: listTitle, isOpen: false });
   };
 
+  /* Cards need to be passed as a value to the MenuItem
+  to force a re-render because of a bug in react-aria-menubutton */
   const doDeleteList = (value: string[]) => {
     dispatch(deleteList)(value, listId, boardId);
   };
