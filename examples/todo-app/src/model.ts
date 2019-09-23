@@ -1,4 +1,5 @@
 import { createModel } from "@prodo/core";
+import devToolsPlugin from "@prodo/devtools-plugin";
 import effectPlugin from "@prodo/effect";
 import loggerPlugin from "@prodo/logger";
 
@@ -8,6 +9,7 @@ export interface State {
 
 export const model = createModel<State>()
   .with(effectPlugin)
-  .with(loggerPlugin);
+  .with(loggerPlugin)
+  .with(devToolsPlugin);
 
 export const { state, watch, effect, dispatch } = model.ctx;

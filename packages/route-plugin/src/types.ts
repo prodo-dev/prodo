@@ -7,6 +7,7 @@ export interface RouteParams {
 
 export const historySymbol = Symbol("@@routing/history");
 export const universeSymbol = Symbol("@@routing/universe");
+export const persistentSymbol = Symbol("@@routing/persistent");
 
 export interface Universe {
   route: Required<RouteParams>;
