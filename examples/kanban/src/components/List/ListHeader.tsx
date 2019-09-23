@@ -67,7 +67,7 @@ function ListTitle({
     setLocalState({ newTitle: listTitle, isOpen: false });
   };
 
-  const doDeleteList = value => {
+  const doDeleteList = (value: string[]) => {
     dispatch(deleteList)(value, listId, boardId);
   };
 
