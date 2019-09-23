@@ -6,7 +6,7 @@ const ruleTester = new RuleTester({
 });
 const messageId = "mustBeCalled";
 
-ruleTester.run("my-rule", rule, {
+ruleTester.run("require-dispatched-action-is-called", rule, {
   valid: [
     {
       code: `foo(bar)()`,
@@ -18,6 +18,17 @@ ruleTester.run("my-rule", rule, {
     },
     {
       code: `[dispatch](foo)`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import * as model from "./model";
+      dispatch(foo);`,
+      filename: defaultTsFile,
+    },
+    {
+      code: `import { dispatch } from "./model";
+      const dispatch = () => {return;};
+      dispatch(foo);`,
       filename: defaultTsFile,
     },
     {
@@ -49,6 +60,24 @@ ruleTester.run("my-rule", rule, {
     },
     {
       code: `import {dispatch} from './model.ctx.js'; dispatch(foo)[bar];`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
+    {
+      code: `import * as model from "./model";
+      model.dispatch(foo);`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
+    {
+      code: `import * as model from "./model";
+      foo(model.dispatch(foo));`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+    },
+    {
+      code: `import {dispatch} from "./model";
+      dispatch(dispatch(foo))();`,
       errors: [{ messageId }],
       filename: defaultTsFile,
     },

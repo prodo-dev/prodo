@@ -1,12 +1,7 @@
-import * as ts from "@typescript-eslint/eslint-plugin";
-import * as tsPluginUtil from "@typescript-eslint/eslint-plugin/dist/util";
-import {
-  ParserServices,
-  TSESTree,
-} from "@typescript-eslint/experimental-utils";
-import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
-import { matchModel } from "../utils/matchModel";
+import { findDefinition } from "../utils/findDefinition";
+import { identifierIsImportedFromModel } from "../utils/identifierIsImportedFromModel";
 
 const rule: TSRuleModule = {
   meta: {
@@ -22,51 +17,46 @@ const rule: TSRuleModule = {
   },
 
   create(context: TSRuleContext) {
-    let importsDispatchFromModel: boolean = false;
-    let dispatchImportSymbol: ts.Symbol;
-    const parserServices: ParserServices = tsPluginUtil.getParserServices(
-      context,
-    );
-
-    const checker = parserServices.program!.getTypeChecker();
     return {
-      ImportDeclaration: (node: TSESTree.ImportDeclaration): void => {
-        const specifiers = node.specifiers;
-        if (node.source.type === AST_NODE_TYPES.Literal) {
-          if (matchModel(node.source.value as string)) {
-            specifiers.forEach(specifier => {
-              if (specifier.type === AST_NODE_TYPES.ImportSpecifier) {
-                const specifierTsNode = parserServices.esTreeNodeToTSNodeMap!.get<
-                  TSNode
-                >(specifier);
-                if (specifierTsNode.getFullText() === "dispatch") {
-                  importsDispatchFromModel = true;
-                  dispatchImportSymbol = (specifierTsNode as any).symbol;
-                }
-              }
-            });
-          }
-        }
-      },
-      CallExpression: (node: TSESTree.CallExpression): void => {
+      "CallExpression:not(CallExpression > CallExpression.callee)"(
+        node: TSESTree.Node,
+      ) {
         if (
-          importsDispatchFromModel &&
-          node &&
-          node.callee.type === "Identifier" &&
-          node.callee.name === "dispatch" &&
-          node.parent &&
-          node.parent.type !== "CallExpression"
+          node.type !== "CallExpression" ||
+          (node.callee.type !== "MemberExpression" &&
+            node.callee.type !== "Identifier")
         ) {
-          const calleeNode = parserServices.esTreeNodeToTSNodeMap!.get<TSNode>(
-            node.callee,
-          );
+          return;
+        }
+        const callee = node.callee;
+        if (callee.type === "Identifier") {
+          const declaration = findDefinition(callee, context);
           if (
-            checker.getSymbolAtLocation(calleeNode) === dispatchImportSymbol
+            declaration &&
+            identifierIsImportedFromModel(declaration) &&
+            declaration.type === "ImportSpecifier" &&
+            declaration.imported.name === "dispatch"
           ) {
             context.report({
-              node,
+              node: callee,
               messageId: "mustBeCalled",
-              data: { name: (node.callee as TSESTree.Identifier).name },
+            });
+          }
+        } else if (
+          callee.type === "MemberExpression" &&
+          callee.object.type === "Identifier"
+        ) {
+          const declaration = findDefinition(callee.object, context);
+          if (
+            declaration &&
+            identifierIsImportedFromModel(declaration) &&
+            declaration.type === "ImportNamespaceSpecifier" &&
+            callee.property.type === "Identifier" &&
+            callee.property.name === "dispatch"
+          ) {
+            context.report({
+              node: callee,
+              messageId: "mustBeCalled",
             });
           }
         }

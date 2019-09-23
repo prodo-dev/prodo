@@ -1,34 +1,8 @@
-import { TSESTree } from "@typescript-eslint/experimental-utils";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { AST, Linter, Rule, Scope, SourceCode } from "eslint";
-type CodePath = Rule.CodePath;
-type CodePathSegment = Rule.CodePathSegment;
 
 interface TSRuleListener {
-  onCodePathStart?(codePath: CodePath, node: TSESTree.Node): void;
-
-  onCodePathEnd?(codePath: CodePath, node: TSESTree.Node): void;
-
-  onCodePathSegmentStart?(segment: CodePathSegment, node: TSESTree.Node): void;
-
-  onCodePathSegmentEnd?(segment: CodePathSegment, node: TSESTree.Node): void;
-
-  onCodePathSegmentLoop?(
-    fromSegment: CodePathSegment,
-    toSegment: CodePathSegment,
-    node: TSESTree.Node,
-  ): void;
-
-  [key: string]:
-    | ((node: TSESTree.ImportDeclaration) => void)
-    | ((node: TSESTree.CallExpression) => void)
-    | ((codePath: CodePath, node: TSESTree.Node) => void)
-    | ((segment: CodePathSegment, node: TSESTree.Node) => void)
-    | ((
-        fromSegment: CodePathSegment,
-        toSegment: CodePathSegment,
-        node: TSESTree.Node,
-      ) => void)
-    | undefined;
+  [key: string]: (node: TSESTree.Node) => void;
 }
 
 export interface TSRuleModule {
