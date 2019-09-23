@@ -67,8 +67,8 @@ function ListTitle({
     setLocalState({ newTitle: listTitle, isOpen: false });
   };
 
-  const doDeleteList = () => {
-    dispatch(deleteList)(cards, listId, boardId);
+  const doDeleteList = value => {
+    dispatch(deleteList)(value, listId, boardId);
   };
 
   const openTitleEditor = () => {
@@ -112,13 +112,18 @@ function ListTitle({
           {listTitle}
         </div>
       )}
-      <Wrapper className="delete-list-wrapper" onSelection={doDeleteList}>
+      <Wrapper
+        className="delete-list-wrapper"
+        onSelection={value => doDeleteList(value)}
+      >
         <Button className="delete-list-button">
           <FaTrash />
         </Button>
         <Menu className="delete-list-menu">
           <div className="delete-list-header">Are you sure?</div>
-          <MenuItem className="delete-list-confirm">Delete</MenuItem>
+          <MenuItem className="delete-list-confirm" value={cards}>
+            Delete
+          </MenuItem>
         </Menu>
       </Wrapper>
     </div>
