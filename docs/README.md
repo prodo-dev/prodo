@@ -47,8 +47,10 @@ To start the docs run `yarn start` from this directory.
   - how to write a plugin
     - ctxs/universe/watchers/etc
 - Prodo plugins
+  - Logger
   - Effects
   - Local
   - Streams
   - Routing
   - Firestore
+  - DevTools
