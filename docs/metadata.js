@@ -2,7 +2,7 @@ const config = {
   siteTitle: "Prodo Documentation",
   siteShortTitle: "Prodo",
   logo: "/assets/icon.svg",
-  url: "https://prodo-docs.web.app",
+  url: "https://docs.prodo.dev",
   image: "/opengraph.png",
   description:
     "Prodo is a React framework to write performant and scalable web apps with as little boilerplate as possible.",
