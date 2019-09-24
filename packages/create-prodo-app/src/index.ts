@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import * as childProcess from "child_process";
 import * as commander from "commander";
 import * as downloadGitRepo from "download-git-repo";
 import * as fs from "fs";
@@ -6,7 +7,6 @@ import * as path from "path";
 import * as tildePath from "tilde-path";
 import * as validateNpmPackageName from "validate-npm-package-name";
 import logger, { VerbosityLevel } from "./logger";
-import * as childProcess from "child_process";
 
 const execSync = childProcess.execSync;
 
