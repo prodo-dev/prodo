@@ -7,6 +7,9 @@
     "lib",
     "src"
   ],
+  "bin": {
+    "create-prodo-app": "lib/index.js"
+  },
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc --build",
