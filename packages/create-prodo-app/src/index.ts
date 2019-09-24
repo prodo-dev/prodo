@@ -85,11 +85,14 @@ const printSuccessMessage = (name: string, root: string) => {
 
 // remove references to prodo-template-* in newly created apps package.json
 const cleanupPackageJson = (name: string, root: string) => {
-  const userPackageJson = require(path.resolve(root, "package.json"));
+  const filename = path.resolve(root, "package.json");
+  const userPackageJson = require(filename);
 
   userPackageJson.name = name;
   userPackageJson.version = "0.1.0";
   delete userPackageJson.repository;
+
+  fs.writeFileSync(filename, JSON.stringify(userPackageJson, null, 2));
 };
 
 // delete files in newly created app that are not needed
