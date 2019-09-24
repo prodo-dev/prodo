@@ -23,6 +23,7 @@
     { "path": "packages/route-plugin" },
     { "path": "packages/stream-plugin" },
     { "path": "packages/devtools-core" },
-    { "path": "packages/devtools-plugin" }
+    { "path": "packages/devtools-plugin" },
+    { "path": "packages/create-prodo-app" }
   ]
 }
