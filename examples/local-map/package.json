@@ -12,6 +12,7 @@
   "dependencies": {
     "@prodo/core": "^0.0.7",
     "@prodo/local": "^0.0.7",
+    "core-js": "2",
     "pigeon-maps": "^0.13.0",
     "pigeon-marker": "^0.3.4",
     "pigeon-overlay": "^0.2.3",
