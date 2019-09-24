@@ -6,11 +6,15 @@ import * as path from "path";
 import * as tildePath from "tilde-path";
 import * as validateNpmPackageName from "validate-npm-package-name";
 import logger, { VerbosityLevel } from "./logger";
+import * as childProcess from "child_process";
+
+const execSync = childProcess.execSync;
 
 // tslint:disable-next-line:no-var-requires
 const packageJson = require("../package.json");
 
 const typescriptTemplate = "github:prodo-ai/prodo-template";
+const javascriptTemplate = "github:prodo-ai/prodo-template-js";
 
 let projectName: string | null = null;
 
@@ -46,6 +50,15 @@ if (projectName == null) {
   process.exit(1);
 }
 
+const shouldUseYarn = () => {
+  try {
+    execSync("yarnpkg --version", { stdio: "ignore" });
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 const downloadRepo = (template: string, dest: string): Promise<boolean> =>
   new Promise((resolve, reject) => {
     downloadGitRepo(template, dest, (err: any) => {
@@ -54,17 +67,45 @@ const downloadRepo = (template: string, dest: string): Promise<boolean> =>
   });
 
 const printSuccessMessage = (name: string, root: string) => {
-  logger.log(`Success! Created ${name} at ${tildePath(root)}`);
+  const useYarn = shouldUseYarn();
+
+  const installCommand = useYarn ? "yarn" : "npm install";
+  const startCommand = useYarn ? "yarn start" : "npm start";
+
+  logger.log(`Success! 🎉`);
+  logger.log(`Created ${name} at ${tildePath(root)}`);
   logger.log();
   logger.log("Start your app with");
   logger.log();
   logger.log(`    ${chalk.cyan("cd")} ${name}`);
-  logger.log(`    ${chalk.cyan("yarn")}`);
-  logger.log(`    ${chalk.cyan("yarn start")}`);
+  logger.log(`    ${chalk.cyan(installCommand)}`);
+  logger.log(`    ${chalk.cyan(startCommand)}`);
   logger.log();
 };
 
-const createApp = async (name: string, _useTypescript: boolean) => {
+// remove references to prodo-template-* in newly created apps package.json
+const cleanupPackageJson = (name: string, root: string) => {
+  const userPackageJson = require(path.resolve(root, "package.json"));
+
+  userPackageJson.name = name;
+  userPackageJson.version = "0.1.0";
+  delete userPackageJson.repository;
+};
+
+// delete files in newly created app that are not needed
+const cleanupRepo = (root: string) => {
+  const filesToDelete = ["yarn.lock", "package-lock.json"];
+
+  filesToDelete.forEach(file => {
+    try {
+      fs.unlinkSync(path.resolve(root, file));
+    } catch (_e) {
+      // do nothing
+    }
+  });
+};
+
+const createApp = async (name: string, useTypescript: boolean) => {
   const root = path.resolve(name);
 
   // validate project name
@@ -84,17 +125,22 @@ const createApp = async (name: string, _useTypescript: boolean) => {
   if (fs.existsSync(root)) {
     logger.log();
     logger.log(`Cannot create app in existing directory`);
-    logger.log(`    ${chalk.magenta(root)}`);
+    logger.log(`    ${chalk.magenta(tildePath(root))}`);
+    logger.log();
     process.exit(1);
   }
 
   // download template repo
+  const template = useTypescript ? typescriptTemplate : javascriptTemplate;
   try {
-    await downloadRepo(typescriptTemplate, root);
+    await downloadRepo(template, root);
   } catch (e) {
     logger.log(chalk.red("Error downloading template repo."));
     process.exit(1);
   }
+
+  cleanupPackageJson(name, root);
+  cleanupRepo(root);
 
   printSuccessMessage(name, root);
 };
