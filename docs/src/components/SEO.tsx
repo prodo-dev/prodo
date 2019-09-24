@@ -59,6 +59,32 @@ function SEO(props: Props) {
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       {meta.image && <meta name="twitter:image" content={meta.image} />}
+
+      <link
+        rel="stylesheet"
+        type="text/css"
+        href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css"
+      />
+
+      <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" />
+      <script type="text/javascript">
+        {`
+setTimeout(
+  () =>
+    window.cookieconsent.initialise({
+      palette: {
+        popup: {
+          background: "#000000"
+        },
+        button: {
+          background: "#00e3a0"
+        }
+      }
+    }),
+  1000
+);
+      `}
+      </script>
     </Helmet>
   );
 }
@@ -66,7 +92,7 @@ function SEO(props: Props) {
 export default SEO;
 
 const query = graphql`
-  query SEOQuery {
+  query {
     site {
       siteMetadata {
         siteTitle
