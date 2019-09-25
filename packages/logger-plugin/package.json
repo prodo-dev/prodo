@@ -1,6 +1,6 @@
 {
   "name": "@prodo/logger",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "lib/index.js",
   "license": "MIT",
   "files": [
@@ -14,7 +14,7 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "devDependencies": {
-    "@prodo/core": "^0.0.7",
+    "@prodo/core": "^0.0.8",
     "@types/jest": "^24.0.18",
     "ts-jest": "^24.0.2"
   },

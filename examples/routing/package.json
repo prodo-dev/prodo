@@ -1,6 +1,6 @@
 {
   "name": "@prodo-example/routing",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,8 +9,8 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "^0.0.7",
-    "@prodo/route": "^0.0.7",
+    "@prodo/core": "^0.0.8",
+    "@prodo/route": "^0.0.8",
     "core-js": "2",
     "history": "^4.9.0",
     "react": "^16.8.6",
