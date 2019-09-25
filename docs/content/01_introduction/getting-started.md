@@ -50,7 +50,7 @@ The typical workflow in developing a Prodo app is to
 
 1. **Specify a model, specifying the types (if you want to use TypeScript)**
 2. **Define your actions as simple functions mutating the state of your model**
-3. ** Use functional React components to render the model in its current state **
+3. **Use functional React components to render the model in its current state**
 
 ## 1. Specifying the Model
 
