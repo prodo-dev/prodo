@@ -28,9 +28,17 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `images`,
+        path: `${__dirname}/content/images`,
+      },
+    },
+    {
       resolve: `gatsby-plugin-mdx`,
       options: {
         extensions: [".mdx", ".md"],
+        plugins: ["gatsby-remark-images"],
         gatsbyRemarkPlugins: [
           {
             resolve: `gatsby-remark-prismjs`,
