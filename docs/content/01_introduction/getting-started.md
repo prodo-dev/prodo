@@ -13,26 +13,20 @@ boilerplate.
 The easiest way to get started with Prodo is with
 [create-prodo-app](/introduction/create-prodo-app). We also recommend using TypeScript.
 
-```
-npx create-prodo-app my-app --typescript
-```
+```shell
+# init
+yarn create prodo-app my-app --typescript
+# OR npx create-prodo-app my-app --typescript
 
-Navigate to your apps' directory and install the dependencies with either NPM or
-Yarn.
+# install
+cd my-app
+yarn
 
-```
-npm install
-```
-
-Run the start to command to start your app in development mode.
-
-```
-npm start
+# start
+yarn start
 ```
 
-Navigate to [localhost:8080](http://localhost:8080) and you should see:
-
-![hello world template](../images/hello-world.png)
+Navigate to [localhost:8080](http://localhost:8080) and you should see "Hello World".
 
 # Basic Example
 
