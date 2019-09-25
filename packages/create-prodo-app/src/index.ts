@@ -30,8 +30,8 @@ const program = new commander.Command(packageJson.name)
     logger.log(`    Only ${chalk.green("<project-directory>")} is required.`);
     logger.log();
   })
-  .option("--typescript", "Create project with TypeScript")
-  .option("--verbose", "Show more logging information")
+  .option("--typescript", "create project with TypeScript")
+  .option("--verbose", "show more logging information")
   .parse(process.argv);
 
 if (program.verbose) {
