@@ -52,7 +52,7 @@ npx create-prodo-app my-app --typescript
 
 ## Installing Dependencies
 
-Navigate to your apps' directory and run either `npm install` or `yarn`.
+Navigate to your app's directory and run either `npm install` or `yarn`.
 
 ```shell
 cd my-app
