@@ -174,6 +174,6 @@ ReactDOM.render(
 );
 ```
 
-## Running your application
+## Running your Application
 
 Run `yarn start` or `npm start` to start your application.
