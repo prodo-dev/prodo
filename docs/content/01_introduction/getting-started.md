@@ -14,6 +14,7 @@ You can either get started with Prodo by cloning the template:
 
 ```shell
 git clone https://github.com/prodo-ai/prodo-template
+yarn install
 ```
 
 or start from a clean repo and do:
@@ -158,3 +159,7 @@ ReactDOM.render(
   document.getElementById("root"),
 );
 ```
+
+## Running your application
+
+Run `yarn start` or `npm start` to start your application.
