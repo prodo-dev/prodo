@@ -1,10 +1,10 @@
+import { clearLogs } from "../../src/App/DevTools/components/ClearLogsButton";
 import { model } from "../../src/model";
 import { initState } from "../../src/store";
 import { Action } from "../../src/types";
 import { recordAction, recordState } from "../../src/utils/communication";
 
-import "@babel/polyfill";
-import { testActionLog, testAppState } from "../fixtures";
+import { populatedState, testActionLog, testAppState } from "../fixtures";
 
 describe("actions", () => {
   it("records state", async () => {
@@ -30,5 +30,16 @@ describe("actions", () => {
     const { state } = await store.dispatch(recordAction)(action);
     expect(state.app.actionLog.length).toBe(1);
     expect(state.app.actionLog[0].actionName).toBe(testActionLog[0].actionName);
+  });
+
+  it("clears action and render logs", async () => {
+    const { store } = model.createStore({
+      initState: populatedState,
+    });
+
+    expect(store.universe.state.app.actionLog.length).toBeGreaterThan(0);
+    const { state } = await store.dispatch(clearLogs)();
+    expect(state.app.actionLog.length).toBe(0);
+    expect(state.app.renderLog.length).toBe(0);
   });
 });

@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import { fireEvent } from "@testing-library/react";
 import * as React from "react";
 import { DevTools } from "../../../src/App/DevTools";
