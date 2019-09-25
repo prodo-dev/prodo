@@ -1,6 +1,6 @@
+import Highlight, { defaultProps } from "prism-react-renderer";
 import * as React from "react";
 import styled from "styled-components";
-import Highlight, { defaultProps } from "prism-react-renderer";
 
 const StyledCode = styled.div`
   padding: 1rem 0;

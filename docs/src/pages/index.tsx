@@ -1,8 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
 import { ButtonLink } from "../components/Button";
-import Container from "../components/Container";
 import Code from "../components/Code";
+import Container from "../components/Container";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
 import SEO from "../components/SEO";
