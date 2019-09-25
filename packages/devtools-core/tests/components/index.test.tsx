@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import * as React from "react";
 import App from "../../src/App";
 import { model } from "../../src/model";

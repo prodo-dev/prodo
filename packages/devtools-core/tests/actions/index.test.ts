@@ -4,7 +4,6 @@ import { initState } from "../../src/store";
 import { Action } from "../../src/types";
 import { recordAction, recordState } from "../../src/utils/communication";
 
-import "@babel/polyfill";
 import { populatedState, testActionLog, testAppState } from "../fixtures";
 
 describe("actions", () => {
@@ -33,11 +32,12 @@ describe("actions", () => {
     expect(state.app.actionLog[0].actionName).toBe(testActionLog[0].actionName);
   });
 
-  it("clears action and render lgos", async () => {
+  it("clears action and render logs", async () => {
     const { store } = model.createStore({
       initState: populatedState,
     });
 
+    expect(store.universe.state.app.actionLog.length).toBeGreaterThan(0);
     const { state } = await store.dispatch(clearLogs)();
     expect(state.app.actionLog.length).toBe(0);
     expect(state.app.renderLog.length).toBe(0);

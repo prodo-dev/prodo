@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import * as React from "react";
 import { StatePanel } from "../../../src/App/DevTools/StatePanel";
 import { model } from "../../../src/model";

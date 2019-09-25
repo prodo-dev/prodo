@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import * as React from "react";
 import JsonTree from "../../../../src/App/DevTools/components/JsonTree";
 import { renderWithTheme } from "../../../utils";

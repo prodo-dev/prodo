@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import { fireEvent } from "@testing-library/react";
 import * as React from "react";
 import { ActionLogRow } from "../../../../src/App/DevTools/ActionLogPanel/ActionLogRow";
