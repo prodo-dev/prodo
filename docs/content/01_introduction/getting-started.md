@@ -10,7 +10,7 @@ boilerplate.
 
 # Index
 
-- [Installation](#installation)
+- [Setup](#setup)
 - [Basic example](#basic-example)
   - [Specifying the model](#1.-specifying-the-model)
   - [Defining actions](#2.-defining-actions)
@@ -18,23 +18,27 @@ boilerplate.
 - [Creating the store](#creating-the-store)
 - [Running your application](#running-your-application)
 
-# Installation
+# Setup
 
-You can either get started with Prodo by cloning the template:
-
-```shell
-git clone https://github.com/prodo-ai/prodo-template
-yarn install
-```
-
-or start from a clean repo and do:
+The easiest way to get started with Prodo is with
+[create-prodo-app](/introduction/create-prodo-app). We also recommend using TypeScript.
 
 ```shell
-npm install --save @prodo/core
-npm install --save-dev @prodo/babel-plugin
+# init
+yarn create prodo-app my-app --typescript
+# OR npx create-prodo-app my-app --typescript
+
+# install
+cd my-app
+yarn
+
+# start
+yarn start
 ```
 
-# Basic example
+Navigate to [localhost:8080](http://localhost:8080) and you should see "Hello World".
+
+# Basic Example
 
 This section walks you through the main concepts of Prodo. We are creating a
 simple "Counter" app, assuming basic knowledge of
