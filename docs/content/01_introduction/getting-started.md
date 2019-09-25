@@ -8,6 +8,16 @@ apps with as little boilerplate as possible. It was designed with TypeScript in
 mind and even includes a babel plugin to further reduce the amount of
 boilerplate.
 
+# Index
+
+- [Installation](#installation)
+- [Basic example](#basic-example)
+  - [Specifying the model](#1.-specifying-the-model)
+  - [Defining actions](#2.-defining-actions)
+  - [React components](#3.-react-components)
+- [Creating the store](#creating-the-store)
+- [Running your application](#running-your-application)
+
 # Installation
 
 You can either get started with Prodo by cloning the template:
@@ -24,7 +34,7 @@ npm install --save @prodo/core
 npm install --save-dev @prodo/babel-plugin
 ```
 
-# Basic Example
+# Basic example
 
 This section walks you through the main concepts of Prodo. We are creating a
 simple "Counter" app, assuming basic knowledge of
@@ -34,11 +44,11 @@ snippets use the babel plugin.
 
 The typical workflow in developing a Prodo app is to
 
-1. Specify a model, specifying the types (if you want to use TypeScript)
-2. Define your actions as simple functions mutating the state of your model
-3. Use functional React components to render the model in its current state
+1. ** Specify a model, specifying the types (if you want to use TypeScript) **
+2. ** Define your actions as simple functions mutating the state of your model **
+3. ** Use functional React components to render the model in its current state **
 
-## Specifying the Model
+## 1. Specifying the Model
 
 The [model](/basics/model) holds all of the types used in your actions and components
 in a file called `src/model.ts`.
@@ -59,7 +69,7 @@ and export any variables from our model that are used elsewhere in our app.
 These variables that are exported from our model are correctly typed with our
 state.
 
-## Defining Actions
+## 2. Defining Actions
 
 [Actions](/basics/actions) are simple functions that can read from the state and write to the state. They can
 take arguments, trigger side effects (see [effect plugin](/plugins/effects)), and dispatch other actions (see [dispatch](/basics/actions#dispatch)). We can create
@@ -80,7 +90,7 @@ be triggered in a component or another action with the `dispatch` function.
 dispatch(changeCount)(1);
 ```
 
-## React Components
+## 3. React Components
 
 [Components](/basics/components) take the state of your application and render it as JSX. Those components are writen with React and let you automatically "watch" for changes to the state. Under the hood, the component will start a subscription to the corresponding state path and trigger a re-render whenever the value changes.
 
