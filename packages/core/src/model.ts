@@ -4,6 +4,9 @@ import { ProdoPlugin } from "./plugins";
 import { createStore } from "./store";
 import { Dispatch, Model, Watch } from "./types";
 
+const invalidCtxUseMessage = (value: string | number | symbol) =>
+  `Cannot use ${value.toString()} outside of an action or React component.`;
+
 export const createModel = <State>(): Model<
   { initState: State },
   { state: State },
@@ -20,7 +23,17 @@ export const createModel = <State>(): Model<
       plugins.push(p);
       return model;
     },
-    ctx: {} as any,
+    ctx: new Proxy(
+      {},
+      {
+        get(_target, key) {
+          throw new Error(invalidCtxUseMessage(key));
+        },
+        set(_target, key) {
+          throw new Error(invalidCtxUseMessage(key));
+        },
+      },
+    ),
   };
 
   return model as any;
