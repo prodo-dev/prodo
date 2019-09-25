@@ -8,20 +8,31 @@ apps with as little boilerplate as possible. It was designed with TypeScript in
 mind and even includes a babel plugin to further reduce the amount of
 boilerplate.
 
-# Installation
+# Setup
 
-You can either get started with Prodo by cloning the template:
+The easiest way to get started with Prodo is with
+[create-prodo-app](/introduction/create-prodo-app). We also recommend using TypeScript.
 
-```shell
-git clone https://github.com/prodo-ai/prodo-template
+```
+npx create-prodo-app my-app --typescript
 ```
 
-or start from a clean repo and do:
+Navigate to your apps' directory and install the dependencies with either NPM or
+Yarn.
 
-```shell
-npm install --save @prodo/core
-npm install --save-dev @prodo/babel-plugin
 ```
+npm install
+```
+
+Run the start to command to start your app in development mode.
+
+```
+npm start
+```
+
+Navigate to [localhost:8080](http://localhost:8080) and you should see:
+
+![hello world template](../images/hello-world.png)
 
 # Basic Example
 
