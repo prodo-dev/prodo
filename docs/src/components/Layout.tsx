@@ -4,6 +4,7 @@ import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import { MdxLink } from "../components/Link";
 import { H1, H2, H3 } from "../components/Text";
 import { theme } from "../styles";
+import "../styles/index.css";
 
 const GlobalStyle = createGlobalStyle`
   body {

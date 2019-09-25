@@ -11,6 +11,7 @@
   "dependencies": {
     "@prodo/core": "^0.0.7",
     "@prodo/route": "^0.0.7",
+    "core-js": "2",
     "history": "^4.9.0",
     "react": "^16.8.6",
     "react-dom": "^16.9.0",
