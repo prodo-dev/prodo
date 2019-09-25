@@ -8,7 +8,7 @@
     "src"
   ],
   "bin": {
-    "create-prodo-app": "lib/index.js"
+    "create-prodo-app": "./lib/index.js"
   },
   "scripts": {
     "start": "ts-node src/index.ts",

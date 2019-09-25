@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import chalk from "chalk";
 import * as childProcess from "child_process";
 import * as commander from "commander";
