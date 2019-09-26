@@ -8,6 +8,9 @@ import {
 } from "./types";
 import { createParamString } from "./utils";
 
+const normalizePath = (path: string): string =>
+  path[0] !== "/" ? `/${path}` : path;
+
 export const pushAction: PluginAction<
   Routing,
   [RouteParams | string]
@@ -15,6 +18,12 @@ export const pushAction: PluginAction<
   if (typeof routeParams === "string") {
     routeParams = { path: routeParams };
   }
+
+  routeParams = {
+    ...routeParams,
+    path: normalizePath(routeParams.path),
+  };
+
   ctx[persistentSymbol].isTimeTravelling = true;
   ctx[universeSymbol].route = {
     path: routeParams.path,
