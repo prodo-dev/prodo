@@ -8,4 +8,4 @@ export default plugin;
 
 export { Config, RouteParams } from "./types";
 export { Route, Switch, Link, Redirect } from "./react";
-export { matchRoute } from "./utils";
+export { matchRoute, normalizePath } from "./utils";

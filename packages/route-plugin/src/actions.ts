@@ -6,10 +6,7 @@ import {
   Routing,
   universeSymbol,
 } from "./types";
-import { createParamString } from "./utils";
-
-const normalizePath = (path: string): string =>
-  path[0] !== "/" ? `/${path}` : path;
+import { createParamString, normalizePath } from "./utils";
 
 export const pushAction: PluginAction<
   Routing,
