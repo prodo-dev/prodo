@@ -1,6 +1,6 @@
 {
   "name": "@prodo/eslint-plugin",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "prodo plugin for eslint",
   "files": [
     "src",

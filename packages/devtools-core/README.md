@@ -5,16 +5,15 @@ The tools are implemented in Prodo.
 
 ## Installation
 
-Add the devtools-plugin to your model so that your app and the devtools can communicate properly.
+Add the devtools plugin to your model so that your app and the devtools can communicate properly.
 
 ```ts
 import { createModel } from "@prodo/core";
-import devToolsPlugin from "@prodo/devtools-plugin";
+import devToolsPlugin from "@prodo/devtools";
 
 export interface State {}
 
-export const model = createModel<State>()
-  .with(devToolsPlugin);
+export const model = createModel<State>().with(devToolsPlugin);
 ```
 
 To show the devtools next to your app, turn the `devtools` variable to true when you create your store.

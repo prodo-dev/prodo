@@ -8,14 +8,14 @@ Adds the prodo developer tools to your application.
 ## Installation
 
 ```shell
-npm install --save @prodo/devtools-plugin
+npm install --save @prodo/devtools
 ```
 
 ## Add to your model
 
 ```ts
 // src/model.ts
-import devToolsPlugin from "@prodo/devtools-plugin";
+import devToolsPlugin from "@prodo/devtools";
 
 // ...
 
