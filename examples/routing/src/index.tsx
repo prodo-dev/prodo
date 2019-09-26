@@ -10,6 +10,7 @@ import "./index.scss";
 const history = createBrowserHistory();
 
 const { store, Provider } = model.createStore({
+  logger: true,
   initState,
   route: { history },
 });

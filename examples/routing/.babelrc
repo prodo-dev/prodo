@@ -4,5 +4,6 @@
     "@babel/preset-react",
     ["@babel/preset-env", { "useBuiltIns": "usage", "corejs": 2 }]
   ],
+  "plugins": ["@prodo/babel-plugin"],
   "sourceMaps": "both"
 }
