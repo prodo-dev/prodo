@@ -51,7 +51,7 @@ const Home = () => (
       <li>
         <Link
           to={{
-            path: "/ellon-musk",
+            path: "/elon-musk",
             params: {
               species: "human",
               ["net worth"]: "20 billion",
