@@ -12,7 +12,7 @@ const Home = () => (
       <li>
         <Link
           to={{
-            path: "izzy",
+            path: "users/izzy",
             params: {
               species: "dog",
             },
@@ -24,7 +24,7 @@ const Home = () => (
       <li>
         <Link
           to={{
-            path: "/bill-gates/",
+            path: "/users/bill-gates/",
             params: {
               species: "human",
               company: "microsoft",
@@ -37,7 +37,7 @@ const Home = () => (
       <li>
         <Link
           to={{
-            path: "/wayne-gretzky",
+            path: "users/wayne-gretzky",
             params: {
               species: "human",
               sport: "hockey",
@@ -51,7 +51,7 @@ const Home = () => (
       <li>
         <Link
           to={{
-            path: "/elon-musk",
+            path: "/users/elon-musk",
             params: {
               species: "human",
               ["net worth"]: "20 billion",
