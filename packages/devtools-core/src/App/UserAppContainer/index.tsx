@@ -40,23 +40,6 @@ const UserAppContainer = (props: Props) => {
         "message",
         eventListener(dispatch),
       );
-      if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
-        document.head.childNodes.forEach((link: ChildNode) => {
-          if ((link as any).tagName === "STYLE") {
-            const content = (link as any).innerHTML;
-            // We use styled components too, so append a copy
-            if (content.includes("sc-component-id:")) {
-              const copy = link.cloneNode(true);
-              styleNodes.push(copy);
-            } else if (!content.includes("prodoDevtoolsStyles")) {
-              styleNodes.push(link);
-            }
-          }
-        });
-        styleNodes.forEach(link => {
-          iFrameRef.current!.contentDocument!.head.appendChild(link);
-        });
-      }
       return () => {
         if (iFrameRef && iFrameRef.current && iFrameRef.current.contentWindow) {
           iFrameRef.current.removeEventListener("load", handleLoad);
@@ -66,6 +49,26 @@ const UserAppContainer = (props: Props) => {
           );
         }
       };
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
+      document.head.childNodes.forEach((link: ChildNode) => {
+        if ((link as any).tagName === "STYLE") {
+          const content = (link as any).innerHTML;
+          // We use styled components too, so append a copy
+          if (content.includes("sc-component-id:")) {
+            const copy = link.cloneNode(true);
+            styleNodes.push(copy);
+          } else if (!content.includes("prodoDevtoolsStyles")) {
+            styleNodes.push(link);
+          }
+        }
+      });
+      styleNodes.forEach(link => {
+        iFrameRef.current!.contentDocument!.head.appendChild(link);
+      });
     }
   });
 
