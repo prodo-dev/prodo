@@ -1,5 +1,5 @@
 import { createModel } from "@prodo/core";
-import devToolsPlugin from "@prodo/devtools-plugin";
+import devToolsPlugin from "@prodo/devtools";
 import effectPlugin from "@prodo/effect";
 import loggerPlugin from "@prodo/logger";
 

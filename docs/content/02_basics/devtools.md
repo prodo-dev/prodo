@@ -5,7 +5,7 @@ order: 8
 
 # Installation
 
-Add the devtools-plugin to your application so that your app and the devtools can communicate properly. You can find details [here](https://docs.prodo.dev/plugins/devtools/).
+Add the devtools plugin to your application so that your app and the devtools can communicate properly. You can find details [here](https://docs.prodo.dev/plugins/devtools/).
 
 Once you have installed the developer tools and turned them on as described above, they will appear to the side of your application when you start it up as normal. If you want to hide them, just toggle `devtools` to `false`.
 
