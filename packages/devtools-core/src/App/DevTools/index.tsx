@@ -16,11 +16,6 @@ const panels: { [key in Panel]: React.ReactElement } = {
 };
 
 const StyledDevtools = styled.div`
-  /* For excluding Prodo styles from the user app container */
-  .prodoDevtoolsStyles {
-    border: none;
-  }
-
   min-height: 100vh;
   width: ${PanelWidth};
 

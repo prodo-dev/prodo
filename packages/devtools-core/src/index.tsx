@@ -7,6 +7,8 @@ import { initState } from "./store";
 export * from "./App/DevTools";
 export * from "./types";
 
+import "./styles/index.scss";
+
 const store = model.createStore({ initState });
 const { Provider } = store;
 
