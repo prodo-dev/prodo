@@ -41,6 +41,12 @@ export const replaceAction: PluginAction<
   if (typeof routeParams === "string") {
     routeParams = { path: routeParams };
   }
+
+  routeParams = {
+    ...routeParams,
+    path: normalizePath(routeParams.path),
+  };
+
   ctx[universeSymbol].route = {
     path: routeParams.path,
     params: routeParams.params || {},
@@ -60,7 +66,7 @@ export const setRouteAction: PluginAction<Routing, [RouteParams]> = ctx => (
 ) => {
   if (!ctx[persistentSymbol].isTimeTravelling) {
     ctx[universeSymbol].route = {
-      path: routeParams.path,
+      path: normalizePath(routeParams.path),
       params: routeParams.params || {},
     };
   } else {
