@@ -52,5 +52,13 @@
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.1"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(svg|jpg|scss|css|png)$": "<rootDir>/tests/__mock.js"
+    }
   }
 }

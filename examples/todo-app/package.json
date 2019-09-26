@@ -51,6 +51,9 @@
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(svg|jpg|scss|css|png)$": "<rootDir>/tests/__mock.js"
     }
   }
 }
