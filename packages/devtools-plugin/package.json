@@ -1,5 +1,5 @@
 {
-  "name": "@prodo/devtools-plugin",
+  "name": "@prodo/devtools",
   "version": "0.0.8",
   "main": "lib/index.js",
   "license": "MIT",

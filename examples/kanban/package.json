@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@prodo/core": "^0.0.8",
-    "@prodo/devtools-plugin": "^0.0.8",
+    "@prodo/devtools": "^0.0.8",
     "@prodo/effect": "^0.0.8",
     "@prodo/logger": "^0.0.8",
     "@prodo/route": "^0.0.8",
