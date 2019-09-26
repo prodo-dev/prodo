@@ -39,6 +39,14 @@ const UserAppContainer = (props: Props) => {
         "message",
         eventListener(dispatch),
       );
+      if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
+        document.head.childNodes.forEach((link: ChildNode) => {
+          if ((link as any).tagName === "STYLE") {
+            const copy = link.cloneNode(true);
+            iFrameRef.current!.contentDocument!.head.appendChild(copy);
+          }
+        });
+      }
       return () => {
         if (iFrameRef && iFrameRef.current && iFrameRef.current.contentWindow) {
           iFrameRef.current.removeEventListener("load", handleLoad);
@@ -49,20 +57,10 @@ const UserAppContainer = (props: Props) => {
         }
       };
     }
-  }, []);
+  });
 
   const renderFrameContents = () => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
-      document.head.childNodes.forEach((link: ChildNode) => {
-        if (
-          (link as any).tagName === "STYLE" &&
-          !(link as any).innerHTML.includes("prodoDevtoolsStyles")
-        ) {
-          const copy = link.cloneNode(true);
-          iFrameRef.current!.contentDocument!.head.appendChild(copy);
-        }
-      });
-
       return [
         ReactDOM.createPortal(
           props.children,
