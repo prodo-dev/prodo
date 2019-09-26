@@ -39,6 +39,7 @@
     "@types/testing-library__react": "^9.1.1",
     "@types/webpack-env": "^1.14.0",
     "babel-loader": "^8.0.6",
+    "babel-runtime": "^6.26.0",
     "css-loader": "^3.2.0",
     "fork-ts-checker-webpack-plugin": "^1.5.0",
     "html-webpack-plugin": "^3.2.0",
