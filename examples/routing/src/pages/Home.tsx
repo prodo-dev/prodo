@@ -1,5 +1,5 @@
-import * as React from "react";
 import { Link } from "@prodo/route";
+import * as React from "react";
 
 const Home = () => (
   <div>

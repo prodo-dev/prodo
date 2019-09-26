@@ -1,8 +1,8 @@
 import { Redirect, Route, Switch } from "@prodo/route";
 import * as React from "react";
 import Home from "./pages/Home";
-import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
 
 const App = () => (
   <div className="app">
