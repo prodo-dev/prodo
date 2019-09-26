@@ -14,9 +14,11 @@
     "@prodo/devtools": "^0.0.9",
     "@prodo/effect": "^0.0.9",
     "@prodo/logger": "^0.0.9",
+    "@types/styled-components": "^4.1.19",
     "core-js": "2",
     "react": "^16.8.6",
-    "react-dom": "^16.9.0"
+    "react-dom": "^16.9.0",
+    "styled-components": "^4.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",

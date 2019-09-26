@@ -1,4 +1,5 @@
 import * as React from "react";
+import styled from "styled-components";
 import { deleteAll, deleteItem, newTodo, toggle } from "./actions";
 import { dispatch, state, watch } from "./model";
 
@@ -48,9 +49,13 @@ export const Buttons = () => (
   </div>
 );
 
+const Title = styled.h1`
+  color: pink;
+`;
+
 const App = () => (
   <div className="app">
-    <h1 className="title">Todos</h1>
+    <Title className="title">Todos</Title>
     <NewTodo />
     <List />
     <Buttons />
