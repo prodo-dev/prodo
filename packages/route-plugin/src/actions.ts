@@ -6,7 +6,7 @@ import {
   Routing,
   universeSymbol,
 } from "./types";
-import { createParamString } from "./utils";
+import { createParamString, normalizePath } from "./utils";
 
 export const pushAction: PluginAction<
   Routing,
@@ -15,6 +15,12 @@ export const pushAction: PluginAction<
   if (typeof routeParams === "string") {
     routeParams = { path: routeParams };
   }
+
+  routeParams = {
+    ...routeParams,
+    path: normalizePath(routeParams.path),
+  };
+
   ctx[persistentSymbol].isTimeTravelling = true;
   ctx[universeSymbol].route = {
     path: routeParams.path,
@@ -32,6 +38,12 @@ export const replaceAction: PluginAction<
   if (typeof routeParams === "string") {
     routeParams = { path: routeParams };
   }
+
+  routeParams = {
+    ...routeParams,
+    path: normalizePath(routeParams.path),
+  };
+
   ctx[universeSymbol].route = {
     path: routeParams.path,
     params: routeParams.params || {},
@@ -51,7 +63,7 @@ export const setRouteAction: PluginAction<Routing, [RouteParams]> = ctx => (
 ) => {
   if (!ctx[persistentSymbol].isTimeTravelling) {
     ctx[universeSymbol].route = {
-      path: routeParams.path,
+      path: normalizePath(routeParams.path),
       params: routeParams.params || {},
     };
   } else {

@@ -65,3 +65,6 @@ export const createParamString = (params?: { [key: string]: string }) => {
     .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
     .join("&")}`;
 };
+
+export const normalizePath = (path: string): string =>
+  path[0] !== "/" ? `/${path}` : path;

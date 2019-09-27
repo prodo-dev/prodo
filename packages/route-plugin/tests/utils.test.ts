@@ -1,4 +1,4 @@
-import { matchRoute } from "../src";
+import { matchRoute, normalizePath } from "../src";
 
 describe("matchRoute", () => {
   it("can match a route", () => {
@@ -21,5 +21,17 @@ describe("matchRoute", () => {
     expect(match).toBeTruthy();
     expect(match.prop1).toBe("b");
     expect(match.prop2).toBe("c");
+  });
+});
+
+describe("normalizePath", () => {
+  it("can add begining slash if it is missing", () => {
+    const path = normalizePath("a/b/c");
+    expect(path).toBe("/a/b/c");
+  });
+
+  it("does not affect path if it is prefixed with slash", () => {
+    const path = normalizePath("/a/b/c");
+    expect(path).toBe("/a/b/c");
   });
 });

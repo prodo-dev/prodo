@@ -7,6 +7,7 @@
   "include": ["src"],
   "references": [
     { "path": "../../packages/core" },
-    { "path": "../../packages/route-plugin" }
+    { "path": "../../packages/route-plugin" },
+    { "path": "../../packages/logger-plugin" }
   ]
 }
