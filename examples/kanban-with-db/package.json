@@ -76,7 +76,7 @@
       "^.+\\.tsx?$": "babel-jest"
     },
     "moduleNameMapper": {
-      "\\.(svg|jpg|scss|css|png)$": "<rootDir>/tests/__mock.js"
+      "\\.(svg|jpg|scss|css|png)$": "<rootDir>/tests/__mock__.js"
     }
   }
 }

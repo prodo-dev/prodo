@@ -26,6 +26,7 @@ interface Props {
 const UserAppContainer = (props: Props) => {
   const iFrameRef = React.useRef<HTMLIFrameElement>(null);
   const [updateValue, forceUpdate] = React.useState(true);
+  const [styleNodes] = React.useState([] as any[]);
 
   // Forces a re-render
   const handleLoad = () => {
@@ -51,18 +52,28 @@ const UserAppContainer = (props: Props) => {
     }
   }, []);
 
-  const renderFrameContents = () => {
+  React.useEffect(() => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
       document.head.childNodes.forEach((link: ChildNode) => {
-        if (
-          (link as any).tagName === "STYLE" &&
-          !(link as any).innerHTML.includes("prodoDevtoolsStyles")
-        ) {
-          const copy = link.cloneNode(true);
-          iFrameRef.current!.contentDocument!.head.appendChild(copy);
+        if ((link as any).tagName === "STYLE") {
+          const content = (link as any).innerHTML;
+          // We use styled components too, so append a copy
+          if (content.includes("sc-component-id:")) {
+            const copy = link.cloneNode(true);
+            styleNodes.push(copy);
+          } else if (!content.includes("prodoDevtoolsStyles")) {
+            styleNodes.push(link);
+          }
         }
       });
+      styleNodes.forEach(link => {
+        iFrameRef.current!.contentDocument!.head.appendChild(link);
+      });
+    }
+  });
 
+  const renderFrameContents = () => {
+    if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
       return [
         ReactDOM.createPortal(
           props.children,

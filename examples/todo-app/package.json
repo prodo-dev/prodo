@@ -16,7 +16,8 @@
     "@prodo/logger": "^0.0.9",
     "core-js": "2",
     "react": "^16.8.6",
-    "react-dom": "^16.9.0"
+    "react-dom": "^16.9.0",
+    "styled-components": "^4.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
@@ -29,6 +30,7 @@
     "@types/node": "^12.7.2",
     "@types/react": "^16.8.25",
     "@types/react-dom": "^16.8.5",
+    "@types/styled-components": "4.1.8",
     "@types/testing-library__react": "^9.1.1",
     "@types/webpack-env": "^1.14.0",
     "babel-jest": "^24.9.0",
@@ -49,6 +51,9 @@
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(svg|jpg|scss|css|png)$": "<rootDir>/tests/__mock__.js"
     }
   }
 }
