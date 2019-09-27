@@ -1,6 +1,6 @@
 {
   "name": "@prodo-example/clock",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,15 +9,15 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "^0.0.9",
+    "@prodo/core": "^0.0.10",
     "core-js": "2",
     "react": "^16.8.6",
     "react-dom": "^16.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
-    "@prodo/babel-plugin": "^0.0.9",
-    "@prodo/stream": "^0.0.9",
+    "@prodo/babel-plugin": "^0.0.10",
+    "@prodo/stream": "^0.0.10",
     "@testing-library/react": "^9.1.3",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
