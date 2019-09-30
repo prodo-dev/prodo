@@ -3,7 +3,6 @@ import * as React from "react";
 import styled from "styled-components";
 import DocsLayout from "../components/DocsLayout";
 import Link from "../components/Link";
-import { Title } from "../components/Text";
 import { normalize } from "../utils";
 
 export interface Props {
@@ -38,8 +37,7 @@ const DocsSection = (props: Props) => {
   );
 
   return (
-    <DocsLayout>
-      <Title>{normalize(props.pageContext.name)}</Title>
+    <DocsLayout title={normalize(props.pageContext.name)}>
       {subSections.map(subSection => (
         <SubSectionLink
           key={subSection.fields.slug}

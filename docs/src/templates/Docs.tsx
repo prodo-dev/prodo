@@ -3,7 +3,6 @@ import { MDXRenderer } from "gatsby-plugin-mdx";
 import * as React from "react";
 import DocsLayout from "../components/DocsLayout";
 import SEO from "../components/SEO";
-import { Title } from "../components/Text";
 
 export interface Props {
   data: {
@@ -12,7 +11,9 @@ export interface Props {
         title: string;
         experimental?: boolean;
         wip?: boolean;
+        toc?: boolean;
       };
+      headings: Array<{ value: string; depth: number }>;
       body: string;
       excerpt: string;
     };
@@ -24,9 +25,11 @@ const Docs = ({ data }: Props) => {
     <DocsLayout
       experimental={data.mdx.frontmatter.experimental}
       wip={data.mdx.frontmatter.wip}
+      toc={data.mdx.frontmatter.toc}
+      headings={data.mdx.headings}
+      title={data.mdx.frontmatter.title}
     >
       <SEO title={data.mdx.frontmatter.title} description={data.mdx.excerpt} />
-      <Title>{data.mdx.frontmatter.title}</Title>
       <MDXRenderer>{data.mdx.body}</MDXRenderer>
     </DocsLayout>
   );
@@ -41,6 +44,11 @@ export const pageQuery = graphql`
         title
         experimental
         wip
+        toc
+      }
+      headings {
+        value
+        depth
       }
       body
       excerpt

@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import Hamburger from "../components/Hamburger";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
+import Link from "../components/Link";
 import Sidebar from "../components/Sidebar";
 import {
   FooterHeight,
@@ -15,10 +16,21 @@ import {
   HeaderHeight,
   SidebarWidth,
 } from "../styles";
+import { makeAnchor } from "../utils";
+import { Title } from "./Text";
 
 export interface Props {
+  title?: string;
+  toc?: boolean;
   experimental?: boolean;
   wip?: boolean;
+  headings?: Array<{ value: string; depth: number }>;
+}
+
+interface Heading {
+  value: string;
+  depth: number;
+  subheadings: Heading[];
 }
 
 const FullPage = styled.div`
@@ -81,6 +93,66 @@ const SidebarButton: React.FC<{ onClick: () => void }> = props => (
   </StyledSidebarButton>
 );
 
+const getGroupedHeadings = (
+  headings: Array<{ value: string; depth: number }>,
+): Heading[] => {
+  const groupedHeadings: Heading[] = [];
+
+  let currentHeading: Heading | null = null;
+  for (const { value, depth } of headings) {
+    if (currentHeading == null) {
+      currentHeading = { value, depth, subheadings: [] };
+    } else {
+      // heading is a subheading of currentHeading
+      // all levels of subheading are treated as subheadings of currentHeading
+      if (depth > currentHeading.depth) {
+        currentHeading.subheadings.push({ value, depth, subheadings: [] });
+      } else {
+        groupedHeadings.push(currentHeading);
+        currentHeading = { value, depth, subheadings: [] };
+      }
+    }
+  }
+
+  if (currentHeading != null) {
+    groupedHeadings.push(currentHeading);
+  }
+
+  return groupedHeadings;
+};
+
+const StyledTOC = styled.div`
+  padding: 1rem 0;
+`;
+
+const TOCList: React.FC<{ headings: Heading[] }> = props => (
+  <ul>
+    {props.headings.map(heading => (
+      <li key={heading.value}>
+        <Link to={`#${makeAnchor(heading.value)}`}>{heading.value}</Link>
+
+        {heading.subheadings.length !== 0 && (
+          <TOCList headings={heading.subheadings} />
+        )}
+      </li>
+    ))}
+  </ul>
+);
+
+const TableOfContents: React.FC<{
+  headings: Array<{ value: string; depth: number }>;
+}> = props => {
+  const groupedHeadings = getGroupedHeadings(
+    props.headings.filter(h => h.depth <= 2),
+  );
+
+  return (
+    <StyledTOC>
+      <TOCList headings={groupedHeadings} />
+    </StyledTOC>
+  );
+};
+
 const DocsLayout: React.FC<Props> = props => {
   const [isSidebarOpen, setSidebarOpen] = React.useState(false);
 
@@ -98,7 +170,17 @@ const DocsLayout: React.FC<Props> = props => {
               <FullPage>
                 {props.experimental && <ExperimentalBanner />}
                 {props.wip && <WipBanner />}
-                <DocsContainer>{props.children}</DocsContainer>
+                <DocsContainer>
+                  {props.title != null && <Title>{props.title}</Title>}
+
+                  {props.toc &&
+                    props.headings &&
+                    props.headings.length !== 0 && (
+                      <TableOfContents headings={props.headings} />
+                    )}
+
+                  {props.children}
+                </DocsContainer>
               </FullPage>
 
               <Footer />
