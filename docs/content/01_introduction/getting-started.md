@@ -1,22 +1,13 @@
 ---
 title: "Getting Started"
 order: 1
+toc: true
 ---
 
 Prodo is a web framework that enables you to write performant and scalable web
 apps with as little boilerplate as possible. It was designed with TypeScript in
 mind and even includes a babel plugin to further reduce the amount of
 boilerplate.
-
-# Index
-
-- [Setup](#setup)
-- [Basic example](#basic-example)
-  - [Specifying the model](#1.-specifying-the-model)
-  - [Defining actions](#2.-defining-actions)
-  - [React components](#3.-react-components)
-- [Creating the store](#creating-the-store)
-- [Running your application](#running-your-application)
 
 # Setup
 
@@ -52,7 +43,7 @@ The typical workflow in developing a Prodo app is to
 2. **Define your actions as simple functions mutating the state of your model**
 3. **Use functional React components to render the model in its current state**
 
-## 1. Specifying the Model
+## Specifying the Model
 
 The [model](/basics/model) holds all of the types used in your actions and components
 in a file called `src/model.ts`.
@@ -73,7 +64,7 @@ and export any variables from our model that are used elsewhere in our app.
 These variables that are exported from our model are correctly typed with our
 state.
 
-## 2. Defining Actions
+## Defining Actions
 
 [Actions](/basics/actions) are simple functions that can read from the state and write to the state. They can
 take arguments, trigger side effects (see [effect plugin](/plugins/effects)), and dispatch other actions (see [dispatch](/basics/actions#dispatch)). We can create
@@ -94,7 +85,7 @@ be triggered in a component or another action with the `dispatch` function.
 dispatch(changeCount)(1);
 ```
 
-## 3. React Components
+## React Components
 
 [Components](/basics/components) take the state of your application and render it as JSX. Those components are writen with React and let you automatically "watch" for changes to the state. Under the hood, the component will start a subscription to the corresponding state path and trigger a re-render whenever the value changes.
 
