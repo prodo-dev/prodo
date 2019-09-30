@@ -2,6 +2,7 @@
 title: "Creating Plugins"
 order: 1
 experimental: true
+toc: true
 ---
 
 Prodo plugins are an essential part of the framework and can add a lot of
@@ -12,6 +13,8 @@ functionality to a user's app. Plugins have the power to:
 - Subscribe a component to a particular part of the [universe](./universe) so
   the component will re-render when that data changes.
 - Wrap the entire user app with a React component.
+
+# Plugin Type
 
 A plugin is parameterised by five type parameters. These are:
 
@@ -51,6 +54,8 @@ const myPlugin = createPlugin<Config, Universe, ActionCtx, ViewCtx>(
 
 export default myPlugin;
 ```
+
+# Plugin Methods
 
 Functionality is added to plugins by calling functions on the plugin object that
 add _hooks_ into different parts of the framework. The available hooks are:
