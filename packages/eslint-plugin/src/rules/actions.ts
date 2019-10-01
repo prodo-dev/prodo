@@ -64,13 +64,19 @@ const rule: TSRuleModule = {
         insideFunctionStackDepth === 1 &&
         currentTopLevelFunctionIsAction
       ) {
-        if (currentTopLevelFunctionReturns) {
+        if (
+          currentTopLevelFunctionReturns &&
+          (!context.options[0] || context.options[0].noReturn === true)
+        ) {
           context.report({
             node: currentTopLevelFunctionNode,
             messageId: "returningValue",
           });
         }
-        if (currentTopLevelFunctionAwaitsDispatchedFunction) {
+        if (
+          currentTopLevelFunctionAwaitsDispatchedFunction &&
+          (!context.options[0] || context.options[0].noAwait)
+        ) {
           context.report({
             node: currentTopLevelFunctionNode,
             messageId: "awaitingAction",

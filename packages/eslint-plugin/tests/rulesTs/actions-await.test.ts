@@ -47,6 +47,23 @@ ruleTester.run("no-action-await", rule, {
         };`,
       filename: defaultTsFile,
     },
+    {
+      code: `import {dispatch} from './model'; 
+          const action = async () => {
+              await dispatch(foo)();
+          };`,
+      filename: defaultTsFile,
+      options: [{ noAwait: false }],
+    },
+    {
+      code: `import {dispatch} from './model'; 
+          const action = async () => {
+              await dispatch(foo)();
+              return 1;
+          };`,
+      filename: defaultTsFile,
+      options: [{ noAwait: false, noReturn: false }],
+    },
   ],
   invalid: [
     {
@@ -138,6 +155,16 @@ ruleTester.run("no-action-await", rule, {
           };`,
       errors: [{ messageId }],
       filename: defaultTsFile,
+    },
+    {
+      code: `import {dispatch} from './model'; 
+          const action = async () => {
+              await dispatch(foo)();
+              return 1;
+          };`,
+      filename: defaultTsFile,
+      errors: [{ messageId }],
+      options: [{ noReturn: false, noAwait: true }],
     },
   ],
 });

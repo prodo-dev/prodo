@@ -63,6 +63,25 @@ ruleTester.run("no-action-return", rule, {
             };`,
       filename: defaultTsFile,
     },
+    {
+      code: `import {state, foo} from './model'; 
+      const action = ()=>{
+        state.a = 1;
+        return 'hello'
+      };`,
+      filename: defaultTsFile,
+      options: [{ noReturn: false }],
+    },
+    {
+      code: `import {state, foo, dispatch} from './model'; 
+      const action = ()=>{
+        state.a = 1;
+        await dispatch(foo)()
+        return 'hello'
+      };`,
+      filename: defaultTsFile,
+      options: [{ noReturn: false, noAwait: false }],
+    },
   ],
   invalid: [
     {
@@ -70,7 +89,7 @@ ruleTester.run("no-action-return", rule, {
       const action = ()=>{
         state.a = 1;
         return 'hello'
-    };`,
+      };`,
       errors: [{ messageId }],
       filename: defaultTsFile,
     },
@@ -124,6 +143,17 @@ ruleTester.run("no-action-return", rule, {
         };`,
       errors: [{ messageId }],
       filename: defaultTsFile,
+    },
+    {
+      code: `import {state, foo, dispatch} from './model'; 
+      const action = ()=>{
+        state.a = 1;
+        await dispatch(foo)();
+        return 'hello'
+      };`,
+      errors: [{ messageId }],
+      filename: defaultTsFile,
+      options: [{ noAwait: false, noReturn: true }],
     },
   ],
 });
