@@ -1,10 +1,6 @@
-import {
-  ParserServices,
-  TSESTree,
-} from "@typescript-eslint/experimental-utils";
-import { AST_NODE_TYPES } from "@typescript-eslint/typescript-estree";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
-import { getParserServices } from "../utils/getParserServices";
+import { findDefinition } from "../utils/findDefinition";
 import { identifierIsImportedFromModel } from "../utils/identifierIsImportedFromModel";
 
 const rule: TSRuleModule = {
@@ -37,25 +33,14 @@ const rule: TSRuleModule = {
     type: "problem",
   },
   create(context: TSRuleContext) {
-    const parserServices: ParserServices = getParserServices(context);
-
-    let currentTopLevelFunctionNode:
-      | TSESTree.FunctionDeclaration
-      | TSESTree.FunctionExpression
-      | TSESTree.ArrowFunctionExpression
-      | undefined;
     let currentTopLevelFunctionReturns: boolean = false;
     let currentTopLevelFunctionAwaitsDispatchedFunction: boolean = false;
     let currentTopLevelFunctionIsAction: boolean = false;
+    let currentTopLevelFunctionNode: TSESTree.Node | undefined;
 
     let insideFunctionStackDepth = 0;
 
-    const enterFunction = (
-      node:
-        | TSESTree.FunctionDeclaration
-        | TSESTree.FunctionExpression
-        | TSESTree.ArrowFunctionExpression,
-    ) => {
+    const enterFunction = (node: TSESTree.Node) => {
       if (insideFunctionStackDepth === 0) {
         currentTopLevelFunctionNode = node;
       }
@@ -95,24 +80,19 @@ const rule: TSRuleModule = {
     };
 
     return {
-      ":function"(
-        node:
-          | TSESTree.FunctionDeclaration
-          | TSESTree.FunctionExpression
-          | TSESTree.ArrowFunctionExpression,
-      ) {
+      ":function"(node: TSESTree.Node) {
         enterFunction(node);
       },
       ":function:exit"() {
         checkAndRaiseIssue();
         exitFunction();
       },
-      ":function Identifier"(node: TSESTree.Identifier): void {
-        const modelImportNode = identifierIsImportedFromModel(
-          node,
-          parserServices,
-        );
-        if (modelImportNode) {
+      ":function Identifier"(node: TSESTree.Node): void {
+        if (node.type !== "Identifier") {
+          return;
+        }
+        const importNode = findDefinition(node, context);
+        if (importNode && identifierIsImportedFromModel(importNode)) {
           currentTopLevelFunctionIsAction = true;
           return;
         }
@@ -123,31 +103,31 @@ const rule: TSRuleModule = {
         }
       },
       ":function AwaitExpression[argument] CallExpression[callee] CallExpression"(
-        node: TSESTree.CallExpression,
+        node: TSESTree.Node,
       ): void {
+        if (node.type !== "CallExpression") {
+          return;
+        }
         const callee = node.callee;
         if (
-          callee.type === AST_NODE_TYPES.MemberExpression &&
-          callee.object.type === AST_NODE_TYPES.Identifier &&
-          callee.property.type === AST_NODE_TYPES.Identifier &&
+          callee.type === "MemberExpression" &&
+          callee.object.type === "Identifier" &&
+          callee.property.type === "Identifier" &&
           callee.property.name === "dispatch"
         ) {
-          const modelImport = identifierIsImportedFromModel(
-            callee.object,
-            parserServices,
-          );
+          const modelImport = findDefinition(callee.object, context);
           if (
             modelImport &&
-            modelImport.type === AST_NODE_TYPES.ImportNamespaceSpecifier
+            identifierIsImportedFromModel(modelImport) &&
+            modelImport.type === "ImportNamespaceSpecifier"
           ) {
             currentTopLevelFunctionAwaitsDispatchedFunction = true;
           }
-        } else if (
-          callee.type === AST_NODE_TYPES.Identifier &&
-          callee.name === "dispatch" &&
-          identifierIsImportedFromModel(callee, parserServices) != null
-        ) {
-          currentTopLevelFunctionAwaitsDispatchedFunction = true;
+        } else if (callee.type === "Identifier" && callee.name === "dispatch") {
+          const modelImport = findDefinition(callee, context);
+          if (modelImport && identifierIsImportedFromModel(modelImport)) {
+            currentTopLevelFunctionAwaitsDispatchedFunction = true;
+          }
         }
       },
     };
