@@ -35,14 +35,15 @@ const UserAppContainer = (props: Props) => {
 
   React.useEffect(() => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentWindow) {
-      iFrameRef.current.contentWindow.addEventListener("load", handleLoad);
       iFrameRef.current.contentWindow.addEventListener(
         "message",
         eventListener(dispatch),
       );
+
+      // Needed for Chrome
+      handleLoad();
       return () => {
         if (iFrameRef && iFrameRef.current && iFrameRef.current.contentWindow) {
-          iFrameRef.current.removeEventListener("load", handleLoad);
           iFrameRef.current.contentWindow.removeEventListener(
             "message",
             eventListener(dispatch),
@@ -84,6 +85,7 @@ const UserAppContainer = (props: Props) => {
     return [];
   };
 
+  // onLoad={handleLoad} is needed for Firefox
   return (
     <StyledUserAppContainer
       className="userAppContainer"
@@ -99,7 +101,12 @@ const UserAppContainer = (props: Props) => {
             onLoad={handleLoad}
           />
         ) : (
-          <StyledIFrame ref={iFrameRef} className="iframe" data-testid="iframe">
+          <StyledIFrame
+            ref={iFrameRef}
+            className="iframe"
+            data-testid="iframe"
+            onLoad={handleLoad}
+          >
             {renderFrameContents()}
           </StyledIFrame>
         )}
