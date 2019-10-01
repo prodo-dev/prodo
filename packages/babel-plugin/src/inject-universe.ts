@@ -34,7 +34,8 @@ export default (
           const bindingPath = binding.path;
 
           if (
-            (t.isImportSpecifier(bindingPath.node) ||
+            ((t.isImportSpecifier(bindingPath.node) &&
+              bindingPath.node.imported.name !== "model") ||
               t.isImportNamespaceSpecifier(bindingPath.node) ||
               t.isImportDefaultSpecifier(bindingPath.node)) &&
             t.isImportDeclaration(bindingPath.parent) &&
@@ -80,7 +81,10 @@ export default (
             if (t.isIdentifier(bindingPath.node.id)) {
               // const foo = require("./model.ctx");
               universeImports.namespace = bindingPath.node.id.name;
-            } else if (t.isObjectPattern(bindingPath.node.id)) {
+            } else if (
+              t.isObjectPattern(bindingPath.node.id) &&
+              p.node.name !== "model"
+            ) {
               const property = bindingPath.node.id.properties.find(
                 (prop: Babel.types.ObjectProperty | Babel.types.RestElement) =>
                   t.isObjectProperty(prop)
