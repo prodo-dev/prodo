@@ -1,18 +1,8 @@
-import { TSESTree } from "@typescript-eslint/experimental-utils";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { AST, Linter, Rule, Scope, SourceCode } from "eslint";
 
 interface TSRuleListener {
-  [key: string]:
-    | (() => void)
-    | ((node: TSESTree.Node) => void)
-    | ((node: TSESTree.Identifier) => void)
-    | ((node: TSESTree.ImportDeclaration) => void)
-    | ((node: TSESTree.CallExpression) => void)
-    | ((node: TSESTree.FunctionDeclaration) => void)
-    | ((node: TSESTree.FunctionExpression) => void)
-    | ((node: TSESTree.ArrowFunctionExpression) => void)
-    | ((node: TSESTree.ReturnStatement) => void)
-    | undefined;
+  [key: string]: (node: TSESTree.Node) => void;
 }
 
 export interface TSRuleModule {

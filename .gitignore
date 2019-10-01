@@ -3,6 +3,7 @@ build
 dev
 dist
 lib
+transpiled
 
 # Development
 .envrc.local
@@ -30,3 +31,6 @@ yarn-error.log
 
 # Firebase
 .firebase
+
+# MacOSX
+.DS_Store

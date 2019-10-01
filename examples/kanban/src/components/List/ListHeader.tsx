@@ -1,19 +1,18 @@
 import * as React from "react";
-import Textarea from "react-textarea-autosize";
-import { Button, Wrapper, Menu, MenuItem } from "react-aria-menubutton";
-// @ts-ignore
+import { Button, Menu, MenuItem, Wrapper } from "react-aria-menubutton";
 import FaTrash from "react-icons/lib/fa/trash";
+import Textarea from "react-textarea-autosize";
 import "./ListHeader.scss";
 
 import { dispatch, state } from "../../model";
 
-type Props = {
+interface Props {
   listTitle: string;
   listId: string;
   boardId: string;
   cards: string[];
   dragHandleProps: any;
-};
+}
 
 function changeListTitle(listId: string, newTitle: string) {
   state.listsById[listId].title = newTitle;
@@ -33,11 +32,11 @@ function ListTitle({
   listId,
   boardId,
   cards,
-  dragHandleProps
+  dragHandleProps,
 }: Props) {
   const [localState, setLocalState] = React.useState({
     isOpen: false,
-    newTitle: listTitle
+    newTitle: listTitle,
   });
   const { isOpen, newTitle } = localState;
 
@@ -55,9 +54,11 @@ function ListTitle({
   };
 
   const handleSubmit = () => {
-    if (newTitle === "") return;
+    if (newTitle === "") {
+      return;
+    }
     if (newTitle !== listTitle) {
-      dispatch(changeListTitle)(listId, newTitle), {};
+      dispatch(changeListTitle)(listId, newTitle);
     }
     setLocalState({ isOpen: false, newTitle });
   };
@@ -66,8 +67,10 @@ function ListTitle({
     setLocalState({ newTitle: listTitle, isOpen: false });
   };
 
-  const doDeleteList = () => {
-    dispatch(deleteList)(cards, listId, boardId);
+  /* Cards need to be passed as a value to the MenuItem
+  to force a re-render because of a bug in react-aria-menubutton */
+  const doDeleteList = (value: string[]) => {
+    dispatch(deleteList)(value, listId, boardId);
   };
 
   const openTitleEditor = () => {
@@ -111,13 +114,18 @@ function ListTitle({
           {listTitle}
         </div>
       )}
-      <Wrapper className="delete-list-wrapper" onSelection={doDeleteList}>
+      <Wrapper
+        className="delete-list-wrapper"
+        onSelection={value => doDeleteList(value)}
+      >
         <Button className="delete-list-button">
           <FaTrash />
         </Button>
         <Menu className="delete-list-menu">
           <div className="delete-list-header">Are you sure?</div>
-          <MenuItem className="delete-list-confirm">Delete</MenuItem>
+          <MenuItem className="delete-list-confirm" value={cards}>
+            Delete
+          </MenuItem>
         </Menu>
       </Wrapper>
     </div>

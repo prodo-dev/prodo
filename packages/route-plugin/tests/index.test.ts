@@ -4,7 +4,7 @@ import routePlugin, { push, replace } from "../src";
 
 const model = createModel<{}>().with(routePlugin);
 
-describe("random plugin", () => {
+describe("route plugin", () => {
   it("", async () => {
     const history = createMemoryHistory();
 
@@ -22,7 +22,6 @@ describe("random plugin", () => {
     expect(route.path).toBe("/test-1");
     expect(route.params).toEqual({});
     expect(history.length).toBe(2);
-
     route = (await store.dispatch(push)({
       path: "/test-2",
       params: { foo: "bar" },

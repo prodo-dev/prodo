@@ -1,4 +1,4 @@
-import { Comp, PluginActionCtx, PluginViewCtx } from "@prodo/core";
+import { Comp } from "@prodo/core";
 import * as firebase from "firebase/app";
 
 export interface FirebaseConfig {
@@ -64,15 +64,11 @@ export interface Ctx<T> {
   db: T;
 }
 
-export interface ActionCtx<T>
-  extends Ctx<T>,
-    PluginActionCtx<ActionCtx<T>, Universe> {
+export interface ActionCtx<T> extends Ctx<T> {
   db_cache: DBCache;
 }
 
-export interface ViewCtx<T>
-  extends Ctx<T>,
-    PluginViewCtx<ActionCtx<T>, Universe> {}
+export interface ViewCtx<T> extends Ctx<T> {}
 
 export interface Universe {
   db_cache: DBCache;
@@ -102,7 +98,8 @@ export interface Collection<T extends { id: string }> {
   // methods for actions
   get: (id: string) => Promise<T>;
   getAll: () => Promise<T[]>;
-  set: (id: string, value: Partial<T>) => Promise<void>;
+  set: (id: string, value: Omit<T, "id">) => Promise<void>;
+  update: (id: string, value: Partial<Omit<T, "id">>) => Promise<void>;
   delete: (id: string) => Promise<void>;
   insert: (value: Omit<T, "id">) => Promise<string>;
   query: (query: Query<T>) => Promise<T[]>;

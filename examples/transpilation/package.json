@@ -1,16 +1,17 @@
 {
   "name": "@prodo-example/transpilation",
-  "version": "0.0.5",
+  "version": "0.0.10",
   "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
-    "start": "parcel src/index.html",
+    "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "lint": "set -ex; tsc --build; tslint --project .",
     "test": "jest"
   },
   "dependencies": {
-    "@prodo/core": "^0.0.5",
+    "@prodo/core": "^0.0.10",
+    "core-js": "2",
     "react": "^16.8.6",
     "react-dom": "^16.9.0"
   },
@@ -20,19 +21,30 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
-    "@prodo/babel-plugin": "^0.0.5",
+    "@prodo/babel-plugin": "^0.0.10",
     "@testing-library/react": "^9.1.3",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "@types/react": "^16.8.25",
     "@types/react-dom": "^16.8.5",
     "@types/testing-library__react": "^9.1.1",
+    "@types/webpack-env": "^1.14.0",
     "babel-jest": "^24.9.0",
+    "babel-loader": "^8.0.6",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "css-loader": "^3.2.0",
+    "fork-ts-checker-webpack-plugin": "^1.5.0",
+    "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
-    "parcel-bundler": "^1.12.3",
-    "sass": "^1.22.9"
+    "node-sass": "^4.12.0",
+    "sass": "^1.22.9",
+    "sass-loader": "^8.0.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1"
   },
   "jest": {
     "transform": {

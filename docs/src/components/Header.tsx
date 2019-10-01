@@ -14,6 +14,7 @@ const StyledHeader = styled.header`
   padding: 0.5rem 0;
   background-color: #20232a;
   color: white;
+  z-index: 9999;
 `;
 
 const LogoText = styled.div`
@@ -37,6 +38,11 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 1rem;
+
+  h2 {
+    padding-bottom: 0;
+    margin: 0;
+  }
 `;
 
 const HeaderLinks = styled.div`

@@ -1,5 +1,10 @@
+import { createBrowserHistory } from "history";
 import { model } from "./model";
-export default model.createStore({
+
+const history = createBrowserHistory();
+
+export const { store, Provider } = model.createStore({
+  devtools: true,
   logger: true,
   initState: {
     user: {
@@ -26,5 +31,8 @@ export default model.createStore({
       C2: { _id: "C2", text: "World", date: new Date(), color: "green" },
       C3: { _id: "C3", text: "everything", date: new Date(), color: "blue" },
     },
+  },
+  route: {
+    history,
   },
 });

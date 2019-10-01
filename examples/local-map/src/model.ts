@@ -7,3 +7,4 @@ export interface Local {
 }
 
 export const model = createModel<{}>().with(localPlugin<Local>());
+export const { state, watch, dispatch, local } = model.ctx;

@@ -5,6 +5,7 @@
     { "path": "examples/chat-app" },
     { "path": "examples/clock" },
     { "path": "examples/kanban" },
+    { "path": "examples/kanban-with-db" },
     { "path": "examples/local-map" },
     { "path": "examples/random" },
     { "path": "examples/routing" },
@@ -20,6 +21,9 @@
     { "path": "packages/local-plugin" },
     { "path": "packages/random-plugin" },
     { "path": "packages/route-plugin" },
-    { "path": "packages/stream-plugin" }
+    { "path": "packages/stream-plugin" },
+    { "path": "packages/devtools-core" },
+    { "path": "packages/devtools-plugin" },
+    { "path": "packages/create-prodo-app" }
   ]
 }

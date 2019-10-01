@@ -2,7 +2,8 @@
   "presets": [
     "@babel/preset-typescript",
     "@babel/preset-react",
-    "@babel/preset-env"
+    ["@babel/preset-env", { "useBuiltIns": "usage", "corejs": 2 }]
   ],
-  "plugins": ["@prodo/babel-plugin"]
+  "plugins": ["@prodo/babel-plugin"],
+  "sourceMaps": "both"
 }

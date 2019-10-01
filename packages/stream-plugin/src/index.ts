@@ -1,5 +1,7 @@
 import {
+  createPlugin,
   createUniverseWatcher,
+  PluginAction,
   PluginActionCtx,
   ProdoPlugin,
 } from "@prodo/core";
@@ -14,47 +16,44 @@ export interface Stream<T> {
   subscribe: (cb: (value: T) => void) => StreamState;
 }
 
-type UnStreams<T extends { [K in keyof T]?: Stream<any> }> = {
-  [K in keyof T]?: T[K] extends Stream<infer V> ? V : never;
+export type UnStream<T extends Stream<any>> = T extends Stream<infer V>
+  ? V
+  : never;
+
+export type UnStreams<T extends { [K in keyof T]: Stream<any> }> = {
+  [K in keyof T]: UnStream<T[K]>;
 };
 
 // Stores the latest values
-export interface Universe<
-  T extends { [K in keyof T]: Stream<any> | undefined }
-> {
-  streams: UnStreams<T>;
+export interface Universe<T extends { [K in keyof T]: Stream<any> }> {
+  streams: Partial<UnStreams<T>>;
 }
 
-interface State<T extends { [K in keyof T]: Stream<any> | undefined }> {
-  streams: T;
+interface State<T extends { [K in keyof T]: Stream<any> }> {
+  streams: Partial<T>;
   states: { [K in keyof T]?: StreamState };
 }
 
-export interface ViewCtx<T extends { [K in keyof T]?: Stream<any> }> {
-  streams: UnStreams<T>;
+export interface ViewCtx<T extends { [K in keyof T]: Stream<any> }> {
+  streams: Partial<UnStreams<T>>;
 }
 
-export interface ActionCtx<T extends { [K in keyof T]?: Stream<any> }> {
-  streams: T;
+export interface ActionCtx<T extends { [K in keyof T]: Stream<any> }> {
+  streams: Partial<T>;
   // Private to streamUpdate
-  [valueSymbol]: UnStreams<T>;
+  [valueSymbol]: Partial<UnStreams<T>>;
 }
 
-const init = <T extends { [K in keyof T]?: Stream<any> }>(
+const init = <T extends { [K in keyof T]: Stream<any> }>(
   _config: {},
   universe: Universe<T>,
 ) => {
   universe.streams = {};
 };
 
-const streamUpdate = <T extends { [K in keyof T]?: Stream<any> }>(
-  ctx: ActionCtx<T>,
-) => (key: keyof T, value: any) => {
-  ctx[valueSymbol][key] = value;
-};
-
-const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
+const prepareActionCtx = <T extends { [K in keyof T]: Stream<any> }>(
   state: State<T>,
+  streamUpdate: PluginAction<ActionCtx<T>, [keyof T, any]>,
 ) => ({
   ctx,
   universe,
@@ -85,7 +84,7 @@ const prepareActionCtx = <T extends { [K in keyof T]?: Stream<any> }>(
   });
 };
 
-const prepareViewCtx = <T extends { [K in keyof T]?: Stream<any> }>({
+const prepareViewCtx = <T extends { [K in keyof T]: Stream<any> }>({
   ctx,
 }: {
   ctx: ViewCtx<T>;
@@ -93,19 +92,33 @@ const prepareViewCtx = <T extends { [K in keyof T]?: Stream<any> }>({
   ctx.streams = createUniverseWatcher("streams");
 };
 
-const streamPlugin = <
-  T extends { [K in keyof T]?: Stream<any> }
->(): ProdoPlugin<{}, Universe<T>, ActionCtx<T>, ViewCtx<T>> => {
-  const state = {
+const streamPlugin = <T extends { [K in keyof T]: Stream<any> }>(): ProdoPlugin<
+  {},
+  Universe<T>,
+  ActionCtx<T>,
+  ViewCtx<T>
+> => {
+  const state: State<T> = {
     streams: {},
     states: {},
   };
-  return {
-    name: "stream",
-    init,
-    prepareActionCtx: prepareActionCtx(state),
-    prepareViewCtx,
-  };
+
+  const plugin = createPlugin<{}, Universe<T>, ActionCtx<T>, ViewCtx<T>>(
+    "stream",
+  );
+
+  const streamUpdate = plugin.action(
+    ctx => (key: keyof T, value: any) => {
+      ctx[valueSymbol][key] = value;
+    },
+    "streamUpdate",
+  );
+
+  plugin.init(init);
+  plugin.prepareActionCtx(prepareActionCtx<T>(state, streamUpdate));
+  plugin.prepareViewCtx(prepareViewCtx);
+
+  return plugin;
 };
 
 export default streamPlugin;

@@ -1,27 +1,10 @@
 import Typography from "typography";
 import CodePlugin from "typography-plugin-code";
-
-const fontFamilies = [
-  "-apple-system",
-  "BlinkMacSystemFont",
-  "Segoe UI",
-  "Roboto",
-  "Oxygen-Sans",
-  "Ubuntu",
-  "Cantarell",
-  "Helvetica Neue",
-  "sans-serif",
-  "Apple Color Emoji",
-  "Segoe UI Emoji",
-  "Segoe UI Symbol",
-];
+import githubTheme from "typography-theme-github";
 
 const typography = new Typography({
-  baseFontSize: "16px",
-  baseLineHeight: 1.666,
-  headerFontFamily: fontFamilies,
-  bodyFontFamily: fontFamilies,
-  plugins: [new CodePlugin()],
+  ...githubTheme,
+  plugins: new CodePlugin(),
 });
 
 // Hot reload typography in development.

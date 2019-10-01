@@ -1,10 +1,6 @@
-import {
-  ParserServices,
-  TSESTree,
-} from "@typescript-eslint/experimental-utils";
-import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
-import { getParserServices } from "../utils/getParserServices";
+import { findDefinition } from "../utils/findDefinition";
 import { identifierIsImportedFromModel } from "../utils/identifierIsImportedFromModel";
 
 const rule: TSRuleModule = {
@@ -21,55 +17,48 @@ const rule: TSRuleModule = {
   },
 
   create(context: TSRuleContext) {
-    const parserServices: ParserServices = getParserServices(context);
-
-    const handleSpecifierImport = (node: TSESTree.Identifier) => {
-      if (node.type === "Identifier") {
-        const importDeclaration = identifierIsImportedFromModel(
-          node,
-          parserServices,
-        );
-        if (importDeclaration != null) {
-          context.report({
-            node,
-            messageId: "mustBeCalled",
-            data: { name: node.name },
-          });
-        }
-      }
-    };
-
-    const handleNamespaceImport = (node: TSESTree.MemberExpression) => {
-      const propertyTSNode = parserServices.esTreeNodeToTSNodeMap!.get<TSNode>(
-        node.property,
-      );
-      if (node.object.type === AST_NODE_TYPES.Identifier) {
-        const importDeclaration = identifierIsImportedFromModel(
-          node.object,
-          parserServices,
-        );
-        if (importDeclaration && propertyTSNode.getText() === "dispatch") {
-          context.report({
-            node: node.property,
-            messageId: "mustBeCalled",
-            data: {
-              name: (node.property as TSESTree.Identifier).name,
-            },
-          });
-        }
-      }
-    };
     return {
-      ":not(CallExpression[callee]) > CallExpression": (
-        node: TSESTree.CallExpression,
-      ): void => {
+      "CallExpression:not(CallExpression > CallExpression.callee)"(
+        node: TSESTree.Node,
+      ) {
         if (
-          node.callee.type === "Identifier" &&
-          node.callee.name === "dispatch"
+          node.type !== "CallExpression" ||
+          (node.callee.type !== "MemberExpression" &&
+            node.callee.type !== "Identifier")
         ) {
-          handleSpecifierImport(node.callee);
-        } else if (node.callee.type === "MemberExpression") {
-          handleNamespaceImport(node.callee);
+          return;
+        }
+        const callee = node.callee;
+        if (callee.type === "Identifier") {
+          const declaration = findDefinition(callee, context);
+          if (
+            declaration &&
+            identifierIsImportedFromModel(declaration) &&
+            declaration.type === "ImportSpecifier" &&
+            declaration.imported.name === "dispatch"
+          ) {
+            context.report({
+              node: callee,
+              messageId: "mustBeCalled",
+            });
+          }
+        } else if (
+          callee.type === "MemberExpression" &&
+          callee.object.type === "Identifier"
+        ) {
+          const declaration = findDefinition(callee.object, context);
+          if (
+            declaration &&
+            identifierIsImportedFromModel(declaration) &&
+            declaration.type === "ImportNamespaceSpecifier" &&
+            callee.property.type === "Identifier" &&
+            callee.property.name === "dispatch"
+          ) {
+            context.report({
+              node: callee,
+              messageId: "mustBeCalled",
+            });
+          }
         }
       },
     };

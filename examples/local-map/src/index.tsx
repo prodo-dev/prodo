@@ -5,18 +5,28 @@ import { Local, model } from "./model";
 
 import "./index.scss";
 
-export const initLocal: Local = {
+export const initLocal: Partial<Local> = {
   center: [51.507351, -0.127758],
   zoom: 12,
 };
 
 const { Provider, store } = model.createStore({ initState: {}, initLocal });
 
-ReactDOM.render(
-  <Provider>
-    <App />
-  </Provider>,
-  document.getElementById("root"),
-);
+const render = () => {
+  ReactDOM.render(
+    <Provider>
+      <App />
+    </Provider>,
+    document.getElementById("root"),
+  );
+};
+
+if (module.hot) {
+  module.hot.accept("./App", () => {
+    render();
+  });
+}
+
+render();
 
 (window as any).store = store;

@@ -6,6 +6,7 @@ import { forNarrowScreen, HeaderHeight, SidebarWidth } from "../styles";
 import { normalize, removeTrailingSlash } from "../utils";
 import Caret from "./Caret";
 import { EmptyLink } from "./Link";
+import Search from "./Search";
 
 interface HeadingProps {
   to: string;
@@ -13,6 +14,8 @@ interface HeadingProps {
 }
 
 interface SubSectionModel {
+  id: string;
+  section: string;
   title: string;
   slug: string;
   order: number;
@@ -25,29 +28,39 @@ interface SectionModel {
   subsections: SubSectionModel[];
 }
 
-const getSections = (data: QueryResult): SectionModel[] => {
+const getSections = (
+  data: QueryResult,
+  filter: string[] | null,
+): SectionModel[] => {
   const nodes = data.allMdx.nodes;
 
   const keyedSubSections: { [name: string]: SubSectionModel[] } = nodes.reduce(
-    (sections: { [name: string]: SubSectionModel[] }, node) => ({
-      ...sections,
-      [node.fields.section]: [
-        ...(sections[node.fields.section] || []),
-        {
-          slug: node.fields.slug,
-          section: node.fields.section,
-          title: node.frontmatter.title,
-          order: node.frontmatter.order,
-        },
-      ],
-    }),
+    (sections: { [name: string]: SubSectionModel[] }, node) => {
+      if (filter != null && !filter.includes(node.id)) {
+        return sections;
+      }
+
+      return {
+        ...sections,
+        [node.fields.section]: [
+          ...(sections[node.fields.section] || []),
+          {
+            id: node.id,
+            slug: node.fields.slug,
+            section: node.fields.section,
+            title: node.frontmatter.title,
+            order: node.frontmatter.order,
+          },
+        ],
+      };
+    },
     {},
   );
 
   const sections: SectionModel[] = Object.entries(keyedSubSections)
     .map(([sectionName, subsections]) => {
       const order = parseInt(sectionName, 10);
-      const normalizedName = sectionName.replace(/^\d+\_/, "");
+      const normalizedName = sectionName.replace(/^\d+\_/, "").toLowerCase();
       const title = normalize(normalizedName);
 
       return {
@@ -91,10 +104,15 @@ const StyledSection = styled.div`
 
 const Section: React.FC<{
   active: boolean;
+  searching: boolean;
   section: SectionModel;
   currentPath: string;
-}> = ({ active, section, currentPath }) => {
+}> = ({ active, searching, section, currentPath }) => {
   const [expanded, setExpanded] = React.useState(active);
+
+  React.useEffect(() => {
+    setExpanded(searching || active);
+  }, [active, searching]);
 
   return (
     <StyledSection>
@@ -130,7 +148,7 @@ const StyledSidebar = styled.div<{ isOpen: boolean }>`
   width: ${SidebarWidth}px;
   max-width: ${SidebarWidth}px;
   padding: 1rem;
-  padding-top: 4rem;
+  padding-top: 1rem;
   background-color: #eaeaea;
   overflow-y: auto;
   z-index: 9999;
@@ -147,19 +165,32 @@ export interface Props {
 
 const Sidebar: React.FC<Props> = props => {
   const data: QueryResult = useStaticQuery(query);
+
+  const [isSearching, setIsSearching] = React.useState(false);
+  const [results, setResults] = React.useState<string[] | null>(null);
+
   const currentPath = props.location.pathname;
-  const sections = getSections(data);
+  const sections = getSections(data, results);
 
   return (
     <StyledSidebar className="sidebar" isOpen={props.isOpen}>
+      <Search
+        onSearchResults={results => {
+          setResults(results);
+          setIsSearching(results !== null);
+        }}
+      />
       {sections.map(section => (
         <Section
           key={section.slug}
           section={section}
+          searching={isSearching}
           active={currentPath.startsWith(section.slug)}
           currentPath={currentPath}
         />
       ))}
+
+      {results != null && results.length === 0 && <p>{"No Results :("}</p>}
     </StyledSidebar>
   );
 };
@@ -169,6 +200,7 @@ export default Sidebar;
 interface QueryResult {
   allMdx: {
     nodes: Array<{
+      id: string;
       fields: {
         slug: string;
         section: string;
@@ -185,6 +217,7 @@ const query = graphql`
   query SidebarQuery {
     allMdx(sort: { fields: [frontmatter___order], order: ASC }) {
       nodes {
+        id
         fields {
           slug
           section

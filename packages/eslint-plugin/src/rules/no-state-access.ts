@@ -1,10 +1,6 @@
-import {
-  ParserServices,
-  TSESTree,
-} from "@typescript-eslint/experimental-utils";
-import { AST_NODE_TYPES, TSNode } from "@typescript-eslint/typescript-estree";
+import { TSESTree } from "@typescript-eslint/typescript-estree";
 import { TSRuleContext, TSRuleModule } from "../types/rules";
-import { getParserServices } from "../utils/getParserServices";
+import { findDefinition } from "../utils/findDefinition";
 import { identifierIsImportedFromModel } from "../utils/identifierIsImportedFromModel";
 
 const rule: TSRuleModule = {
@@ -23,43 +19,40 @@ const rule: TSRuleModule = {
     type: "problem",
   },
   create(context: TSRuleContext) {
-    const parserServices: ParserServices = getParserServices(context);
-
     return {
       "Identifier:not(:function Identifier, ImportDeclaration Identifier)"(
-        node: TSESTree.Identifier,
+        node: TSESTree.Node,
       ): void {
-        const importNode = identifierIsImportedFromModel(node, parserServices);
-        if (
-          importNode &&
-          importNode.type === AST_NODE_TYPES.ImportSpecifier &&
-          node.name === "state"
-        ) {
-          context.report({
-            node,
-            messageId: "accessingState",
-            data: { name: node.name },
-          });
-        } else if (
-          importNode &&
-          importNode.type === AST_NODE_TYPES.ImportNamespaceSpecifier
-        ) {
-          const parentNode = node.parent;
+        if (node.type !== "Identifier") {
+          return;
+        }
+        const importNode = findDefinition(node, context);
+        if (importNode && identifierIsImportedFromModel(importNode)) {
           if (
-            parentNode &&
-            parentNode.type === AST_NODE_TYPES.MemberExpression
+            importNode.type === "ImportSpecifier" &&
+            importNode.imported.name === "state"
           ) {
-            const propertyTSNode = parserServices.esTreeNodeToTSNodeMap!.get<
-              TSNode
-            >(parentNode.property);
-            if (propertyTSNode.getText() === "state" && propertyTSNode) {
-              context.report({
-                node: parentNode.property,
-                messageId: "accessingState",
-                data: {
-                  name: (parentNode.property as TSESTree.Identifier).name,
-                },
-              });
+            context.report({
+              node,
+              messageId: "accessingState",
+              data: { name: node.name },
+            });
+          } else if (importNode.type === "ImportNamespaceSpecifier") {
+            const parentNode = node.parent;
+            if (
+              parentNode &&
+              parentNode.type === "MemberExpression" &&
+              parentNode.property.type === "Identifier"
+            ) {
+              if (parentNode.property.name === "state") {
+                context.report({
+                  node: parentNode.property,
+                  messageId: "accessingState",
+                  data: {
+                    name: (parentNode.property as TSESTree.Identifier).name,
+                  },
+                });
+              }
             }
           }
         }

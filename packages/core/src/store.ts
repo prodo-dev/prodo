@@ -2,11 +2,11 @@ import produce from "immer";
 import * as React from "react";
 import { ProdoProvider } from ".";
 import { completeEvent, startEvent } from "./events";
+import { ProdoPlugin } from "./plugins";
 import {
   BaseStore,
   Origin,
   PluginDispatch,
-  ProdoPlugin,
   Provider,
   WatchTree,
 } from "./types";
@@ -15,11 +15,14 @@ const initPlugins = (
   universe: any,
   config: any,
   plugins: Array<ProdoPlugin<any, any, any, any>>,
+  store: { createDispatch: (name: string) => PluginDispatch<any> },
 ): any =>
   produce(universe, u => {
     plugins.forEach(p => {
-      if (p.init != null) {
-        p.init(config, u);
+      if (p._internals.init != null) {
+        p._internals.init(config, u, {
+          dispatch: (...args) => store.createDispatch(p.name)(...args),
+        });
       }
     });
   });
@@ -33,9 +36,9 @@ const createProvider = <State>(
       next: React.ComponentType<{ children: React.ReactNode }>,
       plugin: ProdoPlugin<any, any, any, any>,
     ) =>
-      plugin.Provider
+      plugin._internals.Provider
         ? ({ children }: { children: React.ReactNode }) =>
-            React.createElement(plugin.Provider!, {
+            React.createElement(plugin._internals.Provider!, {
               children: React.createElement(next, { children }),
             })
         : next,
@@ -53,7 +56,19 @@ export const createStore = <State>(
   store: BaseStore<State>;
   Provider: React.ComponentType<{ children: React.ReactNode }>;
 } => {
-  const universe = initPlugins({ state: config.initState }, config, plugins);
+  const initStore: { createDispatch: (name: string) => PluginDispatch<any> } = {
+    createDispatch: () => () => {
+      throw new Error(
+        "Cannot use the store until all plugins have finished initialising.",
+      );
+    },
+  };
+  const universe = initPlugins(
+    { state: config.initState },
+    config,
+    plugins,
+    initStore,
+  );
 
   const watchTree: WatchTree = {
     subs: new Set(),
@@ -72,6 +87,13 @@ export const createStore = <State>(
     dispatch: null as any,
   };
 
+  const createRootDispatch = (name: string): PluginDispatch<any> => <
+    A extends any[]
+  >(
+    func: (ctx: any) => (...args: A) => void,
+  ) => (...args) =>
+    store.exec({ id: name, parentId: null }, func as any, ...args);
+
   store.exec = async <A extends any[]>(
     origin: Origin,
     func: (...args: A) => void,
@@ -80,6 +102,7 @@ export const createStore = <State>(
     const event = startEvent(
       store,
       (func as any).__name || "(unnamed)",
+      (func as any).__pluginName || "(user)",
       args,
       origin,
     );
@@ -103,17 +126,10 @@ export const createStore = <State>(
           },
         };
 
-        const createRootDispatch = (name: string): PluginDispatch<any> => <
-          A extends any[]
-        >(
-          func: (ctx: any) => (...args: A) => void,
-        ) => (...args) =>
-          store.exec({ id: name, parentId: null }, func as any, ...args);
-
         plugins.forEach(p => {
-          if (p.prepareActionCtx) {
+          if (p._internals.actionCtx) {
             (ctx as any).rootDispatch = createRootDispatch(p.name);
-            p.prepareActionCtx(
+            p._internals.actionCtx(
               {
                 ctx,
                 universe: u,
@@ -133,8 +149,8 @@ export const createStore = <State>(
 
     completeEvent(event, store);
     plugins.forEach(p => {
-      if (p.onCompletedEvent) {
-        p.onCompletedEvent(event);
+      if (p._internals.onCompleteEvent) {
+        p._internals.onCompleteEvent(event, config);
       }
     });
   };
@@ -163,6 +179,8 @@ export const createStore = <State>(
 
     return store.universe;
   };
+
+  initStore.createDispatch = createRootDispatch;
 
   const Provider = createProvider(store, plugins);
 
