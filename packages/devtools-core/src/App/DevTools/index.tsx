@@ -61,6 +61,7 @@ export const DevTools = () => {
 
   const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
 
+  // TODO: bring back scroll-to-bottom?
   return (
     <StyledDevtools className="devTools" data-testid="devTools">
       <Tabs className="headerTabs" data-testid="headerTabs">
