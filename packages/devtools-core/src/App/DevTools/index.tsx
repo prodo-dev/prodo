@@ -1,5 +1,4 @@
 import * as React from "react";
-import ScrollToBottom from "react-scroll-to-bottom";
 import styled from "styled-components";
 import { dispatch } from "../../model";
 import { HeaderHeight, paddings, PanelWidth } from "../../styles";
@@ -16,8 +15,9 @@ const panels: { [key in Panel]: React.ReactElement } = {
 };
 
 const StyledDevtools = styled.div`
-  min-height: 100vh;
   width: ${PanelWidth};
+  min-height: 100vh;
+  max-height: 100vh;
 
   display: flex;
   flex-direction: column;
@@ -47,14 +47,10 @@ const Tab = styled.div<{ isSelected: boolean }>`
 `;
 
 const StyledPanel = styled.div`
+  overflow: auto;
   padding: ${paddings.medium};
-`;
-
-const StyledScroll = styled(ScrollToBottom)`
-  .scroll-to-bottom-view {
-    min-height: calc(100vh - ${HeaderHeight});
-    max-height: calc(100vh - ${HeaderHeight});
-  }
+  min-height: calc(100vh - ${HeaderHeight});
+  max-height: calc(100vh - ${HeaderHeight});
 `;
 
 export const DevTools = () => {
@@ -80,12 +76,7 @@ export const DevTools = () => {
           </Tab>
         ))}
       </Tabs>
-      <StyledScroll
-        scrollViewClassName="scroll-to-bottom-view"
-        followButtonClassName="scroll-to-bottom-button"
-      >
-        <StyledPanel>{panels[selectedPanel]}</StyledPanel>
-      </StyledScroll>
+      <StyledPanel>{panels[selectedPanel]}</StyledPanel>
     </StyledDevtools>
   );
 };
