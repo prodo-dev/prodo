@@ -28,6 +28,7 @@ const NavLink = styled(Link)`
 
 const StyledNav = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   padding-bottom: 1rem;
@@ -39,6 +40,7 @@ const Nav = () => (
     <NavLink to="/basics">Basics</NavLink>
     <NavLink to="/plugins">Plugins</NavLink>
     <NavLink to="/advanced">Advanced</NavLink>
+    <NavLink to="/tutorials">Tutorials</NavLink>
     <NavLink to="/api-reference">API Reference</NavLink>
   </StyledNav>
 );
