@@ -23,11 +23,11 @@ Once you have ensured that you are using parcel, you will need to configure Babe
 
 ```json
 {
-    ...
-    "plugins": [
-        ...
-        "@prodo"
-    ]
+  // ...
+  "plugins": [
+    // ...
+    "@prodo"
+  ]
 }
 ```
 
@@ -39,11 +39,11 @@ When running your tests, you will also need to ensure that your test-runner is u
 
 ```json
 {
-  ...
+  // ...
   "jest": {
     "transform": {
       "^.+\\.[jt]sx?$": "babel-jest"
-    },
+    }
   }
 }
 ```
@@ -54,11 +54,11 @@ If you are using TypeScript, you will need to ensure that Babel transpiles your 
 
 ```json
 {
-    ...
-    "presets": [
-        ...
-        "@babel/preset-typescript"
-    ]
+  // ...
+  "presets": [
+    // ...
+    "@babel/preset-typescript"
+  ]
 }
 ```
 
