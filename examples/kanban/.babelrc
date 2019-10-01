@@ -4,6 +4,6 @@
     "@babel/preset-react",
     ["@babel/preset-env", { "useBuiltIns": "usage", "corejs": 2 }]
   ],
-  "plugins": ["@babel/proposal-class-properties", "@prodo/babel-plugin"],
+  "plugins": ["@babel/proposal-class-properties", "@prodo"],
   "sourceMaps": "both"
 }

@@ -9,7 +9,7 @@ example:
 ```ts
 const changeCount = (amount: number) => {
   state.count += amount;
-}
+};
 ```
 
 # State
@@ -30,7 +30,7 @@ const parentAction = () => {
   console.log("In parent action");
   dispatch(childAction)("bar");
   state.value = 4;
-}
+};
 
 const childAction = (name: string) => {
   console.log("In child action", name, state.value);
@@ -61,18 +61,18 @@ import { state } from "./model";
 
 export const increment = (amount: number) => {
   state.count += amount;
-}
+};
 ```
 
 is converted to
 
 ```tsx
-import model from "./model";
+import { model } from "./model";
 
 export const increment = model.action(
-  ({state}: Ctx) => (amount: number) => {
+  ({ state }) => (amount: number) => {
     state.count += amount;
   },
-  "increment"
+  "increment",
 );
 ```
