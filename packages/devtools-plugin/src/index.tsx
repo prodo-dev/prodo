@@ -21,11 +21,11 @@ const plugin = createPlugin<
 
 // Wrap user app in devtools, unless we're in test mode
 if (process.env.NODE_ENV !== "test") {
-  const onCompleteEventFn = (e: Event) => {
+  const onCompleteEventFn = ({ event }: { event: Event }) => {
     const message: DevMessage = {
       destination: "devtools",
       type: "completedEvent",
-      contents: { event: e },
+      contents: { event },
     };
     window.parent.postMessage(message, "*");
   };

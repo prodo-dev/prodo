@@ -2,11 +2,12 @@ import {
   createPlugin,
   createUniverseWatcher,
   PluginAction,
-  PluginActionCtx,
+  PluginOnCompleteEventFn,
   ProdoPlugin,
 } from "@prodo/core";
 
 const valueSymbol = Symbol("streamValues");
+const deletedSymbol = Symbol("streamDeleted");
 
 interface StreamState {
   unsubscribe: () => void;
@@ -44,43 +45,64 @@ export interface ActionCtx<T extends { [K in keyof T]: Stream<any> }> {
   [valueSymbol]: Partial<UnStreams<T>>;
 }
 
-const init = <T extends { [K in keyof T]: Stream<any> }>(
-  _config: {},
-  universe: Universe<T>,
-) => {
-  universe.streams = {};
-};
+export interface Event<T extends { [K in keyof T]: Stream<any> }> {
+  streams: { [K in keyof T]?: T[K] | (typeof deletedSymbol) };
+}
 
-const prepareActionCtx = <T extends { [K in keyof T]: Stream<any> }>(
-  state: State<T>,
-  streamUpdate: PluginAction<ActionCtx<T>, [keyof T, any]>,
-) => ({
+const prepareActionCtx = <T extends { [K in keyof T]: Stream<any> }>({
   ctx,
   universe,
+  event,
 }: {
-  ctx: PluginActionCtx<ActionCtx<T>, Universe<T>> & ActionCtx<T>;
+  ctx: ActionCtx<T>;
   universe: Universe<T>;
+  event: Event<T>;
 }) => {
+  // For the streamUpdate action
   ctx[valueSymbol] = universe.streams;
-  ctx.streams = new Proxy(state.streams, {
-    set: (obj, key: keyof T, value) => {
-      const cb = (value: any) => {
-        ctx.rootDispatch(streamUpdate)(key, value);
-      };
-      state.states[key] = value.subscribe(cb);
+
+  // For user actions
+  event.streams = {};
+  ctx.streams = new Proxy(event.streams as Partial<T>, {
+    get: () => undefined,
+    set: <K extends keyof T>(obj, key: K, value: T[K]) => {
       obj[key] = value;
       return true;
     },
     deleteProperty: (obj, key: keyof T) => {
-      const streamState = state.states[key];
-      if (streamState != null) {
-        streamState.unsubscribe();
-      }
+      // Typescript doesn't know about proxies (typescript#20846)
+      obj[key] = deletedSymbol as any;
       delete universe.streams[key];
-      delete state.states[key];
-      delete obj[key];
       return true;
     },
+  });
+};
+
+const onCompleteEvent = <T extends { [K in keyof T]: Stream<any> }>(
+  state: State<T>,
+  streamUpdate: PluginAction<ActionCtx<T>, [keyof T, any]>,
+): PluginOnCompleteEventFn<{}, Event<T>, ActionCtx<T>> => ({
+  event,
+  rootDispatch,
+}) => {
+  // Not sure how to type the Object.entries version
+  (Object.keys(event.streams) as Array<keyof T>).forEach(key => {
+    const stream = event.streams[key];
+
+    // First, delete the old stream
+    const streamState = state.states[key];
+    if (streamState != null) {
+      streamState.unsubscribe();
+    }
+
+    if (stream === deletedSymbol) {
+      delete state.states[key];
+    } else if (stream != null) {
+      const cb = (value: any) => {
+        rootDispatch(streamUpdate)(key, value);
+      };
+      state.states[key] = stream.subscribe(cb);
+    }
   });
 };
 
@@ -96,16 +118,21 @@ const streamPlugin = <T extends { [K in keyof T]: Stream<any> }>(): ProdoPlugin<
   {},
   Universe<T>,
   ActionCtx<T>,
-  ViewCtx<T>
+  ViewCtx<T>,
+  Event<T>
 > => {
   const state: State<T> = {
     streams: {},
     states: {},
   };
 
-  const plugin = createPlugin<{}, Universe<T>, ActionCtx<T>, ViewCtx<T>>(
-    "stream",
-  );
+  const plugin = createPlugin<
+    {},
+    Universe<T>,
+    ActionCtx<T>,
+    ViewCtx<T>,
+    Event<T>
+  >("stream");
 
   const streamUpdate = plugin.action(
     ctx => (key: keyof T, value: any) => {
@@ -114,9 +141,12 @@ const streamPlugin = <T extends { [K in keyof T]: Stream<any> }>(): ProdoPlugin<
     "streamUpdate",
   );
 
-  plugin.init(init);
-  plugin.prepareActionCtx(prepareActionCtx<T>(state, streamUpdate));
+  plugin.init((_config, universe) => {
+    universe.streams = {};
+  });
+  plugin.prepareActionCtx(prepareActionCtx);
   plugin.prepareViewCtx(prepareViewCtx);
+  plugin.onCompleteEvent(onCompleteEvent<T>(state, streamUpdate));
 
   return plugin;
 };
