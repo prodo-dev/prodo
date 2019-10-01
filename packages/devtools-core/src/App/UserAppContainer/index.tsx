@@ -11,7 +11,6 @@ const StyledUserAppContainer = styled.div`
 `;
 
 const StyledIFrame = styled.iframe`
-  min-height: 100vh;
   height: 100%;
   width: 100%;
 
