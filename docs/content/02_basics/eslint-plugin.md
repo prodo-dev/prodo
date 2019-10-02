@@ -4,27 +4,33 @@ order: 8
 experimental: true
 ---
 
-_Note: The eslint plugin only works when using the `@typescript-eslint/parser`._
-
 # Installation
 
-First, you'll need to install [ESLint](http://eslint.org) and necessary eslint
-plugins and parsers:
-
-```shell
-npm install --save-dev eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
-```
-
-Finally, install `@prodo/eslint-plugin`:
+First, install [ESLint](http://eslint.org) and `@prodo/eslint-plugin`:
 
 ```shell
 npm install @prodo/eslint-plugin --save-dev
 ```
 
+If you are using TypeScript, you'll also need to install the TypeScript Eslint
+plugin and parser.
+
+```shell
+npm install --save-dev eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
+```
+
 # Usage
 
-If you already have an eslint configuration, add all the above plugins to the
-plugins section and set the parser option to `@typescript-eslint/parser`.
+If you already have an Eslint configuration, add the Prodo plugin to the plugins
+section.
+
+```json
+{
+  "plugins": ["@prodo/eslint-plugin"]
+}
+```
+
+If you are using TypeScript, you will need to change the parser.
 
 ```json
 {
@@ -38,11 +44,21 @@ Next need to specify the eslint [rules](#rules) or use the
 
 # Recommended
 
-We recommend extending the `plugin:@prodo/recommended` and `plugin:@typescript-eslint/eslint-recommended` configurations.
+We recommend extending the `eslint:recommended` and `plugin:@prodo/recommended` configuration.
+
+```json
+{
+  "extends": ["eslint:recommended", "plugin:@prodo/recommended"]
+}
+```
+
+If you are using TypeScript we also recommended extending the
+`plugin:@typescript-eslint/eslint-recommended` configuration.
 
 ```json
 {
   "extends": [
+    "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended"
     "plugin:@prodo/recommended",
   ]
@@ -87,13 +103,22 @@ npm install --save-dev eslint-config-prettier
 
 ```json
 {
+  "extends": ["prettier", "prettier/react"]
+}
+```
+
+If you are using TypeScript
+
+```json
+{
   "extends": ["prettier", "prettier/@typescript-eslint", "prettier/react"]
 }
 ```
 
 ## Full Configuration
 
-Following the above recommendations, a full Eslint configuration can be found below:
+Following the above recommendations, a full Eslint configuration for TypeScript
+can be found below (remove references to TypeScript for a JavaScript version):
 
 ```json
 {
