@@ -13,7 +13,7 @@ logger.init(config => {
   }
 });
 
-logger.onCompleteEvent((event, config) => {
+logger.onCompleteEvent(({ event }, config) => {
   if (config.logger) {
     prettyPrint(event);
   }

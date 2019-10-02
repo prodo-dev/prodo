@@ -42,8 +42,11 @@ export type PluginViewCtxFn<InitOptions, Universe, ActionCtx, ViewCtx> = (
   config: InitOptions,
 ) => void;
 
-export type PluginOnCompleteEventFn<InitOptions, CustomEvent> = (
-  event: Event & CustomEvent,
+export type PluginOnCompleteEventFn<InitOptions, CustomEvent, ActionCtx> = (
+  env: {
+    event: Event & CustomEvent;
+    rootDispatch: PluginDispatch<ActionCtx>;
+  },
   config: InitOptions,
 ) => void;
 
@@ -58,7 +61,11 @@ export interface ProdoInternals<
   init?: PluginInitFn<InitOptions, Universe>;
   actionCtx?: PluginActionCtxFn<InitOptions, Universe, ActionCtx, CustomEvent>;
   viewCtx?: PluginViewCtxFn<InitOptions, Universe, ActionCtx, ViewCtx>;
-  onCompleteEvent?: PluginOnCompleteEventFn<InitOptions, CustomEvent>;
+  onCompleteEvent?: PluginOnCompleteEventFn<
+    InitOptions,
+    CustomEvent,
+    ActionCtx
+  >;
   Provider?: React.ComponentType<{ children: React.ReactNode }>;
 }
 
@@ -92,7 +99,11 @@ export interface ProdoPlugin<
     viewCtxFn: PluginViewCtxFn<InitOptions, Universe, ActionCtx, ViewCtx>,
   ) => void;
   onCompleteEvent: (
-    completeEventFn: PluginOnCompleteEventFn<InitOptions, CustomEvent>,
+    completeEventFn: PluginOnCompleteEventFn<
+      InitOptions,
+      CustomEvent,
+      ActionCtx
+    >,
   ) => void;
   action: PluginActionCreator<ActionCtx>;
   setProvider: (
