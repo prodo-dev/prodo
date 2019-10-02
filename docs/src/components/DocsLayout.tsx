@@ -50,15 +50,6 @@ const DocsContainer = styled(Container)`
   padding-bottom: 2rem;
 
   ${forWideScreen`padding-top: 1.5rem`};
-
-  .gatsby-highlight {
-    margin-bottom: 1.5rem;
-  }
-
-  .gatsby-highlight + h1,
-  .gatsby-highlight + h2 {
-    margin-top: 3rem;
-  }
 `;
 
 const Overlay = styled.div<{ isOpen: boolean }>`
