@@ -7,33 +7,45 @@
 You'll first need to install [ESLint](http://eslint.org):
 
 ```
-$ npm i eslint --save-dev
+$ npm install eslint --save-dev
 ```
 
-Next, install `@prodo/eslint-plugin`:
+Next install the typescript eslint parser:
+
+```
+$ npm install @typescript-eslint/parser --save-dev
+```
+
+Finally, install `@prodo/eslint-plugin`:
 
 ```
 $ npm install @prodo/eslint-plugin --save-dev
 ```
 
-**Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `@prodo/eslint-plugin` globally.
+**Note:** If you installed ESLint globally (using the `-g` flag) then you must
+also install `@prodo/eslint-plugin` globally.
 
 ## Usage
 
-Add `@prodo/eslint-plugin` to the plugins section of your `.eslintrc` configuration file.prefix:
+Add `@prodo/eslint-plugin` to the plugins section of your `.eslintrc`
+configuration, and set the parser option to `@typescript-eslint/parser`:
 
 ```json
 {
+  "parser": "@typescript-eslint/parser",
   "plugins": ["@prodo/eslint-plugin"]
 }
 ```
+
+It is recomended that you also use the [typescript-eslint
+plugin](https://github.com/typescript-eslint/typescript-eslint).
 
 Then configure the rules you want to use under the rules section.
 
 ```json
 {
   "rules": {
-    "@prodo/eslint-plugin/rule-name": 2
+    "@prodo/rule-name": 2
   }
 }
 ```
