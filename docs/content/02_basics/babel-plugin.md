@@ -3,7 +3,7 @@ title: "Babel Plugin"
 order: 7
 ---
 
-Prodo's babel plugin is used to create components and actions using a more concise syntax.
+Prodo's Babel plugin is used to create components and actions using a more concise syntax. You can find out more about Babel from [the official Babel docs](https://babeljs.io/docs/en/).
 
 # Installation
 
