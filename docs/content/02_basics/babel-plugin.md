@@ -19,7 +19,7 @@ yarn install --dev @prodo/babel-plugin
 
 Before you use the babel plugin, you will need to ensure that you are using Babel to transpile your code. If you are using webpack, this can be done by passing your code to the [`babel-loader`](https://www.npmjs.com/package/babel-loader). If you are using Parcel, your code will be transpiled by Babel automatically, so you do not need to do anything.
 
-Once you have ensured that you are using parcel, you will need to configure Babel to include the babel plugin. This is done by adding `"@prodo"` to the list of plugins used by Babel, usually defined in a file called _.babelrc_.
+Once you have ensured that you are using Babel, you will need to configure Babel to include the babel plugin. This is done by adding `"@prodo"` to the list of plugins used by Babel, usually defined in a file called _.babelrc_.
 
 ```json
 {
