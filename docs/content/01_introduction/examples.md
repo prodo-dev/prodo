@@ -1,6 +1,6 @@
 ---
 title: "Examples"
-order: 5
+order: 6
 ---
 
 This page contains examples that use the Prodo framework. You can view them and
