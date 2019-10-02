@@ -70,7 +70,7 @@ const prepareActionCtx = <T extends { [K in keyof T]: Stream<any> }>({
       return true;
     },
     deleteProperty: (obj, key: keyof T) => {
-      // Typescript doesn't know about proxies (typescript#20846)
+      // Typescript doesn't know about proxies (github.com/microsoft/TypeScript/issues/20846)
       obj[key] = deletedSymbol as any;
       delete universe.streams[key];
       return true;
@@ -85,17 +85,17 @@ const onCompleteEvent = <T extends { [K in keyof T]: Stream<any> }>(
   event,
   rootDispatch,
 }) => {
-  // Not sure how to type the Object.entries version
   (Object.keys(event.streams) as Array<keyof T>).forEach(key => {
     const stream = event.streams[key];
 
-    // First, delete the old stream
+    // delete the old stream in all cases
     const streamState = state.states[key];
     if (streamState != null) {
       streamState.unsubscribe();
     }
 
     if (stream === deletedSymbol) {
+      // proxy has already cleaned up universe
       delete state.states[key];
     } else if (stream != null) {
       const cb = (value: any) => {
