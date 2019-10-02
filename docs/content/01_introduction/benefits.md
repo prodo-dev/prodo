@@ -1,6 +1,6 @@
 ---
 title: "Benefits"
-order: 3
+order: 2
 ---
 
 Below are a few snippets of code illustrating the key benefits of Prodo.
