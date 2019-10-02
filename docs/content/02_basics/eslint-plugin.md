@@ -1,9 +1,10 @@
 ---
 title: "Eslint Plugin"
 order: 8
+experimental: true
 ---
 
-The
+_Note: The eslint plugin only works when using the `@typescript-eslint/parser`._
 
 # Installation
 
