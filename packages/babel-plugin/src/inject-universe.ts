@@ -1,6 +1,9 @@
 import * as Babel from "@babel/core";
 import * as pathLib from "path";
 
+// Don't consider an action/component if it uses `model` - e.g. `model.createStore`
+const MODEL_BLACKLIST = ["model"];
+
 const isModelContextImport = (importPath: string): boolean =>
   importPath.startsWith(".") &&
   /^model(\.ctx)?(\.(j|t)sx?)?$/.test(pathLib.basename(importPath));
@@ -34,7 +37,8 @@ export default (
           const bindingPath = binding.path;
 
           if (
-            (t.isImportSpecifier(bindingPath.node) ||
+            ((t.isImportSpecifier(bindingPath.node) &&
+              !MODEL_BLACKLIST.includes(bindingPath.node.imported.name)) ||
               t.isImportNamespaceSpecifier(bindingPath.node) ||
               t.isImportDefaultSpecifier(bindingPath.node)) &&
             t.isImportDeclaration(bindingPath.parent) &&
@@ -80,7 +84,10 @@ export default (
             if (t.isIdentifier(bindingPath.node.id)) {
               // const foo = require("./model.ctx");
               universeImports.namespace = bindingPath.node.id.name;
-            } else if (t.isObjectPattern(bindingPath.node.id)) {
+            } else if (
+              t.isObjectPattern(bindingPath.node.id) &&
+              !MODEL_BLACKLIST.includes(p.node.name)
+            ) {
               const property = bindingPath.node.id.properties.find(
                 (prop: Babel.types.ObjectProperty | Babel.types.RestElement) =>
                   t.isObjectProperty(prop)
