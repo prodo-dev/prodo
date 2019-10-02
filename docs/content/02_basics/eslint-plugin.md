@@ -39,7 +39,7 @@ If you are using TypeScript, you will need to change the parser.
 }
 ```
 
-Next need to specify the eslint [rules](#rules) or use the
+Next you need to specify the eslint [rules](#rules) or use the
 [recommended](#recommended) configuration.
 
 # Recommended
