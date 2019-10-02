@@ -7,7 +7,7 @@ The
 
 # Installation
 
-You'll first need to install [ESLint](http://eslint.org) and necessary eslint
+First, you'll need to install [ESLint](http://eslint.org) and necessary eslint
 plugins and parsers:
 
 ```shell
