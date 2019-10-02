@@ -12,7 +12,7 @@ To install the babel plugin, install the package `@prodo/babel-plugin` as a dev-
 ```bash
 npm install --save-dev @prodo/babel-plugin
 # or
-yarn install --dev @prodo/babel-plugin
+yarn add --dev @prodo/babel-plugin
 ```
 
 # Configuration
