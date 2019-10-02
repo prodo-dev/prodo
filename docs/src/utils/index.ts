@@ -1,5 +1,5 @@
 export const makeAnchor = (value: any) =>
-  value.replace(/\s+/g, "-").toLowerCase();
+  value.replace ? value.replace(/\s+/g, "-").toLowerCase() : "";
 
 export const removeTrailingSlash = (value: string): string =>
   value[value.length - 1] === "/"
