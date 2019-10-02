@@ -1,4 +1,5 @@
 import recommended from "./configs/recommended";
 import rules from "./rules";
 
-export default { rules, configs: { recommended } };
+const configs = { recommended };
+export { rules, configs };
