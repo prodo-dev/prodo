@@ -1,5 +1,5 @@
 ---
-title: "Eslint Plugin"
+title: "ESlint Plugin"
 order: 8
 experimental: true
 ---
@@ -12,7 +12,7 @@ First, install [ESLint](http://eslint.org) and `@prodo/eslint-plugin`:
 npm install @prodo/eslint-plugin --save-dev
 ```
 
-If you are using TypeScript, you'll also need to install the TypeScript Eslint
+If you are using TypeScript, you'll also need to install the TypeScript ESLint
 plugin and parser.
 
 ```shell
@@ -21,7 +21,7 @@ npm install --save-dev eslint @typescript-eslint/eslint-plugin @typescript-eslin
 
 # Usage
 
-If you already have an Eslint configuration, add the Prodo plugin to the plugins
+If you already have an ESLint configuration, add the Prodo plugin to the plugins
 section.
 
 ```json
@@ -95,7 +95,7 @@ npm install --save-dev eslint-plugin-react
 ## Using Prettier
 
 [Prettier](https://prettier.io/) is a commonly used code formatter. To ensure
-Eslint does not conflict with Prettier, you can use `eslint-config-prettier`.
+ESLint does not conflict with Prettier, you can use `eslint-config-prettier`.
 
 ```shell
 npm install --save-dev eslint-config-prettier
@@ -117,7 +117,7 @@ If you are using TypeScript
 
 ## Full Configuration
 
-Following the above recommendations, a full Eslint configuration for TypeScript
+Following the above recommendations, a full ESLint configuration for TypeScript
 can be found below (remove references to TypeScript for a JavaScript version):
 
 ```json
