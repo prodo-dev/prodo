@@ -16,10 +16,12 @@
   },
   "author": "Prodo",
   "main": "lib/index.js",
+  "dependencies": {
+    "@typescript-eslint/typescript-estree": "^2.1.0"
+  },
   "devDependencies": {
     "@types/eslint": "^6.1.1",
     "@typescript-eslint/parser": "^2.1.0",
-    "@typescript-eslint/typescript-estree": "^2.1.0",
     "eslint": "^6.3.0",
     "eslint-scope": "^5.0.0",
     "eslint-visitor-keys": "^1.1.0",
