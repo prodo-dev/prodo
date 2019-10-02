@@ -7,7 +7,6 @@
     "lib"
   ],
   "license": "MIT",
-  "private": true,
   "scripts": {
     "build": "tsc --build",
     "clean": "rm -rf lib tsconfig.tsbuildinfo",
