@@ -20,16 +20,20 @@ export const recordAction = (action: Action) => {
 };
 
 export const eventListener = (dispatch: Dispatch) => (event: MessageEvent) => {
-  if (event.data.destination === "devtools") {
-    const message: DevMessage = event.data;
-    if (message.type === "state") {
-      dispatch(recordState)(message.contents.state);
-    } else if (message.type === "completedEvent") {
-      const completedEvent = JSON.parse(message.contents.event);
-      dispatch(recordAction)(completedEvent);
-      if (completedEvent.nextUniverse) {
-        dispatch(recordState)(completedEvent.nextUniverse.state);
-      }
+  if (typeof event.data !== "string") {
+    return;
+  }
+  const message: DevMessage = JSON.parse(event.data);
+  if (message.destination !== "devtools") {
+    return;
+  }
+  if (message.type === "state") {
+    dispatch(recordState)(message.contents.state);
+  } else if (message.type === "completedEvent") {
+    const completedEvent: Action = JSON.parse(message.contents.event);
+    dispatch(recordAction)(completedEvent);
+    if (completedEvent.nextUniverse) {
+      dispatch(recordState)(completedEvent.nextUniverse.state);
     }
   }
 };
