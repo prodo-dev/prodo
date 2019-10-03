@@ -108,7 +108,7 @@ export const submitPatches = (
       if (!comps[x.compId]) {
         compIds.push(x.compId);
         comps[x.compId] = {
-          setState: x.setState,
+          forceUpdate: x.forceUpdate,
           status: x.status,
           name: x.name,
           newValues: {},
@@ -125,11 +125,11 @@ export const submitPatches = (
 
   event.rerender = {};
   Object.keys(comps).forEach(compId => {
-    const { setState, name, newValues, status } = comps[compId];
+    const { forceUpdate, name, newValues, status } = comps[compId];
     if (!status.unmounted) {
       event.rerender![comps[compId].name] = true;
       logger.info(`[upcoming state update] ${name}`, newValues, status);
-      setState(newValues);
+      forceUpdate();
     }
   });
 };

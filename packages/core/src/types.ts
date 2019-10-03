@@ -72,7 +72,7 @@ export interface Comp {
 export interface Node extends Comp {
   pathKey: string;
   status: { unmounted: boolean };
-  setState: (state: any) => void;
+  forceUpdate: () => void;
   unsubscribe?: (comp: Comp) => void;
 }
 
