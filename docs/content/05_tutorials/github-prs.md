@@ -76,7 +76,7 @@ CPA uses [Webpack](https://webpack.js.org/) to bundle your app and is setup with
 (HMR)](https://webpack.js.org/concepts/hot-module-replacement/). This means when
 you make a change, your app will update without the page refreshing.
 
-Lets change the header in `src/components/Header.tsx`.
+Let's change the header in `src/components/Header.tsx`.
 
 ```tsx
 import * as React from "react";
