@@ -43,6 +43,13 @@ The typical workflow in developing a Prodo app is to
 2. **Define your actions as simple functions mutating the state of your model**
 3. **Use functional React components to render the model in its current state**
 
+<br/><br/>
+The diagram below gives you an overview of how Prodo's architecture works. We will go through each of the steps in more detail in the following sections.
+
+![Architecture diagram](../images/modeldiagram1.jpg "Architecture diagram")
+
+<br/><br/>
+
 ## Specifying the Model
 
 The [model](/basics/model) holds all of the types used in your actions and components
