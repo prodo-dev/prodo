@@ -13,7 +13,8 @@ export const findDefinition = (
   if (reference) {
     const resolved = reference.resolved;
     if (resolved) {
-      return resolved.defs[resolved.defs.length - 1].node;
+      const lastResolved = resolved.defs[resolved.defs.length - 1];
+      return lastResolved != null ? lastResolved.node : undefined;
     }
   }
   return undefined;
