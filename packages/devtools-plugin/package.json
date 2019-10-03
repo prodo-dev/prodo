@@ -1,6 +1,6 @@
 {
   "name": "@prodo/devtools",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lib/index.js",
   "license": "MIT",
   "files": [
@@ -14,7 +14,7 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/devtools-core": "^0.1.0",
+    "@prodo/devtools-core": "^0.1.1",
     "immer": "^3.2.0",
     "lodash": "^4.17.15"
   },
