@@ -35,5 +35,8 @@
         "diagnostics": false
       }
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
