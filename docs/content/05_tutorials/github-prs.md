@@ -104,7 +104,7 @@ components and updated by your actions. The type of this state is defined in a
 functionality.
 
 The model is created with `createModel` using the `State` type. Initially the
-app has not state. We also add the [logger](/plugins/logger) and
+app has no state. We also add the [logger](/plugins/logger) and
 [route](/plugins/routing) plugins. The logger plugin logs useful information to
 the console. The route plugin gives us client side routing.
 
