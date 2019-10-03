@@ -150,7 +150,10 @@ export const createStore = <State>(
     completeEvent(event, store);
     plugins.forEach(p => {
       if (p._internals.onCompleteEvent) {
-        p._internals.onCompleteEvent(event, config);
+        p._internals.onCompleteEvent(
+          { event, rootDispatch: createRootDispatch(p.name) },
+          config,
+        );
       }
     });
   };

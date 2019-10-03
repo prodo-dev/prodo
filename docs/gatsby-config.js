@@ -28,13 +28,6 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `images`,
-        path: `${__dirname}/content/images`,
-      },
-    },
-    {
       resolve: `gatsby-plugin-mdx`,
       options: {
         extensions: [".mdx", ".md"],
@@ -45,13 +38,15 @@ module.exports = {
             options: {
               classPrefix: "language-",
               inlineCodeMarker: null,
+              noInlineHighlight: false,
               aliases: {},
             },
           },
           {
             resolve: `gatsby-remark-images`,
             options: {
-              maxWidth: 590,
+              maxWidth: 800,
+              quality: 100,
             },
           },
           {

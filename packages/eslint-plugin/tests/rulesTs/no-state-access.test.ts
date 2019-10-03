@@ -75,6 +75,12 @@ ruleTester.run("no-state-access", rule, {
       filename: defaultTsFile,
     },
     {
+      code: `import * as model from './model';
+      const today = Date.now();
+      model.dispatch(foo)(today);`,
+      filename: defaultTsFile,
+    },
+    {
       code: `import {state, foo} from './model'; 
         const x = 1;
         foo(x); 
