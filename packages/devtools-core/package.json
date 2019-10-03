@@ -1,6 +1,6 @@
 {
   "name": "@prodo/devtools-core",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "main": "transpiled/index.js",
   "license": "MIT",
   "scripts": {
@@ -17,7 +17,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
-    "@prodo/core": "^0.0.11",
+    "@prodo/core": "^0.1.0",
     "babel-runtime": "^6.26.0",
     "lodash": "^4.17.15",
     "path-browserify": "^1.0.0",
