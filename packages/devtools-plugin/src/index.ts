@@ -12,6 +12,10 @@ export interface DevToolsUniverse<State> {
   state: State;
 }
 
+const serialize = (data: any) => {
+  return JSON.parse(JSON.stringify(data));
+};
+
 const devToolsPlugin = <State>(): ProdoPlugin<
   DevToolsConfig,
   DevToolsUniverse<State>,
@@ -31,7 +35,7 @@ const devToolsPlugin = <State>(): ProdoPlugin<
       const message: DevMessage = {
         destination: "devtools",
         type: "completedEvent",
-        contents: { event: e },
+        contents: { event: serialize(e) },
       };
       window.parent.postMessage(message, "*");
     };
