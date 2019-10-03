@@ -4,7 +4,7 @@
   "main": "transpiled/index.js",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
+    "clean": "rm -rf .cache build dist lib transpiled tsconfig.tsbuildinfo",
     "build:code": "tsc --build",
     "build:babel": "babel src --out-dir transpiled --extensions .ts,.tsx",
     "css": "cp src/styles/*.scss transpiled/styles",
