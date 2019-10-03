@@ -25,9 +25,10 @@ export const eventListener = (dispatch: Dispatch) => (event: MessageEvent) => {
     if (message.type === "state") {
       dispatch(recordState)(message.contents.state);
     } else if (message.type === "completedEvent") {
-      dispatch(recordAction)(message.contents.event);
-      if (message.contents.event.nextUniverse) {
-        dispatch(recordState)(message.contents.event.nextUniverse.state);
+      const completedEvent = JSON.parse(message.contents.event);
+      dispatch(recordAction)(completedEvent);
+      if (completedEvent.nextUniverse) {
+        dispatch(recordState)(completedEvent.nextUniverse.state);
       }
     }
   }

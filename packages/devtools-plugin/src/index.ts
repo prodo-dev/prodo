@@ -13,7 +13,7 @@ export interface DevToolsUniverse<State> {
 }
 
 const serialize = (data: any) => {
-  return JSON.parse(JSON.stringify(data));
+  return JSON.stringify(data);
 };
 
 const devToolsPlugin = <State>(): ProdoPlugin<
