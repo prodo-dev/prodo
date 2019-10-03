@@ -39,7 +39,7 @@ const devToolsPlugin = <State>(): ProdoPlugin<
       const message: DevMessage = {
         destination: "devtools",
         type: "completedEvent",
-        contents: { event: serialize(event) },
+        contents: { event },
       };
       postMessage(message);
     };

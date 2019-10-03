@@ -20,7 +20,7 @@ export const recordAction = (action: Action) => {
 };
 
 export const eventListener = (dispatch: Dispatch) => (event: MessageEvent) => {
-  if (typeof event.data !== "string") {
+  if (!event.data || typeof event.data !== "string") {
     return;
   }
   const message: DevMessage = JSON.parse(event.data);
@@ -30,7 +30,7 @@ export const eventListener = (dispatch: Dispatch) => (event: MessageEvent) => {
   if (message.type === "state") {
     dispatch(recordState)(message.contents.state);
   } else if (message.type === "completedEvent") {
-    const completedEvent: Action = JSON.parse(message.contents.event);
+    const completedEvent: Action = message.contents.event;
     dispatch(recordAction)(completedEvent);
     if (completedEvent.nextUniverse) {
       dispatch(recordState)(completedEvent.nextUniverse.state);
