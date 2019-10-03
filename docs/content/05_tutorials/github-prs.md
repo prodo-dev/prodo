@@ -67,9 +67,10 @@ Open up [localhost:8080](http://localhost:8080) and you should see this:
 
 ![Prodo template first launch](prodo-template.png)
 
-The app created with create-prodo-app (CPA) is fairly minimal, yet is a good starting
-off point when creating simple or complex Prodo apps. It includes two [Prodo
-plugins](/basics/plugins): logger and route, which we will look at in the next section.
+The app created with create-prodo-app (CPA) is fairly minimal, yet a good
+starting point when creating simple or complex Prodo apps. It includes two
+[Prodo plugins](/basics/plugins): logger and route, which we will look at in the
+next section.
 
 CPA uses [Webpack](https://webpack.js.org/) to bundle your app and is setup with
 [hot module replacement
