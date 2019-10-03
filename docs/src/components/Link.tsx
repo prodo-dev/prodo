@@ -26,6 +26,8 @@ export interface Props {
 const isExternalLink = (href: string): boolean =>
   href.startsWith("http://") || href.startsWith("https://");
 
+const isFile = (href: string): boolean => /\.\w\w\w$/.test(href);
+
 const isFileLink = (href: string): boolean => /^\/\d/.test(href);
 
 const isHashLink = (href: string): boolean => href.startsWith("#");
@@ -63,7 +65,7 @@ const reWriteRelativeLink = (pathname: string, href: string): string => {
 
 const Link: React.FC<Props> = props => {
   const href = props.href || props.to;
-  if (isExternalLink(href)) {
+  if (isExternalLink(href) || isFile(href)) {
     return (
       <StyledLink
         as="a"
