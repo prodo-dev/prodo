@@ -60,5 +60,8 @@
     "moduleNameMapper": {
       "\\.(svg|jpg|scss|css|png)$": "<rootDir>/tests/__mock__.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

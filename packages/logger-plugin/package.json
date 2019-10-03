@@ -22,5 +22,8 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
