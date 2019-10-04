@@ -93,7 +93,6 @@ export const connect: Connect<any> = <P extends {}>(
       unsubscribe?: (comp: Comp) => void,
     ) => void;
     private unsubscribe: (path: string[]) => void;
-    private firstTime: boolean;
     private status: { unmounted: boolean };
     private store: Store<any, any>;
     private _renderFunc: any;
@@ -110,7 +109,6 @@ export const connect: Connect<any> = <P extends {}>(
       this.watched = {};
       this.prevWatched = {};
       this.pathNodes = {};
-      this.firstTime = true;
       this.compId = _compIdCnt++;
       this.name = name + "." + this.compId;
       this.store = this.context;
@@ -181,7 +179,6 @@ export const connect: Connect<any> = <P extends {}>(
       logger.debug("store", this.store);
 
       this.prevWatched = { ...this.watched };
-      this.firstTime = true;
       this.setState(this.watched);
       this.watched = {};
     }
@@ -189,10 +186,9 @@ export const connect: Connect<any> = <P extends {}>(
     public shouldComponentUpdate(nextProps: P, nextState: any) {
       const test =
         !shallowEqual(this.props, nextProps) ||
-        (!this.firstTime && !shallowEqual(this.state, nextState));
+        !shallowEqual(this.state, nextState);
 
       logger.info(`[should update] ${this.name}`, test);
-      this.firstTime = false;
 
       return test;
     }
