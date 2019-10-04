@@ -27,7 +27,7 @@ yarn
 yarn start
 ```
 
-Navigate to [localhost:8080](http://localhost:8080) and you should see "Hello World".
+Navigate to [localhost:8080](http://localhost:8080) and you should see your app.
 
 The app created with create-prodo-app (CPA) is fairly minimal, yet a good
 starting point when creating simple or complex Prodo apps. It includes two
