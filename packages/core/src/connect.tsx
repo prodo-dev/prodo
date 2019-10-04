@@ -37,12 +37,12 @@ const getValue = (path: string[], obj: any): any =>
 
 const valueExtractor = (
   store: Store<any, any>,
-  watched: { [key: string]: any },
+  watched: React.MutableRefObject<{ [key: string]: any }>,
 ) => (x: any) => {
   const path = x[pathSymbol];
   const pathKey = joinPath(path);
   const value = getValue(path, store.universe);
-  watched[pathKey] = value;
+  watched.current[pathKey] = value;
   return value;
 };
 
@@ -159,7 +159,7 @@ export const connect: Connect<any> = <P extends {}>(
       }
     });
 
-    Object.keys(prevWatched).forEach(pathKey => {
+    Object.keys(prevWatched.current).forEach(pathKey => {
       const keyDeleted = !watched.current.hasOwnProperty(pathKey);
       if (keyDeleted) {
         logger.info(`[update] ${name}: stop watching < ${pathKey} >`);
@@ -185,7 +185,7 @@ export const connect: Connect<any> = <P extends {}>(
     };
   }, []);
 
-  const watch = valueExtractor(store, watched.current);
+  const watch = valueExtractor(store, watched);
 
   const _subscribe = (path: string[], unsubscribe?: () => void): void => {
     const pathKey = joinPath(path);
