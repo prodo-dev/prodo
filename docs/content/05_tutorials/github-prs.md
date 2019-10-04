@@ -9,7 +9,9 @@ requests](https://help.github.com/en/articles/about-pull-requests) on Github for
 a repo. You can find the completed app and code in the following links.
 
 - [Deployed app](https://prodo-github-prs.netlify.com/)
-- [Code](https://github.com/prodo-ai/github-prs)
+- [Github](https://github.com/prodo-ai/github-prs)
+
+[![Edit Github PR List](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github-pr-list-noxhw?fontsize=14&module=%2Fsrc%2Fmodel.ts)
 
 # Create Prodo App
 
@@ -487,6 +489,12 @@ If you navigate to
 see something like:
 
 ![pull request list for facebook react](pr-list.png)
+
+# Final result
+
+The app we built can be seen in the following CodeSandbox
+
+<iframe src="https://codesandbox.io/embed/github-pr-list-noxhw?fontsize=14&module=%2Fsrc%2Fmodel.ts" title="Github PR List" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
 # Next steps
 

@@ -12,6 +12,14 @@ export interface DevToolsUniverse<State> {
   state: State;
 }
 
+const serialize = (data: any) => {
+  return JSON.stringify(data);
+};
+
+const postMessage = (message: DevMessage) => {
+  window.parent.postMessage(serialize(message), "*");
+};
+
 const devToolsPlugin = <State>(): ProdoPlugin<
   DevToolsConfig,
   DevToolsUniverse<State>,
@@ -33,7 +41,7 @@ const devToolsPlugin = <State>(): ProdoPlugin<
         type: "completedEvent",
         contents: { event },
       };
-      window.parent.postMessage(message, "*");
+      postMessage(message);
     };
     const updateStateAction = plugin.action(
       ctx => ({ path, newValue }) => _.set(ctx.state as any, path, newValue),
@@ -53,7 +61,7 @@ const devToolsPlugin = <State>(): ProdoPlugin<
           type: "state",
           contents: { state: original(universe.state) },
         };
-        window.parent.postMessage(message, "*");
+        postMessage(message);
         // Add listener for devtools events
         window.addEventListener("message", event => {
           if (event.data.destination === "app") {
