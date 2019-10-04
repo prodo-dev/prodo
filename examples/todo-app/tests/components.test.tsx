@@ -95,7 +95,6 @@ describe("components", () => {
     expect(getByTestId("list").textContent).toContain("milk");
     fireEvent.click(getByText("delete all"));
 
-    await waitForDomChange({ container });
     expect(getByTestId("list").textContent).toBe("");
   });
 
@@ -118,8 +117,6 @@ describe("components", () => {
       key: "Enter",
       keyCode: 13,
     });
-
-    await waitForDomChange({ container });
 
     expect(getByTestId("list").textContent).toContain("hello world");
   });
