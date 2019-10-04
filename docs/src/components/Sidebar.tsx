@@ -80,7 +80,6 @@ const SectionHeading = styled.div<{ expanded: boolean }>`
   justify-content: space-between;
   align-items: center;
   color: #646464;
-  font-size: 0.95em;
   cursor: pointer;
 `;
 
@@ -158,10 +157,10 @@ const StyledSidebar = styled.div<{ isOpen: boolean }>`
   min-height: calc(100vh - ${HeaderHeight}px);
   width: ${SidebarWidth}px;
   max-width: ${SidebarWidth}px;
-  padding-top: 1rem;
   background-color: #eaeaea;
   overflow-y: auto;
   z-index: 9999;
+  font-size: 0.95em;
 
   transition: transform 250ms ease-out;
 

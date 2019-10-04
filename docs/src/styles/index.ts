@@ -28,7 +28,7 @@ export const theme: Theme = {
 
     sidebar: {
       linkNormal: "#343434",
-      linkSelected: "#00E3A0",
+      linkSelected: "#0f7d5d",
       linkHover: "#000000",
     },
   },
