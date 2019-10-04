@@ -73,7 +73,15 @@ everything else is automatically inferred.
 
 ## Examples
 
-There are many example apps that use Prodo in `examples/`. We recommend looking at
+There are some examples on [CodeSandbox](https://codesandbox.io/) that you can
+view and edit.
+
+- [Counter](https://codesandbox.io/s/prodo-counter-ts-9n7tx?fontsize=14&module=%2Fsrc%2FApp.tsx)
+- [TodoMVC](https://codesandbox.io/s/prodo-todomvc-wf4nv?fontsize=14&module=%2Fsrc%2Fmodel.ts)
+- [Github PR List](https://codesandbox.io/embed/github-pr-list-noxhw?fontsize=14&module=%2Fsrc%2Fmodel.ts)
+
+There are also many example apps that use Prodo in `examples/`. We recommend
+looking at.
 
 - Small to-do app example: [`examples/todo-app`](/examples/todo-app)
 - Larger kanban app example: [`examples/kanban`](/examples/kanban)
