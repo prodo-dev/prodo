@@ -2,10 +2,14 @@ import logger from "./logger";
 import { Event, Node, Store, WatchTree } from "./types";
 import { splitPath } from "./utils";
 
+const getValue = (path: string[], obj: any): any =>
+  path.reduce((x: any, y: any) => x && x[y], obj);
+
 export const subscribe = (
   store: Store<any, any>,
   path: string[],
   node: Node,
+  seenValue: any = undefined,
 ) => {
   // root tree
   let tree: WatchTree = store.watchTree;
@@ -33,6 +37,10 @@ export const subscribe = (
 
   // add node to esubs of exact part of state tree that was subscribed
   tree.esubs.add(node);
+
+  if (seenValue !== getValue(path, store.universe)) {
+    node.forceUpdate();
+  }
 };
 
 export const unsubscribe = (
