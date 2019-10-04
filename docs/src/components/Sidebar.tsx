@@ -75,31 +75,39 @@ const getSections = (
   return sections;
 };
 
-const HeadingLink = styled(EmptyLink)<HeadingProps>`
-  display: block;
-  color: ${props =>
-    props.active ? props.theme.colours.secondary : props.theme.colours.text};
-`;
-
-const SectionHeading = styled.div`
+const SectionHeading = styled.div<{ expanded: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 0.5rem;
   color: #646464;
   font-size: 0.95em;
-  text-transform: uppercase;
   cursor: pointer;
 `;
 
-const SectionSubHeading = styled(HeadingLink)`
-  padding-bottom: 0.25rem;
+const SectionSubHeading = styled(EmptyLink)<HeadingProps>`
+  display: block;
+  padding-left: 0.25rem;
+  padding-top: 0.25rem;
+  color: ${props =>
+    props.active
+      ? props.theme.colours.sidebar.linkSelected
+      : props.theme.colours.sidebar.linkNormal};
   font-size: 1em;
-  font-weight: bold;
+
+  transition: color 150ms ease-in-out;
+
+  &:hover {
+    opacity: 1;
+    color: ${props =>
+      props.active
+        ? props.theme.colours.sidebar.linkSelected
+        : props.theme.colours.sidebar.linkHover};
+  }
 `;
 
-const StyledSection = styled.div`
-  padding-bottom: 0.5rem;
+const StyledSection = styled.div<{ active: boolean }>`
+  background-color: ${props => props.active && "#f8f8f8"};
+  padding: 0.5rem 1rem;
 `;
 
 const Section: React.FC<{
@@ -115,8 +123,11 @@ const Section: React.FC<{
   }, [active, searching]);
 
   return (
-    <StyledSection>
-      <SectionHeading onClick={() => setExpanded(!expanded)}>
+    <StyledSection active={active}>
+      <SectionHeading
+        expanded={expanded}
+        onClick={() => setExpanded(!expanded)}
+      >
         <span>{section.title}</span> <Caret open={expanded} />
       </SectionHeading>
 
@@ -147,7 +158,6 @@ const StyledSidebar = styled.div<{ isOpen: boolean }>`
   min-height: calc(100vh - ${HeaderHeight}px);
   width: ${SidebarWidth}px;
   max-width: ${SidebarWidth}px;
-  padding: 1rem;
   padding-top: 1rem;
   background-color: #eaeaea;
   overflow-y: auto;
@@ -214,7 +224,7 @@ interface QueryResult {
 }
 
 const query = graphql`
-  query SidebarQuery {
+  query {
     allMdx(sort: { fields: [frontmatter___order], order: ASC }) {
       nodes {
         id
