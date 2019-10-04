@@ -60,12 +60,12 @@ const getSections = (
   const sections: SectionModel[] = Object.entries(keyedSubSections)
     .map(([sectionName, subsections]) => {
       const order = parseInt(sectionName, 10);
-      const normalizedName = sectionName.replace(/^\d+\_/, "").toLowerCase();
+      const normalizedName = sectionName.replace(/^\d+\_/, "");
       const title = normalize(normalizedName);
 
       return {
         title,
-        slug: "/" + normalizedName,
+        slug: "/" + normalizedName.toLowerCase(),
         order,
         subsections: subsections.sort((a, b) => a.order - b.order),
       };

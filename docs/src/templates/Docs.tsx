@@ -13,6 +13,9 @@ export interface Props {
         wip?: boolean;
         toc?: boolean;
       };
+      fields: {
+        slug: string;
+      };
       headings: Array<{ value: string; depth: number }>;
       body: string;
       excerpt: string;
@@ -21,15 +24,20 @@ export interface Props {
 }
 
 const Docs = ({ data }: Props) => {
+  const isTutorial = data.mdx.fields.slug.startsWith("/tutorials");
+  const title = isTutorial
+    ? `Tutorial - ${data.mdx.frontmatter.title}`
+    : data.mdx.frontmatter.title;
+
   return (
     <DocsLayout
       experimental={data.mdx.frontmatter.experimental}
       wip={data.mdx.frontmatter.wip}
       toc={data.mdx.frontmatter.toc}
       headings={data.mdx.headings}
-      title={data.mdx.frontmatter.title}
+      title={title}
     >
-      <SEO title={data.mdx.frontmatter.title} description={data.mdx.excerpt} />
+      <SEO title={title} description={data.mdx.excerpt} />
       <MDXRenderer>{data.mdx.body}</MDXRenderer>
     </DocsLayout>
   );
@@ -45,6 +53,9 @@ export const pageQuery = graphql`
         experimental
         wip
         toc
+      }
+      fields {
+        slug
       }
       headings {
         value
