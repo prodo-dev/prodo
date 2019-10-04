@@ -168,6 +168,10 @@ const StyledSidebar = styled.div<{ isOpen: boolean }>`
   ${props => !props.isOpen && forNarrowScreen`transform: translate(-100%);`}
 `;
 
+const NoResults = styled.p`
+  padding: 0 1rem;
+`;
+
 export interface Props {
   isOpen: boolean;
   location: WindowLocation;
@@ -200,7 +204,9 @@ const Sidebar: React.FC<Props> = props => {
         />
       ))}
 
-      {results != null && results.length === 0 && <p>{"No Results :("}</p>}
+      {results != null && results.length === 0 && (
+        <NoResults>{"No Results :("}</NoResults>
+      )}
     </StyledSidebar>
   );
 };
