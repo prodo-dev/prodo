@@ -178,8 +178,8 @@ pre.line-numbers > code {
 .gatsby-highlight-code-line {
   background-color: #414855;
   display: block;
-  margin-right: -1em;
-  margin-left: -1em;
+  margin-right: -1.2em;
+  margin-left: -1.2em;
   padding-right: 1em;
   padding-left: 0.75em;
   border-left: 0.25em solid #00e89a;
