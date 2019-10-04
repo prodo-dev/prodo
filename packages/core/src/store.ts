@@ -10,6 +10,7 @@ import {
   Provider,
   WatchTree,
 } from "./types";
+import { isPromise } from "./utils";
 
 const initPlugins = (
   universe: any,
@@ -94,7 +95,7 @@ export const createStore = <State>(
   ) => (...args) =>
     store.exec({ id: name, parentId: null }, func as any, ...args);
 
-  store.exec = async <A extends any[]>(
+  store.exec = <A extends any[]>(
     origin: Origin,
     func: (...args: A) => void,
     ...args: A
@@ -107,9 +108,9 @@ export const createStore = <State>(
       origin,
     );
 
-    await produce(
+    const ret = produce(
       store.universe,
-      async u => {
+      u => {
         const ctx = {
           state: u.state,
           dispatch: <A extends any[]>(func: (...a: A) => void) => (
@@ -140,22 +141,41 @@ export const createStore = <State>(
           }
         });
 
-        await (func as any)(ctx)(...args);
+        const ret = (func as any)(ctx)(...args);
+        // if `func` is async, make sure we wait for it to finish
+        if (isPromise(ret)) {
+          return ret.then(() => void {});
+        }
       },
       p => {
         event.patches = p;
       },
     );
 
-    completeEvent(event, store);
-    plugins.forEach(p => {
-      if (p._internals.onCompleteEvent) {
-        p._internals.onCompleteEvent(
-          { event, rootDispatch: createRootDispatch(p.name) },
-          config,
-        );
-      }
-    });
+    // If the producer was async, then wait for it to finish.
+    if (isPromise(ret)) {
+      ret.then(() => {
+        completeEvent(event, store);
+        plugins.forEach(p => {
+          if (p._internals.onCompleteEvent) {
+            p._internals.onCompleteEvent(
+              { event, rootDispatch: createRootDispatch(p.name) },
+              config,
+            );
+          }
+        });
+      });
+    } else {
+      completeEvent(event, store);
+      plugins.forEach(p => {
+        if (p._internals.onCompleteEvent) {
+          p._internals.onCompleteEvent(
+            { event, rootDispatch: createRootDispatch(p.name) },
+            config,
+          );
+        }
+      });
+    }
   };
 
   store.dispatch = <A extends any[]>(func: (...args: A) => void) => async (
