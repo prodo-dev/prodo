@@ -85,7 +85,7 @@ const SectionHeading = styled.div<{ expanded: boolean }>`
 
 const SectionSubHeading = styled(EmptyLink)<HeadingProps>`
   display: block;
-  padding-left: 0.25rem;
+  padding-left: 0.5rem;
   padding-top: 0.25rem;
   color: ${props =>
     props.active
