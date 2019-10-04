@@ -160,7 +160,7 @@ export const connect: Connect<any> = <P extends {}>(
     });
 
     Object.keys(prevWatched).forEach(pathKey => {
-      const keyDeleted = watched.current.hasOwnProperty(pathKey);
+      const keyDeleted = !watched.current.hasOwnProperty(pathKey);
       if (keyDeleted) {
         logger.info(`[update] ${name}: stop watching < ${pathKey} >`);
         unsubscribe(splitPath(pathKey));
@@ -222,6 +222,9 @@ export const connect: Connect<any> = <P extends {}>(
   return (func as ((args: any) => (props: any) => any))(ctx)(props);
 };
 
+// We're not applying any kind of `shouldComponentUpdate` any more.
+// Previous code was:
+//
 // public shouldComponentUpdate(nextProps: P, nextState: any) {
 //   const test =
 //     !shallowEqual(this.props, nextProps) ||
