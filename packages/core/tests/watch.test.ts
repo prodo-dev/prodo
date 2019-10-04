@@ -38,7 +38,7 @@ const createNode = (name: string, compId: number, pathKey: string): Node => ({
   name,
   compId,
   pathKey,
-  setState: () => {}, // tslint:disable-line:no-empty
+  forceUpdate: () => void {},
   status: { unmounted: false },
 });
 
