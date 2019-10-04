@@ -9,6 +9,12 @@ export interface Theme {
     primary: Colour;
     secondary: Colour;
     accent: Colour;
+
+    sidebar: {
+      linkNormal: Colour;
+      linkSelected: Colour;
+      linkHover: Colour;
+    };
   };
 }
 
@@ -19,6 +25,12 @@ export const theme: Theme = {
     primary: "#00bb84",
     secondary: "#4d3ae2",
     accent: "#4d3ae2",
+
+    sidebar: {
+      linkNormal: "#343434",
+      linkSelected: "#0f7d5d",
+      linkHover: "#000000",
+    },
   },
 };
 

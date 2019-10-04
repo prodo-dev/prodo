@@ -8,7 +8,7 @@ interface Props {
 const StyledCaret = styled.span<Props>`
   user-select: none;
   transform-origin: center center;
-  transform: rotate(${props => (props.open ? "180deg" : "90deg")});
+  transform: rotate(${props => (props.open ? "0deg" : "180deg")});
   transition: transform 100ms ease-in-out;
 `;
 

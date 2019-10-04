@@ -2,19 +2,32 @@ import { graphql, useStaticQuery } from "gatsby";
 import * as React from "react";
 import { useFlexSearch } from "react-use-flexsearch";
 import styled from "styled-components";
+import SearchIcon from "./SearchIcon";
 
 export interface Props {
   onSearchResults: (results: string[] | null) => void;
 }
 
-const StyledSearch = styled.div``;
+const StyledSearchIcon = styled(SearchIcon)`
+  position: absolute;
+  top: 1.4rem;
+  left: 1rem;
+  max-width: 0.9rem;
+  fill: #646464;
+  pointer-events: none;
+`;
+
+const StyledSearch = styled.div`
+  position: relative;
+  width: 100%;
+`;
 
 const Input = styled.input`
+  width: 100%;
   appearance: none;
-  margin: 1rem 0;
-  padding: 0.25rem 0.5rem;
-  border: solid lightgrey 1px;
-  border-radius: 2px;
+  padding: 1rem 0.5rem 1rem 2.6rem;
+  background-color: transparent;
+  border: none;
 `;
 
 const Search: React.FC<{ store: any; index: any } & Props> = ({
@@ -31,6 +44,7 @@ const Search: React.FC<{ store: any; index: any } & Props> = ({
 
   return (
     <StyledSearch>
+      <StyledSearchIcon />
       <Input
         placeholder="Search"
         value={query}
