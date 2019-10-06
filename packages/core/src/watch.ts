@@ -2,10 +2,14 @@ import logger from "./logger";
 import { Event, Node, Store, WatchTree } from "./types";
 import { splitPath } from "./utils";
 
+// const getValue = (path: string[], obj: any): any =>
+//   path.reduce((x: any, y: any) => x && x[y], obj);
+
 export const subscribe = (
   store: Store<any, any>,
   path: string[],
   node: Node,
+  // seenValue: any,
 ) => {
   // root tree
   let tree: WatchTree = store.watchTree;
@@ -33,6 +37,11 @@ export const subscribe = (
 
   // add node to esubs of exact part of state tree that was subscribed
   tree.esubs.add(node);
+
+  // if (seenValue !== getValue(path, store.universe)) {
+  //   console.log(`Not seen ${path} before, so rerendering`);
+  //   node.forceUpdate();
+  // }
 };
 
 export const unsubscribe = (
@@ -108,7 +117,7 @@ export const submitPatches = (
       if (!comps[x.compId]) {
         compIds.push(x.compId);
         comps[x.compId] = {
-          setState: x.setState,
+          forceUpdate: x.forceUpdate,
           status: x.status,
           name: x.name,
           newValues: {},
@@ -125,11 +134,13 @@ export const submitPatches = (
 
   event.rerender = {};
   Object.keys(comps).forEach(compId => {
-    const { setState, name, newValues, status } = comps[compId];
+    const { forceUpdate, name, newValues, status } = comps[compId];
     if (!status.unmounted) {
       event.rerender![comps[compId].name] = true;
       logger.info(`[upcoming state update] ${name}`, newValues, status);
-      setState(newValues);
+      forceUpdate();
+    } else {
+      logger.info(`[can't update state] ${name}`, status);
     }
   });
 };
