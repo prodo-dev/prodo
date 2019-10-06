@@ -1,9 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
-import { dispatch } from "../../model";
 import { HeaderHeight, paddings, PanelWidth } from "../../styles";
 import { Panel } from "../../types";
-import { eventListener } from "../../utils/communication";
 import { ActionLogPanel } from "./ActionLogPanel";
 import { RenderLogPanel } from "./RenderLogPanel";
 import { StatePanel } from "./StatePanel";
@@ -54,11 +52,6 @@ const StyledPanel = styled.div`
 `;
 
 export const DevTools = () => {
-  React.useEffect(() => {
-    window.addEventListener("message", eventListener(dispatch));
-    return () => window.removeEventListener("message", eventListener(dispatch));
-  }, []);
-
   const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
 
   // TODO: bring back scroll-to-bottom?

@@ -23,7 +23,13 @@ export const eventListener = (dispatch: Dispatch) => (event: MessageEvent) => {
   if (!event.data || typeof event.data !== "string") {
     return;
   }
-  const message: DevMessage = JSON.parse(event.data);
+  let message: DevMessage;
+  try {
+    message = JSON.parse(event.data);
+  } catch (e) {
+    // clearly not something we sent
+    return;
+  }
   if (message.destination !== "devtools") {
     return;
   }

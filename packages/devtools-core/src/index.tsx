@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import App from "./App";
 import { model } from "./model";
 import { initState } from "./store";
@@ -8,9 +7,11 @@ export * from "./App/DevTools";
 export * from "./types";
 
 import "./styles/index.scss";
+import { eventListener } from "./utils/communication";
 
-const store = model.createStore({ initState });
-const { Provider } = store;
+const { Provider, store } = model.createStore({ initState });
+
+window.addEventListener("message", eventListener(store.dispatch));
 
 interface Props {
   children?: React.ReactNode;
@@ -30,15 +31,5 @@ const DevToolsApp = (props: Props) => (
     <div id="modal" className="modal" />
   </Provider>
 );
-
-const render = () => {
-  ReactDOM.render(<DevToolsApp />, document.getElementById("root"));
-};
-
-if (module.hot) {
-  module.hot.accept("./App", () => {
-    render();
-  });
-}
 
 export default DevToolsApp;
