@@ -35,52 +35,6 @@ const useForceUpdate = () => {
 const getValue = (path: string[], obj: any): any =>
   path.reduce((x: any, y: any) => x && x[y], obj);
 
-const valueExtractor = (
-  store: Store<any, any>,
-  watched: React.MutableRefObject<{ [key: string]: any }>,
-) => (x: any) => {
-  const path = x[pathSymbol];
-  const pathKey = joinPath(path);
-  const value = getValue(path, store.universe);
-  watched.current[pathKey] = value;
-  return value;
-};
-
-export const shallowEqual = (objA: any, objB: any): boolean => {
-  if (Object.is(objA, objB)) {
-    return true;
-  }
-
-  if (
-    typeof objA !== "object" ||
-    objA === null ||
-    typeof objB !== "object" ||
-    objB === null
-  ) {
-    return false;
-  }
-
-  const keysA = Object.keys(objA);
-  const keysB = Object.keys(objB);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  // Test for A's keys different from B.
-  // tslint:disable-next-line:prefer-for-of
-  for (let i = 0; i < keysA.length; i++) {
-    if (
-      !Object.prototype.hasOwnProperty.call(objB, keysA[i]) ||
-      !Object.is(objA[keysA[i]], objB[keysA[i]])
-    ) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
 let _compIdCnt = 1;
 
 export type Func<V, P = {}> = (viewCtx: V) => React.ComponentType<P>;
@@ -93,23 +47,21 @@ export const connect: Connect<any> = <P extends {}>(
   const name = baseName + "." + compId.current;
 
   logger.info(`[rendering] ${name}`);
-  // First render only
-  React.useMemo(() => logger.info(`[constructing] ${name}`), []);
 
   const store = React.useContext(ProdoContext);
   const forceUpdate = useForceUpdate();
 
   // Subscribing to part of the state
-  const status = React.useRef({ unmounted: true });
+  const status = React.useRef({ unmounted: false });
   React.useEffect(() => {
     logger.info(`[did mount] ${name}`);
-    status.current.unmounted = false;
     logger.debug("store", store);
   }, []);
 
   const pathNodes = React.useRef({});
   const subscribe = (path: string[], unsubscribe?: (comp: Comp) => void) => {
     const pathKey = joinPath(path);
+    logger.info(`[subscribe] ${name} subscribing to ${pathKey}`);
 
     const node: Node =
       pathNodes.current[pathKey] ||
@@ -145,21 +97,29 @@ export const connect: Connect<any> = <P extends {}>(
     );
 
   const watched = React.useRef({});
-  const prevWatched = React.useRef({});
-
-  // On update, update subscriptions
-  React.useEffect(() => {
-    logger.info(`[updating watch] ${name}`);
-
-    Object.keys(watched.current).forEach(pathKey => {
-      const keyExisted = prevWatched.current.hasOwnProperty(pathKey);
-      if (!keyExisted) {
-        logger.info(`[update] ${name}: now watching < ${pathKey} >`);
-        subscribe(splitPath(pathKey));
+  const subscriptions = React.useRef({});
+  // As we are rendering, create subscriptions
+  const watch = React.useCallback(
+    (proxy: any) => {
+      const path = proxy[pathSymbol];
+      const pathKey = joinPath(path);
+      const value = getValue(path, store.universe);
+      watched.current[pathKey] = true;
+      if (!subscriptions.current[pathKey]) {
+        subscriptions.current[pathKey] = true;
+        subscribe(path);
       }
-    });
+      return value;
+    },
+    [store],
+  );
 
-    Object.keys(prevWatched.current).forEach(pathKey => {
+  // After updating, prune subscriptions
+  React.useEffect(() => {
+    Object.keys(watched.current).forEach(pathKey => {
+      logger.info(`[update] ${name}: watching < ${pathKey} >`);
+    });
+    Object.keys(subscriptions.current).forEach(pathKey => {
       const keyDeleted = !watched.current.hasOwnProperty(pathKey);
       if (keyDeleted) {
         logger.info(`[update] ${name}: stop watching < ${pathKey} >`);
@@ -167,7 +127,7 @@ export const connect: Connect<any> = <P extends {}>(
       }
     });
 
-    prevWatched.current = { ...watched.current };
+    subscriptions.current = { ...watched.current };
     watched.current = {};
   });
 
@@ -175,22 +135,21 @@ export const connect: Connect<any> = <P extends {}>(
   React.useEffect(() => {
     return () => {
       logger.info(`[unmounting]: ${name}`, watched.current);
-
-      Object.keys(prevWatched.current).forEach(pathKey => {
+      Object.keys(subscriptions.current).forEach(pathKey => {
         logger.info(`[unmount] ${name}: stop watching < ${pathKey} >`);
         unsubscribe(splitPath(pathKey));
       });
-      logger.debug("store", store);
       status.current = { unmounted: true };
     };
   }, []);
 
-  const watch = valueExtractor(store, watched);
-
   const _subscribe = (path: string[], unsubscribe?: () => void): void => {
     const pathKey = joinPath(path);
     watched.current[pathKey] = getValue(path, store.universe);
-    subscribe(path, unsubscribe);
+    if (!subscriptions.current[pathKey]) {
+      subscriptions.current[pathKey] = true;
+      subscribe(path, unsubscribe);
+    }
   };
 
   const ctx = React.useMemo(() => {
@@ -217,11 +176,45 @@ export const connect: Connect<any> = <P extends {}>(
       }
     });
     return ctx;
-  }, [store.universe]);
+  }, [store]);
 
   return (func as ((args: any) => (props: any) => any))(ctx)(props);
 };
 
+// export const shallowEqual = (objA: any, objB: any): boolean => {
+//   if (Object.is(objA, objB)) {
+//     return true;
+//   }
+
+//   if (
+//     typeof objA !== "object" ||
+//     objA === null ||
+//     typeof objB !== "object" ||
+//     objB === null
+//   ) {
+//     return false;
+//   }
+
+//   const keysA = Object.keys(objA);
+//   const keysB = Object.keys(objB);
+
+//   if (keysA.length !== keysB.length) {
+//     return false;
+//   }
+
+//   // Test for A's keys different from B.
+//   // tslint:disable-next-line:prefer-for-of
+//   for (let i = 0; i < keysA.length; i++) {
+//     if (
+//       !Object.prototype.hasOwnProperty.call(objB, keysA[i]) ||
+//       !Object.is(objA[keysA[i]], objB[keysA[i]])
+//     ) {
+//       return false;
+//     }
+//   }
+
+//   return true;
+// };
 // We're not applying any kind of `shouldComponentUpdate` any more.
 // Previous code was:
 //
