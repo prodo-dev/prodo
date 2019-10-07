@@ -145,7 +145,8 @@ export const createStore = <State>(
 
             return syncIfPossible(
               () => (func as any)(ctx)(...args),
-              () => void {},
+              // tslint:disable-next-line:no-empty
+              () => {},
             )();
           },
           p => {

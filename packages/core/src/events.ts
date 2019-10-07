@@ -41,8 +41,8 @@ export const completeEvent = (event: Event, store: Store<any, any>): void => {
   event.nextUniverse = nextUniverse;
   submitPatches(store, store.universe, event);
 
-  event.nextActions.map(({ func, args, origin }) =>
-    store.exec(origin, func, ...args),
+  event.nextActions.forEach(({ func, args, origin }) =>
+    setTimeout(() => store.exec(origin, func, ...args), 0),
   );
 
   if (store.watchForComplete) {
