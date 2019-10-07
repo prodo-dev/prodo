@@ -10,7 +10,7 @@ import {
   Provider,
   WatchTree,
 } from "./types";
-import { isPromise } from "./utils";
+import { syncIfPossible } from "./utils";
 
 const initPlugins = (
   universe: any,
@@ -108,53 +108,51 @@ export const createStore = <State>(
       origin,
     );
 
-    const ret = produce(
-      store.universe,
-      u => {
-        const ctx = {
-          state: u.state,
-          dispatch: <A extends any[]>(func: (...a: A) => void) => (
-            ...args: A
-          ) => {
-            event.nextActions.push({
-              func: func as any,
-              args,
-              origin: {
-                parentId: event.id,
-                id: `${event.id}/${event.nextActions.length}`,
+    syncIfPossible(
+      () =>
+        produce(
+          store.universe,
+          u => {
+            const ctx = {
+              state: u.state,
+              dispatch: <A extends any[]>(func: (...a: A) => void) => (
+                ...args: A
+              ) => {
+                event.nextActions.push({
+                  func: func as any,
+                  args,
+                  origin: {
+                    parentId: event.id,
+                    id: `${event.id}/${event.nextActions.length}`,
+                  },
+                });
               },
+            };
+
+            plugins.forEach(p => {
+              if (p._internals.actionCtx) {
+                (ctx as any).rootDispatch = createRootDispatch(p.name);
+                p._internals.actionCtx(
+                  {
+                    ctx,
+                    universe: u,
+                    event,
+                  },
+                  config,
+                );
+              }
             });
+
+            return syncIfPossible(
+              () => (func as any)(ctx)(...args),
+              () => void {},
+            )();
           },
-        };
-
-        plugins.forEach(p => {
-          if (p._internals.actionCtx) {
-            (ctx as any).rootDispatch = createRootDispatch(p.name);
-            p._internals.actionCtx(
-              {
-                ctx,
-                universe: u,
-                event,
-              },
-              config,
-            );
-          }
-        });
-
-        const ret = (func as any)(ctx)(...args);
-        // if `func` is async, make sure we wait for it to finish
-        if (isPromise(ret)) {
-          return ret.then(() => void {});
-        }
-      },
-      p => {
-        event.patches = p;
-      },
-    );
-
-    // If the producer was async, then wait for it to finish.
-    if (isPromise(ret)) {
-      ret.then(() => {
+          p => {
+            event.patches = p;
+          },
+        ),
+      () => {
         completeEvent(event, store);
         plugins.forEach(p => {
           if (p._internals.onCompleteEvent) {
@@ -164,18 +162,8 @@ export const createStore = <State>(
             );
           }
         });
-      });
-    } else {
-      completeEvent(event, store);
-      plugins.forEach(p => {
-        if (p._internals.onCompleteEvent) {
-          p._internals.onCompleteEvent(
-            { event, rootDispatch: createRootDispatch(p.name) },
-            config,
-          );
-        }
-      });
-    }
+      },
+    )();
   };
 
   store.dispatch = <A extends any[]>(func: (...args: A) => void) => async (
