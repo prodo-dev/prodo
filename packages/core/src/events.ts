@@ -27,23 +27,21 @@ export const startEvent = (
     store.history.push(event);
   }
 
-  if (store.watchForComplete) {
-    store.watchForComplete.count += 1;
-  }
-
   return event;
 };
 
 export const completeEvent = (event: Event, store: Store<any, any>): void => {
   const nextUniverse = applyPatches(store.universe, event.patches);
-
   store.universe = nextUniverse;
   event.nextUniverse = nextUniverse;
   submitPatches(store, store.universe, event);
 
-  event.nextActions.forEach(({ func, args, origin }) =>
-    setTimeout(() => store.exec(origin, func, ...args), 0),
-  );
+  event.nextActions.forEach(({ func, args, origin }) => {
+    if (store.watchForComplete) {
+      store.watchForComplete.count += 1;
+    }
+    setTimeout(() => store.exec(origin, func, ...args), 0);
+  });
 
   if (store.watchForComplete) {
     store.watchForComplete.count -= 1;

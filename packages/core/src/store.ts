@@ -172,7 +172,7 @@ export const createStore = <State>(
   ) => {
     const actionsCompleted = new Promise(async r => {
       store.watchForComplete = {
-        count: 0,
+        count: 1,
         cb: r,
       };
     });
