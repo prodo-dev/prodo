@@ -1,7 +1,7 @@
 {
   "name": "@prodo/gatsby-plugin",
   "description": "Gatsby plugin to add support for prodo",
-  "version": "0.0.5",
+  "version": "0.1.1",
   "bugs": {
     "url": "https://github.com/prodo-ai/prodo/issues"
   },
