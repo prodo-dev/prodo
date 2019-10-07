@@ -4,6 +4,7 @@ import {
   PluginActionCtxFn,
   PluginInitFn,
   PluginViewCtxFn,
+  PluginOnCompleteEventFn,
   ProdoPlugin,
 } from "@prodo/core";
 
@@ -43,7 +44,7 @@ const parseItem = (key: string, item: string): any => {
 const getItem = <T>(config: Config<T>, key: string): any => {
   if (config.localFixture != null && config.localFixture[key] != null) {
     // use fixtures
-    return parseItem(key, JSON.stringify(config.localFixture[key]));
+    return config.localFixture[key];
   }
 
   const prodoKey = serializeKey(key);
@@ -52,15 +53,11 @@ const getItem = <T>(config: Config<T>, key: string): any => {
     return parseItem(prodoKey, localItem);
   }
 
-  return undefined;
-};
-
-const keyExists = <T>(config: Config<T>, key: string): boolean => {
-  if (config.localFixture) {
-    return Object.keys(config.localFixture).includes(key);
+  if (config.initLocal != null && config.initLocal[key] != null) {
+    return config.initLocal[key];
   }
 
-  return Object.keys(localStorage).includes(serializeKey(key));
+  return undefined;
 };
 
 const initFn = <T>(): PluginInitFn<Config<T>, Universe<T>> => (
@@ -69,17 +66,18 @@ const initFn = <T>(): PluginInitFn<Config<T>, Universe<T>> => (
 ) => {
   universe.local = {};
 
-  // init universe with values from localStorage or fixtures
-  const keys =
+  // init universe with values from localStorage (or fixtures) and initLocal
+  const existingKeys =
     config.localFixture == null
-      ? Object.keys(localStorage).filter(isProdoKey)
+      ? Object.keys(localStorage)
+          .filter(isProdoKey)
+          .map(deserializeKey)
       : Object.keys(config.localFixture);
+  const defaultKeys = Object.keys(config.initLocal || {});
+  const keys = Array.from(new Set([...existingKeys, ...defaultKeys]));
 
   universe.local = keys.reduce((acc, key) => {
-    const item =
-      config.localFixture == null
-        ? localStorage.getItem(key)
-        : JSON.stringify(config.localFixture[key]);
+    const item = getItem(config, key);
 
     if (item == null) {
       return acc;
@@ -87,10 +85,7 @@ const initFn = <T>(): PluginInitFn<Config<T>, Universe<T>> => (
 
     return {
       ...acc,
-      [config.localFixture == null ? deserializeKey(key) : key]: parseItem(
-        key,
-        item,
-      ),
+      [key]: item,
     };
   }, {});
 
@@ -109,36 +104,19 @@ const prepareActionCtx = <T>(): PluginActionCtxFn<
   Universe<T>,
   ActionCtx<T>
 > => ({ ctx, universe }, config) => {
-  ctx.local = new Proxy(
-    {},
-    {
-      get(_target, key) {
-        // key does not exist, return undefined
-        if (!keyExists<T>(config, key.toString())) {
-          // attempt to use initLocal
-          if (config.initLocal) {
-            return config.initLocal[key.toString()];
-          }
+  ctx.local = new Proxy(universe.local, {
+    deleteProperty(target, key) {
+      const ret = Reflect.deleteProperty(target, key);
 
-          // fallback to returning undefined
-        }
+      // place default value back in the universe so it is available
+      // in components
+      if (config.initLocal && config.initLocal[key]) {
+        target[key] = config.initLocal[key];
+      }
 
-        return getItem(config, key.toString());
-      },
-      set(_target, key, value) {
-        if (config.localFixture == null) {
-          localStorage.setItem(
-            serializeKey(key.toString()),
-            JSON.stringify(value),
-          );
-        }
-
-        universe.local[key.toString()] = value;
-
-        return true;
-      },
+      return ret;
     },
-  ) as Partial<T>;
+  });
 };
 
 const prepareViewCtx = <T>(): PluginViewCtxFn<
@@ -148,6 +126,36 @@ const prepareViewCtx = <T>(): PluginViewCtxFn<
   ViewCtx<T>
 > => ({ ctx }) => {
   ctx.local = createUniverseWatcher("local");
+};
+
+const onCompleteEvent = <T>(): PluginOnCompleteEventFn<
+  Config<T>,
+  {},
+  ActionCtx<T>
+> => ({ event }, config) => {
+  if (config.localFixture != null) {
+    // do not update localStorage if using fixtures
+    return;
+  }
+
+  const prevLocal: Universe<T> = event.prevUniverse.local;
+  const nextLocal: Universe<T> = event.nextUniverse.local;
+
+  // save everything on nextUniverse.local to localStorage
+  Object.keys(nextLocal).forEach(pathKey => {
+    localStorage.setItem(
+      serializeKey(pathKey),
+      JSON.stringify(nextLocal[pathKey]),
+    );
+  });
+
+  // remove items that were deleted
+  Object.keys(prevLocal).forEach(pathKey => {
+    const keyDeleted = !nextLocal.hasOwnProperty(pathKey);
+    if (keyDeleted) {
+      localStorage.removeItem(serializeKey(pathKey));
+    }
+  });
 };
 
 const localPlugin = <T>(): ProdoPlugin<
@@ -163,6 +171,7 @@ const localPlugin = <T>(): ProdoPlugin<
   plugin.init(initFn<T>());
   plugin.prepareActionCtx(prepareActionCtx<T>());
   plugin.prepareViewCtx(prepareViewCtx<T>());
+  plugin.onCompleteEvent(onCompleteEvent<T>());
 
   return plugin;
 };
