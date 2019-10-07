@@ -2399,15 +2399,6 @@
     "@babel/core" "^7.5.5"
     "@babel/types" "^7.5.5"
 
-"@prodo/core@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@prodo/core/-/core-0.0.11.tgz#6f1b6c24b98b0ceba4567a0a6ed581bde44dc997"
-  integrity sha512-gmLsXLT2MKWnrEQ0r5OO++ScNk/WDAooXEKvqw4z8zxKG9RKX5dRN51yzQ/sIZyJ8fyLijf+uduSwMz6/hFayw==
-  dependencies:
-    immer "^3.2.0"
-    react "^16.9.0"
-    react-dom "^16.9.0"
-
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"
