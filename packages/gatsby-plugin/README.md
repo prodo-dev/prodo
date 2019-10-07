@@ -20,7 +20,7 @@ module.exports = {
     {
       resolve: `@prodo/gatsby-plugin`,
       options: {
-        model: path.join(__dirname, `path/to/model.ts`), // absolute path to the model
+        model: path.join(__dirname, `path/to/model.js`), // absolute path to the model
         exportName: `model`, // optional name of the model export
         storeConfig: {
           // initial store configuration
