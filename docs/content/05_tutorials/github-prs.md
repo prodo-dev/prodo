@@ -121,7 +121,7 @@ import loggerPlugin from "@prodo/logger";
 import routePlugin from "@prodo/route";
 
 // highlight-start
-export interface PullRequest {
+export interface IPullRequest {
   id: number;
   prNumber: number;
   title: string;
@@ -132,7 +132,7 @@ export interface PullRequest {
 }
 
 export interface State {
-  pullRequests: { [key: string]: PullRequest[] };
+  pullRequests: { [key: string]: IPullRequest[] };
 }
 // highlight-end
 
@@ -258,12 +258,12 @@ requests](https://developer.github.com/v3/pulls/#list-pull-requests).
 Create the file `src/api.ts` with the following contents:
 
 ```ts
-import { PullRequest } from "./model";
+import { IPullRequest } from "./model";
 
 export const getPullRequests = async (
   owner: string,
   repo: string,
-): Promise<PullRequest[]> => {
+): Promise<IPullRequest[]> => {
   const data = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/pulls`,
   ).then(res => res.json());
@@ -272,7 +272,7 @@ export const getPullRequests = async (
     throw new Error(data.message);
   }
 
-  const pullRequests: PullRequest[] = data.map((d: any) => ({
+  const pullRequests: IPullRequest[] = data.map((d: any) => ({
     id: d.id,
     prNumber: d.number,
     title: d.title,
