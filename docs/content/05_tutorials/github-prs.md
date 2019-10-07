@@ -426,7 +426,12 @@ const PullRequest: React.FC<{ pullRequest: IPullRequest }> = ({
   pullRequest,
 }) => {
   return (
-    <a href={pullRequest.url} target="_blank" className="none">
+    <a
+      href={pullRequest.url}
+      target="_blank"
+      className="none"
+      rel="noopener noreferrer"
+    >
       <div className="pull-request">
         <img src={pullRequest.authorImage} />
 
