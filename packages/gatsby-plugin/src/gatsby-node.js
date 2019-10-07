@@ -5,7 +5,7 @@ try {
   require.resolve(`@prodo/babel-plugin`);
 } catch (e) {
   throw new Error(
-    `'@prodo/babel-plugin' is not installed which is needed by plugin '@prodo/gatsby-plugin'`,
+    `'@prodo/babel-plugin' is not installed which is needed by plugin 'gatsby-plugin-prodo'`,
   );
 }
 
@@ -28,11 +28,11 @@ exports.onCreateWebpackConfig = (
       rules: [
         {
           test: /model\.js$/,
-          include: path.dirname(require.resolve(`@prodo/gatsby-plugin`)),
+          include: path.dirname(require.resolve(`gatsby-plugin-prodo`)),
           use: [
             loaders.js(),
             {
-              loader: path.join(`@prodo/gatsby-plugin`, `loaders`, `model`),
+              loader: path.join(`gatsby-plugin-prodo`, `loaders`, `model`),
               options: {
                 ssr,
                 ...pluginOptions,

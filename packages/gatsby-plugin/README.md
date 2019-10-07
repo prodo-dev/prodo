@@ -1,4 +1,4 @@
-# @prodo/gatsby-plugin
+# gatsby-plugin-prodo
 
 A [Gatsby](https://github.com/gatsbyjs/gatsby) plugin for
 [Prodo](https://github.com/prodo-ai/prodo) with
@@ -6,7 +6,7 @@ built-in server-side rendering support.
 
 ## Install
 
-`npm install --save @prodo/core @prodo/babel-plugin @prodo/gatsby-plugin`
+`npm install --save @prodo/core @prodo/babel-plugin gatsby-plugin-prodo`
 
 ## How to use
 
@@ -18,7 +18,7 @@ const path = require(`path`);
 module.exports = {
   plugins: [
     {
-      resolve: `@prodo/gatsby-plugin`,
+      resolve: `gatsby-plugin-prodo`,
       options: {
         model: path.join(__dirname, `path/to/model.js`), // absolute path to the model
         exportName: `model`, // optional name of the model export
