@@ -3,8 +3,8 @@ import {
   createUniverseWatcher,
   PluginActionCtxFn,
   PluginInitFn,
-  PluginViewCtxFn,
   PluginOnCompleteEventFn,
+  PluginViewCtxFn,
   ProdoPlugin,
 } from "@prodo/core";
 
