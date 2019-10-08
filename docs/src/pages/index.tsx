@@ -51,7 +51,9 @@ const Home = () => {
             Get Started
           </ButtonLink>
 
-          <Code language="shell" codeString={code} />
+          <Code className="language-shell" copy={false}>
+            {code}
+          </Code>
         </Container>
       </Hero>
     </Layout>

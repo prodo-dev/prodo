@@ -1,6 +1,7 @@
 import { MDXProvider } from "@mdx-js/react";
 import * as React from "react";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
+import Code from "../components/Code";
 import { MdxLink } from "../components/Link";
 import { H1, H2, H3 } from "../components/Text";
 import { theme } from "../styles";
@@ -24,6 +25,7 @@ const components = {
   h2: H2,
   h3: H3,
   a: MdxLink,
+  pre: Code,
 };
 
 const Layout: React.FC = ({ children }) => {

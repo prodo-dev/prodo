@@ -42,7 +42,7 @@ export interface Config<T> {
 
 `initLocal`
 
-Fallback values to use if an item is not in local storage.
+Values to initialize local storage with.
 
 `localFixture`
 
