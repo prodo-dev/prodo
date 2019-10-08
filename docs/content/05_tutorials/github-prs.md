@@ -104,7 +104,7 @@ The page should update automatically with the new text.
 _This tutorial is not about CSS. To use the same styles as this tutorial,
 copy [this
 file](https://github.com/prodo-ai/github-prs/blob/master/src/styles.css) to
-`src/styles.css`_
+`src/styles.css`._
 
 # Specifying the model
 
@@ -376,9 +376,10 @@ We can fetch the pull requests for the owner and repo with a `useEffect` hook.
 ```tsx
 import * as React from "react";
 import { Link } from "@prodo/route";
-// highlight-next-line
+// highlight-start
 import { state, watch, dispatch } from "../model";
 import * as actions from "../actions";
+// highlight-end
 
 export interface Props {
   owner: string;
