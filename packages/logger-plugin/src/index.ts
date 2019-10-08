@@ -46,6 +46,7 @@ function prettyPrint(e: any) {
     nextActions: e.nextActions,
     rerender: e.rerender,
     recordedEffects: e.recordedEffects,
+    pluginName: e.pluginName,
   });
   console.groupEnd();
 }
