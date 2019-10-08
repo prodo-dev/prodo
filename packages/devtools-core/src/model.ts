@@ -3,7 +3,7 @@ import { Action, Render } from "./types";
 
 export interface State {
   app: {
-    state: any;
+    universe: any;
     actionLog: Action[];
     renderLog: Render[];
   };

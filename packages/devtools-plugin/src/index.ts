@@ -56,10 +56,11 @@ const devToolsPlugin = <State>(): ProdoPlugin<
         plugin.setProvider(DevTools);
         plugin.onCompleteEvent(onCompleteEventFn);
         // Send initial state to devtools
+        // TODO: also pass exposed plugin states
         const message: DevMessage = {
           destination: "devtools",
-          type: "state",
-          contents: { state: original(universe.state) },
+          type: "universe",
+          contents: { universe: original(universe) },
         };
         postMessage(message);
         // Add listener for devtools events

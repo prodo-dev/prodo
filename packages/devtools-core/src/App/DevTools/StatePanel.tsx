@@ -26,13 +26,23 @@ export const StatePanel = () => {
     }
   };
 
+  const { state: editableState, ...readOnlyState } = watch(state.app.universe);
+
   return (
     <StyledStatePanel className="statePanel" data-testid="statePanel">
-      <JsonTree
-        value={watch(state.app.state)}
-        onDeltaUpdate={onDeltaStateUpdate}
-        readOnly={false}
-      />
+      {editableState && (
+        <JsonTree
+          value={editableState}
+          onDeltaUpdate={onDeltaStateUpdate}
+          readOnly={false}
+        />
+      )}
+      {Object.keys(readOnlyState).length > 0 && (
+        <>
+          <h3>Plugin states</h3>
+          <JsonTree value={readOnlyState} readOnly={true} />
+        </>
+      )}
     </StyledStatePanel>
   );
 };

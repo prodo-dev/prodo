@@ -2,8 +2,8 @@ import { Dispatch } from "@prodo/core/lib/types";
 import { state } from "../model";
 import { Action, AppMessage, DevMessage } from "../types";
 
-export const recordState = (newState: any) => {
-  state.app.state = newState;
+export const recordUniverse = (newUniverse: any) => {
+  state.app.universe = newUniverse;
 };
 
 export const recordAction = (action: Action) => {
@@ -27,13 +27,13 @@ export const eventListener = (dispatch: Dispatch) => (event: MessageEvent) => {
   if (message.destination !== "devtools") {
     return;
   }
-  if (message.type === "state") {
-    dispatch(recordState)(message.contents.state);
+  if (message.type === "universe") {
+    dispatch(recordUniverse)(message.contents.universe);
   } else if (message.type === "completedEvent") {
     const completedEvent: Action = message.contents.event;
     dispatch(recordAction)(completedEvent);
     if (completedEvent.nextUniverse) {
-      dispatch(recordState)(completedEvent.nextUniverse.state);
+      dispatch(recordUniverse)(completedEvent.nextUniverse);
     }
   }
 };
