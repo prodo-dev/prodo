@@ -3,6 +3,7 @@ import * as React from "react";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import { MdxLink } from "../components/Link";
 import { H1, H2, H3 } from "../components/Text";
+import Code from "../components/Code";
 import { theme } from "../styles";
 import "../styles/index.css";
 
@@ -24,6 +25,7 @@ const components = {
   h2: H2,
   h3: H3,
   a: MdxLink,
+  pre: Code,
 };
 
 const Layout: React.FC = ({ children }) => {
