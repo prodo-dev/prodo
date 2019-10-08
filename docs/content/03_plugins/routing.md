@@ -28,7 +28,7 @@ export const { route /* ... */ } = model.ctx;
 Items added to the `createStore` config.
 
 ```ts
-interface EffectConfig {
+interface RouteConfig {
   route: {
     history: History;
   };
