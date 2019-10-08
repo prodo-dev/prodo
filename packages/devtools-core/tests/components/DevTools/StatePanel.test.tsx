@@ -12,7 +12,7 @@ describe("StatePanel", () => {
       model.createStore({ initState }),
     );
 
-    expect(getByTestId("statePanel").textContent.trim()).toBe(": {}");
+    expect(getByTestId("statePanel").textContent.trim()).toBe("");
   });
 
   it("renders the contents of a populated state", async () => {

@@ -54,7 +54,7 @@ export const testRenderLog: Render[] = [
 
 export const populatedState: State = {
   app: {
-    state: testAppState,
+    universe: testAppState,
     actionLog: testActionLog,
     renderLog: testRenderLog,
   },
