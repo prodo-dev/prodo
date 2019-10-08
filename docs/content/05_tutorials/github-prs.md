@@ -104,7 +104,7 @@ The page should update automatically with the new text.
 _This tutorial is not about CSS. To use the same styles as this tutorial,
 copy [this
 file](https://github.com/prodo-ai/github-prs/blob/master/src/styles.css) to
-`src/styles.css`_
+`src/styles.css`._
 
 # Specifying the model
 

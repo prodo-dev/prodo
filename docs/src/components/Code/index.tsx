@@ -1,9 +1,13 @@
+// Heavily inspired by https://github.com/gatsbyjs/gatsby/blob/561d33e2e491d3971cb2a404eec9705a5a493602/www/src/components/code-block/index.js
+
 import Highlight, { defaultProps, Language } from "prism-react-renderer";
 import * as React from "react";
 import styled from "styled-components";
+import CopyButton from "./CopyButton";
 import normalize from "./normalize";
 
 const StyledCode = styled.div`
+  position: relative;
   padding: 1rem 0;
 
   .token-line {
@@ -32,6 +36,7 @@ const getParams = (name = "") => {
 const Code = ({
   children,
   className = children.props ? children.props.className : "",
+  copy = true,
 }) => {
   const [language, { title = "" }] = getParams(className) as any;
 
@@ -44,6 +49,7 @@ const Code = ({
 
   return (
     <StyledCode>
+      {copy && <CopyButton content={content as string} />}
       <Highlight
         {...defaultProps}
         code={content}

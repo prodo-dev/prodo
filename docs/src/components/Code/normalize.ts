@@ -1,3 +1,5 @@
+// https://github.com/gatsbyjs/gatsby/blob/561d33e2e491d3971cb2a404eec9705a5a493602/www/src/components/code-block/normalize.js
+
 const COMMENT_START = new RegExp(`(#|\\/\\/|\\{\\/\\*|\\/\\*+|<!--)`);
 
 const createDirectiveRegExp = featureSelector =>

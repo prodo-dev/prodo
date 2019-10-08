@@ -1,9 +1,9 @@
 import { MDXProvider } from "@mdx-js/react";
 import * as React from "react";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
+import Code from "../components/Code";
 import { MdxLink } from "../components/Link";
 import { H1, H2, H3 } from "../components/Text";
-import Code from "../components/Code";
 import { theme } from "../styles";
 import "../styles/index.css";
 
