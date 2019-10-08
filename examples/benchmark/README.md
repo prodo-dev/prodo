@@ -1,6 +1,8 @@
-# Prodo Clock
+# Benchmark
 
-This is a simple todo app example that uses the [Prodo](https://prodo.dev) framework.
+This is a synthetic benchmark that compares the time taken to update the state
+of many elements in the [Prodo](https://prodo.dev) framework and [React
+Redux](https://react-redux.js.org/).
 
 ## Running
 
