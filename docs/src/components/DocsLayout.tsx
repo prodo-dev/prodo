@@ -116,14 +116,22 @@ const StyledTOC = styled.div`
   padding: 1rem 0;
 `;
 
-const TOCList: React.FC<{ headings: Heading[] }> = props => (
+const TOCList: React.FC<{
+  currentPath: string;
+  headings: Heading[];
+}> = props => (
   <ul>
     {props.headings.map(heading => (
       <li key={heading.value}>
-        <Link to={`#${makeAnchor(heading.value)}`}>{heading.value}</Link>
+        <Link to={`${props.currentPath}#${makeAnchor(heading.value)}`}>
+          {heading.value}
+        </Link>
 
         {heading.subheadings.length !== 0 && (
-          <TOCList headings={heading.subheadings} />
+          <TOCList
+            currentPath={props.currentPath}
+            headings={heading.subheadings}
+          />
         )}
       </li>
     ))}
@@ -131,6 +139,7 @@ const TOCList: React.FC<{ headings: Heading[] }> = props => (
 );
 
 const TableOfContents: React.FC<{
+  currentPath: string;
   headings: Array<{ value: string; depth: number }>;
 }> = props => {
   const groupedHeadings = getGroupedHeadings(
@@ -139,7 +148,7 @@ const TableOfContents: React.FC<{
 
   return (
     <StyledTOC>
-      <TOCList headings={groupedHeadings} />
+      <TOCList currentPath={props.currentPath} headings={groupedHeadings} />
     </StyledTOC>
   );
 };
@@ -167,7 +176,10 @@ const DocsLayout: React.FC<Props> = props => {
                   {props.toc &&
                     props.headings &&
                     props.headings.length !== 0 && (
-                      <TableOfContents headings={props.headings} />
+                      <TableOfContents
+                        currentPath={location.pathname}
+                        headings={props.headings}
+                      />
                     )}
 
                   {props.children}
