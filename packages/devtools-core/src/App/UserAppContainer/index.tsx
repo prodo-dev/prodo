@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
-import { dispatch } from "../../model";
+import { dispatch, state, watch } from "../../model";
 import { eventListener } from "../../utils/communication";
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -18,7 +18,6 @@ const StyledIFrame = styled.iframe`
 `;
 
 interface Props {
-  url?: string;
   children?: React.ReactNode;
 }
 
@@ -26,6 +25,9 @@ const UserAppContainer = (props: Props) => {
   const iFrameRef = React.useRef<HTMLIFrameElement>(null);
   const [updateValue, forceUpdate] = React.useState(true);
   const [styleNodes] = React.useState([] as any[]);
+
+  // Make sure styled components update on route change
+  watch(state.app.universe.route.path);
 
   // Forces a re-render
   const handleLoad = () => {
@@ -53,6 +55,10 @@ const UserAppContainer = (props: Props) => {
   }, []);
 
   React.useEffect(() => {
+    copyStyleNodes();
+  });
+
+  const copyStyleNodes = () => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
       document.head.childNodes.forEach((link: ChildNode) => {
         if ((link as any).tagName === "STYLE") {
@@ -70,7 +76,7 @@ const UserAppContainer = (props: Props) => {
         iFrameRef.current!.contentDocument!.head.appendChild(link);
       });
     }
-  });
+  };
 
   const renderFrameContents = () => {
     if (iFrameRef && iFrameRef.current && iFrameRef.current.contentDocument) {
@@ -91,24 +97,14 @@ const UserAppContainer = (props: Props) => {
       data-testid="userAppContainer"
     >
       <ErrorBoundary>
-        {props.url ? (
-          <StyledIFrame
-            ref={iFrameRef}
-            src={props.url}
-            className="iframe"
-            data-testid="iframe"
-            onLoad={handleLoad}
-          />
-        ) : (
-          <StyledIFrame
-            ref={iFrameRef}
-            className="iframe"
-            data-testid="iframe"
-            onLoad={handleLoad}
-          >
-            {renderFrameContents()}
-          </StyledIFrame>
-        )}
+        <StyledIFrame
+          ref={iFrameRef}
+          className="iframe"
+          data-testid="iframe"
+          onLoad={handleLoad}
+        >
+          {renderFrameContents()}
+        </StyledIFrame>
       </ErrorBoundary>
     </StyledUserAppContainer>
   );
