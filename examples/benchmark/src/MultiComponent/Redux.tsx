@@ -4,7 +4,7 @@ import { applyMiddleware, createStore, Dispatch } from "redux";
 import thunkMiddleware, { ThunkAction } from "redux-thunk";
 import Controls from "./Controls";
 import { shuffle } from "./lib";
-import { State } from "./model";
+import { State } from "./types";
 
 const initState = [...Array(300)].map(() => ({
   value: false,

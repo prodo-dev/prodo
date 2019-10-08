@@ -1,9 +1,12 @@
+import { createModel } from "@prodo/core";
 import * as React from "react";
 import Controls from "./Controls";
 import { shuffle } from "./lib";
-import { model } from "./model";
+import { State } from "./types";
 
-export const changeN = model.action(
+const model = createModel<State>();
+
+const changeN = model.action(
   ({ state, dispatch }) => async (fraction: number, count: number) => {
     const idxs = [...Array(state.length)].map((_, i) => i);
     shuffle(idxs);
@@ -18,7 +21,7 @@ export const changeN = model.action(
   },
 );
 
-export const changeNSync = model.action(
+const changeNSync = model.action(
   ({ state, dispatch }) => (fraction: number, count: number) => {
     const idxs = [...Array(state.length)].map((_, i) => i);
     shuffle(idxs);
