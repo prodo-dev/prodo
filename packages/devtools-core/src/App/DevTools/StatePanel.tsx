@@ -30,7 +30,7 @@ export const StatePanel = () => {
 
   return (
     <StyledStatePanel className="statePanel" data-testid="statePanel">
-      {editableState && (
+      {editableState && Object.keys(editableState).length > 0 && (
         <JsonTree
           value={editableState}
           onDeltaUpdate={onDeltaStateUpdate}

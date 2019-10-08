@@ -53,9 +53,7 @@ const devToolsPlugin = <State>(): ProdoPlugin<
       if (config.devtools) {
         plugin.setProvider(DevTools);
         plugin.onCompleteEvent(onCompleteEventFn);
-        const exposedUniverse = {
-          state: original(universe),
-        };
+        const exposedUniverse = original(universe);
         (store.exposedUniverseVars || []).forEach(
           (exposedUniverseVar: string) =>
             (exposedUniverse[exposedUniverseVar] =

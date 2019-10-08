@@ -60,9 +60,6 @@ export const createStore = <State>(
   store: BaseStore<State>;
   Provider: React.ComponentType<{ children: React.ReactNode }>;
 } => {
-  // TODO exposed vars?
-
-  console.log(plugins);
   const initStore: {
     createDispatch: (name: string) => PluginDispatch<any>;
     exposedUniverseVars: string[];
