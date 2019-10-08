@@ -1,5 +1,5 @@
 {
-  "name": "@prodo/gatsby-plugin",
+  "name": "gatsby-plugin-prodo",
   "description": "Gatsby plugin to add support for prodo",
   "version": "0.1.1",
   "bugs": {
