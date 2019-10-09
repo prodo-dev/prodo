@@ -3,12 +3,11 @@ import { connect, Provider } from "react-redux";
 import { applyMiddleware, createStore, Dispatch } from "redux";
 import thunkMiddleware, { ThunkAction } from "redux-thunk";
 import Controls from "../Controls";
-import { shuffle } from "../lib";
-import { State } from "./types";
+import { State, newState, toggle, copy } from "./types";
 
-const initState = [...Array(300)].map(() => ({
-  value: false,
-}));
+const n = 300;
+
+const initState = newState(n);
 
 type Action =
   | {
@@ -20,14 +19,8 @@ type Action =
 const reducer = (state: State = initState, action: Action): State => {
   switch (action.type) {
     case "CHANGE":
-      const newState = [...state];
-
-      const idxs = [...Array(state.length)].map((_, i) => i);
-      shuffle(idxs);
-      idxs.slice(Math.floor(action.fraction * state.length)).forEach(idx => {
-        newState[idx].value = !state[idx].value;
-      });
-
+      const newState = copy(state)
+      toggle(newState, action.fraction);
       return newState;
   }
   return state;
@@ -72,11 +65,17 @@ const Box = ({ value }: { value: boolean }) => {
   return <div className={`box ${value ? "on" : "off"}`} />;
 };
 
-const ConnectedBox = connect((state: State, props: { idx: number }) => ({
-  value: state[props.idx].value,
-}))(Box);
+const ConnectedBox = connect((state: State, props: { idx: number }) => {
+  for (let i = 0; i < props.idx && state.next != null; i++) {
+    state = state.next;
+  }
 
-const Grid = ({ n }: { n: number }) => {
+  return {
+    value: state.value,
+  };
+})(Box);
+
+const Grid = ({ n }) => {
   return (
     <div>
       {[...Array(n)].map((_, i) => (
@@ -86,8 +85,8 @@ const Grid = ({ n }: { n: number }) => {
   );
 };
 
-const ConnectedGrid = connect((state: State) => ({
-  n: state.length,
+const ConnectedGrid = connect(() => ({
+  n,
 }))(Grid);
 
 const App = ({

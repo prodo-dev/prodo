@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import MultiComponent from "./MultiComponent";
+import DeepComponent from "./DeepComponent";
 
 import "./index.scss";
 
@@ -8,6 +9,7 @@ const render = () => {
   ReactDOM.render(
     <>
       <MultiComponent />
+      <DeepComponent />
     </>,
     document.getElementById("root"),
   );
@@ -15,6 +17,9 @@ const render = () => {
 
 if (module.hot) {
   module.hot.accept("./MultiComponent", () => {
+    render();
+  });
+  module.hot.accept("./DeepComponent", () => {
     render();
   });
 }

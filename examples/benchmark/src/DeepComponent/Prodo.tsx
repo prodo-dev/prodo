@@ -1,19 +1,14 @@
 import { createModel } from "@prodo/core";
 import * as React from "react";
+import { State, newState, toggle } from "./types";
 import Controls from "../Controls";
-import { shuffle } from "../lib";
-import { State } from "./types";
 
 const model = createModel<State>();
+const n = 300;
 
 const changeN = model.action(
   ({ state, dispatch }) => async (fraction: number, count: number) => {
-    const idxs = [...Array(state.length)].map((_, i) => i);
-    shuffle(idxs);
-
-    idxs.slice(Math.floor(fraction * state.length)).forEach(idx => {
-      state[idx].value = !state[idx].value;
-    });
+    toggle(state, fraction);
     if (count > 1) {
       dispatch(changeN)(fraction, count - 1);
     }
@@ -23,12 +18,7 @@ const changeN = model.action(
 
 const changeNSync = model.action(
   ({ state, dispatch }) => (fraction: number, count: number) => {
-    const idxs = [...Array(state.length)].map((_, i) => i);
-    shuffle(idxs);
-
-    idxs.slice(Math.floor(fraction * state.length)).forEach(idx => {
-      state[idx].value = !state[idx].value;
-    });
+    toggle(state, fraction);
     if (count > 1) {
       dispatch(changeNSync)(fraction, count - 1);
     }
@@ -36,20 +26,22 @@ const changeNSync = model.action(
 );
 
 const Box = model.connect(({ watch, state }) => ({ idx }: { idx: number }) => {
-  const value = watch(state[idx].value);
+  let i = 0;
+  while (i++ < idx && state.next) {
+    state = state.next;
+  }
+
+  const value = watch(state.value);
   return <div className={`box ${value ? "on" : "off"}`} />;
 });
 
-const Grid = model.connect(({ watch, state }) => () => {
-  const n = watch(state.length);
-  return (
-    <div>
-      {[...Array(n)].map((_, i) => (
-        <Box key={i} idx={i} />
-      ))}
-    </div>
-  );
-});
+const Grid = model.connect(({}) => () => (
+  <div>
+    {[...Array(n)].map((_, i) => (
+      <Box key={i} idx={i} />
+    ))}
+  </div>
+));
 
 const App = model.connect(({ dispatch }) => () => (
   <div>
@@ -58,11 +50,7 @@ const App = model.connect(({ dispatch }) => () => (
   </div>
 ));
 
-const { Provider } = model.createStore({
-  initState: [...Array(300)].map(() => ({
-    value: false,
-  })),
-});
+const { Provider } = model.createStore({ initState: newState(n) });
 
 export default () => (
   <Provider>
