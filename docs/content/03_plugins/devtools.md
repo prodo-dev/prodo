@@ -19,7 +19,7 @@ import devToolsPlugin from "@prodo/devtools";
 
 // ...
 
-export const model = createModel<State>().with(devToolsPlugin<State>());
+export const model = createModel<State>().with(devToolsPlugin);
 ```
 
 ## Config
