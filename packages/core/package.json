@@ -13,6 +13,15 @@
     "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "homepage": "https://github.com/prodo-ai/prodo/tree/master/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/prodo-ai/prodo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prodo-ai/prodo.git",
+    "directory": "packages/core"
+  },
   "keywords": [
     "prodo",
     "state-management",
