@@ -30,7 +30,7 @@
     "mobx",
     "effects",
     "flux",
-    "prodo-eslint"
+    "prodo-effect"
   ],
   "devDependencies": {
     "@prodo/core": "^0.1.0",
