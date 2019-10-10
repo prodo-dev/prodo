@@ -1,11 +1,21 @@
 import * as React from "react";
 import styled from "styled-components";
 import { state, watch } from "../../model";
+import { margins } from "../../styles";
 import { sendMessage } from "../../utils/communication";
 import JsonTree from "./components/JsonTree";
 
 const StyledStatePanel = styled.div`
   font-size: ${props => props.theme.fontSizes.code};
+`;
+
+const Info = styled.span`
+  color: grey;
+  font-weight: normal;
+`;
+
+const SectionTitle = styled.h3<{ skipTopMargin?: boolean }>`
+  ${props => props.skipTopMargin && `margin-top: ${margins.none};`}
 `;
 
 export const StatePanel = () => {
@@ -30,16 +40,25 @@ export const StatePanel = () => {
 
   return (
     <StyledStatePanel className="statePanel" data-testid="statePanel">
-      {editableState && Object.keys(editableState).length > 0 && (
-        <JsonTree
-          value={editableState}
-          onDeltaUpdate={onDeltaStateUpdate}
-          readOnly={false}
-        />
+      {editableState && Object.keys(editableState).length > 0 ? (
+        <>
+          {Object.keys(readOnlyState).length > 0 && (
+            <SectionTitle skipTopMargin>
+              App State <Info>(editable)</Info>
+            </SectionTitle>
+          )}
+          <JsonTree
+            value={editableState}
+            onDeltaUpdate={onDeltaStateUpdate}
+            readOnly={false}
+          />
+        </>
+      ) : (
+        <SectionTitle skipTopMargin>App state is empty.</SectionTitle>
       )}
       {Object.keys(readOnlyState).length > 0 && (
         <>
-          <h3>Plugin states</h3>
+          <SectionTitle>Plugin State</SectionTitle>
           <JsonTree value={readOnlyState} readOnly={true} />
         </>
       )}
