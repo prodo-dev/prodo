@@ -13,6 +13,26 @@
     "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "homepage": "https://github.com/prodo-ai/prodo/tree/master/packages/local-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/prodo-ai/prodo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prodo-ai/prodo.git",
+    "directory": "packages/local-plugin"
+  },
+  "keywords": [
+    "prodo",
+    "state-management",
+    "react",
+    "redux",
+    "mobx",
+    "effects",
+    "flux",
+    "local-storage",
+    "prodo-local"
+  ],
   "devDependencies": {
     "@prodo/core": "^0.1.0",
     "@types/jest": "^24.0.18",

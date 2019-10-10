@@ -13,6 +13,28 @@
     "test": "jest --passWithNoTests",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "homepage": "https://github.com/prodo-ai/prodo/tree/master/packages/devtools-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/prodo-ai/prodo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prodo-ai/prodo.git",
+    "directory": "packages/devtools-plugin"
+  },
+  "keywords": [
+    "prodo",
+    "state-management",
+    "react",
+    "redux",
+    "mobx",
+    "state",
+    "actions",
+    "effects",
+    "flux",
+    "devtools",
+    "prodo-devtools"
+  ],
   "dependencies": {
     "@prodo/devtools-core": "^0.1.1",
     "immer": "^3.2.0",
