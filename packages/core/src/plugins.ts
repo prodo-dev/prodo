@@ -16,7 +16,7 @@ export interface PluginViewCtx<ActionCtx, Universe> {
 export type PluginInitFn<InitOptions, Universe> = (
   config: InitOptions,
   universe: Universe,
-  store: { dispatch: PluginDispatch<any> },
+  store: { dispatch: PluginDispatch<any>; exposedUniverseVars: string[] },
 ) => void;
 
 export type PluginActionCtxFn<
@@ -67,6 +67,7 @@ export interface ProdoInternals<
     ActionCtx
   >;
   Provider?: React.ComponentType<{ children: React.ReactNode }>;
+  exposedUniverseVars?: string[];
 }
 
 export type PluginAction<ActionCtx, A extends any[]> = (
@@ -116,6 +117,7 @@ export interface ProdoPlugin<
     ViewCtx,
     CustomEvent
   >;
+  exposeUniverseVars: (vars: string[]) => void;
 }
 
 export const mkUserAction = <ActionCtx, A extends any[]>(
@@ -164,6 +166,9 @@ export const createPlugin = <
     },
     setProvider: provider => {
       prodoInternals.Provider = provider;
+    },
+    exposeUniverseVars: exposeUniverseVars => {
+      prodoInternals.exposedUniverseVars = exposeUniverseVars;
     },
     _internals: prodoInternals,
   };

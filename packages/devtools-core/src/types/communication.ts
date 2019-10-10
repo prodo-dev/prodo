@@ -14,9 +14,9 @@ export type DevMessage =
     }
   | {
       destination: "devtools";
-      type: "state";
+      type: "universe";
       contents: {
-        state: any;
+        universe: any;
       };
     }
   | {

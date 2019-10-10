@@ -1,5 +1,8 @@
 import * as React from "react";
-import { StatePanel } from "../../../src/App/DevTools/StatePanel";
+import {
+  emptyStateMessage,
+  StatePanel,
+} from "../../../src/App/DevTools/StatePanel";
 import { model } from "../../../src/model";
 import { initState } from "../../../src/store";
 import { populatedState } from "../../fixtures";
@@ -12,7 +15,9 @@ describe("StatePanel", () => {
       model.createStore({ initState }),
     );
 
-    expect(getByTestId("statePanel").textContent.trim()).toBe(": {}");
+    expect(getByTestId("statePanel").textContent.trim()).toBe(
+      emptyStateMessage,
+    );
   });
 
   it("renders the contents of a populated state", async () => {

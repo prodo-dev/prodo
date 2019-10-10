@@ -9,6 +9,6 @@ export const model = createModel<State>()
   .with(effectPlugin)
   .with(loggerPlugin)
   .with(routePlugin)
-  .with(devToolsPlugin<State>());
+  .with(devToolsPlugin);
 
 export const { state, watch, dispatch, effect, route } = model.ctx;

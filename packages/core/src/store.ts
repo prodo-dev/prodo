@@ -15,13 +15,17 @@ const initPlugins = (
   universe: any,
   config: any,
   plugins: Array<ProdoPlugin<any, any, any, any>>,
-  store: { createDispatch: (name: string) => PluginDispatch<any> },
+  store: {
+    createDispatch: (name: string) => PluginDispatch<any>;
+    exposedUniverseVars: string[];
+  },
 ): any =>
   produce(universe, u => {
     plugins.forEach(p => {
       if (p._internals.init != null) {
         p._internals.init(config, u, {
           dispatch: (...args) => store.createDispatch(p.name)(...args),
+          exposedUniverseVars: store.exposedUniverseVars,
         });
       }
     });
@@ -56,12 +60,19 @@ export const createStore = <State>(
   store: BaseStore<State>;
   Provider: React.ComponentType<{ children: React.ReactNode }>;
 } => {
-  const initStore: { createDispatch: (name: string) => PluginDispatch<any> } = {
+  const initStore: {
+    createDispatch: (name: string) => PluginDispatch<any>;
+    exposedUniverseVars: string[];
+  } = {
     createDispatch: () => () => {
       throw new Error(
         "Cannot use the store until all plugins have finished initialising.",
       );
     },
+    exposedUniverseVars: plugins.reduce(
+      (acc, plugin) => acc.concat(plugin._internals.exposedUniverseVars || []),
+      [] as string[],
+    ),
   };
   const universe = initPlugins(
     { state: config.initState },

@@ -171,6 +171,7 @@ const localPlugin = <T>(): ProdoPlugin<
   plugin.init(initFn<T>());
   plugin.prepareActionCtx(prepareActionCtx<T>());
   plugin.prepareViewCtx(prepareViewCtx<T>());
+  plugin.exposeUniverseVars(["local"]);
   plugin.onCompleteEvent(onCompleteEvent<T>());
 
   return plugin;
