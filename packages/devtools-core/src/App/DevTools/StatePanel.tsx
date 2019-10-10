@@ -18,6 +18,8 @@ const SectionTitle = styled.h3<{ skipTopMargin?: boolean }>`
   ${props => props.skipTopMargin && `margin-top: ${margins.none};`}
 `;
 
+export const emptyStateMessage = "App state is empty.";
+
 export const StatePanel = () => {
   const onDeltaStateUpdate = ({
     key,
@@ -54,7 +56,7 @@ export const StatePanel = () => {
           />
         </>
       ) : (
-        <SectionTitle skipTopMargin>App state is empty.</SectionTitle>
+        <SectionTitle skipTopMargin>{emptyStateMessage}</SectionTitle>
       )}
       {Object.keys(readOnlyState).length > 0 && (
         <>
