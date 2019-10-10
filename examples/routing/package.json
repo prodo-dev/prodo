@@ -32,6 +32,7 @@
     "@types/node": "^12.7.2",
     "@types/react": "^16.8.25",
     "@types/react-dom": "^16.8.5",
+    "@types/styled-components": "^4.1.19",
     "@types/testing-library__react": "^9.1.1",
     "@types/webpack-env": "^1.14.0",
     "babel-loader": "^8.0.6",

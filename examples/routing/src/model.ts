@@ -9,6 +9,6 @@ export interface State {}
 export const model = createModel<State>()
   .with(routingPlugin)
   .with(loggerPlugin)
-  .with(devToolsPlugin<State>());
+  .with(devToolsPlugin);
 
 export const { state, route, watch, dispatch } = model.ctx;
