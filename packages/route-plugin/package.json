@@ -13,6 +13,17 @@
     "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "keywords": [
+    "prodo",
+    "state-management",
+    "react",
+    "redux",
+    "mobx",
+    "effects",
+    "flux",
+    "routing",
+    "prodo-route"
+  ],
   "dependencies": {
     "history": "^4.9.0",
     "path-to-regexp": "^3.1.0",

@@ -13,6 +13,17 @@
     "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "keywords": [
+    "prodo",
+    "state-management",
+    "react",
+    "redux",
+    "mobx",
+    "effects",
+    "flux",
+    "local-storage",
+    "prodo-local"
+  ],
   "devDependencies": {
     "@prodo/core": "^0.1.0",
     "@types/jest": "^24.0.18",

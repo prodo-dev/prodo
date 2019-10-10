@@ -15,6 +15,18 @@
   },
   "author": "Prodo",
   "main": "lib/index.js",
+  "keywords": [
+    "prodo",
+    "state-management",
+    "react",
+    "redux",
+    "mobx",
+    "effects",
+    "flux",
+    "eslint",
+    "typescript",
+    "prodo-eslint"
+  ],
   "dependencies": {
     "@typescript-eslint/typescript-estree": "^2.1.0"
   },

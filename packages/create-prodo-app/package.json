@@ -16,6 +16,21 @@
     "clean": "rm -rf lib tsconfig.tsbuildinfo",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "keywords": [
+    "prodo",
+    "state-management",
+    "react",
+    "redux",
+    "mobx",
+    "state",
+    "actions",
+    "effects",
+    "flux",
+    "create-react-app",
+    "create-prodo-app",
+    "cpa",
+    "cra"
+  ],
   "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^3.0.1",

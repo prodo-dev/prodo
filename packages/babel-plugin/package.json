@@ -12,6 +12,13 @@
     "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "keywords": [
+    "prodo",
+    "babel",
+    "prodo-babel-plugin",
+    "compiler",
+    "prodo-babel"
+  ],
   "dependencies": {
     "@babel/core": "^7.5.5",
     "@babel/types": "^7.5.5"

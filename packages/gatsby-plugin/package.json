@@ -19,7 +19,8 @@
   "keywords": [
     "gatsby",
     "gatsby-plugin",
-    "prodo"
+    "prodo",
+    "prodo-gatsby"
   ],
   "license": "MIT",
   "main": "index.js",
