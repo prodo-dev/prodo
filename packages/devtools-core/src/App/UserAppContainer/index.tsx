@@ -21,13 +21,31 @@ interface Props {
   children?: React.ReactNode;
 }
 
+let prevLoc = window.location.href;
+let interval = -1;
+
 const UserAppContainer = (props: Props) => {
   const iFrameRef = React.useRef<HTMLIFrameElement>(null);
   const [updateValue, forceUpdate] = React.useState(true);
   const [styleNodes] = React.useState([] as any[]);
 
   // Make sure styled components update on route change
-  watch(state.app.universe.route.path);
+  // If they use the route plugin, we can just watch the route path
+  // (Sometimes it takes a little while to load the route)
+  // If not, we have to poll the location to see if it changed
+  const route = watch(state.app.universe.route.path);
+  const checkLocation = () => {
+    if (window.location.href !== prevLoc) {
+      prevLoc = window.location.href;
+      copyStyleNodes();
+    }
+  };
+  if (!route && interval === -1) {
+    interval = window.setInterval(checkLocation, 100);
+  } else if (route && interval !== -1) {
+    window.clearInterval(interval);
+    interval = -1;
+  }
 
   // Forces a re-render
   const handleLoad = () => {
