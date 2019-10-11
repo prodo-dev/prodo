@@ -7,7 +7,8 @@
   "scripts": {
     "build": "babel src --out-dir . --ignore **/__tests__",
     "prepare": "cross-env NODE_ENV=production npm run build",
-    "watch": "babel -w src --out-dir . --ignore **/__tests__"
+    "watch": "babel -w src --out-dir . --ignore **/__tests__",
+    "clean": "echo 'clean not implemented'"
   },
   "homepage": "https://github.com/prodo-ai/prodo/tree/master/packages/gatsby-plugin#readme",
   "bugs": {
