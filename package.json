@@ -7,7 +7,7 @@
     "build": "set -ex; yarn workspace @prodo/devtools-core build; tsc --build",
     "build:watch": "yarn build --watch",
     "build:babel:watch": "yarn workspace @prodo/devtools-core build:babel --watch",
-    "clean": "wsrun clean",
+    "clean": "wsrun --exclude-missing clean",
     "test": "wsrun --serial --exclude-missing test",
     "lint": "wsrun --serial --exclude-missing lint",
     "verify": "set -ex; yarn install; yarn build; yarn test; yarn lint"
