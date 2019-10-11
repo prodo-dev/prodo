@@ -10,7 +10,6 @@ const Layout = styled.div`
 `;
 
 interface Props {
-  url?: string;
   children?: React.ReactNode;
   skipUserApp?: boolean;
 }
@@ -19,7 +18,7 @@ export default (props: Props) => (
   <ThemeProvider theme={darkTheme}>
     <Layout className="devToolsApp" data-testid="devToolsApp">
       {!props.skipUserApp && (
-        <UserAppContainer url={props.url}>{props.children}</UserAppContainer>
+        <UserAppContainer>{props.children}</UserAppContainer>
       )}
       <DevTools />
     </Layout>

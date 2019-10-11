@@ -19,13 +19,7 @@ interface Props {
 
 const DevToolsApp = (props: Props) => (
   <Provider>
-    <App
-      skipUserApp={props.skipUserApp}
-      // The below is used when devtools are not used as a wrapper component
-      url={!props.children ? "http://localhost:8080" : undefined}
-    >
-      {props.children}
-    </App>
+    <App skipUserApp={props.skipUserApp}>{props.children}</App>
     {/* Temporary fix for react-modal (at least in kanban example) */}
     <div id="modal" className="modal" />
   </Provider>

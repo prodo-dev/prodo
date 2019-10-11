@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@prodo/core": "^0.1.0",
+    "@prodo/devtools": "^0.1.1",
     "@prodo/logger": "^0.1.0",
     "@prodo/route": "^0.1.0",
     "core-js": "2",
@@ -17,7 +18,8 @@
     "react": "^16.8.6",
     "react-dom": "^16.9.0",
     "react-router": "^5.0.1",
-    "react-router-dom": "^5.0.1"
+    "react-router-dom": "^5.0.1",
+    "styled-components": "^4.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
@@ -30,6 +32,7 @@
     "@types/node": "^12.7.2",
     "@types/react": "^16.8.25",
     "@types/react-dom": "^16.8.5",
+    "@types/styled-components": "4.1.8",
     "@types/testing-library__react": "^9.1.1",
     "@types/webpack-env": "^1.14.0",
     "babel-loader": "^8.0.6",

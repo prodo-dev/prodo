@@ -9153,15 +9153,6 @@ gatsby-remark-images@^3.1.20:
     unist-util-select "^1.5.0"
     unist-util-visit-parents "^2.1.2"
 
-gatsby-remark-prismjs@^3.2.9:
-  version "3.3.17"
-  resolved "https://registry.yarnpkg.com/gatsby-remark-prismjs/-/gatsby-remark-prismjs-3.3.17.tgz#61a4fc04d1ce9be7bf0297a91613a88bcac83ca8"
-  integrity sha512-V8Aas0s2l7kofk6bBsHKeW0TImZefb9idUpQN6K1AIvqktDrU4vOSpdiIWmkBiWzGA9QSTdQjnfZb7Sj1psEEQ==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    parse-numeric-range "^0.0.2"
-    unist-util-visit "^1.4.1"
-
 gatsby-remark-responsive-iframe@^2.0.5:
   version "2.2.16"
   resolved "https://registry.yarnpkg.com/gatsby-remark-responsive-iframe/-/gatsby-remark-responsive-iframe-2.2.16.tgz#e826eda2ea29d91318852c271d104a9c3f7ba3d6"
@@ -14621,11 +14612,6 @@ parse-latin@^4.0.0:
     unist-util-modify-children "^1.0.0"
     unist-util-visit-children "^1.0.0"
 
-parse-numeric-range@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/parse-numeric-range/-/parse-numeric-range-0.0.2.tgz#b4f09d413c7adbcd987f6e9233c7b4b210c938e4"
-  integrity sha1-tPCdQTx6282Yf26SM8e0shDJOOQ=
-
 parse-passwd@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/parse-passwd/-/parse-passwd-1.0.0.tgz#6d5b934a456993b23d37f40a382d6f1666a8e5c6"
@@ -15448,10 +15434,10 @@ pretty-format@^24.3.0, pretty-format@^24.8.0, pretty-format@^24.9.0:
     ansi-styles "^3.2.0"
     react-is "^16.8.4"
 
-prism-react-renderer@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/prism-react-renderer/-/prism-react-renderer-0.1.7.tgz#dc273d0cb6e4a498ba0775094e9a8b01a3ad2eaa"
-  integrity sha512-EhnM0sYfLK103ASK0ViSv0rta//ZGB0dBA9TiFyOvA+zOj5peLmGEG01sLEDwl9sMe+gSqncInafBe1VFTCMvA==
+prism-react-renderer@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/prism-react-renderer/-/prism-react-renderer-1.0.1.tgz#98a437b01a5e48f140ae2321a95fa6693d4fe9de"
+  integrity sha512-EDdbBEoG9xD1zhN3pKYxTc10ifpTV2rqJBKpCTKRVAxNE3YP1XVp6Ewa+ydTnYALQOmHWsNVVJC0zzA9fafbew==
 
 prismjs@^1.16.0:
   version "1.17.1"
