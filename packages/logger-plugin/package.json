@@ -1,6 +1,6 @@
 {
   "name": "@prodo/logger",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "main": "lib/index.js",
   "license": "MIT",
   "files": [
@@ -34,7 +34,7 @@
     "prodo-logger"
   ],
   "devDependencies": {
-    "@prodo/core": "^0.1.0",
+    "@prodo/core": "^0.1.2",
     "@types/jest": "^24.0.18",
     "ts-jest": "^24.0.2"
   },

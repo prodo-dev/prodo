@@ -1,7 +1,7 @@
 {
   "name": "gatsby-plugin-prodo",
   "description": "Gatsby plugin to add support for prodo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
