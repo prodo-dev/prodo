@@ -7,7 +7,7 @@ little boilerplate as possible. View the
 [Documentation](https://docs.prodo.dev). Join us on [Slack](https://prodo-feedback-slackin.herokuapp.com)!
 
 [![CircleCI](https://circleci.com/gh/prodo-ai/prodo.svg?style=svg)](https://circleci.com/gh/prodo-ai/prodo)
-[![npm version](https://img.shields.io/npm/v/%40prodo%2Fcore.svg?style=flat-square&color=brightgreen)](https://www.npmjs.com/package/@prodo/core)
+[![npm version](https://img.shields.io/npm/v/%40prodo%2Fcore.svg?style=flat-square&color=brightgreen)](https://www.npmjs.com/package/@prodo/core) [![npm version](https://img.shields.io/badge/chat-on%20slack-blue?style=flat-square)](https://prodo-feedback-slackin.herokuapp.com)
 
 ## Key benefits
 
