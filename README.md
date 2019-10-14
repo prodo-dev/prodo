@@ -128,3 +128,5 @@ yarn test
 
 - [Join the private beta!](https://prodo.dev)
 - [Documentation](https://docs.prodo.dev)
+
+[![Analytics](https://ga-beacon.appspot.com/UA-84098400-13/welcome-page?pixel&useReferer)](https://github.com/igrigorik/ga-beacon)
