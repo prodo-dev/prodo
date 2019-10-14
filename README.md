@@ -114,10 +114,14 @@ Some examples have tests. You can run the tests with
 yarn test
 ```
 
-## Contributing
+## How to help?
 
-See [CONTRIBUTING](./CONTRIBUTING.md) for information on how to contribute to
-the project.
+- Help us gauge interest by [starring](https://github.com/prodo-ai/prodo#) this
+  repository if you like what you see!
+- Give feedback by opening an [issue](https://github.com/prodo-ai/prodo/issues/new).
+- Contribute code by opening a [PR](https://github.com/prodo-ai/prodo/pulls). See
+  [CONTRIBUTING](./CONTRIBUTING.md) for information on how to contribute code to
+  the project.
 
 ## Where to go next?
 
