@@ -23,7 +23,7 @@ The easiest way to get started with Prodo is with
 Run the following command to create a Prodo app in the `github-prs` directory.
 
 ```shell
-yarn create prodo-app github-prs
+yarn create prodo-app github-prs --typescript
 ```
 
 This will create the directory structure.
