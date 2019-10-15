@@ -27,8 +27,6 @@ yarn
 yarn start
 ```
 
-If you get an error `Incorrect integrity when fetching from the cache` when creating your app, try running `yarn cache clean` first.
-
 Navigate to [localhost:8080](http://localhost:8080) and you should see your app.
 
 The app created with create-prodo-app (CPA) is fairly minimal, yet a good
