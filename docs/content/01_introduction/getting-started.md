@@ -80,7 +80,7 @@ state.
 
 ## Defining Actions
 
-[Actions](/basics/actions) are simple functions that can read from the state and write to the state. They can
+[Actions](/basics/actions) are simple functions that can read from the state and write to the state. They cannot return anything. They can
 take arguments, trigger side effects (see [effect plugin](/plugins/effects)), and dispatch other actions (see [dispatch](/basics/actions#dispatch)). We can create
 an action in the `src/pages/App.tsx` file.
 
