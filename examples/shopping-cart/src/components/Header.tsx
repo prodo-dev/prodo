@@ -4,7 +4,7 @@ import { Link } from "@prodo/route";
 const Header = () => (
   <header>
     <div className="container">
-      <Link to="/">Shpping Cart</Link>
+      <Link to="/">Shopping Cart</Link>
     </div>
   </header>
 );
