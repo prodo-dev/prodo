@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "lib": ["es2015", "dom"],
+    "jsx": "react",
+    "target": "es2017",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "sourceMap": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src", "typings"]
+}
