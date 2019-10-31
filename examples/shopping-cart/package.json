@@ -1,6 +1,6 @@
 {
   "name": "shopping-cart",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "main": "lib/index.js",
   "author": "Kamran Hamid",
   "license": "MIT",
