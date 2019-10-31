@@ -42,7 +42,7 @@ const parseItem = (key: string, item: string): any => {
 };
 
 const getItem = <T>(config: Config<T>, key: string): any => {
-  if (config.localFixture != null && config.localFixture[key] != null) {
+  if (config.localFixture != null && config.localFixture.hasOwnProperty(key)) {
     // use fixtures
     return config.localFixture[key];
   }
@@ -53,7 +53,7 @@ const getItem = <T>(config: Config<T>, key: string): any => {
     return parseItem(prodoKey, localItem);
   }
 
-  if (config.initLocal != null && config.initLocal[key] != null) {
+  if (config.initLocal != null && config.initLocal.hasOwnProperty(key)) {
     return config.initLocal[key];
   }
 
@@ -92,7 +92,7 @@ const initFn = <T>(): PluginInitFn<Config<T>, Universe<T>> => (
   // use initLocal for any values that have not yet been loaded
   if (config.initLocal != null) {
     Object.keys(config.initLocal).forEach(key => {
-      if (universe.local[key] === undefined) {
+      if (!universe.local.hasOwnProperty(key)) {
         universe.local[key] = config.initLocal![key];
       }
     });
@@ -110,7 +110,7 @@ const prepareActionCtx = <T>(): PluginActionCtxFn<
 
       // place default value back in the universe so it is available
       // in components
-      if (config.initLocal && config.initLocal[key]) {
+      if (config.initLocal && config.initLocal.hasOwnProperty(key)) {
         target[key] = config.initLocal[key];
       }
 
