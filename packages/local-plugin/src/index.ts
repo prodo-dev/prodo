@@ -42,7 +42,7 @@ const parseItem = (key: string, item: string): any => {
 };
 
 const getItem = <T>(config: Config<T>, key: string): any => {
-  if (config.localFixture != null && config.localFixture[key] != null) {
+  if (config.localFixture != null && config.localFixture.hasOwnProperty(key)) {
     // use fixtures
     return config.localFixture[key];
   }
@@ -53,7 +53,7 @@ const getItem = <T>(config: Config<T>, key: string): any => {
     return parseItem(prodoKey, localItem);
   }
 
-  if (config.initLocal != null && config.initLocal[key] != null) {
+  if (config.initLocal != null && config.initLocal.hasOwnProperty(key)) {
     return config.initLocal[key];
   }
 
