@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
-import { dispatch } from "../../model";
+import { dispatch, watch, state } from "../../model";
 import { HeaderHeight, paddings, PanelWidth } from "../../styles";
 import { Panel } from "../../types";
 import { eventListener } from "../../utils/communication";
@@ -53,6 +53,42 @@ const StyledPanel = styled.div`
   max-height: calc(100vh - ${HeaderHeight});
 `;
 
+const RecordButtons = styled.div`
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+`;
+
+function post({ func, universe, actionLog }: any) {
+  const name = prompt("Name:");
+  // @ts-ignore
+  const { port } = window.devtoolsServer;
+  fetch(`http://localhost:${port}/${func}`, {
+    method: "post",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ universe, actionLog, name }),
+  })
+    .then(res => res.json())
+    .then(res => console.log(res));
+}
+
+const ServerActions = () => {
+  // @ts-ignore
+  const { buttons } = window.devtoolsServer;
+  console.log({ ServerActions, buttons });
+  const universe = watch(state.app.universe);
+  const actionLog = watch(state.app.actionLog);
+  return (
+    <RecordButtons>
+      {Object.keys(buttons).map(func => (
+        <button onClick={() => post({ func, universe, actionLog })}>
+          {buttons[func]}
+        </button>
+      ))}
+    </RecordButtons>
+  );
+};
+
 export const DevTools = () => {
   React.useEffect(() => {
     window.addEventListener("message", eventListener(dispatch));
@@ -60,6 +96,9 @@ export const DevTools = () => {
   }, []);
 
   const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
+  // @ts-ignore
+  const hasServer = !!window.devtoolsServer;
+  console.log({ hasServer });
 
   // TODO: bring back scroll-to-bottom?
   return (
@@ -78,6 +117,7 @@ export const DevTools = () => {
         ))}
       </Tabs>
       <StyledPanel>{panels[selectedPanel]}</StyledPanel>
+      {hasServer && <ServerActions />}
     </StyledDevtools>
   );
 };

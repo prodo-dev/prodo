@@ -6,6 +6,10 @@ import * as _ from "lodash";
 
 export interface DevToolsConfig {
   devtools?: boolean;
+  devtoolsServer?: {
+    port: number;
+    buttons: { [key: string]: string };
+  };
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -51,6 +55,11 @@ if (process.env.NODE_ENV !== "test") {
         (exposedUniverseVar: string) =>
           (exposedUniverse[exposedUniverseVar] = universe[exposedUniverseVar]),
       );
+      //
+      if (config.devtoolsServer) {
+        // @ts-ignore
+        window.devtoolsServer = config.devtoolsServer;
+      }
       // Send initial state to devtools
       const message: DevMessage = {
         destination: "devtools",
