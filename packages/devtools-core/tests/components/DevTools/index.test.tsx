@@ -13,8 +13,8 @@ describe("DevTools", () => {
     );
 
     expect(getByTestId("stateHeaderTab").textContent).toBe("State");
-    expect(getByTestId("actionLogHeaderTab").textContent).toBe("Action Log");
-    expect(getByTestId("renderLogHeaderTab").textContent).toBe("Render Log");
+    expect(getByTestId("actionLogHeaderTab").textContent).toBe("Action log");
+    expect(getByTestId("renderLogHeaderTab").textContent).toBe("Render log");
   });
 
   it("shows state panel by default", async () => {
@@ -36,25 +36,25 @@ describe("DevTools", () => {
     expect(getByTestId("statePanel")).toBeTruthy;
   });
 
-  it("shows action log panel when Action Log clicked in header", async () => {
+  it("shows action log panel when Action log clicked in header", async () => {
     const { getByText, getByTestId, queryByTestId } = renderWithProdo(
       <DevTools />,
       model.createStore({ initState }),
     );
 
     expect(queryByTestId("actionLogPanel")).toBeNull();
-    fireEvent.click(getByText("Action Log"));
+    fireEvent.click(getByText("Action log"));
     expect(getByTestId("actionLogPanel")).toBeTruthy;
   });
 
-  it("shows render log panel when Render Log clicked in header", async () => {
+  it("shows render log panel when Render log clicked in header", async () => {
     const { getByText, getByTestId, queryByTestId } = renderWithProdo(
       <DevTools />,
       model.createStore({ initState }),
     );
 
     expect(queryByTestId("renderLogPanel")).toBeNull();
-    fireEvent.click(getByText("Render Log"));
+    fireEvent.click(getByText("Render log"));
     expect(getByTestId("renderLogPanel")).toBeTruthy;
   });
 });

@@ -25,6 +25,7 @@ const StyledDevtools = styled.div`
 
   background-color: ${props => props.theme.colors.bg};
   color: ${props => props.theme.colors.fg};
+  font-size: ${props => props.theme.fontSizes.normal};
 `;
 
 const Tabs = styled.div`
