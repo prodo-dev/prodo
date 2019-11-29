@@ -1,10 +1,11 @@
 import * as React from "react";
 import styled from "styled-components";
-import { dispatch, watch, state } from "../../model";
+import { dispatch } from "../../model";
 import { HeaderHeight, paddings, PanelWidth } from "../../styles";
 import { Panel } from "../../types";
 import { eventListener } from "../../utils/communication";
 import { ActionLogPanel } from "./ActionLogPanel";
+import { ServerActions } from "./recordingTests";
 import { RenderLogPanel } from "./RenderLogPanel";
 import { StatePanel } from "./StatePanel";
 
@@ -28,18 +29,17 @@ const StyledDevtools = styled.div`
 
 const Tabs = styled.div`
   height: ${HeaderHeight};
-
   display: flex;
-  justify-content: space-around;
-
-  border-bottom: 1px solid ${props => props.theme.colors.fg};
-
+  border-bottom: 1px solid ${props => props.theme.colors.detail};
   cursor: pointer;
 `;
 
 const Tab = styled.div<{ isSelected: boolean }>`
-  padding: ${paddings.small};
-  ${props => props.isSelected && `font-weight: bold`};
+  border-right: 1px solid ${props => props.theme.colors.detail};
+  padding: ${paddings.small} ${paddings.small} ${paddings.tiny}
+    ${paddings.small};
+  ${props =>
+    props.isSelected && `background-color: ${props.theme.colors.detail};`}
 
   &:hover {
     color: ${props => props.theme.colors.accent};
@@ -53,42 +53,6 @@ const StyledPanel = styled.div`
   max-height: calc(100vh - ${HeaderHeight});
 `;
 
-const RecordButtons = styled.div`
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-`;
-
-function post({ func, universe, actionLog }: any) {
-  const name = prompt("Name:");
-  // @ts-ignore
-  const { port } = window.devtoolsServer;
-  fetch(`http://localhost:${port}/${func}`, {
-    method: "post",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ universe, actionLog, name }),
-  })
-    .then(res => res.json())
-    .then(res => console.log(res));
-}
-
-const ServerActions = () => {
-  // @ts-ignore
-  const { buttons } = window.devtoolsServer;
-  console.log({ ServerActions, buttons });
-  const universe = watch(state.app.universe);
-  const actionLog = watch(state.app.actionLog);
-  return (
-    <RecordButtons>
-      {Object.keys(buttons).map(func => (
-        <button onClick={() => post({ func, universe, actionLog })}>
-          {buttons[func]}
-        </button>
-      ))}
-    </RecordButtons>
-  );
-};
-
 export const DevTools = () => {
   React.useEffect(() => {
     window.addEventListener("message", eventListener(dispatch));
@@ -96,9 +60,7 @@ export const DevTools = () => {
   }, []);
 
   const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
-  // @ts-ignore
-  const hasServer = !!window.devtoolsServer;
-  console.log({ hasServer });
+  const hasServer = !!(window as any).devtoolsServer;
 
   // TODO: bring back scroll-to-bottom?
   return (
@@ -129,6 +91,6 @@ const getPanelTitle = (data: string) => {
     data
       .slice(1)
       .split("Log")
-      .join(" Log")
+      .join(" log")
   );
 };

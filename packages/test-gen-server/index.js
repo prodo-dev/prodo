@@ -37,7 +37,7 @@ Object.keys(config.generators).forEach(funcName => {
         .toLowerCase() + ".test.tsx",
     );
     if (fs.existsSync(testFileName)) {
-      res.json({ error: "FILE_ALREADY_EXIST", testFileName });
+      res.json({ error: "FILE_ALREADY_EXISTS", testFileName });
     } else {
       try {
         fs.writeFileSync(testFileName, format(template(enrich(input))));

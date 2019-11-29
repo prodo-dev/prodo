@@ -11,8 +11,8 @@ const { Provider } = model.createStore({
   devtoolsServer: {
     port: 8088,
     buttons: {
-      saveRenderTest: "🎥render",
-      saveActionTest: "🎥action",
+      saveRenderTest: "Save render test",
+      saveActionTest: "Save action test",
     },
   },
   initState,

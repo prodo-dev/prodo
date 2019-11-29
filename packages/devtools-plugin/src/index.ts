@@ -57,8 +57,7 @@ if (process.env.NODE_ENV !== "test") {
       );
       //
       if (config.devtoolsServer) {
-        // @ts-ignore
-        window.devtoolsServer = config.devtoolsServer;
+        (window as any).devtoolsServer = config.devtoolsServer;
       }
       // Send initial state to devtools
       const message: DevMessage = {
