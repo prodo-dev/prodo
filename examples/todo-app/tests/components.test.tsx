@@ -119,8 +119,6 @@ describe("components", () => {
       keyCode: 13,
     });
 
-    await waitForDomChange({ container });
-
     expect(getByTestId("list").textContent).toContain("hello world");
   });
 });

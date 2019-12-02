@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@prodo/core": "^0.1.2",
+    "@prodo/logger": "^0.1.0",
     "core-js": "2",
     "react": "^16.8.6",
     "react-dom": "^16.9.0"
