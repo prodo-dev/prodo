@@ -1,6 +1,6 @@
 {
   "name": "@prodo-example/chat-app",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,9 +9,9 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "^0.1.2",
-    "@prodo/firestore": "^0.1.2",
-    "@prodo/logger": "^0.1.2",
+    "@prodo/core": "^0.1.4",
+    "@prodo/firestore": "^0.1.4",
+    "@prodo/logger": "^0.1.4",
     "core-js": "2",
     "moment": "^2.24.0",
     "react": "^16.8.6",

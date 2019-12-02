@@ -1,6 +1,6 @@
 {
   "name": "@prodo/route",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "main": "lib/index.js",
   "license": "MIT",
   "files": [
@@ -39,7 +39,7 @@
     "react": "^16.9.0"
   },
   "devDependencies": {
-    "@prodo/core": "^0.1.2",
+    "@prodo/core": "^0.1.4",
     "@types/history": "^4.7.3",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",

@@ -1,6 +1,6 @@
 {
   "name": "@prodo-example/local-map",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,9 +10,9 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "^0.1.2",
-    "@prodo/local": "^0.1.3",
-    "@prodo/logger": "^0.1.2",
+    "@prodo/core": "^0.1.4",
+    "@prodo/local": "^0.1.4",
+    "@prodo/logger": "^0.1.4",
     "core-js": "2",
     "pigeon-maps": "^0.13.0",
     "pigeon-marker": "^0.3.4",
