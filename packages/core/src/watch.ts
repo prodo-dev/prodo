@@ -1,3 +1,4 @@
+import { unstable_batchedUpdates } from "react-dom";
 import logger from "./logger";
 import { Event, Node, Store, WatchTree } from "./types";
 import { splitPath } from "./utils";
@@ -124,12 +125,14 @@ export const submitPatches = (
   logger.info("[update cycle]", comps);
 
   event.rerender = {};
-  Object.keys(comps).forEach(compId => {
-    const { setState, name, newValues, status } = comps[compId];
-    if (!status.unmounted) {
-      event.rerender![comps[compId].name] = true;
-      logger.info(`[upcoming state update] ${name}`, newValues, status);
-      setState(newValues);
-    }
-  });
+  unstable_batchedUpdates(() =>
+    Object.keys(comps).forEach(compId => {
+      const { setState, name, newValues, status } = comps[compId];
+      if (!status.unmounted) {
+        event.rerender![comps[compId].name] = true;
+        logger.info(`[upcoming state update] ${name}`, newValues, status);
+        setState(newValues);
+      }
+    }),
+  );
 };

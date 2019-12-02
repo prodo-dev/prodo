@@ -12,6 +12,8 @@ npm install --save @prodo/core
 yarn add @prodo/core
 ```
 
+If you get an error `Incorrect integrity when fetching from the cache` when creating your app, try running `yarn cache clean` first.
+
 Prodo also provides a [Babel plugin](https://babeljs.io/)
 that enables you to write components and actions in a concise syntax. Check out
 [the docs](/basics/babel-plugin/) for information on how to set it up.

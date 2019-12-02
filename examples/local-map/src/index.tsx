@@ -10,7 +10,11 @@ export const initLocal: Partial<Local> = {
   zoom: 12,
 };
 
-const { Provider, store } = model.createStore({ initState: {}, initLocal });
+const { Provider, store } = model.createStore({
+  logger: true,
+  initState: {},
+  initLocal,
+});
 
 const render = () => {
   ReactDOM.render(

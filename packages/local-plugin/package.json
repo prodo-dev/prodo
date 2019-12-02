@@ -1,6 +1,6 @@
 {
   "name": "@prodo/local",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "main": "lib/index.js",
   "license": "MIT",
   "files": [
@@ -13,8 +13,28 @@
     "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "homepage": "https://github.com/prodo-ai/prodo/tree/master/packages/local-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/prodo-ai/prodo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prodo-ai/prodo.git",
+    "directory": "packages/local-plugin"
+  },
+  "keywords": [
+    "prodo",
+    "state-management",
+    "react",
+    "redux",
+    "mobx",
+    "effects",
+    "flux",
+    "local-storage",
+    "prodo-local"
+  ],
   "devDependencies": {
-    "@prodo/core": "^0.1.0",
+    "@prodo/core": "^0.1.2",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "@types/react": "^16.9.2",

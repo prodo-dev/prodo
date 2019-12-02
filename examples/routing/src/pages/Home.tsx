@@ -1,9 +1,14 @@
 import { Link } from "@prodo/route";
 import * as React from "react";
+import styled from "styled-components";
+
+const StyledTitle = styled.h1`
+  color: pink;
+`;
 
 const Home = () => (
   <div>
-    <h1 className="title">Home</h1>
+    <StyledTitle className="title">Home</StyledTitle>
     <p>
       This is a test for the <a href="https://docs.prodo.dev">route plugin</a>.
     </p>

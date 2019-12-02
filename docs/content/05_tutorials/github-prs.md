@@ -23,7 +23,7 @@ The easiest way to get started with Prodo is with
 Run the following command to create a Prodo app in the `github-prs` directory.
 
 ```shell
-yarn create prodo-app github-prs
+yarn create prodo-app github-prs --typescript
 ```
 
 This will create the directory structure.
@@ -99,6 +99,13 @@ export default Header;
 
 The page should update automatically with the new text.
 
+# Styling
+
+_This tutorial is not about CSS. To use the same styles as this tutorial,
+copy [this
+file](https://github.com/prodo-ai/github-prs/blob/master/src/styles.css) to
+`src/styles.css`._
+
 # Specifying the model
 
 In a Prodo app your state is stored in a global store which is accessed by your
@@ -121,7 +128,7 @@ import loggerPlugin from "@prodo/logger";
 import routePlugin from "@prodo/route";
 
 // highlight-start
-export interface PullRequest {
+export interface IPullRequest {
   id: number;
   prNumber: number;
   title: string;
@@ -132,7 +139,7 @@ export interface PullRequest {
 }
 
 export interface State {
-  pullRequests: { [key: string]: PullRequest[] };
+  pullRequests: { [key: string]: IPullRequest[] };
 }
 // highlight-end
 
@@ -258,12 +265,12 @@ requests](https://developer.github.com/v3/pulls/#list-pull-requests).
 Create the file `src/api.ts` with the following contents:
 
 ```ts
-import { PullRequest } from "./model";
+import { IPullRequest } from "./model";
 
 export const getPullRequests = async (
   owner: string,
   repo: string,
-): Promise<PullRequest[]> => {
+): Promise<IPullRequest[]> => {
   const data = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/pulls`,
   ).then(res => res.json());
@@ -272,7 +279,7 @@ export const getPullRequests = async (
     throw new Error(data.message);
   }
 
-  const pullRequests: PullRequest[] = data.map((d: any) => ({
+  const pullRequests: IPullRequest[] = data.map((d: any) => ({
     id: d.id,
     prNumber: d.number,
     title: d.title,
@@ -311,11 +318,6 @@ async/await.
 
 We've setup the internals of our app, but still need a way for the user to
 interact with it.
-
-_This tutorial is not about styling. To use the same styles as this tutorial,
-copy [this
-file](https://github.com/prodo-ai/github-prs/blob/master/src/styles.css) to
-`src/styles.css`_
 
 ## Repo search
 
@@ -374,9 +376,10 @@ We can fetch the pull requests for the owner and repo with a `useEffect` hook.
 ```tsx
 import * as React from "react";
 import { Link } from "@prodo/route";
-// highlight-next-line
+// highlight-start
 import { state, watch, dispatch } from "../model";
 import * as actions from "../actions";
+// highlight-end
 
 export interface Props {
   owner: string;
@@ -426,7 +429,12 @@ const PullRequest: React.FC<{ pullRequest: IPullRequest }> = ({
   pullRequest,
 }) => {
   return (
-    <a href={pullRequest.url} target="_blank" className="none">
+    <a
+      href={pullRequest.url}
+      target="_blank"
+      className="none"
+      rel="noopener noreferrer"
+    >
       <div className="pull-request">
         <img src={pullRequest.authorImage} />
 

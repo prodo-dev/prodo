@@ -30,12 +30,23 @@ section.
 }
 ```
 
-If you are using TypeScript, you will need to change the parser.
+If you are using TypeScript, you will need to change the parser to the
+[TypeScript ESLint parser](https://www.npmjs.com/package/@typescript-eslint/parser).
 
 ```json
 {
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript/eslint-plugin", "@prodo/eslint-plugin"]
+}
+```
+
+If you are using JavaScript, you will need to change the parser to the [Babel
+ESLint parser](https://github.com/babel/babel-eslint).
+
+```json
+{
+  "parser": "babel-eslint",
+  "plugins": ["@prodo/eslint-plugin"]
 }
 ```
 

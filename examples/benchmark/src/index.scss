@@ -1,0 +1,32 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: black;
+    border: 1px solid black;
+    padding: 0;
+    margin: 0;
+}
+
+.box.on {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: red;
+}
+
+.box.off {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: blue;
+}

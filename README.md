@@ -4,10 +4,11 @@
 
 Prodo is a React framework to write performant and scalable web apps with as
 little boilerplate as possible. View the
-[Documentation](https://docs.prodo.dev).
+[Documentation](https://docs.prodo.dev). Read more about the motivation behind Prodo on our [blog](https://medium.com/prodo-ai). Join us on [Slack](https://prodo-feedback-slackin.herokuapp.com)!
 
-[![CircleCI](https://circleci.com/gh/prodo-ai/prodo.svg?style=svg)](https://circleci.com/gh/prodo-ai/prodo)
+[![CircleCI](https://circleci.com/gh/prodo-dev/prodo.svg?style=svg)](https://circleci.com/gh/prodo-dev/prodo)
 [![npm version](https://img.shields.io/npm/v/%40prodo%2Fcore.svg?style=flat-square&color=brightgreen)](https://www.npmjs.com/package/@prodo/core)
+[![npm version](https://img.shields.io/badge/chat-on%20slack-blue?style=flat-square)](https://prodo-feedback-slackin.herokuapp.com)
 
 ## Key benefits
 
@@ -73,7 +74,15 @@ everything else is automatically inferred.
 
 ## Examples
 
-There are many example apps that use Prodo in `examples/`. We recommend looking at
+There are some examples on [CodeSandbox](https://codesandbox.io/) that you can
+view and edit.
+
+- [Counter](https://codesandbox.io/s/prodo-counter-ts-9n7tx?fontsize=14&module=%2Fsrc%2FApp.tsx)
+- [TodoMVC](https://codesandbox.io/s/prodo-todomvc-wf4nv?fontsize=14&module=%2Fsrc%2Fmodel.ts)
+- [Github PR List](https://codesandbox.io/embed/github-pr-list-noxhw?fontsize=14&module=%2Fsrc%2Fmodel.ts)
+
+There are also many example apps that use Prodo in `examples/`. We recommend
+looking at.
 
 - Small to-do app example: [`examples/todo-app`](/examples/todo-app)
 - Larger kanban app example: [`examples/kanban`](/examples/kanban)
@@ -106,10 +115,14 @@ Some examples have tests. You can run the tests with
 yarn test
 ```
 
-## Contributing
+## How to help?
 
-See [CONTRIBUTING](./CONTRIBUTING.md) for information on how to contribute to
-the project.
+- Help us gauge interest by [starring](https://github.com/prodo-ai/prodo#) this
+  repository if you like what you see!
+- Give feedback by opening an [issue](https://github.com/prodo-ai/prodo/issues/new).
+- Contribute code by opening a [PR](https://github.com/prodo-ai/prodo/pulls). See
+  [CONTRIBUTING](./CONTRIBUTING.md) for information on how to contribute code to
+  the project.
 
 ## Where to go next?
 

@@ -60,3 +60,5 @@ export default plugin;
 export const push = plugin.action(pushAction, "push");
 export const replace = plugin.action(replaceAction, "replace");
 export const setRoute = plugin.action(setRouteAction, "setRoute");
+
+plugin.exposeUniverseVars(["route"]);

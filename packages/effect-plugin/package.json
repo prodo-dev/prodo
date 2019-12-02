@@ -1,6 +1,6 @@
 {
   "name": "@prodo/effect",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "main": "lib/index.js",
   "license": "MIT",
   "files": [
@@ -13,8 +13,27 @@
     "test": "jest",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
+  "homepage": "https://github.com/prodo-ai/prodo/tree/master/packages/effect-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/prodo-ai/prodo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prodo-ai/prodo.git",
+    "directory": "packages/effect-plugin"
+  },
+  "keywords": [
+    "prodo",
+    "state-management",
+    "react",
+    "redux",
+    "mobx",
+    "effects",
+    "flux",
+    "prodo-effect"
+  ],
   "devDependencies": {
-    "@prodo/core": "^0.1.0",
+    "@prodo/core": "^0.1.2",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "@types/react": "^16.9.2",

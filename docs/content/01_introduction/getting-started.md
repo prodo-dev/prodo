@@ -27,14 +27,20 @@ yarn
 yarn start
 ```
 
-Navigate to [localhost:8080](http://localhost:8080) and you should see "Hello World".
+Navigate to [localhost:8080](http://localhost:8080) and you should see your app.
+
+The app created with create-prodo-app (CPA) is fairly minimal, yet a good
+starting point when creating simple or complex Prodo apps. It includes two
+[Prodo plugins](/basics/plugins): logger and route. The logger plugin logs useful
+information about your app to the console and the route plugin gives you client
+side routing.
 
 # Basic Example
 
 This section walks you through the main concepts of Prodo. We are creating a
 simple "Counter" app, assuming basic knowledge of
 [ES6](https://www.w3schools.com/js/js_es6.asp) and [React](https://reactjs.org).
-The following example assumes you have cloned the starting template. All code
+The following example assumes you have created an app with create-prodo-app. All code
 snippets use the babel plugin.
 
 The typical workflow in developing a Prodo app is to
@@ -46,16 +52,24 @@ The typical workflow in developing a Prodo app is to
 ## Specifying the Model
 
 The [model](/basics/model) holds all of the types used in your actions and components
-in a file called `src/model.ts`.
+in a file called `src/model.ts`. Edit the file with the following contents:
 
 ```ts
+// src/model.ts
 import { createModel } from "@prodo/core";
+import loggerPlugin from "@prodo/logger";
+import routePlugin from "@prodo/route";
 
+// highlight-start
 export interface State {
   count: number;
 }
+// highlight-end
 
-export const model = createModel<State>();
+export const model = createModel<State>()
+  .with(loggerPlugin)
+  .with(routePlugin);
+
 export const { state, watch, dispatch } = model.ctx;
 ```
 
@@ -66,16 +80,24 @@ state.
 
 ## Defining Actions
 
-[Actions](/basics/actions) are simple functions that can read from the state and write to the state. They can
+[Actions](/basics/actions) are simple functions that can read from the state and write to the state. They cannot return anything. They can
 take arguments, trigger side effects (see [effect plugin](/plugins/effects)), and dispatch other actions (see [dispatch](/basics/actions#dispatch)). We can create
-an action in the `src/App.tsx` file.
+an action in the `src/pages/App.tsx` file.
 
 ```tsx
-import { state, dispatch } from "./model";
+// src/pages/Home.tsx
+import * as React from "react";
+import { state, watch, dispatch } from "../model";
 
+// highlight-start
 const changeCount = (amount: number) => {
   state.count += amount;
 };
+// highlight-end
+
+const Home = () => <div />;
+
+export default Home;
 ```
 
 This action changes the count in our state by a specified amount. This action can
@@ -87,16 +109,30 @@ dispatch(changeCount)(1);
 
 ## React Components
 
-[Components](/basics/components) take the state of your application and render it as JSX. Those components are writen with React and let you automatically "watch" for changes to the state. Under the hood, the component will start a subscription to the corresponding state path and trigger a re-render whenever the value changes.
+[Components](/basics/components) take the state of your application and render
+it as JSX. Those components are writen with React and let you automatically
+"watch" for changes to the state. Under the hood, the component will start a
+subscription to the corresponding state path and trigger a re-render whenever
+the value changes.
 
 ```tsx
-import { state, watch } from "./model";
+// src/pages/Home.tsx
+import * as React from "react";
+import { state, watch, dispatch } from "../model";
 
-const App = () => (
+const changeCount = (amount: number) => {
+  state.count += amount;
+};
+
+const Home = () => (
   <div>
+    // highlight-start
     <h1>{watch(state.count)}</h1>
+    // highlight-end
   </div>
 );
+
+export default Home;
 ```
 
 Here we simply show the the `state.count` value.
@@ -105,56 +141,56 @@ Components can also trigger actions. Lets create two buttons to increment and
 decrement the counter using the action we defined above.
 
 ```tsx
-import { state, dispatch, watch } from "./model";
-
-const App = () => (
-  <div>
-    <button onClick={() => dispatch(changeCount)(-1)}>-</button>
-    <h1>{watch(state.count)}</h1>
-    <button onClick={() => dispatch(changeCount)(1)}>+</button>
-  </div>
-);
-```
-
-After the above change the full `src/App.tsx` file is,
-
-```tsx
+// src/pages/Home.tsx
 import * as React from "react";
-import { state, dispatch, watch } from "./model";
+import { state, watch, dispatch } from "../model";
 
 const changeCount = (amount: number) => {
   state.count += amount;
 };
 
-const App = () => (
+const Home = () => (
   <div>
+    // highlight-next-line
     <button onClick={() => dispatch(changeCount)(-1)}>-</button>
     <h1>{watch(state.count)}</h1>
+    // highlight-next-line
     <button onClick={() => dispatch(changeCount)(1)}>+</button>
   </div>
 );
 
-export default App;
+export default Home;
 ```
 
 ## Creating the Store
 
 When starting your app, you need to create a [store](/basics/store) with your
-app's initial state. We then wrap the application into a [Provider](/api-reference/provider) to make
-this store accessible in all of the components.
-
-This is done in `src/index.tsx`.
+app's initial state. We then wrap the application into a
+[Provider](/api-reference/provider) to make this store accessible in all of the
+components.
 
 ```tsx
+// src/index.tsx
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
 import { model } from "./model";
+import { createBrowserHistory } from "history";
+
+import "./styles.css";
+
+const history = createBrowserHistory();
 
 const { Provider } = model.createStore({
+  logger: true,
+  route: {
+    history,
+  },
+  // highlight-start
   initState: {
     count: 0,
   },
+  // highlight-end
 });
 
 ReactDOM.render(
@@ -167,4 +203,6 @@ ReactDOM.render(
 
 ## Running your Application
 
-Run `yarn start` or `npm start` to start your application.
+Run `yarn start` or `npm start` to start your application. You should see the
+current count and a decrease and increase button. Clicking the buttons should
+change the count.

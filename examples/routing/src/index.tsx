@@ -11,6 +11,7 @@ const history = createBrowserHistory();
 
 const { store, Provider } = model.createStore({
   logger: true,
+  devtools: true,
   initState,
   route: { history },
 });

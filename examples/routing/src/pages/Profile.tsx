@@ -1,6 +1,11 @@
 import * as React from "react";
+import styled from "styled-components";
 import { redirectHome } from "../actions";
 import { dispatch, route, watch } from "../model";
+
+const StyledTitle = styled.h1`
+  color: red;
+`;
 
 const capitalize = (s: string): string =>
   `${s.charAt(0).toUpperCase()}${s.substring(1)}`;
@@ -17,7 +22,7 @@ const Home: React.FC<{ username: string }> = props => {
 
   return (
     <div>
-      <h1 className="title">{normalize(props.username)}</h1>
+      <StyledTitle className="title">{normalize(props.username)}</StyledTitle>
       <div className="gohome" onClick={() => dispatch(redirectHome)()}>
         Go Home
       </div>

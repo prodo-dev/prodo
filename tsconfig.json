@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "docs" },
+    { "path": "examples/benchmark" },
     { "path": "examples/chat-app" },
     { "path": "examples/clock" },
     { "path": "examples/kanban" },

@@ -2,7 +2,7 @@ import { clearLogs } from "../../src/App/DevTools/components/ClearLogsButton";
 import { model } from "../../src/model";
 import { initState } from "../../src/store";
 import { Action } from "../../src/types";
-import { recordAction, recordState } from "../../src/utils/communication";
+import { recordAction, recordUniverse } from "../../src/utils/communication";
 
 import { populatedState, testActionLog, testAppState } from "../fixtures";
 
@@ -12,12 +12,12 @@ describe("actions", () => {
       initState,
     });
 
-    const { state } = await store.dispatch(recordState)(testAppState);
-    expect(Object.keys(state.app.state)).toHaveLength(
+    const { state } = await store.dispatch(recordUniverse)(testAppState);
+    expect(Object.keys(state.app.universe)).toHaveLength(
       Object.keys(testAppState).length,
     );
 
-    const recordedState = state.app.state;
+    const recordedState = state.app.universe;
     expect(recordedState).toEqual(testAppState);
   });
 

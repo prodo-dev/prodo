@@ -13,7 +13,7 @@ import devToolsPlugin from "@prodo/devtools";
 
 export interface State {}
 
-export const model = createModel<State>().with(devToolsPlugin<State>());
+export const model = createModel<State>().with(devToolsPlugin);
 ```
 
 To show the devtools next to your app, turn the `devtools` variable to true when you create your store.
