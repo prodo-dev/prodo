@@ -35,8 +35,6 @@ describe("components", () => {
 
     const button = getByTestId("button-todos");
     fireEvent.click(button);
-
-    await waitForDomChange({ container });
     expect(store.universe.route.path).toBe("/b/B1/todos");
   });
 });

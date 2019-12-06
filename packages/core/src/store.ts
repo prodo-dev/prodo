@@ -10,6 +10,7 @@ import {
   Provider,
   WatchTree,
 } from "./types";
+import { syncIfPossible } from "./utils";
 
 const initPlugins = (
   universe: any,
@@ -105,7 +106,7 @@ export const createStore = <State>(
   ) => (...args) =>
     store.exec({ id: name, parentId: null }, func as any, ...args);
 
-  store.exec = async <A extends any[]>(
+  store.exec = <A extends any[]>(
     origin: Origin,
     func: (...args: A) => void,
     ...args: A
@@ -118,55 +119,63 @@ export const createStore = <State>(
       origin,
     );
 
-    await produce(
-      store.universe,
-      async u => {
-        const ctx = {
-          state: u.state,
-          dispatch: <A extends any[]>(func: (...a: A) => void) => (
-            ...args: A
-          ) => {
-            event.nextActions.push({
-              func: func as any,
-              args,
-              origin: {
-                parentId: event.id,
-                id: `${event.id}/${event.nextActions.length}`,
+    syncIfPossible(
+      () =>
+        produce(
+          store.universe,
+          u => {
+            const ctx = {
+              state: u.state,
+              dispatch: <A extends any[]>(func: (...a: A) => void) => (
+                ...args: A
+              ) => {
+                event.nextActions.push({
+                  func: func as any,
+                  args,
+                  origin: {
+                    parentId: event.id,
+                    id: `${event.id}/${event.nextActions.length}`,
+                  },
+                });
               },
-            });
-          },
-        };
+            };
 
+            plugins.forEach(p => {
+              if (p._internals.actionCtx) {
+                (ctx as any).rootDispatch = createRootDispatch(p.name);
+                p._internals.actionCtx(
+                  {
+                    ctx,
+                    universe: u,
+                    event,
+                  },
+                  config,
+                );
+              }
+            });
+
+            return syncIfPossible(
+              () => (func as any)(ctx)(...args),
+              // tslint:disable-next-line:no-empty
+              () => {},
+            )();
+          },
+          p => {
+            event.patches = p;
+          },
+        ),
+      () => {
+        completeEvent(event, store);
         plugins.forEach(p => {
-          if (p._internals.actionCtx) {
-            (ctx as any).rootDispatch = createRootDispatch(p.name);
-            p._internals.actionCtx(
-              {
-                ctx,
-                universe: u,
-                event,
-              },
+          if (p._internals.onCompleteEvent) {
+            p._internals.onCompleteEvent(
+              { event, rootDispatch: createRootDispatch(p.name) },
               config,
             );
           }
         });
-
-        await (func as any)(ctx)(...args);
       },
-      p => {
-        event.patches = p;
-      },
-    );
-
-    completeEvent(event, store);
-    plugins.forEach(p => {
-      if (p._internals.onCompleteEvent) {
-        p._internals.onCompleteEvent(
-          { event, rootDispatch: createRootDispatch(p.name) },
-          config,
-        );
-      }
-    });
+    )();
   };
 
   store.dispatch = <A extends any[]>(func: (...args: A) => void) => async (
@@ -174,7 +183,7 @@ export const createStore = <State>(
   ) => {
     const actionsCompleted = new Promise(async r => {
       store.watchForComplete = {
-        count: 0,
+        count: 1,
         cb: r,
       };
     });

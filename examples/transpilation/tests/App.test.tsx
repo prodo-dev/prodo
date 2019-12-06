@@ -23,8 +23,6 @@ describe("App", () => {
       model.createStore({ initState }),
     );
 
-    await waitForDomChange({ container });
-
     expect(container.textContent).toBe("Initialized");
   });
 });
