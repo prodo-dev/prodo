@@ -6,7 +6,17 @@ import { initState } from "./store";
 
 import "./index.scss";
 
-const { Provider } = model.createStore({ devtools: true, initState });
+const { Provider } = model.createStore({
+  devtools: true,
+  devtoolsServer: {
+    port: 8088,
+    buttons: {
+      saveRenderTest: "Save render test",
+      saveActionTest: "Save action test",
+    },
+  },
+  initState,
+});
 
 const render = () => {
   ReactDOM.render(

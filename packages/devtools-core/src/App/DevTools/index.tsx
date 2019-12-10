@@ -5,6 +5,7 @@ import { HeaderHeight, paddings, PanelWidth } from "../../styles";
 import { Panel } from "../../types";
 import { eventListener } from "../../utils/communication";
 import { ActionLogPanel } from "./ActionLogPanel";
+import { ServerActions } from "./recordingTests";
 import { RenderLogPanel } from "./RenderLogPanel";
 import { StatePanel } from "./StatePanel";
 
@@ -24,22 +25,22 @@ const StyledDevtools = styled.div`
 
   background-color: ${props => props.theme.colors.bg};
   color: ${props => props.theme.colors.fg};
+  font-size: ${props => props.theme.fontSizes.normal};
 `;
 
 const Tabs = styled.div`
   height: ${HeaderHeight};
-
   display: flex;
-  justify-content: space-around;
-
-  border-bottom: 1px solid ${props => props.theme.colors.fg};
-
+  border-bottom: 1px solid ${props => props.theme.colors.detail};
   cursor: pointer;
 `;
 
 const Tab = styled.div<{ isSelected: boolean }>`
-  padding: ${paddings.small};
-  ${props => props.isSelected && `font-weight: bold`};
+  border-right: 1px solid ${props => props.theme.colors.detail};
+  padding: ${paddings.small} ${paddings.small} ${paddings.tiny}
+    ${paddings.small};
+  ${props =>
+    props.isSelected && `background-color: ${props.theme.colors.detail};`}
 
   &:hover {
     color: ${props => props.theme.colors.accent};
@@ -60,6 +61,7 @@ export const DevTools = () => {
   }, []);
 
   const [selectedPanel, setSelectedPanel] = React.useState("state" as Panel);
+  const hasServer = !!(window as any).devtoolsServer;
 
   // TODO: bring back scroll-to-bottom?
   return (
@@ -78,6 +80,7 @@ export const DevTools = () => {
         ))}
       </Tabs>
       <StyledPanel>{panels[selectedPanel]}</StyledPanel>
+      {hasServer && <ServerActions />}
     </StyledDevtools>
   );
 };
@@ -89,6 +92,6 @@ const getPanelTitle = (data: string) => {
     data
       .slice(1)
       .split("Log")
-      .join(" Log")
+      .join(" log")
   );
 };

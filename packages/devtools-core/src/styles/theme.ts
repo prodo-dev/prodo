@@ -6,6 +6,7 @@ export interface Theme {
   colors: {
     bg: Color;
     fg: Color;
+    detail: Color;
     accent: Color;
     error: Color;
     errorBg: Color;
@@ -25,8 +26,9 @@ export interface Theme {
 
 export const darkTheme: Theme = {
   colors: {
-    bg: "#282c34",
+    bg: "#1D1F23",
     fg: "#f8f8f2",
+    detail: "rgb(61, 67, 77)",
     accent: "#00e3a0",
     error: "#9f3a38",
     errorBg: "#fff6f6",

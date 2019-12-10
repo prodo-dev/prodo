@@ -7,6 +7,7 @@
     "clean": "rm -rf .cache build dist lib tsconfig.tsbuildinfo",
     "start": "webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
     "test": "jest",
+    "testgen": "test-gen-serve ./tests/generated/config.js",
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
@@ -15,6 +16,7 @@
     "@prodo/effect": "^0.1.4",
     "@prodo/logger": "^0.1.4",
     "core-js": "2",
+    "cors": "^2.8.5",
     "react": "^16.8.6",
     "react-dom": "^16.9.0",
     "styled-components": "^4.4.0"
@@ -25,6 +27,7 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.6.0",
     "@prodo/babel-plugin": "^0.1.2",
+    "@prodo/test-gen-server": "^0.1.2",
     "@testing-library/react": "^9.1.3",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
