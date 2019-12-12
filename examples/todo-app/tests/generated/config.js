@@ -20,7 +20,7 @@ module.exports = {
       dir: "./tests/generated/actions",
       template: t => `
         import { ${t.actionNames} } from "../../../src/actions";
-        import { model } from "../../../src/model";
+        import { model, State } from "../../../src/model";
         
         describe("actions", () => {
           it(${t.testName}, async () => {
@@ -29,7 +29,8 @@ module.exports = {
               mockEffects: ${t.recordedEffects},
             });
             ${t.awaitActions}
-            expect(store.universe.state).toEqual(${t.lastState});
+            const lastState : State = ${t.lastState} 
+            expect(store.universe.state).toEqual(lastState);
           });
         });`,
     },
