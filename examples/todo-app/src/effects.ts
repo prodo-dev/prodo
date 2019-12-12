@@ -2,7 +2,7 @@ export const randomId = () =>
   "T" +
   Math.random()
     .toString()
-    .slice(2, 7);
+    .slice(2, 5);
 
 export const fetchEmoji = (text: string) =>
   fetch("https://us-central1-emoji-search-by-prodo.cloudfunctions.net/search", {

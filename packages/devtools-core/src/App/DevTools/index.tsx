@@ -36,12 +36,13 @@ const Tabs = styled.div`
 `;
 
 const Tab = styled.div<{ isSelected: boolean }>`
+  flex: 1;
+  text-align: center;
   border-right: 1px solid ${props => props.theme.colors.detail};
-  padding: ${paddings.small} ${paddings.small} ${paddings.tiny}
-    ${paddings.small};
-  ${props =>
-    props.isSelected && `background-color: ${props.theme.colors.detail};`}
-
+  padding: ${paddings.small} ${paddings.large} ${paddings.tiny}
+    ${paddings.large};
+  background-color: ${props =>
+    !props.isSelected ? props.theme.colors.detail : "#4d505d"};
   &:hover {
     color: ${props => props.theme.colors.accent};
   }
@@ -87,11 +88,9 @@ export const DevTools = () => {
 
 // Title-cases and spaces panel name, eg. actionLog => Action Log
 const getPanelTitle = (data: string) => {
-  return (
-    data.charAt(0).toUpperCase() +
-    data
-      .slice(1)
-      .split("Log")
-      .join(" log")
-  );
+  return {
+    state: "state",
+    actionLog: "actions",
+    renderLog: "render",
+  }[data];
 };

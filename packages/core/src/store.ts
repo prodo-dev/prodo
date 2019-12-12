@@ -131,6 +131,7 @@ export const createStore = <State>(
               ) => {
                 event.nextActions.push({
                   func: func as any,
+                  name: (func as any).__name || "(unnamed)",
                   args,
                   origin: {
                     parentId: event.id,

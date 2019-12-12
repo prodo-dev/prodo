@@ -27,7 +27,6 @@ export interface Props {
 
 const StyledJsonTree = styled.div`
   font-family: ${props => props.theme.fonts.code};
-
   .rejt-name {
     display: inline-block;
     height: 20px;
@@ -46,7 +45,12 @@ const StyledJsonTree = styled.div`
   }
 
   .rejt-value-node {
+    display: block;
     max-height: 22px;
+  }
+
+  .rejt-value {
+    padding-left: 6px;
   }
 `;
 

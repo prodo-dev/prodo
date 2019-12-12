@@ -15,7 +15,6 @@ const StyledRenderLogPanel = styled.div`
 
 export const RenderLogPanel = () => {
   const renderLog = watch(state.app.renderLog);
-
   const components = {};
   renderLog.map((entry: Render) => {
     if (!components[entry.componentId]) {

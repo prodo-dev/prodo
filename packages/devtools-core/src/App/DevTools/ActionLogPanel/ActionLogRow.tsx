@@ -8,30 +8,79 @@ const StyledActionLogRow = styled.div`
   padding-bottom: ${paddings.medium};
 `;
 
-const StyledSummary = styled.summary`
+const StyledSummary = styled.summary<{ dim?: boolean }>`
   cursor: pointer;
+  ${props => props.dim && "opacity: 50%;"}
   &:hover {
     color: ${props => props.theme.colors.accent};
   }
 `;
 
+const ActionId = styled.span`
+  color: black;
+  font-weight: bold;
+  margin-right: 3px;
+  background: grey;
+  border-radius: 10px;
+  padding-left: 1px;
+  padding-right: 1px;
+`;
+
+const ActionParentId = styled.span`
+  color: white;
+  font-size: 70%;
+`;
+
+const ActionName = styled.span`
+  color: ${props => props.theme.colors.accent};
+  padding-right: 3px;
+`;
+
+const ActionComponent = styled.span`
+  color: rgb(230, 232, 117);
+  padding-right: 3px;
+`;
+
+const ActionArgs = styled.span`
+  color: ${props => props.theme.colors.accent};
+`;
+
 const ActionLogRowContents = styled.div`
-  padding-left: ${paddings.medium};
+  padding-left: 18px;
   padding-top: ${paddings.small};
   font-size: ${props => props.theme.fontSizes.code};
 `;
 
-const Section = ({ name, value }: { name: string; value: any }) => (
+const RestyledJson = styled.div`
+  background: #3d434d82;
+  padding: 8px;
+  margin: 4px;
+`;
+
+const Section = ({
+  name,
+  value,
+  dim,
+}: {
+  name: string;
+  value: any;
+  dim?: boolean;
+}) => (
   <details>
-    <StyledSummary>{name}</StyledSummary>
-    <JsonTree value={value} readOnly={true} />
+    <StyledSummary dim={dim}>{name}</StyledSummary>
+    <RestyledJson>
+      <JsonTree value={value} readOnly={true} />
+    </RestyledJson>
   </details>
 );
 
 export const ActionLogRow = ({ action }: { action: Action }) => {
+  // @ts-ignore
+  const { _id, _parentId, _component } = action;
   const rerenders = action.rerender
     ? Object.keys(action.rerender).filter(comp => action.rerender![comp])
     : [];
+  console.log({ nextActions: action.nextActions });
   return (
     <StyledActionLogRow className="actionLogRow" data-testid="actionLogRow">
       <details>
@@ -39,28 +88,53 @@ export const ActionLogRow = ({ action }: { action: Action }) => {
           className="actionLogRowHeader"
           data-testid="actionLogRowHeader"
         >
-          {action.actionName} (dispatched by {action.id}
-          {action.parentId && `, parent: ${action.parentId}`})
+          {_parentId && <ActionParentId>{_parentId} → </ActionParentId>}
+          <ActionId>&nbsp;{_id}&nbsp;</ActionId>
+          <ActionComponent>{_component}:</ActionComponent>
+          <ActionName>{action.actionName}</ActionName>
+          <ActionArgs>
+            ({action.args.map((x: any) => JSON.stringify(x)).join(",")})
+          </ActionArgs>
         </StyledSummary>
         <ActionLogRowContents
           className="actionLogRowContents"
           data-testid="actionLogRowContents"
         >
-          <Section name={"Args"} value={action.args} />
-          <Section name={"Previous universe"} value={action.prevUniverse} />
+          {/* <Section name={"Prev"} value={action.prevUniverse} />
           {action.nextUniverse && (
-            <Section name={"Next universe"} value={action.nextUniverse} />
+            <Section name={"Next"} value={action.nextUniverse} />
+          )} */}
+          {action.patches && action.patches.length > 0 && (
+            <Section
+              name={`Patches (${action.patches.length})`}
+              value={action.patches}
+            />
           )}
-          <Section name={"State patches"} value={action.patches} />
+
           {action.recordedEffects && action.recordedEffects.length > 0 && (
-            <Section name={"Recorded Effects"} value={action.recordedEffects} />
+            <Section
+              name={`Effects (${action.recordedEffects.length})`}
+              value={action.recordedEffects}
+            />
           )}
           {action.nextActions.length > 0 && (
-            <div>Next actions: {JSON.stringify(action.nextActions)}</div>
+            <Section
+              name={`Dispatch (${action.nextActions.length})`}
+              value={action.nextActions}
+            />
           )}
           {rerenders.length > 0 && (
-            <div>Components to re-render: {JSON.stringify(rerenders)}</div>
+            <Section name={`Renders (${rerenders.length})`} value={rerenders} />
           )}
+          <Section
+            name={"Details"}
+            dim={true}
+            value={{
+              args: action.args,
+              prevState: action.prevUniverse,
+              nextState: action.nextUniverse,
+            }}
+          />
         </ActionLogRowContents>
       </details>
     </StyledActionLogRow>

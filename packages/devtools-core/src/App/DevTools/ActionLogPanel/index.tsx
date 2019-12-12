@@ -14,7 +14,7 @@ const StyledActionLogPanel = styled.div`
 
 export const ActionLogPanel = () => {
   const actions = watch(state.app.actionLog);
-
+  addCleanActionIds(actions);
   return (
     <StyledActionLogPanel
       className="actionLogPanel"
@@ -33,3 +33,17 @@ export const ActionLogPanel = () => {
     </StyledActionLogPanel>
   );
 };
+
+function addCleanActionIds(actions: Action[]) {
+  const mapping = {};
+  actions.forEach((action, i) => {
+    const id = i + 1;
+    // @ts-ignore
+    action._id = id;
+    mapping[action.id] = id;
+    // @ts-ignore
+    action._parentId = mapping[action.parentId];
+    // @ts-ignore
+    action._component = action.id.split(".")[0];
+  });
+}

@@ -110,7 +110,13 @@ export const connect: Connect<any> = <P extends {}>(
       this.prevWatched = {};
       this.pathNodes = {};
       this.compId = _compIdCnt++;
-      this.name = name + "." + this.compId;
+      let shortIdProp = "";
+      // @ts-ignore
+      if (props.id && typeof props.id === "string") {
+        // @ts-ignore
+        shortIdProp = "(" + props.id + ")";
+      }
+      this.name = `${name}${shortIdProp}.${this.compId}`;
       this.store = this.context;
 
       const setState = this.setState.bind(this);
