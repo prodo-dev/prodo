@@ -71,6 +71,7 @@ function enrich(input) {
     });
     input.recordedEffects = str(mocks);
     input.awaitActions = actionLog
+      .filter(action => action.id.split("/").length <= 2)
       .map(
         action => `
           await store.dispatch(${action.actionName})(${action.args
