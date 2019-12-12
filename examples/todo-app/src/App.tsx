@@ -11,20 +11,22 @@ export const List = () => (
   </ul>
 );
 
-export const Item = ({ id }: { id: string }) => (
-  <li data-testid="item">
-    <input
-      type="checkbox"
-      checked={watch(state.todos[id].done)}
-      onChange={() => dispatch(toggle)(id)}
-    />
-    <span className="item-text">
-      {watch(state.todos[id].text) + " "}
-      <Emoji str={watch(state.todos[id].emoji)} />
-    </span>
-    <button onClick={() => dispatch(deleteItem)(id)}>x</button>
-  </li>
-);
+export const Item = ({ id }: { id: string }) => {
+  const { done, emoji, text } = watch(state.todos[id]);
+  return (
+    <li data-testid="item">
+      <input
+        type="checkbox"
+        checked={done}
+        onChange={() => dispatch(toggle)(id)}
+      />
+      <span className="item-text" style={{ opacity: done ? 0.3 : 1 }}>
+        {text} <Emoji str={emoji} />
+      </span>
+      <button onClick={() => dispatch(deleteItem)(id)}>x</button>
+    </li>
+  );
+};
 
 export const Emoji = ({ str }: { str?: string }) => (
   <span dangerouslySetInnerHTML={{ __html: str || "" }} />
