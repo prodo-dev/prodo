@@ -4,7 +4,7 @@ import loggerPlugin from "@prodo/logger";
 import devToolsPlugin from "../../../packages/devtools-plugin/lib";
 
 export interface State {
-  todos: { [key: string]: { text: string; done: boolean } };
+  todos: { [key: string]: { text: string; done: boolean; emoji?: string } };
 }
 
 export const model = createModel<State>()

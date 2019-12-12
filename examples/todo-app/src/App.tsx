@@ -18,9 +18,16 @@ export const Item = ({ id }: { id: string }) => (
       checked={watch(state.todos[id].done)}
       onChange={() => dispatch(toggle)(id)}
     />
-    <span className="item-text">{watch(state.todos[id].text)}</span>
+    <span className="item-text">
+      {watch(state.todos[id].text) + " "}
+      <Emoji str={watch(state.todos[id].emoji)} />
+    </span>
     <button onClick={() => dispatch(deleteItem)(id)}>x</button>
   </li>
+);
+
+export const Emoji = ({ str }: { str?: string }) => (
+  <span dangerouslySetInnerHTML={{ __html: str || "" }} />
 );
 
 export const NewTodo = () => (

@@ -2,7 +2,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
 import { model } from "./model";
-import { initState } from "./store";
 
 import "./index.scss";
 
@@ -15,7 +14,7 @@ const { Provider } = model.createStore({
       saveActionTest: "Save action test",
     },
   },
-  initState,
+  initState: { todos: {} },
 });
 
 const render = () => {

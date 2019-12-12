@@ -1,10 +1,11 @@
 import { dispatch, effect, state } from "./model";
+import { randomId, fetchEmoji } from "./effects";
 
-const randomId = () => Math.random().toString();
-
-export const newTodo = (text: string) => {
+export const newTodo = async (text: string) => {
   const id = effect(randomId)();
+  const emoji = await effect(fetchEmoji)();
   state.todos[id] = {
+    emoji,
     text,
     done: false,
   };
