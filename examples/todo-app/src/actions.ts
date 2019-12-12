@@ -3,7 +3,7 @@ import { randomId, fetchEmoji } from "./effects";
 
 export const newTodo = async (text: string) => {
   const id = effect(randomId)();
-  const emoji = await effect(fetchEmoji)();
+  const emoji = await effect(fetchEmoji)(text);
   state.todos[id] = {
     emoji,
     text,
