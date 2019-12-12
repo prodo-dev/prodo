@@ -15,7 +15,7 @@ const ActionText = styled.span`
 `;
 
 const Number = styled.span`
-  color: pink;
+  color: #e86060;
   font-weight: bold;
 `;
 

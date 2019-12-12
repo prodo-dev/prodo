@@ -80,7 +80,6 @@ export const ActionLogRow = ({ action }: { action: Action }) => {
   const rerenders = action.rerender
     ? Object.keys(action.rerender).filter(comp => action.rerender![comp])
     : [];
-  console.log({ nextActions: action.nextActions });
   return (
     <StyledActionLogRow className="actionLogRow" data-testid="actionLogRow">
       <details>
