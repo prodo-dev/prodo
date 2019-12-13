@@ -37,7 +37,6 @@ const ActionName = styled.span`
 `;
 
 const ActionComponent = styled.span`
-  color: rgb(230, 232, 117);
   padding-right: 3px;
 `;
 
