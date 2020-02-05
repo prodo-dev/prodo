@@ -43,7 +43,7 @@ const parseItem = (key: string, item: string): any => {
 };
 
 const getItem = <T>(config: Config<T>, key: string): any => {
-  if (config.localFixture != null && config.localFixture.hasOwnProperty(key)) {
+  if (config.localFixture != null) {
     // use fixtures
     return config.localFixture[key];
   }
