@@ -35,6 +35,7 @@ const parseItem = (key: string, item: string): any => {
   try {
     return JSON.parse(item);
   } catch (e) {
+    localStorage.removeItem(key);
     throw new Error(
       `Error parsing '${key.toString()}' from localStorage\n\n${item}`,
     );
