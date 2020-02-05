@@ -143,10 +143,12 @@ const onCompleteEvent = <T>(): PluginOnCompleteEventFn<
 
   // save everything on nextUniverse.local to localStorage
   Object.keys(nextLocal).forEach(pathKey => {
-    localStorage.setItem(
-      serializeKey(pathKey),
-      JSON.stringify(nextLocal[pathKey]),
-    );
+    const value = JSON.stringify(nextLocal[pathKey]);
+    if (value != null) {
+      localStorage.setItem(serializeKey(pathKey), value);
+    } else {
+      localStorage.removeItem(serializeKey(pathKey));
+    }
   });
 
   // remove items that were deleted
