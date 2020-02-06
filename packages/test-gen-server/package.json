@@ -1,6 +1,6 @@
 {
   "name": "@prodo/test-gen-server",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "main": "index.js",
   "files": [
     "index.js"
