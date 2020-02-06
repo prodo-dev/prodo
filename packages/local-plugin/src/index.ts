@@ -35,6 +35,7 @@ const parseItem = (key: string, item: string): any => {
   try {
     return JSON.parse(item);
   } catch (e) {
+    localStorage.removeItem(key);
     throw new Error(
       `Error parsing '${key.toString()}' from localStorage\n\n${item}`,
     );
@@ -42,7 +43,7 @@ const parseItem = (key: string, item: string): any => {
 };
 
 const getItem = <T>(config: Config<T>, key: string): any => {
-  if (config.localFixture != null && config.localFixture.hasOwnProperty(key)) {
+  if (config.localFixture != null) {
     // use fixtures
     return config.localFixture[key];
   }
@@ -143,10 +144,12 @@ const onCompleteEvent = <T>(): PluginOnCompleteEventFn<
 
   // save everything on nextUniverse.local to localStorage
   Object.keys(nextLocal).forEach(pathKey => {
-    localStorage.setItem(
-      serializeKey(pathKey),
-      JSON.stringify(nextLocal[pathKey]),
-    );
+    const value = JSON.stringify(nextLocal[pathKey]);
+    if (value != null) {
+      localStorage.setItem(serializeKey(pathKey), value);
+    } else {
+      localStorage.removeItem(serializeKey(pathKey));
+    }
   });
 
   // remove items that were deleted
