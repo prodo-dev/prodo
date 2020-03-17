@@ -37,6 +37,7 @@ Items added to the `createStore` config.
 export interface Config<T> {
   initLocal?: Partial<T>;
   localFixture?: Partial<T>;
+  overrideStorage?: Storage;
 }
 ```
 
@@ -44,9 +45,9 @@ export interface Config<T> {
 
 Values to initialize local storage with.
 
-`localFixture`
+`overrideStorage`
 
-Mock local storage to use in your tests.
+Inject your own local storage, for testing purposes. At a minimum, this must support `setItem`, `getItem` and `removeItem`, and must support `Reflect.ownKeys()`.
 
 ## Usage
 
