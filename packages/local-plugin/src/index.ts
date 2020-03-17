@@ -186,4 +186,6 @@ const localPlugin = <T>(): ProdoPlugin<
   return plugin;
 };
 
+export { createInMemoryLocalStorage };
+
 export default localPlugin;
