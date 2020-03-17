@@ -36,7 +36,6 @@ Items added to the `createStore` config.
 ```ts
 export interface Config<T> {
   initLocal?: Partial<T>;
-  localFixture?: Partial<T>;
   overrideStorage?: Storage;
 }
 ```
