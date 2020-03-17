@@ -1,5 +1,6 @@
 import { createModel } from "@prodo/core";
 import localPlugin from "../src";
+import { createInMemoryLocalStorage, serializeKey } from "../src/utils";
 
 interface Local {
   count: number;
@@ -43,6 +44,30 @@ describe("local plugin", () => {
     expect(store.universe.local.count).toBe(10);
   });
 
+  it("sets init values to local storage", async () => {
+    const localStorage = createInMemoryLocalStorage();
+    model.createStore({
+      initState: {},
+      initLocal: { count: 10 },
+      overrideStorage: localStorage,
+    });
+
+    expect(localStorage.getItem(serializeKey("count"))).toBe("10");
+  });
+
+  it.only("doesn't override local storage with init values", async () => {
+    const localStorage = createInMemoryLocalStorage();
+    localStorage.setItem(serializeKey("count"), JSON.stringify(20));
+
+    model.createStore({
+      initState: {},
+      initLocal: { count: 10 },
+      overrideStorage: localStorage,
+    });
+
+    expect(localStorage.getItem(serializeKey("count"))).toBe("20");
+  });
+
   it("uses fixtures", async () => {
     const { store } = model.createStore({
       initState: {},
@@ -55,27 +80,37 @@ describe("local plugin", () => {
   });
 
   it("sets local storage value", async () => {
+    const localStorage = createInMemoryLocalStorage();
     const { store } = model.createStore({
       initState: {},
-      localFixture: {},
+      initLocal: {},
+      overrideStorage: localStorage,
     });
 
     const finalUniverse = await store.dispatch(setCount)(100);
     expect(finalUniverse.local.count).toBe(100);
+
+    expect(localStorage.getItem(serializeKey("count"))).toBe("100");
   });
 
   it("sets nested local storage value without initLocal", async () => {
+    const localStorage = createInMemoryLocalStorage();
     const { store } = model.createStore({
       initState: {},
-      localFixture: {},
+      initLocal: {},
+      overrideStorage: localStorage,
     });
 
     expect(store.universe.local.obj).toBe(undefined);
     const finalUniverse = await store.dispatch(setObj)("foo");
     expect(finalUniverse.local.obj!.a).toBe("foo");
+
+    const storedValue = localStorage.getItem(serializeKey("obj"));
+    expect(storedValue).not.toBeNull();
+    expect(JSON.parse(storedValue)).toEqual({ a: "foo" });
   });
 
-  it("sets nested local storage value without initLocal", async () => {
+  it("sets nested local storage value with initLocal", async () => {
     const { store } = model.createStore({
       initState: {},
       initLocal: {
