@@ -55,7 +55,7 @@ describe("local plugin", () => {
     expect(localStorage.getItem(serializeKey("count"))).toBe("10");
   });
 
-  it.only("doesn't override local storage with init values", async () => {
+  it("doesn't override local storage with init values", async () => {
     const localStorage = createInMemoryLocalStorage();
     localStorage.setItem(serializeKey("count"), JSON.stringify(20));
 
@@ -68,12 +68,12 @@ describe("local plugin", () => {
     expect(localStorage.getItem(serializeKey("count"))).toBe("20");
   });
 
-  it("uses fixtures", async () => {
+  it("loads existing values into the universe", async () => {
+    const localStorage = createInMemoryLocalStorage();
+    localStorage.setItem(serializeKey("count"), JSON.stringify(200));
     const { store } = model.createStore({
       initState: {},
-      localFixture: {
-        count: 200,
-      },
+      overrideStorage: localStorage,
     });
 
     expect(store.universe.local.count).toBe(200);
@@ -111,6 +111,7 @@ describe("local plugin", () => {
   });
 
   it("sets nested local storage value with initLocal", async () => {
+    const localStorage = createInMemoryLocalStorage();
     const { store } = model.createStore({
       initState: {},
       initLocal: {
@@ -118,7 +119,7 @@ describe("local plugin", () => {
           a: "foo",
         },
       },
-      localFixture: {},
+      overrideStorage: localStorage,
     });
 
     expect(store.universe.local.obj!.a).toBe("foo");
@@ -127,12 +128,14 @@ describe("local plugin", () => {
   });
 
   it("updates local storage value with initLocal", async () => {
+    const localStorage = createInMemoryLocalStorage();
+
     const { store } = model.createStore({
       initState: {},
-      localFixture: {},
       initLocal: {
         count: 300,
       },
+      overrideStorage: localStorage,
     });
 
     expect(store.universe.local.count).toBe(300);
@@ -140,56 +143,53 @@ describe("local plugin", () => {
     expect(finalUniverse.local.count).toBe(502);
   });
 
-  it("sets local storage value with fixture", async () => {
-    const { store } = model.createStore({
-      initState: {},
-      localFixture: {
-        count: 2,
-      },
-    });
-
-    expect(store.universe.local.count).toBe(2);
-    const finalUniverse = await store.dispatch(increaseCount)(400);
-    expect(finalUniverse.local.count).toBe(402);
-  });
-
   it("sets local storage value without initLocal or fixture", async () => {
+    const localStorage = createInMemoryLocalStorage();
+
     const { store } = model.createStore({
       initState: {},
-      localFixture: {},
+      overrideStorage: localStorage,
     });
 
     expect(store.universe.local.count).toBe(undefined);
     const finalUniverse = await store.dispatch(increaseCount)(1000);
     expect(finalUniverse.local.count).toBe(1000);
+
+    expect(localStorage.getItem(serializeKey("count"))).toBe("1000");
   });
 
   it("deletes a local storage value with default", async () => {
+    const localStorage = createInMemoryLocalStorage();
+    localStorage.setItem(serializeKey("count"), JSON.stringify(10));
+
     const { store } = model.createStore({
       initState: {},
       initLocal: {
         count: 1000,
       },
-      localFixture: {
-        count: 10,
-      },
+      overrideStorage: localStorage,
     });
 
     expect(store.universe.local.count).toBe(10);
     const finalUniverse = await store.dispatch(deleteCount)();
     expect(finalUniverse.local.count).toBe(1000);
+
+    expect(localStorage.getItem(serializeKey("count"))).toBe("1000");
   });
 
   it("deletes a local storage value without default", async () => {
+    const localStorage = createInMemoryLocalStorage();
+    localStorage.setItem(serializeKey("count"), JSON.stringify(10));
+
     const { store } = model.createStore({
       initState: {},
-      localFixture: {
-        count: 10,
-      },
+      overrideStorage: localStorage,
     });
 
     expect(store.universe.local.count).toBe(10);
     const finalUniverse = await store.dispatch(deleteCount)();
     expect(finalUniverse.local.count).toBe(undefined);
+
+    expect(localStorage.getItem(serializeKey("count"))).toBeUndefined();
   });
 });

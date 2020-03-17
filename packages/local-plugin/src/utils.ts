@@ -26,7 +26,12 @@ export const createInMemoryLocalStorage = () => {
       getItem: (key: string) => store[key],
     },
     {
-      ownKeys: () => Object.keys(store),
+      ownKeys: () => Reflect.ownKeys(store),
+      has: (_, key) => key in store,
+      getOwnPropertyDescriptor: () => ({
+        enumerable: true,
+        configurable: true,
+      }),
     },
   );
 };

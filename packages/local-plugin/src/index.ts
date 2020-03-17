@@ -26,7 +26,6 @@ interface Store {
 }
 
 export interface Config<T> {
-  localFixture?: Partial<T>;
   initLocal?: Partial<T>;
   overrideStorage?: Store;
 }
@@ -50,11 +49,6 @@ const parseItem = (store: Store, key: string, item: string): any => {
 };
 
 const getItem = <T>(config: Config<T>, key: string): any => {
-  if (config.localFixture != null) {
-    // use fixtures
-    return config.localFixture[key];
-  }
-
   const prodoKey = serializeKey(key);
   const store = config.overrideStorage || localStorage;
   const localItem = store.getItem(prodoKey);
@@ -75,20 +69,15 @@ const initFn = <T>(): PluginInitFn<Config<T>, Universe<T>> => (
 ) => {
   universe.local = {};
 
-  if (config.localFixture == null && config.initLocal) {
-    const store = config.overrideStorage || localStorage;
+  const store = config.overrideStorage || localStorage;
+  if (config.initLocal) {
     saveLocalStorage(store, config.initLocal, false);
   }
 
-  const store = config.overrideStorage || localStorage;
-
   // init universe with values from localStorage (or fixtures) and initLocal
-  const existingKeys =
-    config.localFixture == null
-      ? Object.keys(store)
-          .filter(isProdoKey)
-          .map(deserializeKey)
-      : Object.keys(config.localFixture);
+  const existingKeys = Object.keys(store)
+    .filter(isProdoKey)
+    .map(deserializeKey);
   const defaultKeys = Object.keys(config.initLocal || {});
   const keys = Array.from(new Set([...existingKeys, ...defaultKeys]));
 
@@ -146,11 +135,11 @@ const prepareViewCtx = <T>(): PluginViewCtxFn<
 
 const saveLocalStorage = (store, newValues, overrideExisting = true) => {
   Object.keys(newValues).forEach(pathKey => {
-    const value = JSON.stringify(newValues[pathKey]);
+    const value = newValues[pathKey];
     const key = serializeKey(pathKey);
     const existing = store.getItem(key);
     if (value != null && (existing == null || overrideExisting)) {
-      store.setItem(key, value);
+      store.setItem(key, JSON.stringify(value));
     } else if (overrideExisting) {
       store.removeItem(key);
     }
@@ -162,11 +151,6 @@ const onCompleteEvent = <T>(): PluginOnCompleteEventFn<
   {},
   ActionCtx<T>
 > => ({ event }, config) => {
-  if (config.localFixture != null) {
-    // do not update localStorage if using fixtures
-    return;
-  }
-
   const prevLocal: Universe<T> = event.prevUniverse.local;
   const nextLocal: Universe<T> = event.nextUniverse.local;
 
