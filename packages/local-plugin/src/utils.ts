@@ -2,7 +2,7 @@ const TEST_KEY = "__storage_test__";
 
 export const isLocalStorageAvailable = () => {
   try {
-    if (typeof window.localStorage === "undefined") {
+    if (typeof window !== "object" || window.localStorage == null) {
       return false;
     }
     window.localStorage.setItem(TEST_KEY, TEST_KEY);
