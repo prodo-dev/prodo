@@ -36,7 +36,7 @@ Items added to the `createStore` config.
 ```ts
 export interface Config<T> {
   initLocal?: Partial<T>;
-  localFixture?: Partial<T>;
+  overrideStorage?: Storage;
 }
 ```
 
@@ -44,9 +44,15 @@ export interface Config<T> {
 
 Values to initialize local storage with.
 
-`localFixture`
+`overrideStorage`
 
-Mock local storage to use in your tests.
+Inject your own local storage, for testing purposes. At a minimum, this must support `setItem`, `getItem` and `removeItem`, and must support `Reflect.ownKeys()` and `Reflect.getOwnPropertyDescriptor()` for the stored items. A simple in-memory version (that does not persist between sessions) is provided in the plugin:
+
+```ts
+import { createInMemoryLocalStorage } from "@prodo/local";
+```
+
+The implementation can be found [here](../../packages/local-plugin/src/utils.ts).
 
 ## Usage
 
