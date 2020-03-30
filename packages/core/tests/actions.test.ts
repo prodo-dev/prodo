@@ -3,11 +3,15 @@ import { createModel } from "../src";
 interface State {
   count: number;
   foo: string;
+  rich: { a: { b: number } };
+  bar: number;
 }
 
 const initState: State = {
   count: 0,
   foo: "foo",
+  rich: { a: { b: 1 } },
+  bar: 0,
 };
 
 const model = createModel<State>();
@@ -43,6 +47,14 @@ const changeCount = model.action(
 
 const add = model.action(({ state }) => (a: number, b: number) => {
   state.count = a + b;
+});
+
+const richArgs = model.action(({ state }) => (arg: { a: { b: number } }) => {
+  state.bar = arg.a.b;
+});
+
+const richCaller = model.action(({ state, dispatch }) => () => {
+  dispatch(richArgs)(state.rich);
 });
 
 describe("actions", () => {
@@ -87,5 +99,13 @@ describe("actions", () => {
     expect(store.universe.state.count).toBe(0);
     const finalUniverse = await store.dispatch(add)(1, 2);
     expect(finalUniverse.state.count).toBe(3);
+  });
+
+  it("can dispatch other actions with rich arguments", async () => {
+    const { store } = model.createStore({ initState });
+
+    expect(store.universe.state.bar).toBe(0);
+    const finalUniverse = await store.dispatch(richCaller)();
+    expect(finalUniverse.state.bar).toBe(1);
   });
 });
