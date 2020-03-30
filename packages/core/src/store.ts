@@ -1,4 +1,5 @@
 import produce, { isDraft } from "immer";
+import cloneDeep = require("lodash.clonedeep");
 import * as React from "react";
 import { ProdoProvider } from ".";
 import { completeEvent, startEvent } from "./events";
@@ -11,7 +12,6 @@ import {
   WatchTree,
 } from "./types";
 import { syncIfPossible } from "./utils";
-import cloneDeep = require("lodash.clonedeep");
 
 const initPlugins = (
   universe: any,
