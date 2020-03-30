@@ -54,6 +54,7 @@ const richArgs = model.action(({ state }) => (arg: { a: { b: number } }) => {
 });
 
 const richCaller = model.action(({ state, dispatch }) => () => {
+  state.rich.a.b += 1;
   dispatch(richArgs)(state.rich);
 });
 
@@ -106,6 +107,6 @@ describe("actions", () => {
 
     expect(store.universe.state.bar).toBe(0);
     const finalUniverse = await store.dispatch(richCaller)();
-    expect(finalUniverse.state.bar).toBe(1);
+    expect(finalUniverse.state.bar).toBe(2);
   });
 });

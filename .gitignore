@@ -34,3 +34,5 @@ yarn-error.log
 
 # MacOSX
 .DS_Store
+
+lerna-debug.log

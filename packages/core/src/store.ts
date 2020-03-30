@@ -1,4 +1,4 @@
-import produce from "immer";
+import produce, { isDraft } from "immer";
 import * as React from "react";
 import { ProdoProvider } from ".";
 import { completeEvent, startEvent } from "./events";
@@ -11,6 +11,7 @@ import {
   WatchTree,
 } from "./types";
 import { syncIfPossible } from "./utils";
+import cloneDeep = require("lodash.clonedeep");
 
 const initPlugins = (
   universe: any,
@@ -132,7 +133,7 @@ export const createStore = <State>(
                 event.nextActions.push({
                   func: func as any,
                   name: (func as any).__name || "(unnamed)",
-                  args,
+                  args: args.map(arg => (isDraft(arg) ? cloneDeep(arg) : arg)),
                   origin: {
                     parentId: event.id,
                     id: `${event.id}/${event.nextActions.length}`,
