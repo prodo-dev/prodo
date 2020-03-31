@@ -1,6 +1,6 @@
 {
   "name": "@prodo-example/update-testing",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "set -ex; tsc --build; tslint --project ."
   },
   "dependencies": {
-    "@prodo/core": "^0.1.5",
+    "@prodo/core": "^0.1.7",
     "core-js": "2",
     "react": "^16.8.6",
     "react-dom": "^16.9.0"
