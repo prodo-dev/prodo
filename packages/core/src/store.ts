@@ -104,7 +104,7 @@ export const createStore = <State>(
     A extends any[]
   >(
     func: (ctx: any) => (...args: A) => void,
-  ) => (...args) =>
+  ) => (...args: A) =>
     store.exec({ id: name, parentId: null }, func as any, ...args);
 
   store.exec = <A extends any[]>(
