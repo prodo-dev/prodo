@@ -183,12 +183,26 @@ export const createStore = <State>(
   store.dispatch = <A extends any[]>(func: (...args: A) => void) => async (
     ...args: A
   ) => {
-    const actionsCompleted = new Promise(async r => {
-      store.watchForComplete = {
-        count: 1,
-        cb: r,
-      };
-    });
+    let actionsCompleted;
+    if (store.watchForComplete != null) {
+      const previous = store.watchForComplete;
+      actionsCompleted = new Promise(async r => {
+        store.watchForComplete = {
+          count: previous.count + 1,
+          cb: () => {
+            previous.cb();
+            r();
+          },
+        };
+      });
+    } else {
+      actionsCompleted = new Promise(async r => {
+        store.watchForComplete = {
+          count: 1,
+          cb: r,
+        };
+      });
+    }
 
     await store.exec(
       {
