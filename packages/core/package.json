@@ -35,7 +35,7 @@
     "prodo-core"
   ],
   "dependencies": {
-    "immer": "^3.2.0",
+    "immer": "^8.0.1",
     "lodash.clonedeep": "^4.5.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
