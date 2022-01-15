@@ -16,7 +16,7 @@
     "classnames": "^2.2.5",
     "core-js": "2",
     "date-fns": "^1.29.0",
-    "marked": "^0.3.19",
+    "marked": "^4.0.10",
     "react": "^16.8.6",
     "react-aria-menubutton": "^6.1.0",
     "react-beautiful-dnd": "^11.0.5",
